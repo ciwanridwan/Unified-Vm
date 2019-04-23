@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PrintLog>
+  <Data>
+    <Date>11/04/2019</Date>
+    <Time>12:23:09</Time>
+    <File>status</File>
+    <Printer />
+    <PaperSource>Automatically Select</PaperSource>
+    <Status>Fail</Status>
+    <Message>Parameter is not valid.</Message>
+  </Data>
+</PrintLog>

@@ -1,0 +1,9 @@
+[BILLDEPOSITDEV]
+COMMTYPE =1
+ComID =5
+ComBaud =19200
+ComBoardPort =
+ComBoardPortBaud =
+DevCommLogID =2100
+DevTraceLogID =2101
+IniCfgFileName=BillDepositDevCfg.ini

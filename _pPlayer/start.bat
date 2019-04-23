@@ -1,0 +1,1 @@
+@start /wait %~dp0TVCPlayer.scr /s
