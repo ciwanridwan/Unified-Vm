@@ -772,7 +772,7 @@ if __name__ == '__main__':
     translator.load(path + 'INA.qm')
     app.installTranslator(translator)
     view.engine().quit.connect(app.quit)
-    view.setSource(QUrl(path + 'TransJ.qml'))
+    view.setSource(QUrl(path + 'Main.qml'))
     s_handler()
     if not _Global.TEST_MODE:
         app.setOverrideCursor(Qt.BlankCursor)

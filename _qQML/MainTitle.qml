@@ -12,7 +12,7 @@ Rectangle{
         id: text_notif
         anchors.fill: parent
         text: show_text
-        font.pixelSize: 40
+        font.pixelSize: size_
         font.family:"Microsoft YaHei"
         color: color_
         textFormat: Text.PlainText

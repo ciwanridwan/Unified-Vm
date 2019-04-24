@@ -15,16 +15,16 @@ Rectangle{
     property var boxName: base.globalBoxName
 //    property var boxName: 'VM Shelter Blok M 01'
     property bool logo_vis: true
-    property int header_height: 100
+    property int header_height: 125
     property int idx_bg: 0
     //Change Background Asset
-    property variant backgrounds: ['aAsset/inacraft-01.jpg', 'aAsset/inacraft-02.jpg', 'aAsset/inacraft-03.jpg', 'aAsset/inacraft-01.jpg' ]
+    property variant backgrounds: ['aAsset/mandiri_background.png', 'aAsset/mandiri_background.png', 'aAsset/mandiri_background.png', 'aAsset/mandiri_background.png' ]
     // Old Property Not Used But Cannot Be Removed
-    property bool isPanelActive: true
+    property bool isPanelActive: false
     property bool isBoxNameActive: true
-    property bool isHeaderActive: false
+    property bool isHeaderActive: true
     property string imgPanel: "aAsset/rocket.png"
-    property string textPanel: "Greeting From Inacraft 2019"
+    property string textPanel: ""
     property string colorPanel: "white"
     property int panelWidth: 400
     property var imgPanelScale: .9
@@ -34,71 +34,54 @@ Rectangle{
 
     Image{
         id: img_background
-        visible: isPanelActive || isHeaderActive
-        source: backgrounds[idx_bg]
+        visible: true
+        source: 'aAsset/mandiri_background.png'
         fillMode: Image.PreserveAspectCrop
         anchors.fill: parent
     }
 
     Rectangle{
         id: header_opacity
-        height: header_height
         width: parent.width
-        color: '#9E4305'
-        visible: isPanelActive || isHeaderActive
-        opacity: .97
-        z: 10
+        height: header_height
+        color: 'white'
+        visible: true
+        opacity: 0.1
     }
-
 
     Image{
-        id: img_logo
-        width: 200
-        height: 150
-        z: 10
+        id: img_logo_left
+        width: 275
+        height: 100
+        anchors.verticalCenter: header_opacity.verticalCenter
         anchors.left: parent.left
-        anchors.leftMargin: 100
-        anchors.top: parent.top
-        anchors.topMargin: 50
-        source: "aAsset/logo_bni.png"
+        anchors.leftMargin: 50
+        source: "aAsset/emoney_logo.png"
         fillMode: Image.PreserveAspectFit
-        visible: isPanelActive
+        visible: true
     }
 
-//    ColorOverlay{
-//        source: img_logo
-//        anchors.fill: img_logo
-//        color: 'WHITE'
-//        scale: 1
-//        z: 9
-//        visible: isPanelActive
-//    }
-
-
-//    Rectangle{
-//        id: base_overlay_boxName
-//        color: 'black'
-//        opacity: .5
-//        width: 500
-//        height: 120
-//        radius: 25
-//        anchors.top: parent.top
-//        anchors.topMargin: -25
-//        anchors.horizontalCenter: parent.horizontalCenter
-//        visible: !isPanelActive
-//        z: 10
-//    }
-
+    Image{
+        id: img_logo_right
+        width: 275
+        height: 100
+        anchors.verticalCenter: header_opacity.verticalCenter
+        anchors.right: parent.right
+        anchors.rightMargin: 50
+        source: "aAsset/mandiri_logo.png"
+        fillMode: Image.PreserveAspectFit
+        visible: true
+    }
 
     Text {
         id: boxNameText
         width: 500
         height: 50
-        visible: isBoxNameActive
         text: boxName
+        visible: isBoxNameActive
         style: Text.Sunken
         anchors.top: parent.top
-        anchors.topMargin: 20
+        anchors.topMargin: 10
         anchors.horizontalCenter: parent.horizontalCenter
         horizontalAlignment: Text.AlignHCenter
         font.italic: false
@@ -129,46 +112,46 @@ Rectangle{
     Text {
         id: timeText
         x: 0
-        y: 15
         width: 150
         height: 35
         style: Text.Sunken
         text: new Date().toLocaleTimeString(Qt.locale("id_ID"), "hh:mm:ss")
-        anchors.right: parent.right
-        anchors.rightMargin: 20
-        horizontalAlignment: Text.AlignRight
+        anchors.top: parent.top
+        anchors.topMargin: 80
+        anchors.horizontalCenter: parent.horizontalCenter
+        horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
         font.family:"Microsoft YaHei"
         font.pixelSize:30
         color:"#ffffff"
-        z: 10
+        visible: isBoxNameActive
 
     }
 
     Text {
         id: dateText
         x: 0
-        y: 50
         width: 250
         height: 25
         style: Text.Sunken
         text: new Date().toLocaleDateString(Qt.locale("id_ID"), Locale.LongFormat)
-        horizontalAlignment: Text.AlignRight
-        anchors.right: parent.right
-        anchors.rightMargin: 20
+        anchors.top: parent.top
+        anchors.topMargin: 60
+        anchors.horizontalCenter: parent.horizontalCenter
+        horizontalAlignment: Text.AlignHCenter
         font.italic: false
         verticalAlignment: Text.AlignVCenter
         font.family:"Microsoft YaHei"
         font.pixelSize:20
         color:"#ffffff"
-        z: 10
+        visible: isBoxNameActive
     }
 
     Timer {
         id: timer_clock
         interval: 1000
         repeat: true
-        running: true
+        running: isBoxNameActive
         onTriggered:
         {
             timeText.text = new Date().toLocaleTimeString(Qt.locale("en_EN"), "hh:mm:ss")
@@ -187,7 +170,6 @@ Rectangle{
 //        source: "aAsset/kasirku_inacraft.png"
 //        visible: !isPanelActive
 //        z: 10
-
 //    }
 
 //    Image {
@@ -204,12 +186,15 @@ Rectangle{
 //        z: 10
 //    }
 
+
+
     Rectangle{
         id: rec_left_panel
         y: header_height
         width: panelWidth
         height: parent.height - header_height
-        visible: isPanelActive
+//        visible: isPanelActive
+        visible: false
         color: '#9E4305'
         opacity: .97
 //        Rectangle{

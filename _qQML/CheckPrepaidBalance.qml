@@ -14,6 +14,7 @@ Base{
     property var bankName: undefined
     property var ableTopupCode: undefined
     property var imageSource: undefined
+    property bool mandiriLogin: false
     imgPanel: 'aAsset/cek_saldo.png'
     textPanel: 'Cek Saldo Kartu Prabayar'
 
@@ -104,35 +105,35 @@ Base{
         }
     }
 
-    Rectangle{
-        id: rec_timer
-        width:10
-        height:10
-        y:10
-        color:"transparent"
-        QtObject{
-            id:abc
-            property int counter
-            Component.onCompleted:{
-                abc.counter = timer_value
-            }
-        }
+//    Rectangle{
+//        id: rec_timer
+//        width:10
+//        height:10
+//        y:10
+//        color:"transparent"
+//        QtObject{
+//            id:abc
+//            property int counter
+//            Component.onCompleted:{
+//                abc.counter = timer_value
+//            }
+//        }
 
-        Timer{
-            id:my_timer
-            interval:1000
-            repeat:true
-            running:true
-            triggeredOnStart:true
-            onTriggered:{
-                abc.counter -= 1
-                if(abc.counter < 0){
-                    my_timer.stop()
-                    my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }))
-                }
-            }
-        }
-    }
+//        Timer{
+//            id:my_timer
+//            interval:1000
+//            repeat:true
+//            running:true
+//            triggeredOnStart:true
+//            onTriggered:{
+//                abc.counter -= 1
+//                if(abc.counter < 0){
+//                    my_timer.stop()
+//                    my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }))
+//                }
+//            }
+//        }
+//    }
 
     BackButton{
         id:back_button
@@ -175,20 +176,20 @@ Base{
         standard_notif_view.open();
     }
 
-    Rectangle{
-        id: main_base
-        color: '#9E4305'
-        radius: 50
-        border.width: 0
-        anchors.verticalCenterOffset: 100
-        anchors.horizontalCenterOffset: 150
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.horizontalCenter: parent.horizontalCenter
-        opacity: .97
-        width: 1100
-        height: 800
-        visible: !standard_notif_view.visible && !popup_loading.visible
-    }
+//    Rectangle{
+//        id: main_base
+//        color: '#9E4305'
+//        radius: 50
+//        border.width: 0
+//        anchors.verticalCenterOffset: 100
+//        anchors.horizontalCenterOffset: 150
+//        anchors.verticalCenter: parent.verticalCenter
+//        anchors.horizontalCenter: parent.horizontalCenter
+//        opacity: .97
+//        width: 1100
+//        height: 800
+//        visible: !standard_notif_view.visible && !popup_loading.visible
+//    }
 
     Text {
         id: notif_saldo
@@ -267,6 +268,10 @@ Base{
             anchors.fill: parent
             onClicked: {
                 _SLOT.user_action_log('Press "Isi Saldo"');
+                if (!mandiriLogin) {
+                    false_notif('Mohon Maaf|Fitur Isi Ulang Belum Diaktifkan')
+                    return;
+                }
                 if (press!='0') return;
                 press = '1';
                 if (bankName=='BNI'){
@@ -302,7 +307,7 @@ Base{
         x: 0
         color: "white"
         visible: !standard_notif_view.visible && !popup_loading.visible
-        text: "*Pastikan Kartu Prabayar Anda masih Ditempelkan di Reader Hingga Proses Isi Ulang Selesai."
+        text: ""
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 50
         anchors.horizontalCenter: parent.horizontalCenter
@@ -318,33 +323,33 @@ Base{
 
     //==============================================================
 
-    ConfirmView{
-        id: confirm_view
-        show_text: "Dear Customer"
-        show_detail: "Proceed This ?."
-        z: 99
-        MouseArea{
-            id: ok_confirm_view
-            x: 668; y:691
-            width: 190; height: 50;
-            onClicked: {
-            }
-        }
-    }
+//    ConfirmView{
+//        id: confirm_view
+//        show_text: "Dear Customer"
+//        show_detail: "Proceed This ?."
+//        z: 99
+//        MouseArea{
+//            id: ok_confirm_view
+//            x: 668; y:691
+//            width: 190; height: 50;
+//            onClicked: {
+//            }
+//        }
+//    }
 
-    NotifView{
-        id: notif_view
-        isSuccess: false
-        show_text: "Dear Customer"
-        show_detail: "Please Ensure You have set Your plan correctly."
-        z: 99
-    }
+//    NotifView{
+//        id: notif_view
+//        isSuccess: false
+//        show_text: "Dear Customer"
+//        show_detail: "Please Ensure You have set Your plan correctly."
+//        z: 99
+//    }
 
-    LoadingView{
-        id:loading_view
-        z: 99
-        show_text: "Finding Flight..."
-    }
+//    LoadingView{
+//        id:loading_view
+//        z: 99
+//        show_text: "Finding Flight..."
+//    }
 
     StandardNotifView{
         id: standard_notif_view
@@ -374,6 +379,11 @@ Base{
 
     PopupLoading{
         id: popup_loading
+    }
+
+
+    GlobalFrame{
+        id: global_frame
     }
 
 

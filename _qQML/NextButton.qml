@@ -5,22 +5,23 @@ Rectangle{
     width:180
     height:90
     color:"transparent"
-    property string button_text: 'lanjut'
     property bool modeReverse: false
+    property string button_text: 'lanjut'
+    property real globalOpacity: .97
     property int fontSize: 30
     property bool modeRadius: true
 
     Rectangle{
         anchors.fill: parent
-        color:(modeReverse) ? 'white' : '#9E4305'
-        opacity: .97
+        color: (modeReverse) ? 'white' : 'darkblue'
+        opacity: globalOpacity
         radius: (modeRadius) ? fontSize : 0
     }
 
     Text {
-        color: (modeReverse) ? '#9E4305' : 'white'
+        color: (modeReverse) ? 'darkblue' : 'white'
         anchors.fill: parent
-        text: button_text
+        text: button_text.toUpperCase()
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
         font.family:"Microsoft YaHei"
@@ -28,7 +29,6 @@ Rectangle{
         font.pixelSize: fontSize
     }
 
-
-
 }
+
 

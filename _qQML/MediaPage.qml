@@ -7,6 +7,8 @@ import QtMultimedia 5.0
 Rectangle{
     id:parent_root
     color: "black"
+    width: 1920
+    height: 1080
     property var img_path: "/_vVideo/"
     property url img_path_: ".." + img_path
     property var qml_pic
@@ -82,8 +84,7 @@ Rectangle{
     Rectangle {
         id: media_mode
         visible: (mode=="mediaPlayer") ? true : false
-        width: 1920
-        height: 1080
+        anchors.fill: parent
         color: "black"
 
         function setIndex(i){
@@ -146,13 +147,56 @@ Rectangle{
         }
     }
 
-    NotifView{
-        id: notif_view
-        isSuccess: false
-        show_text: "Dear Customer"
-        show_detail: "Please Ensure You have set Your plan correctly."
-        z: 99
+    Rectangle{
+        id: header_opacity
+        width: parent.width
+        height: 125
+        color: 'white'
+        visible: true
+        opacity: 0.1
     }
+
+    Image{
+        id: img_logo_left
+        width: 275
+        height: 100
+        anchors.verticalCenter: header_opacity.verticalCenter
+        anchors.left: parent.left
+        anchors.leftMargin: 50
+        source: "aAsset/emoney_logo.png"
+        fillMode: Image.PreserveAspectFit
+    }
+
+    Image{
+        id: img_logo_right
+        width: 275
+        height: 100
+        anchors.verticalCenter: header_opacity.verticalCenter
+        anchors.right: parent.right
+        anchors.rightMargin: 50
+        source: "aAsset/mandiri_logo.png"
+        fillMode: Image.PreserveAspectFit
+    }
+
+    Rectangle{
+        id: rec_bottom
+        color: 'white'
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 0
+        height: 100
+        width: parent.width
+        opacity: .1
+    }
+    Text{
+        id: text_notif
+        anchors.fill: rec_bottom
+        color: "#ffffff"
+        text: 'Sentuh Layar Untuk Memulai Transaksi'
+        font.pointSize: 45
+        verticalAlignment: Text.AlignVCenter
+        horizontalAlignment: Text.AlignHCenter
+    }
+
 
 }
 

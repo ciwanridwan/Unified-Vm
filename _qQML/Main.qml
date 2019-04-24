@@ -3,14 +3,16 @@ import QtQuick.Controls 1.2
 
 Rectangle {
     id:base
-    width: 1280
-    height: 1024
+    width: 1920
+    height: 1080
     color: 'transparent'
     property var top_color: "#f03838"
     property var language: "INA"
     property var raw_origin: undefined
     property var raw_destination: undefined
     property var raw_transit: undefined
+    property var globalBoxName: 'VM01 - Box Name'
+    property bool mediaOnPlaying: false
 
     //==================================================================================================//
     signal result_get_file_list(string str)
@@ -68,38 +70,88 @@ Rectangle {
     signal result_print_boarding_pass(string str)
     signal result_admin_key(string str)
     signal result_wallet_check(string str)
-
+    signal result_cd_hold(string str)
+    signal result_cd_move(string str)
+    signal result_cd_stop(string str)
+    signal result_product_stock(string str)
+    signal result_store_transaction(string str)
+    signal result_topup_amount(string str)
+    signal result_topup_readiness(string str)
+    signal result_sale_print(string str)
+    signal result_multiple_eject(string str)
+    signal result_store_topup(string str)
+    signal result_user_login(string str)
+    signal result_kiosk_admin_summary(string str)
+    signal result_change_stock(string str)
+    signal result_grg_status(string str)
+    signal result_grg_receive(string str)
+    signal result_grg_stop(string str)
+    signal result_do_topup_bni(string str)
+    signal result_admin_print(string str)
+    signal result_reprint_global(string str)
+    signal result_init_grg(string str)
+    signal result_activation_bni(string str)
+    signal result_cd_readiness(string str)
 
     //==================================================================================================//
 
     StackView {
         id: my_layer
         anchors.fill: base
-//        initialItem: test_view
         initialItem: home_page
 
         delegate: StackViewDelegate {
             function transitionFinished(properties)
             {
-                properties.exitItem.opacity = 1
+                properties.exitItem.opacity = 1.0
             }
 
             pushTransition: StackViewTransition {
                 PropertyAnimation {
                     target: enterItem
                     property: "opacity"
-                    from: 0
-                    to: 1
+                    from: 0.0
+                    to: 1.0
                 }
                 PropertyAnimation {
                     target: exitItem
                     property: "opacity"
-                    from: 1
-                    to: 0
+                    from: 1.0
+                    to: 0.0
                 }
             }
         }
     }
+
+    Component{id: admin_manage
+        AdministratorPage{}
+    }
+
+
+    Component{id: admin_login
+        AdministratorLogin{}
+    }
+
+    Component{id: topup_prepaid_denom
+        PrepaidTopupDenom{}
+    }
+
+    Component{id: process_shop
+        ProcessShop{}
+    }
+
+    Component{id: select_prepaid_provider
+        SelectPrepaidProvider{}
+    }
+
+    Component{id: shop_prepaid_card
+        ShopPrepaidCard{}
+    }
+
+    Component{id: check_balance
+        CheckPrepaidBalance{}
+    }
+
 
     Component{id: checkin_success
         CheckInSuccess{}
@@ -123,6 +175,10 @@ Rectangle {
 
     Component {id: home_page
         HomePage{}  
+    }
+
+    Component {id: home_page_event
+        HomePageEvent{}
     }
 
     Component {id: media_page
@@ -183,6 +239,10 @@ Rectangle {
 
     Component {id: reprint_detail_view
         ReprintDetailPage{}
+    }
+
+    Component {id: home_page_tj
+        HomePageTJ{}
     }
 
 

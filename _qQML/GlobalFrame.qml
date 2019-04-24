@@ -3,14 +3,14 @@ import QtQuick.Controls 1.2
 import QtGraphicalEffects 1.0
 
 Base{
-    id:popup_loading
+    id:globalFrame
     isBoxNameActive: false
-    property var textMain: 'Silakan Menunggu'
-    property var textSlave: ''
-    property var imageSource: "aAsset/loading_static.png"
-    property bool smallerSlaveSize: false
+    property var textMain: 'Silakan Ambil Kartu dan Struk Transaksi Anda'
+    property var textSlave: 'Terima Kasih'
+    property var imageSource: "aAsset/thumb_ok.png"
+    property bool smallerSlaveSize: true
     property int textSize: 30
-    visible: false
+//    visible: false
 //    scale: visible ? 1.0 : 0.1
 //    Behavior on scale {
 //        NumberAnimation  { duration: 500 ; easing.type: Easing.InOutBounce  }
@@ -23,7 +23,7 @@ Base{
 //    }
 
     Column{
-        width: 600
+        width: 900
         height: 500
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
@@ -31,6 +31,7 @@ Base{
         AnimatedImage  {
             width: 300
             height: 300
+            scale: 0.9
             anchors.horizontalCenter: parent.horizontalCenter
             source: imageSource
             fillMode: Image.PreserveAspectFit
@@ -48,6 +49,7 @@ Base{
         }
         Text{
             text: textSlave
+            horizontalAlignment: Text.AlignHCenter
             width: parent.width
             wrapMode: Text.WordWrap
             font.pointSize: (smallerSlaveSize) ? textSize-10: textSize
@@ -60,10 +62,10 @@ Base{
 
 
     function open(){
-        popup_loading.visible = true
+        globalFrame.visible = true
     }
 
     function close(){
-        popup_loading.visible = false
+        globalFrame.visible = false
     }
 }
