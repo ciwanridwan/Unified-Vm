@@ -141,14 +141,14 @@ Base{
             text: (language=='INA') ? qsTr("Sisa Waktu : ") : qsTr("Time Left : ")
             font.pixelSize: 20
             color: "yellow"
-            font.family: "Microsoft YaHei"
+            font.family: "Ubuntu"
         }
         Text{
             id: timer_text
             font.pixelSize: 20
             text: "500"
             color: "yellow"
-            font.family: "Microsoft YaHei"
+            font.family: "Ubuntu"
         }
     }
 
@@ -176,7 +176,7 @@ Base{
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignLeft
             color: 'darkred'
-            font.family: "Microsoft YaHei"
+            font.family: "Ubuntu"
             anchors.right: textCodeRectangle.left
             anchors.rightMargin: 50
             anchors.verticalCenter: textCodeRectangle.verticalCenter
@@ -208,7 +208,7 @@ Base{
             text: textCodeInput
             cursorVisible: (stepInput==0) ? true : false
             horizontalAlignment: Text.AlignLeft
-            font.family: "Microsoft YaHei"
+            font.family: "Ubuntu"
             font.pixelSize: globalFontSize
             color: "darkred"
             clip: true
@@ -228,7 +228,7 @@ Base{
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignLeft
             color: 'darkred'
-            font.family: "Microsoft YaHei"
+            font.family: "Ubuntu"
             anchors.right: textNameRectangle.left
             anchors.rightMargin: 50
             anchors.verticalCenter: textNameRectangle.verticalCenter
@@ -257,7 +257,7 @@ Base{
             text: textNameInput
             cursorVisible: (stepInput==1) ? true : false
             horizontalAlignment: Text.AlignLeft
-            font.family: "Microsoft YaHei"
+            font.family: "Ubuntu"
             font.pixelSize: globalFontSize
             color: "darkred"
             clip: true
@@ -276,7 +276,7 @@ Base{
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignLeft
             color: 'darkred'
-            font.family: "Microsoft YaHei"
+            font.family: "Ubuntu"
             anchors.right: textCardRectangle.left
             anchors.rightMargin: 50
             anchors.verticalCenter: textCardRectangle.verticalCenter
@@ -305,7 +305,7 @@ Base{
             text: textCardInput
             cursorVisible: (stepInput==2) ? true : false
             horizontalAlignment: Text.AlignLeft
-            font.family: "Microsoft YaHei"
+            font.family: "Ubuntu"
             font.pixelSize: globalFontSize - 10
             color: "darkred"
             clip: true
@@ -324,7 +324,7 @@ Base{
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignLeft
             color: 'darkred'
-            font.family: "Microsoft YaHei"
+            font.family: "Ubuntu"
             anchors.right: row_category.left
             anchors.rightMargin: 50
             anchors.verticalCenter: row_category.verticalCenter
@@ -366,7 +366,7 @@ Base{
                     height: 60
                     text: (language=='INA') ? "Dewasa (Pria)" : 'Adult (Male)'
                     wrapMode: Text.WordWrap
-                    font.family:"Microsoft YaHei"
+                    font.family:"Ubuntu"
                     font.bold: true
                     font.pixelSize: 15
                     verticalAlignment: Text.AlignVCenter
@@ -398,7 +398,7 @@ Base{
                     height: 60
                     text: (language=='INA') ? "Dewasa (Wanita)" : 'Adult (Female)'
                     wrapMode: Text.WordWrap
-                    font.family:"Microsoft YaHei"
+                    font.family:"Ubuntu"
                     font.bold: true
                     font.pixelSize: 15
                     verticalAlignment: Text.AlignVCenter
@@ -431,7 +431,7 @@ Base{
                     height: 60
                     text: (language=='INA') ? "Anak Kecil" : 'Child'
                     wrapMode: Text.WordWrap
-                    font.family:"Microsoft YaHei"
+                    font.family:"Ubuntu"
                     font.bold: true
                     font.pixelSize: 15
                     verticalAlignment: Text.AlignVCenter
@@ -461,7 +461,7 @@ Base{
 //            id: notif_text1
 //            width: parent.width
 //            height: 30
-//            font.family: "Microsoft YaHei"
+//            font.family: "Ubuntu"
 //            font.pixelSize: 25
 //            color: "darkred"
 //            text: (language=="INA") ? "Penting :" : "Important :"
@@ -476,7 +476,7 @@ Base{
 //            y: 0
 //            width: parent.width
 //            height: 20
-//            font.family: "Microsoft YaHei"
+//            font.family: "Ubuntu"
 //            font.pixelSize: 20
 //            color: "darkred"
 //            text: (language=="INA") ? text_cols.noteIna : text_cols.noteEng

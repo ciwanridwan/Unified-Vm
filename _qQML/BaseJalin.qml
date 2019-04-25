@@ -117,7 +117,7 @@ Rectangle{
         anchors.rightMargin: 20
         horizontalAlignment: Text.AlignRight
         verticalAlignment: Text.AlignVCenter
-        font.family:"Microsoft YaHei"
+        font.family:"Ubuntu"
         font.pixelSize:30
         color:"#ffffff"
         MouseArea{
@@ -145,7 +145,7 @@ Rectangle{
         anchors.rightMargin: 20
         font.italic: false
         verticalAlignment: Text.AlignVCenter
-        font.family:"Microsoft YaHei"
+        font.family:"Ubuntu"
         font.pixelSize:20
         color:"#ffffff"
     }
@@ -189,7 +189,7 @@ Rectangle{
             style: Text.Sunken
             wrapMode: Text.WordWrap
             font.pixelSize: 45
-            font.family:"Microsoft YaHei"
+            font.family:"Ubuntu"
             color: "white"
             textFormat: Text.PlainText
             horizontalAlignment: Text.AlignHCenter

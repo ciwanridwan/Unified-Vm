@@ -19,9 +19,9 @@ Item {
      id:template;
      width: (style=="Header") ? 500 : topwidth;
      color:paint;
-     font.pointSize: fontsize;
+     font.pixelSize: fontsize;
      font.bold: fontbold;
-     font.family: "Microsoft YaHei";
+     font.family: "Ubuntu";
      wrapMode: Text.WrapAtWordBoundaryOrAnywhere;
      text:content;
      }

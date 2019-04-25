@@ -9,14 +9,14 @@ Base{
     property var textSlave: 'Terima Kasih'
     property var imageSource: "aAsset/thumb_ok.png"
     property bool smallerSlaveSize: true
-    property int textSize: 30
-    property int showDuration: 10
+    property int textSize: 40
+    property int showDuration: 5
     property var closeMode: 'closeWindow' // 'closeWindow', 'backToMain', 'backToPrev'
-    visible: false
-//    scale: visible ? 1.0 : 0.1
-//    Behavior on scale {
-//        NumberAnimation  { duration: 500 ; easing.type: Easing.InOutBounce  }
-//    }
+//    visible: false
+    opacity: visible ? 1.0 : 0.0
+    Behavior on opacity {
+        NumberAnimation  { duration: 500 ; easing.type: Easing.InOutQuad  }
+    }
 
 //    Rectangle{
 //        anchors.fill: parent
@@ -43,22 +43,24 @@ Base{
             wrapMode: Text.WordWrap
             horizontalAlignment: Text.AlignHCenter
             width: parent.width
-            font.pointSize: textSize
+            font.pixelSize: textSize
             anchors.horizontalCenter: parent.horizontalCenter
             font.bold: false
             color: 'white'
             verticalAlignment: Text.AlignVCenter
+            font.family:"Ubuntu"
         }
         Text{
             text: textSlave
             horizontalAlignment: Text.AlignHCenter
             width: parent.width
             wrapMode: Text.WordWrap
-            font.pointSize: (smallerSlaveSize) ? textSize-10: textSize
+            font.pixelSize: (smallerSlaveSize) ? textSize-5: textSize
             anchors.horizontalCenter: parent.horizontalCenter
             font.bold: false
             color: 'white'
             verticalAlignment: Text.AlignVCenter
+            font.family:"Ubuntu"
         }
     }
 
@@ -89,6 +91,7 @@ Base{
 
     function open(){
         globalFrame.visible = true;
+        showDuration = 5;
         show_timer.start();
     }
 

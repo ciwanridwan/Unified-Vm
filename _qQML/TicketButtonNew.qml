@@ -110,7 +110,7 @@ Rectangle{
             id: text_flight_no
             x: 150
             y: 0
-            font.family:"Microsoft YaHei"
+            font.family:"Ubuntu"
             color: "black"
             text: f_no
             anchors.bottom: parent.bottom
@@ -125,7 +125,7 @@ Rectangle{
         Text {
             id: text_flight_type
             x: 159
-            font.family:"Microsoft YaHei"
+            font.family:"Ubuntu"
             color: "black"
             text: f_type
             font.italic: true
@@ -162,7 +162,7 @@ Rectangle{
             font.bold: false
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
-            font.family: "Microsoft YaHei"
+            font.family: "Ubuntu"
             anchors.horizontalCenter: parent.horizontalCenter
             textFormat: Text.PlainText
             font.pixelSize: 25
@@ -187,7 +187,7 @@ Rectangle{
             font.bold: (is_same_origin==1) ? true : false
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
-            font.family: "Microsoft YaHei"
+            font.family: "Ubuntu"
             textFormat: Text.PlainText
             font.pixelSize: 20
         }
@@ -211,7 +211,7 @@ Rectangle{
                 color: "white"
                 text: "TRANSIT"
                 font.pixelSize: 15
-                font.family:"Microsoft YaHei"
+                font.family:"Ubuntu"
                 horizontalAlignment: Text.AlignHCenter
                 verticalAlignment: Text.AlignVCenter
                 textFormat: Text.PlainText
@@ -223,7 +223,7 @@ Rectangle{
             id: text_flight_no_trans
             x: 150
             y: 0
-            font.family:"Microsoft YaHei"
+            font.family:"Ubuntu"
             color: "black"
             text: trans_flight_no
             anchors.bottom: parent.bottom
@@ -258,7 +258,7 @@ Rectangle{
             font.bold: false
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
-            font.family: "Microsoft YaHei"
+            font.family: "Ubuntu"
             anchors.horizontalCenter: parent.horizontalCenter
             textFormat: Text.PlainText
             font.pixelSize: 25
@@ -275,7 +275,7 @@ Rectangle{
             font.bold: true
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
-            font.family: "Microsoft YaHei"
+            font.family: "Ubuntu"
             textFormat: Text.PlainText
             font.pixelSize: 20
         }
@@ -294,7 +294,7 @@ Rectangle{
             text: "Promo"
             color: "darkred"
             font.bold: true
-            font.family:"Microsoft YaHei"
+            font.family:"Ubuntu"
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             textFormat: Text.PlainText
@@ -307,7 +307,7 @@ Rectangle{
             text: "Economy"
             color: "darkgreen"
             font.bold: true
-            font.family:"Microsoft YaHei"
+            font.family:"Ubuntu"
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             textFormat: Text.PlainText
@@ -318,9 +318,9 @@ Rectangle{
             x: 260
             y: -6
             text: "Business"
-            color: "darkblue"
+            color: "#1D294D"
             font.bold: true
-            font.family:"Microsoft YaHei"
+            font.family:"Ubuntu"
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             textFormat: Text.PlainText

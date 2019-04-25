@@ -61,6 +61,8 @@ PROCODE_BRI = _ConfigParser.get_value('QPROX', 'procode^bri')
 MID_BCA = _ConfigParser.get_value('QPROX', 'mid^bca')
 TID_BCA = _ConfigParser.get_value('QPROX', 'tid^bca')
 
+SERVICE_URL = 'http://localhost:9000/Service/GET?type=json&cmd='
+
 BANKS = [{
     "BANK": "MANDIRI",
     "STATUS": True if ('---' not in MID_MAN and len(MID_MAN) > 3) else False,

@@ -357,7 +357,7 @@ Base{
 
     Rectangle{
         id: main_base
-        color: '#9E4305'
+        color: '#1D294D'
         radius: 50
         border.width: 0
         anchors.verticalCenterOffset: 50
@@ -385,7 +385,7 @@ Base{
         wrapMode: Text.WordWrap
         text: "Konfirmasi Isi Ulang";
         font.bold: false
-        font.family: "Microsoft YaHei"
+        font.family: "Ubuntu"
         font.pixelSize: 45
         visible: !standard_notif_view.visible && !popup_loading.visible
     }
@@ -535,7 +535,7 @@ Base{
         font.italic: true
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
-        font.family:"Microsoft YaHei"
+        font.family:"Ubuntu"
         font.pixelSize: 20
     }
 
@@ -553,7 +553,7 @@ Base{
         font.italic: true
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
-        font.family:"Microsoft YaHei"
+        font.family:"Ubuntu"
         font.pixelSize: 15
     }
 

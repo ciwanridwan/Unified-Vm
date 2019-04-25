@@ -31,4 +31,4 @@ if '%errorlevel%' NEQ '0' (
 :: BatchGotAdmin (Run as Admin code ends)
 
 schtasks /delete /tn "Kiosk_App_AutoStart" /f
-schtasks /create /xml "C:\_inaCraftKiosk\Kiosk_App_AutoStart.xml" /tn "Kiosk_App_AutoStart"
+schtasks /create /xml "C:\_mandiriKiosk\Kiosk_App_AutoStart.xml" /tn "Kiosk_App_AutoStart"

@@ -20,7 +20,7 @@ Base{
     property var bniTopupWallet: 0
     property bool kalogButton: false
     property bool withSlider: true
-    property bool mandiriLogin: false
+    property bool mandiriAvailable: false
     isPanelActive: false
 
     Stack.onStatusChanged:{
@@ -29,10 +29,7 @@ Base{
             _SLOT.start_idle_mode();
             _SLOT.kiosk_get_product_stock();
             press = "0";
-            if(isMedia){
-                tvc_loading.counter = tvc_timeout;
-                show_tvc_loading.start();
-            }
+            resetMediaTimer();
             kalogButton = false;
             productCount1 = 0;
             productCount2 = 0;
@@ -64,6 +61,13 @@ Base{
         base.result_auth_qprox.disconnect(ka_login_status);
     }
 
+    function resetMediaTimer(){
+        if(isMedia){
+            tvc_loading.counter = tvc_timeout;
+            show_tvc_loading.start();
+        }
+    }
+
     function ka_login_status(t){
         console.log('ka_login_status', t);
         popup_loading.close()
@@ -91,7 +95,10 @@ Base{
         var tr = JSON.parse(t);
         mandiriTopupWallet = parseInt(tr.balance_mandiri);
         bniTopupWallet = parseInt(tr.balance_bni);
-        if (tr.mandiri == 'AVAILABLE') mandiriTopupActive = true; mandiriLogin = true;
+        if (tr.mandiri == 'AVAILABLE') {
+            mandiriTopupActive = true;
+            if (mandiriTopupWallet > 0) mandiriAvailable = true;
+        }
         if (tr.bni == 'AVAILABLE') bniTopupActive = true;
     }
 
@@ -240,10 +247,10 @@ Base{
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('Press "Cek Saldo"');
+                    resetMediaTimer();
                     if (press!="0") return;
                     press = "1";
-                    my_layer.push(check_balance, {mandiriLogin: mandiriLogin});
-                    _SLOT.set_tvc_player("STOP");
+                    my_layer.push(check_balance, {mandiriAvailable: mandiriAvailable});
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
                 }
@@ -262,14 +269,14 @@ Base{
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('Press "TopUp Saldo"');
-                    if (!mandiriTopupActive || mandiriTopupWallet == 0) {
+                    resetMediaTimer();
+                    if (!mandiriAvailable) {
                         kalog_notif();
                         return;
                     }
                     if (press!="0") return;
                     press = "1";
                     my_layer.push(topup_prepaid_denom);
-                    _SLOT.set_tvc_player("STOP");
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
                 }
@@ -291,10 +298,11 @@ Base{
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('Press "Beli Kartu"');
+                    resetMediaTimer();
                     if (press!="0") return;
                     press = "1";
-                    my_layer.push(shop_prepaid_card, {productData: productData, shop_type: 'shop', productCount: productCountAll});
-                    _SLOT.set_tvc_player("STOP");
+                    my_layer.push(mandiri_shop_card, {productData: productData, shop_type: 'shop', productCount: productCountAll});
+//                    _SLOT.set_tvc_player("STOP");
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
                 }
@@ -315,9 +323,10 @@ Base{
                     id: text_oos
                     text: qsTr("HABIS")
                     anchors.fill: parent
-                    font.pointSize: 25
+                    font.pixelSize: 25
                     color: "#000000"
                     font.bold: false
+                    font.family:"Ubuntu"
                     verticalAlignment: Text.AlignVCenter
                     horizontalAlignment: Text.AlignHCenter
                 }
@@ -412,12 +421,14 @@ Base{
                 height: parent.height
                 verticalAlignment: Text.AlignVCenter
                 color: "#000000"
+                font.family:"Ubuntu"
             }
             Text{
                 id: box_version
                 height: parent.height
                 verticalAlignment: Text.AlignVCenter
                 color: "#000000"
+                font.family:"Ubuntu"
             }
             Image{
                 id: img_kiosk
@@ -433,6 +444,7 @@ Base{
                 height: parent.height
                 verticalAlignment: Text.AlignVCenter
                 color: 'white'
+                font.family:"Ubuntu"
             }
         }
 

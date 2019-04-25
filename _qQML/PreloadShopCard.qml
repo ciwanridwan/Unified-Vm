@@ -3,14 +3,16 @@ import QtQuick.Controls 1.2
 import QtGraphicalEffects 1.0
 
 Base{
-    id:preload_check_card
+    id:preload_shop_card
     isBoxNameActive: false
-    property var textMain: 'Letakkan kartu e-Money Anda di alat pembaca kartu yang bertanda '
-    property var textSlave: 'Pastikan kartu Anda tetap berada di alat pembaca kartu sampai transaksi selesai'
+    property var textMain: 'Kartu Mandiri e-Money yang dijual pada mesin ini memiliki keterangan sebagai berikut :'
+    property var textSlave: '1. Saldo awal kartu = Rp. 30.000 per kartu'
+    property var textRebel: '2. Biaya pembelian kartu perdana = Rp. 20.000 per kartu'
+    property var textQuard: 'sehingga, dana yang perlu dibayarkan oleh pembeli = Rp. 50.000 per kartu'
     property var imageSource: "aAsset/reader_sign.png"
     property bool smallerSlaveSize: true
     property int textSize: 45
-//    visible: false
+    visible: false
     opacity: visible ? 1.0 : 0.0
     Behavior on opacity {
         NumberAnimation  { duration: 500 ; easing.type: Easing.InOutQuad  }
@@ -22,9 +24,20 @@ Base{
 //        opacity: 0.5
 //    }
 
+    MainTitle{
+        anchors.top: parent.top
+        anchors.topMargin: 300
+        anchors.horizontalCenter: parent.horizontalCenter
+        show_text: 'Penting : Informasi Pembelian Kartu Mandiri e-Money'
+        size_: 50
+        color_: "white"
+
+    }
+
     Column{
-        width: 1500
+        width: 1600
         height: 500
+        anchors.verticalCenterOffset: 100
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         spacing: 30
@@ -38,13 +51,7 @@ Base{
             font.bold: false
             color: 'white'
             verticalAlignment: Text.AlignVCenter
-        }
-        AnimatedImage  {
-            width: 300
-            height: 300
-            anchors.horizontalCenter: parent.horizontalCenter
-            source: imageSource
-            fillMode: Image.PreserveAspectFit
+            font.family: 'Ubuntu'
         }
         Text{
             text: textSlave
@@ -56,12 +63,38 @@ Base{
             font.bold: false
             color: 'white'
             verticalAlignment: Text.AlignVCenter
+            font.family: 'Ubuntu'
+        }
+        Text{
+            text: textRebel
+            horizontalAlignment: Text.AlignHCenter
+            width: parent.width
+            wrapMode: Text.WordWrap
+            font.pixelSize: (smallerSlaveSize) ? textSize-5: textSize
+            anchors.horizontalCenter: parent.horizontalCenter
+            font.bold: false
+            color: 'white'
+            verticalAlignment: Text.AlignVCenter
+            font.family: 'Ubuntu'
+        }
+        Text{
+            text: textQuard
+            horizontalAlignment: Text.AlignHCenter
+            width: parent.width
+            wrapMode: Text.WordWrap
+            font.pixelSize: (smallerSlaveSize) ? textSize-5: textSize
+            anchors.horizontalCenter: parent.horizontalCenter
+            font.bold: false
+            color: 'white'
+            verticalAlignment: Text.AlignVCenter
+            font.family: 'Ubuntu'
         }
     }
 
 //    Image{
 //        width: 210
 //        height: 80
+//        visible: false
 //        anchors.left: parent.left
 //        anchors.leftMargin: 565
 //        anchors.top: parent.top
@@ -71,10 +104,10 @@ Base{
 //    }
 
     function open(){
-        preload_check_card.visible = true
+        preload_shop_card.visible = true
     }
 
     function close(){
-        preload_check_card.visible = false
+        preload_shop_card.visible = false
     }
 }

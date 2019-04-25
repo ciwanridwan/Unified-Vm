@@ -7,6 +7,7 @@ from time import sleep, time
 from _cConfig import _ConfigParser
 import win32file
 from _tTools import _Tools
+from _cConfig import _Global
 # import win32api
 # import pywintypes
 # import win32con
@@ -225,7 +226,8 @@ def send_command_with_handle(param=None, output=None, responding=True, flushing=
         return 0, param
 
 
-LOCAL_URL = 'http://localhost:9000/service?type=json&CMD='
+LOCAL_URL = _Global.SERVICE_URL
+# http://localhost:9000/Service/GET?type=json&cmd=000&param=com4
 
 
 def set_output(p):
@@ -250,14 +252,16 @@ def send_request(param=None, output=None, responding=True, flushing=MO_STATUS, w
         ___param = "0"
     else:
         ___param = set_output(param)
-    ___status, ___response = _NetworkAccess.get_local(LOCAL_URL + ___cmd + '&param=' + ___param)
-    if ___status == 200 and ___response.get('response') is not None:
-        if ___response['result'] == '0000':
-            return 0, ___response['response']
+    ___stat, ___resp = _NetworkAccess.get_local(LOCAL_URL + ___cmd + '&param=' + ___param)
+    if ___stat == 200:
+        # {"Result":"0","Command":"000","Parameter":"com4","Response":null,"ErrorDesc":"Sukses"}
+        if ___resp.get('Command') == ___cmd and ___resp.get('Parameter') == ___param:
+            ___output = ___resp.get('Response') if ___resp.get('Response') is not None else ___resp.get('Result')
+            return 0, ___output
         else:
-            return -1, ___response['response']
+            return -1, json.dumps(___resp)
     else:
-        return -1, json.dumps(___response)
+        return -1, json.dumps(___resp)
 
 
 def send_command(param=None, output=None):

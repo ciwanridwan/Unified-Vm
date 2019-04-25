@@ -30,7 +30,7 @@ Rectangle {
                 id: month
                 anchors.centerIn: parent
                 color: "#ecc089"
-                font.pointSize: 25
+                font.pixelSize: 25
                 font.bold: true
                 text: root._monthNames[root.date.getMonth()]
                 onAccepted: {
@@ -59,7 +59,7 @@ Rectangle {
                 id: day
                 anchors.centerIn: parent
                 color: "#ecc089"
-                font.pointSize: 25
+                font.pixelSize: 25
                 font.bold: true
                 text: root.date.getDate()
                 validator:IntValidator {bottom: 1; top: 31}
@@ -80,7 +80,7 @@ Rectangle {
                 id: year
                 anchors.centerIn: parent
                 color: "#ecc089"
-                font.pointSize: 25
+                font.pixelSize: 25
                 font.bold: true
                 text: root.date.getFullYear()
                 validator: IntValidator {bottom: 1995; top: (new Date()).getFullYear()}

@@ -277,7 +277,7 @@ Base{
             text_: qsTr("Beli Kartu")
             text2_: qsTr("Buy Card")
             modeReverse: false
-            color_: (productCountAll > 0) ? '#9E4305' : 'gray'
+            color_: (productCountAll > 0) ? '#1D294D' : 'gray'
             opacity: 1
             MouseArea{
                 enabled: (productCountAll > 0) ? true : false
@@ -310,7 +310,7 @@ Base{
                     id: text_oos
                     text: qsTr("HABIS")
                     anchors.fill: parent
-                    font.pointSize: 20
+                    font.pixelSize: 20
                     color: 'darkred'
                     font.bold: true
                     verticalAlignment: Text.AlignVCenter

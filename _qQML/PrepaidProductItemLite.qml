@@ -46,14 +46,14 @@ Rectangle{
         anchors.horizontalCenter: parent.horizontalCenter
         horizontalAlignment: Text.AlignHCenter
         font.bold: false
-        font.pointSize: 20
+        font.pixelSize: 20
     }
 
     Text {
         id: item_desc
         width: 400
         height: 200
-        color: "#9E4305"
+        color: "#1D294D"
         text: itemDesc
         visible: false
         horizontalAlignment: Text.AlignLeft
@@ -64,7 +64,7 @@ Rectangle{
         verticalAlignment: Text.AlignTop
         wrapMode: Text.WordWrap
         font.italic: true
-        font.pointSize: 20
+        font.pixelSize: 20
     }
 
     Rectangle{
@@ -78,12 +78,12 @@ Rectangle{
         anchors.horizontalCenter: parent.horizontalCenter
         Text {
             id: item_price
-            color: '#9E4305'
+            color: '#1D294D'
             text: (itemStock > 0) ? 'Rp. ' + FUNC.insert_dot(itemPrice) + ',-' : 'HABIS'
             anchors.verticalCenter: parent.verticalCenter
             anchors.horizontalCenter: parent.horizontalCenter
             horizontalAlignment: Text.AlignHCenter
-            font.pointSize: 30
+            font.pixelSize: 30
             verticalAlignment: Text.AlignVCenter
         }
     }
@@ -91,14 +91,14 @@ Rectangle{
 
     Text {
         id: item_stock
-        color: "#9E4305"
+        color: "#1D294D"
         text: 'Stock : ' + itemStock
         visible: false
         anchors.bottom: item_img.bottom
         anchors.bottomMargin: 10
         anchors.horizontalCenter: parent.horizontalCenter
         horizontalAlignment: Text.AlignHCenter
-        font.pointSize: 20
+        font.pixelSize: 20
         verticalAlignment: Text.AlignVCenter
     }
 

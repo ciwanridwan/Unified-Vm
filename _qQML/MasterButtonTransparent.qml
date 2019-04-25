@@ -3,11 +3,11 @@ import QtGraphicalEffects 1.0
 
 Rectangle {
     property bool modeReverse: false
-    property var color_: (modeReverse) ? "white" : "#9E4305"
+    property var color_: (modeReverse) ? "white" : "#1D294D"
     property var img_:""
     property var text_:"TIket Pesawat"
     property var text2_:"Flight Ticket"
-    property var text_color: (modeReverse) ? "#9E4305" : "white"
+    property var text_color: (modeReverse) ? "#1D294D" : "white"
     width: 320
     height: 400
     color: 'transparent'
@@ -44,7 +44,7 @@ Rectangle {
         anchors.horizontalCenterOffset: 0
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
-        font.family: "Microsoft YaHei"
+        font.family: "Ubuntu"
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
     }
@@ -58,7 +58,7 @@ Rectangle {
         anchors.horizontalCenterOffset: 0
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
-        font.family: "Microsoft YaHei"
+        font.family: "Ubuntu"
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
     }

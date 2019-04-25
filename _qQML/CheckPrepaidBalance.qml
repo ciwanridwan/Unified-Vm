@@ -14,7 +14,7 @@ Base{
     property var bankName: undefined
     property var ableTopupCode: undefined
     property var imageSource: undefined
-    property bool mandiriLogin: false
+    property bool mandiriAvailable: false
     imgPanel: 'aAsset/cek_saldo.png'
     textPanel: 'Cek Saldo Kartu Prabayar'
 
@@ -56,7 +56,7 @@ Base{
     function topup_readiness(r){
         console.log('topup_readiness', r);
         popup_loading.close();
-        var ready = JSON.parse(r)
+//        var ready = JSON.parse(r)
     }
 
     function get_balance(text){
@@ -66,14 +66,15 @@ Base{
         standard_notif_view.buttonEnabled = true;
         var result = text.split('|')[1];
         if (result == 'ERROR'){
-            false_notif('Mohon Maaf|Gagal Mendapatkan Saldo, Pastikan Kartu Prabayar Anda Sudah Ditempelkan Pada Reader');
             cardNo = undefined;
             balance = 0;
             bankType = undefined;
-            image_prepaid_card.source = "aAsset/card_tj_original.png";
-            imageSource = "aAsset/card_tj_original.png";
-            notif_saldo.text = "Saldo Kartu Prabayar Anda\nRp. 0, -";
+            switch_frame('aAsset/insert_card_new.png', 'Anda tidak meletakkan kartu', 'ataupun kartu Anda tidak dapat digunakan', 'closeWindow', false );
             return;
+//            false_notif('Mohon Maaf|Gagal Mendapatkan Saldo, Pastikan Kartu Prabayar Anda Sudah Ditempelkan Pada Reader');
+//            image_prepaid_card.source = "aAsset/card_tj_original.png";
+//            imageSource = "aAsset/card_tj_original.png";
+//            notif_saldo.text = "Saldo Kartu Prabayar Anda\nRp. 0, -";
         } else {
             var info = JSON.parse(result);
             balance = info.balance.toString();
@@ -139,6 +140,7 @@ Base{
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 50
         z: 10
+        button_text: 'BATAL'
         visible: !popup_loading.visible || !preload_check_card.visible
         modeReverse: true
         MouseArea{
@@ -163,13 +165,13 @@ Base{
             onClicked: {
                 _SLOT.user_action_log('Press "ISI SALDO"');
                 preload_check_card.close();
-                if (press!='0') return;
-                press = '1'
-                if (!mandiriLogin) {
+                if (!mandiriAvailable) {
                     press = '0';
                     switch_frame('aAsset/smiley_down.png', 'Maaf Sementara Mesin Tidak Dapat Untuk', 'Melakukan Pengisian Kartu', 'closeWindow', false )
                     return;
                 }
+                if (press!='0') return;
+                press = '1'
                 if (bankName=='MANDIRI'){
                     if (ableTopupCode=='0000'){
                         var _cardData = {
@@ -180,26 +182,26 @@ Base{
                             'notifSaldo': ''
                         }
                         my_layer.push(topup_prepaid_denom, {cardData: _cardData});
-                    } else if (ableTopupCode=='1008'){
-                        press = 0;
-//                        false_notif('Mohon Maaf|Kartu BNI TapCash Anda Sudah Tidak Aktif\nSilakan Hubungi Bank BNI Terdekat')
-                        switch_frame('aAsset/smiley_down.png', 'Maaf Kartu Anda Sudah Tidak Aktif', '', 'closeWindow', false );
-                        return;
-                    }  else if (ableTopupCode=='5106'){
-                        press = 0;
-//                        false_notif('Mohon Maaf|Kartu BNI TapCash Anda Tidak Resmi\nSilakan Gunakan Kartu TapCash Yang Lain')
-                        switch_frame('aAsset/smiley_down.png', 'Maaf Kartu Anda Sudah Tidak Resmi', 'Gunakan Kartu lainnya', 'closeWindow', false );
-                        return;
+//                    } else if (ableTopupCode=='1008'){
+//                        press = 0;
+////                        false_notif('Mohon Maaf|Kartu BNI TapCash Anda Sudah Tidak Aktif\nSilakan Hubungi Bank BNI Terdekat')
+//                        switch_frame('aAsset/smiley_down.png', 'Maaf Kartu Anda Sudah Tidak Aktif', '', 'closeWindow', false );
+//                        return;
+//                    }  else if (ableTopupCode=='5106'){
+//                        press = 0;
+////                        false_notif('Mohon Maaf|Kartu BNI TapCash Anda Tidak Resmi\nSilakan Gunakan Kartu TapCash Yang Lain')
+//                        switch_frame('aAsset/smiley_down.png', 'Maaf Kartu Anda Sudah Tidak Resmi', 'Gunakan Kartu lainnya', 'closeWindow', false );
+//                        return;
                     } else {
                         press = 0;
 //                        false_notif('Mohon Maaf|Terjadi Kesalahan Pada Kartu BNI TapCash Anda\nSilakan Gunakan Kartu TapCash Yang Lain');
-                        switch_frame('aAsset/smiley_down.png', 'Maaf Terjadi Kesalahan Pada Kartu Anda', 'Gunakan Kartu lainnya', 'closeWindow', false );
+                        switch_frame('aAsset/insert_card_new.png', 'Maaf terjadi kesalahan pada kartu Anda', 'gunakan kartu lainnya', 'closeWindow', false );
                         return;
                     }
                 } else {
                     press = 0;
 //                    false_notif('Mohon Maaf|Kartu Prabayar Anda Diterbitkan Oleh Bank Lain ('+bankName+')\nUntuk Sementara Kartu Anda Belum Dapat Digunakan Pada Mesin Ini')
-                    switch_frame('aAsset/smiley_down.png', 'Maaf Kartu Anda Bukan Diterbitkan Oleh Bank MANDIRI', 'Gunakan Kartu e-money Mandiri', 'closeWindow', false );
+                    switch_frame('aAsset/insert_card_new.png', 'Anda tidak meletakkan kartu', 'ataupun kartu Anda tidak dapat digunakan', 'closeWindow', false );
                     return;
                 }
             }
@@ -236,7 +238,7 @@ Base{
         wrapMode: Text.WordWrap
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
-        font.family: "Microsoft YaHei"
+        font.family:"Ubuntu"
         font.pixelSize: 50
     }
 
@@ -251,7 +253,7 @@ Base{
         wrapMode: Text.WordWrap
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignRight
-        font.family: "Microsoft YaHei"
+        font.family:"Ubuntu"
         font.pixelSize: 50
     }
 
@@ -266,7 +268,7 @@ Base{
         wrapMode: Text.WordWrap
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
-        font.family: "Microsoft YaHei"
+        font.family:"Ubuntu"
         font.pixelSize: 50
     }
 
@@ -281,7 +283,7 @@ Base{
         wrapMode: Text.WordWrap
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignRight
-        font.family: "Microsoft YaHei"
+        font.family:"Ubuntu"
         font.pixelSize: 50
     }
 
@@ -298,7 +300,7 @@ Base{
 //        fillMode: Image.PreserveAspectFit
 //        Text{
 //            id: card_no_prepaid
-//            font.pointSize: 16
+//            font.pixelSize: 16
 //            anchors.bottom: parent.bottom
 //            anchors.bottomMargin: 25
 //            anchors.left: parent.left
@@ -393,7 +395,7 @@ Base{
         font.italic: true
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
-        font.family:"Microsoft YaHei"
+        font.family:"Ubuntu"
         font.pixelSize: 20
     }
 

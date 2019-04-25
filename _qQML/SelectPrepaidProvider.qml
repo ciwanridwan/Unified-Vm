@@ -211,7 +211,7 @@ Base{
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
         anchors.horizontalCenterOffset: 0
-        font.family: "Microsoft YaHei"
+        font.family: "Ubuntu"
         anchors.horizontalCenter: parent.horizontalCenter
         font.pixelSize: 45
     }
@@ -261,7 +261,7 @@ Base{
                 anchors.bottom: parent.top
                 anchors.left: parent.right
                 visible: !emoneyAvailable
-                font.pointSize: 20
+                font.pixelSize: 20
                 color: 'white'
                 font.bold: true
                 verticalAlignment: Text.AlignVCenter
@@ -305,7 +305,7 @@ Base{
                 anchors.right: parent.left
                 anchors.bottom: parent.top
                 anchors.left: parent.right
-                font.pointSize: 20
+                font.pixelSize: 20
                 color: 'white'
                 font.bold: true
                 verticalAlignment: Text.AlignVCenter
@@ -330,7 +330,7 @@ Base{
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
         anchors.horizontalCenterOffset: 0
-        font.family:"Microsoft YaHei"
+        font.family:"Ubuntu"
         font.pixelSize: 20
     }
 

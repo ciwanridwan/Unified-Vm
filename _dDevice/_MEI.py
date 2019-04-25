@@ -648,8 +648,7 @@ def handling_storing_cash():
                     'history': get_cash_history(),
                     'total': get_collected_cash()
                 }
-
-                M_SIGNDLER.SIGNAL_STORE_ES_MEI.emit("STORE_ES|SUCCESS-"+json.dumps(cash_received))
+                M_SIGNDLER.SIGNAL_STORE_ES_MEI.emit("STORE_ES|SUCCESS"+json.dumps(cash_received))
             LOGGER.debug(('handling_storing_cash', module_mode, 'break GRAB_KEY_STORE_ES1:', GRAB_KEY_STORE_ES1))
             break
         if CANCEL_STORE_ES is True:

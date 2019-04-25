@@ -30,7 +30,7 @@ Rectangle{
         id: notif_rec
         width: 800
         height: 500
-        color: (modeReverse) ? "white" : "#9E4305"
+        color: (modeReverse) ? "white" : "#1D294D"
         opacity: .97
         radius: 20
         anchors.horizontalCenterOffset: 150
@@ -63,7 +63,7 @@ Rectangle{
 
     Text {
         id: main_text
-        color: (modeReverse) ? "#9E4305" : "white"
+        color: (modeReverse) ? "#1D294D" : "white"
         text: show_text
         font.bold: true
         verticalAlignment: Text.AlignVCenter
@@ -71,7 +71,7 @@ Rectangle{
         anchors.top: notif_rec.top
         anchors.topMargin: 50
         anchors.horizontalCenterOffset: 5
-        font.family:"Microsoft YaHei"
+        font.family:"Ubuntu"
         anchors.horizontalCenter: notif_rec.horizontalCenter
         font.pixelSize: 30
     }

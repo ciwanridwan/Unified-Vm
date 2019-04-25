@@ -24,7 +24,7 @@ Rectangle{
         style: Text.Sunken
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
-        font.family:"Microsoft YaHei"
+        font.family:"Ubuntu"
         anchors.horizontalCenter: parent.horizontalCenter
         font.pixelSize: fontSize - 3
     }

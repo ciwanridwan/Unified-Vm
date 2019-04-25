@@ -185,7 +185,87 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None):
                 _DAO.mark_sync(param=settle, _table='TopUpRecords', _key='rid', _syncFlag=9)
             return _result
         except Exception as e:
-            LOGGER.warning(('create_settlement_file', str(e)))
+            LOGGER.warning((bank, mode, str(e)))
+            return False
+    elif bank == 'MANDIRI' and mode == 'TOPUP':
+        try:
+            # TODO Check Mandiri Settlement Function
+            LOGGER.info(('Create Settlement File', bank, mode))
+            if output_path is None:
+                output_path = FILE_PATH
+            settlements = _DAO.get_query_from('TopUpRecords', ' syncFlag=1 AND reportKA="N/A" ')
+            GLOBAL_SETTLEMENT = settlements
+            if len(settlements) == 0:
+                LOGGER.warning(('No Data For Settlement', str(settlements)))
+                return False
+            _filename = 'TOPMDD_'+_Global.MID_BNI + _Global.TID_BNI + datetime.now().strftime('%Y%m%d%H%M%S')+'.TXT'
+            LOGGER.info(('Settlement Filename', _filename))
+            _filecontent = ''
+            _filecontent2 = ''
+            _all_amount = 0
+            _header = 'H01' + _Global.MID_BNI + _Global.TID_BNI + '|'
+            _filecontent += _header
+            _trailer = 'T' + str(len(settlements)).zfill(6) + '00000000'
+            for settle in settlements:
+                remarks = json.loads(settle['remarks'])
+                _all_amount += int(remarks['value']) #Must Be Denom
+                _filecontent += ('D' + settle['reportSAM']) + '|'
+                # settle['key'] = settle['rid']
+                # _DAO.mark_sync(param=settle, _table='TopUpRecords', _key='rid', _syncFlag=9)
+            # Copy File Content Here to Update with the new CRC32
+            _filecontent2 = _filecontent
+            _filecontent += _trailer
+            _file_created = os.path.join(output_path, _filename)
+            with open(_file_created, 'w+') as f:
+                __all_lines1 = _filecontent.split('|')
+                for line in __all_lines1:
+                    if line != __all_lines1[-1]:
+                        f.write(line+'\n')
+                    else:
+                        f.write(line)
+                f.close()
+            _crc = _Tools.file2crc32(_file_created)
+            if _crc is False:
+                LOGGER.warning(('Settlement Filename Failed in CRC', _filename))
+                return False
+            _filecontent2 += ('T' + str(len(settlements)).zfill(6) + _crc)
+            with open(_file_created, 'w+') as f:
+                __all_lines2 = _filecontent2.split('|')
+                for line in __all_lines2:
+                    if line != __all_lines2[-1]:
+                        f.write(line+'\n')
+                    else:
+                        f.write(line)
+                f.close()
+            _result = {
+                'path_file': _file_created,
+                'filename': _filename,
+                'row': len(settlements),
+                'amount': str(_all_amount),
+                'bank': bank,
+                'bid': BID[bank],
+                'settlement_created_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            }
+            # Insert Into DB
+            #       smid            VARCHAR(100) PRIMARY KEY NOT NULL,
+            #       fileName        TEXT,
+            #       fileContent     TEXT,
+            #       status          INT,
+            #       remarks         TEXT,
+            _DAO.insert_sam_record({
+                'smid': _Tools.get_uuid(),
+                'fileName': _filename,
+                'fileContent': _filecontent2,
+                'status': 1,
+                'remarks': json.dumps(_result)
+            })
+            # To Prevent Re-Create The Same File When Failed Push To SMT
+            for settle in GLOBAL_SETTLEMENT:
+                settle['key'] = settle['rid']
+                _DAO.mark_sync(param=settle, _table='TopUpRecords', _key='rid', _syncFlag=9)
+            return _result
+        except Exception as e:
+            LOGGER.warning((bank, mode, str(e)))
             return False
     else:
         LOGGER.warning(('Unknown bank/mode', bank, mode))
@@ -209,6 +289,22 @@ def start_do_bni_topup_settlement():
 def do_settlement_for(bank='BNI'):
     if bank == 'BNI':
         if _Tools.is_online(source='bni_settlement') is False:
+            return
+        # if _SFTPAccess.SFTP is not None:
+        #     _SFTPAccess.close_sftp()
+        # _SFTPAccess.init_sftp()
+        # if _SFTPAccess.SFTP is None:
+        #     LOGGER.warning(('do_settlement_for', bank, 'failed cannot init SFTP'))
+        #     return
+        _param = create_settlement_file(bank=bank)
+        if _param is False:
+            return
+        _push = upload_settlement_file(_param['filename'], _param['path_file'])
+        if _push is False:
+            return
+        return push_settlement_data(_param)
+    elif bank == 'MANDIRI':
+        if _Tools.is_online(source='mandiri_settlement') is False:
             return
         # if _SFTPAccess.SFTP is not None:
         #     _SFTPAccess.close_sftp()

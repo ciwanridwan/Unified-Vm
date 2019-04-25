@@ -13,7 +13,7 @@ Rectangle{
         anchors.fill: parent
         text: show_text
         font.pixelSize: size_
-        font.family:"Microsoft YaHei"
+        font.family:"Ubuntu"
         color: color_
         textFormat: Text.PlainText
         horizontalAlignment: Text.AlignHCenter

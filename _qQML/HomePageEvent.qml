@@ -289,7 +289,7 @@ Base{
                     id: text_oos
                     text: qsTr("HABIS")
                     anchors.fill: parent
-                    font.pointSize: 20
+                    font.pixelSize: 20
                     color: 'darkred'
                     font.bold: true
                     verticalAlignment: Text.AlignVCenter

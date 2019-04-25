@@ -142,7 +142,7 @@ def simply_eject(attempt, multiply):
                 set_false_output(attempt, 'DEVICE_NOT_OPEN|'+attempt, 'simply_eject')
                 continue
     except Exception as e:
-        set_false_output(attempt, str(e) + '|' + attempt, 'simply_eject')
+        set_false_output(attempt, str(e)+'|'+   attempt, 'simply_eject')
 
 
 def eject_full_round(attempt):

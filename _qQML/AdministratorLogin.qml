@@ -123,20 +123,12 @@ Base{
         id: rec_parent
         color: "transparent"
         anchors.verticalCenterOffset: 50
-        anchors.horizontalCenterOffset: 200
+        anchors.horizontalCenterOffset: 0
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         width: 1200
         height: 900
         visible: (!popup_loading.visible && !standard_notif_view.visible) ? true : false
-
-        Rectangle{
-            id: base_opacity
-            anchors.fill: parent
-            color: '#9E4305'
-            opacity: .97
-            radius: 30
-        }
 
         Label{
             id: username_label
@@ -153,7 +145,7 @@ Base{
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignLeft
             color: 'white'
-            font.family: "Microsoft YaHei"
+            font.family: "Ubuntu"
 
         }
 
@@ -163,7 +155,6 @@ Base{
             y:150
             width: 600
             height: textRecHeigth
-            radius: 25
             anchors.left: username_label.right
             anchors.leftMargin: 50
             anchors.verticalCenter: username_label.verticalCenter
@@ -185,7 +176,7 @@ Base{
             text: usernameInput
             cursorVisible: (stepInput==0) ? true : false
             horizontalAlignment: Text.AlignLeft
-            font.family: "Microsoft YaHei"
+            font.family: "Ubuntu"
             font.pixelSize: globalFontSize
             color: "black"
             clip: true
@@ -208,7 +199,7 @@ Base{
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignLeft
             color: 'white'
-            font.family: "Microsoft YaHei"
+            font.family: "Ubuntu"
 
         }
 
@@ -218,7 +209,6 @@ Base{
             y:textUsernameRectangle.y + 125
             width: 600
             height: textRecHeigth
-            radius: 25
             anchors.left: password_label.right
             anchors.leftMargin: 50
             anchors.verticalCenter: password_label.verticalCenter
@@ -239,7 +229,7 @@ Base{
             text: passwordInput
             cursorVisible: (stepInput==1) ? true : false
             horizontalAlignment: Text.AlignLeft
-            font.family: "Microsoft YaHei"
+            font.family: "Ubuntu"
             font.pixelSize: globalFontSize
             color: "black"
             clip: true

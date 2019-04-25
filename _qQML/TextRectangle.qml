@@ -10,7 +10,7 @@ Rectangle{
     width: 500
     height: 50
     color: baseColor
-    radius: 20
+//    radius: 20
     border.color: borderColor
     border.width: 3
     Text{
@@ -20,7 +20,7 @@ Rectangle{
         anchors.leftMargin: 30
         anchors.verticalCenter: parent.verticalCenter
         horizontalAlignment: Text.AlignLeft
-        font.family: "Microsoft YaHei"
+        font.family: "Ubuntu"
         font.pixelSize: 30
         font.italic: true
         color: "silver"

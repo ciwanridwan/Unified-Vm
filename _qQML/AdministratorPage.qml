@@ -416,7 +416,7 @@ Base{
             width: (parent.width/4) - 20
             Rectangle{
                 anchors.fill: parent
-                color: '#9E4305'
+                color: '#1D294D'
                 radius: 25
                 opacity: .97
             }
@@ -513,7 +513,7 @@ Base{
             width: (parent.width/4) - 10
             Rectangle{
                 anchors.fill: parent
-                color: '#9E4305'
+                color: '#1D294D'
                 radius: 25
                 opacity: .97
             }
@@ -609,7 +609,7 @@ Base{
             width: (parent.width/4) - 10
             Rectangle{
                 anchors.fill: parent
-                color: '#9E4305'
+                color: '#1D294D'
                 radius: 25
                 opacity: .97
             }
@@ -814,7 +814,7 @@ Base{
             width: (parent.width/4) - 10
             Rectangle{
                 anchors.fill: parent
-                color: '#9E4305'
+                color: '#1D294D'
                 radius: 25
                 opacity: .97
             }

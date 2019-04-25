@@ -32,7 +32,7 @@ Rectangle{
         id: notif_rec
         width: 750
         height: 600
-        color: (modeReverse) ? "white" : "#9E4305"
+        color: (modeReverse) ? "white" : "#1D294D"
         opacity: .8
         radius: 20
         anchors.horizontalCenterOffset: 150
@@ -65,7 +65,7 @@ Rectangle{
 
     Text {
         id: main_text
-        color: (modeReverse) ? "#9E4305" : "white"
+        color: (modeReverse) ? "#1D294D" : "white"
         text: show_text
         font.bold: true
         verticalAlignment: Text.AlignVCenter
@@ -73,7 +73,7 @@ Rectangle{
         anchors.top: notif_rec.top
         anchors.topMargin: 30
         anchors.horizontalCenterOffset: 5
-        font.family:"Microsoft YaHei"
+        font.family:"Ubuntu"
         anchors.horizontalCenter: notif_rec.horizontalCenter
         font.pixelSize: 30
     }
@@ -83,7 +83,7 @@ Rectangle{
         y: 0
         width: 650
         height: 400
-        color: (modeReverse) ? "#9E4305" : "white"
+        color: (modeReverse) ? "#1D294D" : "white"
         text: show_detail
         anchors.verticalCenterOffset: 0
         anchors.verticalCenter: parent.verticalCenter
@@ -91,7 +91,7 @@ Rectangle{
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
         font.bold: true
-        font.family:"Microsoft YaHei"
+        font.family:"Ubuntu"
         anchors.horizontalCenter: notif_rec.horizontalCenter
         font.pixelSize: 25
     }

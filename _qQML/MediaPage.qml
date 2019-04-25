@@ -192,9 +192,10 @@ Rectangle{
         anchors.fill: rec_bottom
         color: "#ffffff"
         text: 'Sentuh Layar Untuk Memulai Transaksi'
-        font.pointSize: 45
+        font.pixelSize: 35
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
+        font.family:"Ubuntu"
     }
 
 

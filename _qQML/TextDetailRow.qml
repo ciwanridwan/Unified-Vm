@@ -26,7 +26,7 @@ Rectangle{
         anchors.verticalCenter: parent.verticalCenter
         wrapMode: Text.WordWrap
         font.pixelSize: labelSize
-        font.family: 'Microsoft YaHei'
+        font.family: 'Ubuntu'
         color: theme
         font.bold: true
 
@@ -41,7 +41,7 @@ Rectangle{
         anchors.leftMargin: separatorPoint
         wrapMode: Text.WordWrap
         font.pixelSize: labelSize
-        font.family: 'Microsoft YaHei'
+        font.family: 'Ubuntu'
         color: theme
         font.bold: true
 
@@ -70,7 +70,7 @@ Rectangle{
             anchors.top: parent.top
             wrapMode: Text.WordWrap
             font.pixelSize: contentSize
-            font.family: 'Microsoft YaHei'
+            font.family: 'Ubuntu'
             font.bold: (labelName=='Payment Status') ? true : false
             color: (labelContent=='CONFIRMED'||labelContent=='WAITING') ? 'white' : 'darkred'
 
@@ -88,7 +88,7 @@ Rectangle{
         anchors.leftMargin: 50
         wrapMode: Text.WordWrap
         font.pixelSize: contentSize
-        font.family: 'Microsoft YaHei'
+        font.family: 'Ubuntu'
         font.bold: false
         color: theme
 

@@ -163,7 +163,7 @@ Rectangle{
             style: Text.Sunken
             wrapMode: Text.WordWrap
             font.pixelSize: 45
-            font.family:"Microsoft YaHei"
+            font.family:"Ubuntu"
             color: "white"
             textFormat: Text.PlainText
             horizontalAlignment: Text.AlignHCenter

@@ -309,7 +309,7 @@ Base{
                 horizontalAlignment: Text.AlignHCenter
                 font.pixelSize: 20
                 font.bold: true
-                font.family: "Microsoft YaHei"
+                font.family: "Ubuntu"
                 color: (isWithReturn==false)  ? "white" : "darkred"
 //                color: 'white'
             }
@@ -337,7 +337,7 @@ Base{
                 horizontalAlignment: Text.AlignHCenter
                 font.pixelSize: 20
                 font.bold: true
-                font.family: "Microsoft YaHei"
+                font.family: "Ubuntu"
                 color: (isWithReturn==false) ? "darkred" : "white"
 //                color: 'white'
             }
@@ -365,7 +365,7 @@ Base{
             text: qsTr("From")
             anchors.top: parent.top
             anchors.topMargin: -45
-            font.family: "Microsoft YaHei"
+            font.family: "Ubuntu"
             font.pixelSize: 20
             color: "darkred"
             font.bold: false
@@ -404,7 +404,7 @@ Base{
                     text: control.currentText
                     font.pixelSize: 20
                     verticalAlignment: Text.AlignVCenter
-                    font.family: "Microsoft YaHei"
+                    font.family: "Ubuntu"
                 }
                 __popupStyle: __dropDownStyle
                 __dropDownStyle: MenuStyle {
@@ -416,7 +416,7 @@ Base{
                         text: styleData.text
                         font.pixelSize: 20
                         verticalAlignment: Text.AlignVCenter
-                        font.family: "Microsoft YaHei"
+                        font.family: "Ubuntu"
                     }
                     itemDelegate.background: Rectangle {
                         z: 2
@@ -539,7 +539,7 @@ Base{
             text: qsTr("To")
             anchors.top: parent.top
             anchors.topMargin: -45
-            font.family: "Microsoft YaHei"
+            font.family: "Ubuntu"
             font.pixelSize: 20
             color: "darkred"
             font.bold: false
@@ -577,7 +577,7 @@ Base{
                     text: control.currentText
                     font.pixelSize: 20
                     verticalAlignment: Text.AlignVCenter
-                    font.family: "Microsoft YaHei"
+                    font.family: "Ubuntu"
                 }
                 __popupStyle: __dropDownStyle
                 __dropDownStyle: MenuStyle {
@@ -589,7 +589,7 @@ Base{
                         text: styleData.text
                         font.pixelSize: 20
                         verticalAlignment: Text.AlignVCenter
-                        font.family: "Microsoft YaHei"
+                        font.family: "Ubuntu"
                     }
                     itemDelegate.background: Rectangle {
                         z: 2
@@ -713,7 +713,7 @@ Base{
         Text{
             id: titleDepart
             text: qsTr("Departure Date")
-            font.family: "Microsoft YaHei"
+            font.family: "Ubuntu"
             font.pixelSize: 20
             color: "darkred"
             font.bold: false
@@ -746,8 +746,8 @@ Base{
             text:Qt.formatDate(calDepart.selectedDate, "dddd, dd MMM yyyy")
             font.italic: true
             font.bold: false
-            font.family:"Microsoft YaHei"
-            font.pointSize: 15
+            font.family:"Ubuntu"
+            font.pixelSize: 15
         }
         Calendar{
                    id:calDepart
@@ -781,7 +781,7 @@ Base{
         Text{
             id: titleReturn
             text: qsTr("Return Date")
-            font.family: "Microsoft YaHei"
+            font.family: "Ubuntu"
             font.pixelSize: 20
             color: "darkred"
             font.bold: false
@@ -813,8 +813,8 @@ Base{
 //            text:Qt.formatDate(calReturn.selectedDate, "dddd, dd MMM yyyy")
             font.italic: true
             font.bold: false
-            font.family:"Microsoft YaHei"
-            font.pointSize: 15
+            font.family:"Ubuntu"
+            font.pixelSize: 15
         }
         Calendar{
                    id:calReturn
@@ -847,7 +847,7 @@ Base{
             text: qsTr("Passenger")
             anchors.top: parent.top
             anchors.topMargin: -45
-            font.family: "Microsoft YaHei"
+            font.family: "Ubuntu"
             font.pixelSize: 20
             color: "darkred"
             font.bold: false
@@ -866,8 +866,8 @@ Base{
                     font.bold: false
                     verticalAlignment: Text.AlignVCenter
                     horizontalAlignment: Text.AlignHCenter
-                    font.family:"Microsoft YaHei"
-                    font.pointSize: 30
+                    font.family:"Ubuntu"
+                    font.pixelSize: 30
                 }
                 MouseArea{
                     x: 97
@@ -906,8 +906,8 @@ Base{
                     font.bold: false
                     verticalAlignment: Text.AlignVCenter
                     horizontalAlignment: Text.AlignHCenter
-                    font.family:"Microsoft YaHei"
-                    font.pointSize: 30
+                    font.family:"Ubuntu"
+                    font.pixelSize: 30
                 }
                 MouseArea{
                     x: 97
@@ -945,8 +945,8 @@ Base{
                     font.bold: false
                     verticalAlignment: Text.AlignVCenter
                     horizontalAlignment: Text.AlignHCenter
-                    font.family:"Microsoft YaHei"
-                    font.pointSize: 30
+                    font.family:"Ubuntu"
+                    font.pixelSize: 30
                 }
                 MouseArea{
                     x: 97

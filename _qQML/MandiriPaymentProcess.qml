@@ -30,6 +30,7 @@ Base{
             if (details != undefined) console.log('details', JSON.stringify(details));
             abc.counter = timer_value;
             my_timer.start();
+            open_preload_notif();
             press = '0';
             uniqueCode = ''
             receivedCash = 0;
@@ -519,41 +520,28 @@ Base{
     //PUT MAIN COMPONENT HERE
 
     function open_preload_notif(){
-        false_notif('Mohon Pastikan|Kartu Prabayar Anda Masih Ditempelkan Pada Reader Sebelum Melanjutkan');
+        press = '0';
+        switch_frame('aAsset/insert_money.png', 'Masukkan Uang Anda', '', 'closeWindow', false )
+        return;
     }
 
     function false_notif(param){
         press = '0';
-        standard_notif_view.z = 100;
-        standard_notif_view.buttonEnabled = true ;
-        standard_notif_view._button_text = 'tutup';
-        if (param==undefined){
-            standard_notif_view.show_text = "Mohon Maaf";
-            standard_notif_view.show_detail = "Terjadi Kesalahan Pada Sistem, Mohon Coba Lagi Beberapa Saat";
-        } else {
-            standard_notif_view.show_text = param.split('|')[0];
-            standard_notif_view.show_detail = param.split('|')[1];
-        }
-        standard_notif_view.open();
+        switch_frame('aAsset/smiley_down.png', 'Maaf Sementara Mesin Tidak Dapat Digunakan', '', 'backToMain', false )
+        return;
+    }
+
+    function switch_frame(imageSource, textMain, textSlave, closeMode, smallerText){
+        global_frame.imageSource = imageSource;
+        global_frame.textMain = textMain;
+        global_frame.textSlave = textSlave;
+        global_frame.closeMode = closeMode;
+        global_frame.smallerSlaveSize = smallerText;
+        global_frame.open();
     }
 
 
-    Rectangle{
-        id: main_base
-        color: '#1D294D'
-        radius: 50
-        border.width: 0
-        anchors.verticalCenterOffset: 50
-        anchors.horizontalCenterOffset: 150
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.horizontalCenter: parent.horizontalCenter
-        opacity: .97
-        width: 1100
-        height: 900
-        visible: !standard_notif_view.visible
-
-    }
-
+/*
 
     Text {
         id: main_title
@@ -572,7 +560,6 @@ Base{
         anchors.horizontalCenter: parent.horizontalCenter
         font.pixelSize: 45
     }
-
 
     Text {
         id: slave_title
@@ -873,6 +860,7 @@ Base{
 
     }
 
+    */
 
     //==============================================================
 
@@ -913,6 +901,10 @@ Base{
 
     PopupLoading{
         id: popup_loading
+    }
+
+    GlobalFrame{
+        id: global_frame
     }
 
 

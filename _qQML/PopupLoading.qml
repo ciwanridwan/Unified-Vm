@@ -9,12 +9,12 @@ Base{
     property var textSlave: ''
     property var imageSource: "aAsset/loading_static.png"
     property bool smallerSlaveSize: false
-    property int textSize: 30
+    property int textSize: 45
     visible: false
-//    scale: visible ? 1.0 : 0.1
-//    Behavior on scale {
-//        NumberAnimation  { duration: 500 ; easing.type: Easing.InOutBounce  }
-//    }
+    opacity: visible ? 1.0 : 0.0
+    Behavior on opacity {
+        NumberAnimation  { duration: 500 ; easing.type: Easing.InOutQuad  }
+    }
 
 //    Rectangle{
 //        anchors.fill: parent
@@ -40,21 +40,25 @@ Base{
             wrapMode: Text.WordWrap
             horizontalAlignment: Text.AlignHCenter
             width: parent.width
-            font.pointSize: textSize
+            font.pixelSize: textSize
             anchors.horizontalCenter: parent.horizontalCenter
             font.bold: false
             color: 'white'
             verticalAlignment: Text.AlignVCenter
+            font.family:"Ubuntu"
+
         }
         Text{
             text: textSlave
             width: parent.width
             wrapMode: Text.WordWrap
-            font.pointSize: (smallerSlaveSize) ? textSize-10: textSize
+            font.pixelSize: (smallerSlaveSize) ? textSize-5: textSize
             anchors.horizontalCenter: parent.horizontalCenter
             font.bold: false
             color: 'white'
             verticalAlignment: Text.AlignVCenter
+            font.family:"Ubuntu"
+
         }
     }
 

@@ -32,7 +32,7 @@ Rectangle {
                 anchors.horizontalCenterOffset: 0
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom: parent.bottom
-            font.family: "Microsoft YaHei"
+            font.family: "Ubuntu"
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
         }
@@ -46,7 +46,7 @@ Rectangle {
                 anchors.horizontalCenterOffset: 0
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom: parent.bottom
-            font.family: "Microsoft YaHei"
+            font.family: "Ubuntu"
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
         }

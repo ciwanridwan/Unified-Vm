@@ -201,7 +201,7 @@ Base{
 //        text: "INPUT NUMBER 1234567890SRDCVBUVTY"
         cursorVisible: true
         horizontalAlignment: Text.AlignLeft
-        font.family: "Microsoft YaHei"
+        font.family: "Ubuntu"
         font.pixelSize: 40
         color: "darkred"
         clip: true
@@ -300,7 +300,7 @@ Base{
             horizontalAlignment: Text.AlignHCenter
             anchors.fill: parent
             font.bold: true
-            font.family: "Microsoft YaHei"
+            font.family: "Ubuntu"
             font.pixelSize: 20
         }
         onClicked: {
@@ -380,7 +380,7 @@ Base{
                 anchors.topMargin: 20
                 anchors.horizontalCenter: parent.horizontalCenter
                 font.bold: true
-                font.pointSize: 25
+                font.pixelSize: 25
                 verticalAlignment: Text.AlignVCenter
             }
 
@@ -402,7 +402,7 @@ Base{
                 anchors.topMargin: 175
                 anchors.horizontalCenter: parent.horizontalCenter
                 font.bold: true
-                font.pointSize: 20
+                font.pixelSize: 20
                 verticalAlignment: Text.AlignVCenter
             }
 
@@ -447,7 +447,7 @@ Base{
                 anchors.topMargin: 20
                 anchors.horizontalCenter: parent.horizontalCenter
                 font.bold: true
-                font.pointSize: 25
+                font.pixelSize: 25
                 verticalAlignment: Text.AlignVCenter
             }
 
@@ -469,7 +469,7 @@ Base{
                 anchors.topMargin: 175
                 anchors.horizontalCenter: parent.horizontalCenter
                 font.bold: true
-                font.pointSize: 20
+                font.pixelSize: 20
                 verticalAlignment: Text.AlignVCenter
             }
 

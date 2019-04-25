@@ -21,7 +21,7 @@ Rectangle {
         anchors.fill: parent
         font.pixelSize: 20
         font.bold: false
-        font.family: "Microsoft YaHei"
+        font.family: "Ubuntu"
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
     }

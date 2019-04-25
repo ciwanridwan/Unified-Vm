@@ -45,7 +45,7 @@ Rectangle{
         width: parent.width
         height: header_height
         color: 'white'
-        visible: true
+        visible: isHeaderActive
         opacity: 0.1
     }
 
@@ -58,7 +58,7 @@ Rectangle{
         anchors.leftMargin: 50
         source: "aAsset/emoney_logo.png"
         fillMode: Image.PreserveAspectFit
-        visible: true
+        visible: logo_vis
     }
 
     Image{
@@ -70,7 +70,7 @@ Rectangle{
         anchors.rightMargin: 50
         source: "aAsset/mandiri_logo.png"
         fillMode: Image.PreserveAspectFit
-        visible: true
+        visible: logo_vis
     }
 
     Text {
@@ -86,27 +86,11 @@ Rectangle{
         horizontalAlignment: Text.AlignHCenter
         font.italic: false
         verticalAlignment: Text.AlignVCenter
-        font.family:"Microsoft YaHei"
+        font.family:"Ubuntu"
         font.pixelSize:35
         color:"#ffffff"
-        z: 10
 
     }
-
-//    Rectangle{
-//        id: base_overlay_clock
-//        color: 'black'
-//        opacity: .5
-//        width: 300
-//        height: 100
-//        radius: 25
-//        visible: !isPanelActive
-//        anchors.right: parent.right
-//        anchors.rightMargin: -20
-//        anchors.top: parent.top
-//        anchors.topMargin: 0
-//        z: 10
-//    }
 
 
     Text {
@@ -121,7 +105,7 @@ Rectangle{
         anchors.horizontalCenter: parent.horizontalCenter
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
-        font.family:"Microsoft YaHei"
+        font.family:"Ubuntu"
         font.pixelSize:30
         color:"#ffffff"
         visible: isBoxNameActive
@@ -140,7 +124,7 @@ Rectangle{
         horizontalAlignment: Text.AlignHCenter
         font.italic: false
         verticalAlignment: Text.AlignVCenter
-        font.family:"Microsoft YaHei"
+        font.family:"Ubuntu"
         font.pixelSize:20
         color:"#ffffff"
         visible: isBoxNameActive
@@ -193,7 +177,7 @@ Rectangle{
         height: parent.height - header_height
 //        visible: isPanelActive
         visible: false
-        color: '#9E4305'
+        color: '#1D294D'
         opacity: .97
 //        Rectangle{
 //            id: opacity
@@ -237,7 +221,7 @@ Rectangle{
             anchors.left: parent.left
             anchors.top: parent.top
             font.pixelSize: 40
-            font.family:"Microsoft YaHei"
+            font.family:"Ubuntu"
             textFormat: Text.PlainText
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter

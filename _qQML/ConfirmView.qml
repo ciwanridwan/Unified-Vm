@@ -39,7 +39,7 @@ Base{
             anchors.top: parent.top
             anchors.topMargin: 40
             anchors.horizontalCenterOffset: 5
-            font.family:"Microsoft YaHei"
+            font.family:"Ubuntu"
             anchors.horizontalCenter: parent.horizontalCenter
             font.pixelSize: 30
         }
@@ -60,7 +60,7 @@ Base{
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             font.bold: true
-            font.family:"Microsoft YaHei"
+            font.family:"Ubuntu"
             font.pixelSize: 25
         }
         GroupBox{

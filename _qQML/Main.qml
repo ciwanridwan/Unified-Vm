@@ -245,6 +245,14 @@ Rectangle {
         HomePageTJ{}
     }
 
+    Component {id: mandiri_shop_card
+        MandiriShopCard{}
+    }
+
+    Component {id: mandiri_payment_process
+        MandiriPaymentProcess{}
+    }
+
 
 }
 

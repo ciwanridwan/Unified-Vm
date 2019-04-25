@@ -47,7 +47,7 @@ Rectangle{
         anchors.top: parent.top
         anchors.topMargin: 25
         font.bold: false
-        font.pointSize: 30
+        font.pixelSize: 30
     }
 
     Text {
@@ -64,7 +64,7 @@ Rectangle{
         verticalAlignment: Text.AlignTop
         wrapMode: Text.WordWrap
         font.italic: true
-        font.pointSize: 20
+        font.pixelSize: 20
     }
 
     Text {
@@ -78,7 +78,7 @@ Rectangle{
         anchors.rightMargin: 40
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 40
-        font.pointSize: 35
+        font.pixelSize: 35
         verticalAlignment: Text.AlignVCenter
     }
 
@@ -91,7 +91,7 @@ Rectangle{
         anchors.leftMargin: 100
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 50
-        font.pointSize: 25
+        font.pixelSize: 25
         verticalAlignment: Text.AlignVCenter
     }
 

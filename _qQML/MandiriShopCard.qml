@@ -30,7 +30,7 @@ Base{
     Stack.onStatusChanged:{
         if(Stack.status==Stack.Activating){
             console.log('shop_type', shop_type);
-            popup_loading.open();
+            preload_shop_card.open();
             cdReadiness = undefined;
             _SLOT.kiosk_get_cd_readiness();
             _SLOT.start_get_device_status();
@@ -102,7 +102,7 @@ Base{
     function process_selected_payment(p){
         console.log('process_selected_payment', p);
         var get_details = get_cart_details(p);
-        my_layer.push(process_shop, {details: get_details});
+        my_layer.push(mandiri_payment_process, {details: get_details});
     }
 
     function get_status_multiple(m){
@@ -271,20 +271,28 @@ Base{
         }
     }
 
-    Rectangle{
-        id: main_base
-        color: '#1D294D'
-        radius: 50
-        border.width: 0
-        anchors.verticalCenterOffset: 50
-        anchors.horizontalCenterOffset: 150
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.horizontalCenter: parent.horizontalCenter
-        opacity: .97
-        width: 1100
-        height: 900
-        visible: !standard_notif_view.visible && !popup_loading.visible
+//    Rectangle{
+//        id: main_base
+//        color: '#1D294D'
+//        radius: 50
+//        border.width: 0
+//        anchors.verticalCenterOffset: 50
+//        anchors.horizontalCenterOffset: 150
+//        anchors.verticalCenter: parent.verticalCenter
+//        anchors.horizontalCenter: parent.horizontalCenter
+//        opacity: .97
+//        width: 1100
+//        height: 900
+//        visible: !standard_notif_view.visible && !popup_loading.visible
+//    }
 
+    function switch_frame(imageSource, textMain, textSlave, closeMode, smallerText){
+        global_frame.imageSource = imageSource;
+        global_frame.textMain = textMain;
+        global_frame.textSlave = textSlave;
+        global_frame.closeMode = closeMode;
+        global_frame.smallerSlaveSize = smallerText;
+        global_frame.open();
     }
 
     Text {
@@ -456,33 +464,33 @@ Base{
 
     //==============================================================
 
-    ConfirmView{
-        id: confirm_view
-        show_text: "Dear Customer"
-        show_detail: "Proceed This ?."
-        z: 99
-        MouseArea{
-            id: ok_confirm_view
-            x: 668; y:691
-            width: 190; height: 50;
-            onClicked: {
-            }
-        }
-    }
+//    ConfirmView{
+//        id: confirm_view
+//        show_text: "Dear Customer"
+//        show_detail: "Proceed This ?."
+//        z: 99
+//        MouseArea{
+//            id: ok_confirm_view
+//            x: 668; y:691
+//            width: 190; height: 50;
+//            onClicked: {
+//            }
+//        }
+//    }
 
-    NotifView{
-        id: notif_view
-        isSuccess: false
-        show_text: "Dear Customer"
-        show_detail: "Please Ensure You have set Your plan correctly."
-        z: 99
-    }
+//    NotifView{
+//        id: notif_view
+//        isSuccess: false
+//        show_text: "Dear Customer"
+//        show_detail: "Please Ensure You have set Your plan correctly."
+//        z: 99
+//    }
 
-    LoadingView{
-        id:loading_view
-        z: 99
-        show_text: "Finding Flight..."
-    }
+//    LoadingView{
+//        id:loading_view
+//        z: 99
+//        show_text: "Finding Flight..."
+//    }
 
     StandardNotifView{
         id: standard_notif_view
@@ -503,6 +511,54 @@ Base{
     PopupLoading{
         id: popup_loading
     }
+
+    GlobalFrame{
+        id: global_frame
+    }
+
+    PreloadShopCard{
+        id: preload_shop_card
+        NextButton{
+            id: cancel_button_preload
+            anchors.left: parent.left
+            anchors.leftMargin: 100
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 50
+            button_text: 'BATAL'
+            modeReverse: true
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('Press "BATAL"');
+                    my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
+                }
+            }
+        }
+
+        NextButton{
+            id: next_button_preload
+            anchors.right: parent.right
+            anchors.rightMargin: 100
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 50
+            button_text: 'LANJUT'
+            modeReverse: true
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('Press "LANJUT"');
+                    preload_shop_card.close();
+                    if (press!='0') return;
+                    press = '1'
+                    popup_loading.open();
+                    //TODO Define SLOT Function to be called
+//                    _SLOT.start_check_balance();
+                }
+            }
+        }
+    }
+
+
 
 
 

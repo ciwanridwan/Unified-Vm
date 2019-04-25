@@ -13,18 +13,18 @@ Rectangle{
 
     Rectangle{
         anchors.fill: parent
-        color: (modeReverse) ? 'white' : 'darkblue'
+        color: (modeReverse) ? 'white' : '#1D294D'
         opacity: globalOpacity
         radius: (modeRadius) ? fontSize : 0
     }
 
     Text {
-        color: (modeReverse) ? 'darkblue' : 'white'
+        color: (modeReverse) ? '#1D294D' : 'white'
         anchors.fill: parent
         text: button_text.toUpperCase()
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
-        font.family:"Microsoft YaHei"
+        font.family:"Ubuntu"
         anchors.horizontalCenter: parent.horizontalCenter
         font.pixelSize: fontSize
     }

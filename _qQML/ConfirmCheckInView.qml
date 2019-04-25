@@ -79,7 +79,7 @@ Termasuk perbuatan melanggar hukum untuk membawa ke dalam pesawat (sebagai bawaa
             anchors.top: parent.top
             anchors.topMargin: 40
             anchors.horizontalCenterOffset: 5
-            font.family:"Microsoft YaHei"
+            font.family:"Ubuntu"
             anchors.horizontalCenter: parent.horizontalCenter
             font.pixelSize: 30
         }
@@ -119,7 +119,7 @@ Termasuk perbuatan melanggar hukum untuk membawa ke dalam pesawat (sebagai bawaa
                 horizontalAlignment: Text.AlignLeft
                 verticalAlignment: Text.AlignTop
                 //                font.bold: true
-                font.family:"Microsoft YaHei"
+                font.family:"Ubuntu"
                 font.pixelSize: 25
             }
         }

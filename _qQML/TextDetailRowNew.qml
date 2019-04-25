@@ -54,7 +54,7 @@ Rectangle{
             wrapMode: Text.WrapAnywhere
             font.pixelSize: contentSize/2
             font.family: 'Microsoft YaHei'
-            color: '#9E4305'
+            color: '#1D294D'
 
         }
     }

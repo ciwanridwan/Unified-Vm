@@ -182,14 +182,14 @@ Base{
             text: (language=='INA') ? qsTr("Sisa Waktu : ") : qsTr("Time Left : ")
             font.pixelSize: 20
             color: "yellow"
-            font.family: "Microsoft YaHei"
+            font.family: "Ubuntu"
         }
         Text{
             id: timer_text
             font.pixelSize: 20
             text: "500"
             color: "yellow"
-            font.family: "Microsoft YaHei"
+            font.family: "Ubuntu"
         }
     }
 

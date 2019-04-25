@@ -477,7 +477,7 @@ Base{
         visible: (getReturnActivated==false && totalDeparture!=undefined) ? true : false
         color: "darkred"
         font.bold: true
-        font.family: "Microsoft YaHei"
+        font.family: "Ubuntu"
         font.pixelSize: 20
     }
 
@@ -491,7 +491,7 @@ Base{
         visible: (getReturnActivated==true && totalReturn!=undefined) ? true : false
         color: "darkred"
         font.bold: true
-        font.family: "Microsoft YaHei"
+        font.family: "Ubuntu"
         font.pixelSize: 20
     }
 
@@ -517,7 +517,7 @@ Base{
 //            text: "ID-7843"
             font.bold: true
             font.pixelSize: 20
-            font.family: "Microsoft YaHei"
+            font.family: "Ubuntu"
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignLeft
         }
@@ -532,7 +532,7 @@ Base{
             anchors.horizontalCenterOffset: 1
             anchors.horizontalCenter: parent.horizontalCenter
             font.pixelSize: 25
-            font.family: "Microsoft YaHei"
+            font.family: "Ubuntu"
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
         }
@@ -546,7 +546,7 @@ Base{
             color: "darkred"
             font.bold: false
             font.pixelSize: 30
-            font.family: "Microsoft YaHei"
+            font.family: "Ubuntu"
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignLeft
         }

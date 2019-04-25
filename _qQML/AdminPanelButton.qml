@@ -11,20 +11,20 @@ Rectangle{
 
     Rectangle{
         anchors.fill: parent
-        color: (modeReverse) ? 'white' : '#9E4305'
+        color: (modeReverse) ? 'white' : '#1D294D'
         opacity: globalOpacity
         radius: 30
     }
 
     Text {
         height: 80
-        color: (modeReverse) ? '#9E4305' : 'white'
+        color: (modeReverse) ? '#1D294D' : 'white'
         anchors.fill: parent
         text: button_text
         wrapMode: Text.WordWrap
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
-        font.family:"Microsoft YaHei"
+        font.family:"Ubuntu"
         anchors.horizontalCenter: parent.horizontalCenter
         font.pixelSize: 25
     }
