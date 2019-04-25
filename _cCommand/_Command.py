@@ -250,7 +250,7 @@ def send_request(param=None, output=None, responding=True, flushing=MO_STATUS, w
         ___param = "0"
     else:
         ___param = set_output(param)
-    ___status, ___response = _NetworkAccess.local_get(LOCAL_URL+___cmd+'&param='+___param)
+    ___status, ___response = _NetworkAccess.get_local(LOCAL_URL + ___cmd + '&param=' + ___param)
     if ___status == 200 and ___response.get('response') is not None:
         if ___response['result'] == '0000':
             return 0, ___response['response']

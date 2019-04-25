@@ -330,9 +330,9 @@ class SlotHandler(QObject):
         _MEI.start_set_direct_price(price)
     start_set_direct_price = pyqtSlot(str)(start_set_direct_price)
 
-    def start_multiple_eject(self, attempt):
-        _CD.start_multiple_eject(attempt)
-    start_multiple_eject = pyqtSlot(str)(start_multiple_eject)
+    def start_multiple_eject(self, attempt, multiply):
+        _CD.start_multiple_eject(attempt, multiply)
+    start_multiple_eject = pyqtSlot(str, str)(start_multiple_eject)
 
     def start_store_transaction_global(self, param):
         _KioskService.start_store_transaction_global(param)

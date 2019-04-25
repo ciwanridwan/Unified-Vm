@@ -150,7 +150,7 @@ def post_to_url(url, param=None, header=None, log=True):
     return r.status_code, response
 
 
-def local_get(url, param=None, log=True):
+def get_local(url, param=None, log=True):
     try:
         s = requests.session()
         s.keep_alive = False

@@ -4,7 +4,7 @@ import QtGraphicalEffects 1.0
 import "base_function.js" as FUNC
 
 Base{
-    id: base_page
+    id: check_prepaid_balance
     property int timer_value: 300
     property var press: '0'
     property var cardNo: undefined
@@ -22,7 +22,7 @@ Base{
         if(Stack.status==Stack.Activating){
             abc.counter = timer_value;
             my_timer.start();
-            open_preload_notif();
+            preload_check_card.open();
             press = '0';
             cardNo = undefined;
             balance = 0;
@@ -30,12 +30,9 @@ Base{
             bankName = undefined;
             imageSource = undefined;
             ableTopupCode = undefined;
-            notif_saldo.text = 'Saldo Kartu Prabayar Anda\nRp. 0, -'
-
         }
         if(Stack.status==Stack.Deactivating){
             my_timer.stop()
-            loading_view.close()
         }
     }
 
@@ -84,65 +81,65 @@ Base{
             bankType = info.bank_type;
             bankName = info.bank_name;
             ableTopupCode = info.able_topup;
-            card_no_prepaid.text = FUNC.insert_space_four(cardNo);
-            if (bankName == 'MANDIRI'){
-                image_prepaid_card.source = "aAsset/mandiri_emoney_card.png";
-                imageSource = "aAsset/mandiri_emoney_card.png";
-                notif_saldo.text = "Saldo Kartu Prabayar e-Money Anda\nRp. " + FUNC.insert_dot(balance) + ",-";
-            } else if (bankName == 'BNI'){
-                image_prepaid_card.source = "aAsset/bni_tapcash_card.png";
-                imageSource = "aAsset/bni_tapcash_card.png";
-                notif_saldo.text = "Saldo Kartu Prabayar TapCash Anda\nRp. " + FUNC.insert_dot(balance) + ",-";
-            } else if (bankName == 'BCA'){
-                image_prepaid_card.source = "aAsset/bca_flazz_card.png";
-                imageSource = "aAsset/bca_flazz_card.png";
-                notif_saldo.text = "Saldo Kartu Prabayar Flazz Anda\nRp. " + FUNC.insert_dot(balance) + ",-";
-            }else {
-                image_prepaid_card.source = "aAsset/card_tj_original.png";
-                imageSource = "aAsset/card_tj_original.png";
-                notif_saldo.text = "Saldo Kartu Prabayar Anda\nRp. " + FUNC.insert_dot(balance) + ",-";
+            content_card_no.text = FUNC.insert_space_four(cardNo);
+//            if (bankName == 'MANDIRI'){
+//                image_prepaid_card.source = "aAsset/mandiri_emoney_card.png";
+//                imageSource = "aAsset/mandiri_emoney_card.png";
+//                notif_saldo.text = "Saldo Kartu Prabayar e-Money Anda\nRp. " + FUNC.insert_dot(balance) + ",-";
+//            } else if (bankName == 'BNI'){
+//                image_prepaid_card.source = "aAsset/bni_tapcash_card.png";
+//                imageSource = "aAsset/bni_tapcash_card.png";
+//                notif_saldo.text = "Saldo Kartu Prabayar TapCash Anda\nRp. " + FUNC.insert_dot(balance) + ",-";
+//            } else if (bankName == 'BCA'){
+//                image_prepaid_card.source = "aAsset/bca_flazz_card.png";
+//                imageSource = "aAsset/bca_flazz_card.png";
+//                notif_saldo.text = "Saldo Kartu Prabayar Flazz Anda\nRp. " + FUNC.insert_dot(balance) + ",-";
+//            }else {
+//                image_prepaid_card.source = "aAsset/card_tj_original.png";
+//                imageSource = "aAsset/card_tj_original.png";
+//                notif_saldo.text = "Saldo Kartu Prabayar Anda\nRp. " + FUNC.insert_dot(balance) + ",-";
+//            }
+        }
+    }
+
+    Rectangle{
+        id: rec_timer
+        width:10
+        height:10
+        y:10
+        color:"transparent"
+        QtObject{
+            id:abc
+            property int counter
+            Component.onCompleted:{
+                abc.counter = timer_value
+            }
+        }
+
+        Timer{
+            id:my_timer
+            interval:1000
+            repeat:true
+            running:true
+            triggeredOnStart:true
+            onTriggered:{
+                abc.counter -= 1
+                if(abc.counter < 0){
+                    my_timer.stop()
+                    my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }))
+                }
             }
         }
     }
 
-//    Rectangle{
-//        id: rec_timer
-//        width:10
-//        height:10
-//        y:10
-//        color:"transparent"
-//        QtObject{
-//            id:abc
-//            property int counter
-//            Component.onCompleted:{
-//                abc.counter = timer_value
-//            }
-//        }
-
-//        Timer{
-//            id:my_timer
-//            interval:1000
-//            repeat:true
-//            running:true
-//            triggeredOnStart:true
-//            onTriggered:{
-//                abc.counter -= 1
-//                if(abc.counter < 0){
-//                    my_timer.stop()
-//                    my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }))
-//                }
-//            }
-//        }
-//    }
-
     BackButton{
         id:back_button
         anchors.left: parent.left
-        anchors.leftMargin: 120
+        anchors.leftMargin: 100
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 50
         z: 10
-//        visible: !popup_loading.visible
+        visible: !popup_loading.visible || !preload_check_card.visible
         modeReverse: true
         MouseArea{
             anchors.fill: parent
@@ -153,154 +150,234 @@ Base{
         }
     }
 
-    //==============================================================
-    //PUT MAIN COMPONENT HERE
-
-    function open_preload_notif(){
-        false_notif('Penumpang YTH|Silakan Tempelkan Kartu Prabayar Anda Pada Reader Sebelum Melanjutkan');
-        standard_notif_view.buttonEnabled = false;
-        standard_notif_view._button_text = 'lanjut';
-    }
-
-    function false_notif(param){
-        press = '0';
-        standard_notif_view.z = 100;
-        standard_notif_view._button_text = 'tutup';
-        if (param==undefined){
-            standard_notif_view.show_text = "Mohon Maaf";
-            standard_notif_view.show_detail = "Terjadi Kesalahan Pada Sistem, Mohon Coba Lagi Beberapa Saat";
-        } else {
-            standard_notif_view.show_text = param.split('|')[0];
-            standard_notif_view.show_detail = param.split('|')[1];
-        }
-        standard_notif_view.open();
-    }
-
-//    Rectangle{
-//        id: main_base
-//        color: '#9E4305'
-//        radius: 50
-//        border.width: 0
-//        anchors.verticalCenterOffset: 100
-//        anchors.horizontalCenterOffset: 150
-//        anchors.verticalCenter: parent.verticalCenter
-//        anchors.horizontalCenter: parent.horizontalCenter
-//        opacity: .97
-//        width: 1100
-//        height: 800
-//        visible: !standard_notif_view.visible && !popup_loading.visible
-//    }
-
-    Text {
-        id: notif_saldo
-        height: 200
-        color: "white"
-        visible: !standard_notif_view.visible && !popup_loading.visible
-        text: "Saldo Kartu Prabayar Anda\nRp. 0, -"
-        wrapMode: Text.WordWrap
-        anchors.verticalCenter: parent.verticalCenter
-        font.bold: false
-        verticalAlignment: Text.AlignVCenter
-        horizontalAlignment: Text.AlignHCenter
-        anchors.horizontalCenterOffset: 350
-        font.family: "Microsoft YaHei"
-        anchors.horizontalCenter: parent.horizontalCenter
-        font.pixelSize: 30
-    }
-
-
-    Image{
-        id: image_prepaid_card
-        visible: !standard_notif_view.visible && !popup_loading.visible
-        source: "aAsset/card_tj_original.png"
-        width: 400
-        height: 250
-        anchors.horizontalCenterOffset: -150
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
-        fillMode: Image.PreserveAspectFit
-        Text{
-            id: card_no_prepaid
-            font.pointSize: 16
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 25
-            anchors.left: parent.left
-            anchors.leftMargin: 30
-            color: 'black'
-        }
-    }
-
     NextButton{
-        id: check_button
-        x: 242
-        y: 732
-        visible: !standard_notif_view.visible && !popup_loading.visible
-        anchors.horizontalCenterOffset: -50
+        id: next_button
+        anchors.right: parent.right
+        anchors.rightMargin: 100
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 200
-        anchors.horizontalCenter: parent.horizontalCenter
-        button_text: 'Cek Saldo'
-        modeReverse: true
-        MouseArea{
-            anchors.fill: parent
-            onClicked : {
-                _SLOT.user_action_log('Press "Cek Saldo"');
-                if (press!='0') return;
-                press = '1'
-                popup_loading.open();
-                _SLOT.start_check_balance();
-            }
-        }
-    }
-
-    NextButton{
-        id: topup_button
-        x: 542
-        y: 732
-        visible: !standard_notif_view.visible && !popup_loading.visible
-        anchors.horizontalCenterOffset: 300
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 200
-        anchors.horizontalCenter: parent.horizontalCenter
-        button_text: 'Isi Saldo'
+        anchors.bottomMargin: 50
+        button_text: 'ISI SALDO'
         modeReverse: true
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                _SLOT.user_action_log('Press "Isi Saldo"');
+                _SLOT.user_action_log('Press "ISI SALDO"');
+                preload_check_card.close();
+                if (press!='0') return;
+                press = '1'
                 if (!mandiriLogin) {
-                    false_notif('Mohon Maaf|Fitur Isi Ulang Belum Diaktifkan')
+                    press = '0';
+                    switch_frame('aAsset/smiley_down.png', 'Maaf Sementara Mesin Tidak Dapat Untuk', 'Melakukan Pengisian Kartu', 'closeWindow', false )
                     return;
                 }
-                if (press!='0') return;
-                press = '1';
-                if (bankName=='BNI'){
+                if (bankName=='MANDIRI'){
                     if (ableTopupCode=='0000'){
                         var _cardData = {
                             'balance': balance,
                             'card_no': cardNo,
                             'bank_type': bankType,
                             'imageSource': imageSource,
-                            'notifSaldo': notif_saldo.text
+                            'notifSaldo': ''
                         }
                         my_layer.push(topup_prepaid_denom, {cardData: _cardData});
                     } else if (ableTopupCode=='1008'){
                         press = 0;
-                        false_notif('Mohon Maaf|Kartu BNI TapCash Anda Sudah Tidak Aktif\nSilakan Hubungi Bank BNI Terdekat')
+//                        false_notif('Mohon Maaf|Kartu BNI TapCash Anda Sudah Tidak Aktif\nSilakan Hubungi Bank BNI Terdekat')
+                        switch_frame('aAsset/smiley_down.png', 'Maaf Kartu Anda Sudah Tidak Aktif', '', 'closeWindow', false );
+                        return;
                     }  else if (ableTopupCode=='5106'){
                         press = 0;
-                        false_notif('Mohon Maaf|Kartu BNI TapCash Anda Tidak Resmi\nSilakan Gunakan Kartu TapCash Yang Lain')
+//                        false_notif('Mohon Maaf|Kartu BNI TapCash Anda Tidak Resmi\nSilakan Gunakan Kartu TapCash Yang Lain')
+                        switch_frame('aAsset/smiley_down.png', 'Maaf Kartu Anda Sudah Tidak Resmi', 'Gunakan Kartu lainnya', 'closeWindow', false );
+                        return;
                     } else {
                         press = 0;
-                        false_notif('Mohon Maaf|Terjadi Kesalahan Pada Kartu BNI TapCash Anda\nSilakan Gunakan Kartu TapCash Yang Lain')
+//                        false_notif('Mohon Maaf|Terjadi Kesalahan Pada Kartu BNI TapCash Anda\nSilakan Gunakan Kartu TapCash Yang Lain');
+                        switch_frame('aAsset/smiley_down.png', 'Maaf Terjadi Kesalahan Pada Kartu Anda', 'Gunakan Kartu lainnya', 'closeWindow', false );
+                        return;
                     }
                 } else {
                     press = 0;
-                    false_notif('Mohon Maaf|Kartu Prabayar Anda Diterbitkan Oleh Bank Lain ('+bankName+')\nUntuk Sementara Kartu Anda Belum Dapat Digunakan Pada Mesin Ini')
+//                    false_notif('Mohon Maaf|Kartu Prabayar Anda Diterbitkan Oleh Bank Lain ('+bankName+')\nUntuk Sementara Kartu Anda Belum Dapat Digunakan Pada Mesin Ini')
+                    switch_frame('aAsset/smiley_down.png', 'Maaf Kartu Anda Bukan Diterbitkan Oleh Bank MANDIRI', 'Gunakan Kartu e-money Mandiri', 'closeWindow', false );
+                    return;
                 }
             }
         }
     }
+
+    //==============================================================
+    //PUT MAIN COMPONENT HERE
+
+
+    function false_notif(param){
+        press = '0';
+        switch_frame('aAsset/smiley_down.png', 'Maaf Sementara Mesin Tidak Dapat Digunakan', '', 'backToMain', false )
+        return;
+    }
+
+    function switch_frame(imageSource, textMain, textSlave, closeMode, smallerText){
+        global_frame.imageSource = imageSource;
+        global_frame.textMain = textMain;
+        global_frame.textSlave = textSlave;
+        global_frame.closeMode = closeMode;
+        global_frame.smallerSlaveSize = smallerText;
+        global_frame.open();
+    }
+
+    Text {
+        id: label_card_no
+        color: "white"
+        text: "Nomor kartu Anda"
+        anchors.top: parent.top
+        anchors.topMargin: 300
+        anchors.left: parent.left
+        anchors.leftMargin: 200
+        wrapMode: Text.WordWrap
+        verticalAlignment: Text.AlignVCenter
+        horizontalAlignment: Text.AlignHCenter
+        font.family: "Microsoft YaHei"
+        font.pixelSize: 50
+    }
+
+    Text {
+        id: content_card_no
+        color: "white"
+        text: ''
+        anchors.right: parent.right
+        anchors.rightMargin: 350
+        anchors.top: parent.top
+        anchors.topMargin: 300
+        wrapMode: Text.WordWrap
+        verticalAlignment: Text.AlignVCenter
+        horizontalAlignment: Text.AlignRight
+        font.family: "Microsoft YaHei"
+        font.pixelSize: 50
+    }
+
+    Text {
+        id: card_balance
+        color: "white"
+        text: "Saldo kartu Anda"
+        anchors.top: parent.top
+        anchors.topMargin: 450
+        anchors.left: parent.left
+        anchors.leftMargin: 200
+        wrapMode: Text.WordWrap
+        verticalAlignment: Text.AlignVCenter
+        horizontalAlignment: Text.AlignHCenter
+        font.family: "Microsoft YaHei"
+        font.pixelSize: 50
+    }
+
+    Text {
+        id: content_balance
+        color: "white"
+        text: 'Rp ' + FUNC.insert_dot(balance)
+        anchors.right: parent.right
+        anchors.rightMargin: 350
+        anchors.top: parent.top
+        anchors.topMargin: 450
+        wrapMode: Text.WordWrap
+        verticalAlignment: Text.AlignVCenter
+        horizontalAlignment: Text.AlignRight
+        font.family: "Microsoft YaHei"
+        font.pixelSize: 50
+    }
+
+
+//    Image{
+//        id: image_prepaid_card
+//        visible: !standard_notif_view.visible && !popup_loading.visible
+//        source: "aAsset/card_tj_original.png"
+//        width: 400
+//        height: 250
+//        anchors.horizontalCenterOffset: -150
+//        anchors.horizontalCenter: parent.horizontalCenter
+//        anchors.verticalCenter: parent.verticalCenter
+//        fillMode: Image.PreserveAspectFit
+//        Text{
+//            id: card_no_prepaid
+//            font.pointSize: 16
+//            anchors.bottom: parent.bottom
+//            anchors.bottomMargin: 25
+//            anchors.left: parent.left
+//            anchors.leftMargin: 30
+//            color: 'black'
+//        }
+//    }
+
+//    NextButton{
+//        id: check_button
+//        x: 242
+//        y: 732
+//        visible: !standard_notif_view.visible && !popup_loading.visible
+//        anchors.horizontalCenterOffset: -50
+//        anchors.bottom: parent.bottom
+//        anchors.bottomMargin: 200
+//        anchors.horizontalCenter: parent.horizontalCenter
+//        button_text: 'Cek Saldo'
+//        modeReverse: true
+//        MouseArea{
+//            anchors.fill: parent
+//            onClicked : {
+//                _SLOT.user_action_log('Press "Cek Saldo"');
+//                if (press!='0') return;
+//                press = '1'
+//                popup_loading.open();
+//                _SLOT.start_check_balance();
+//            }
+//        }
+//    }
+
+//    NextButton{
+//        id: topup_button
+//        x: 542
+//        y: 732
+//        visible: !standard_notif_view.visible && !popup_loading.visible
+//        anchors.horizontalCenterOffset: 300
+//        anchors.bottom: parent.bottom
+//        anchors.bottomMargin: 200
+//        anchors.horizontalCenter: parent.horizontalCenter
+//        button_text: 'Isi Saldo'
+//        modeReverse: true
+//        MouseArea{
+//            anchors.fill: parent
+//            onClicked: {
+//                _SLOT.user_action_log('Press "Isi Saldo"');
+//                if (!mandiriLogin) {
+//                    false_notif('Mohon Maaf|Fitur Isi Ulang Belum Diaktifkan')
+//                    return;
+//                }
+//                if (press!='0') return;
+//                press = '1';
+//                if (bankName=='BNI'){
+//                    if (ableTopupCode=='0000'){
+//                        var _cardData = {
+//                            'balance': balance,
+//                            'card_no': cardNo,
+//                            'bank_type': bankType,
+//                            'imageSource': imageSource,
+//                            'notifSaldo': notif_saldo.text
+//                        }
+//                        my_layer.push(topup_prepaid_denom, {cardData: _cardData});
+//                    } else if (ableTopupCode=='1008'){
+//                        press = 0;
+//                        false_notif('Mohon Maaf|Kartu BNI TapCash Anda Sudah Tidak Aktif\nSilakan Hubungi Bank BNI Terdekat')
+//                    }  else if (ableTopupCode=='5106'){
+//                        press = 0;
+//                        false_notif('Mohon Maaf|Kartu BNI TapCash Anda Tidak Resmi\nSilakan Gunakan Kartu TapCash Yang Lain')
+//                    } else {
+//                        press = 0;
+//                        false_notif('Mohon Maaf|Terjadi Kesalahan Pada Kartu BNI TapCash Anda\nSilakan Gunakan Kartu TapCash Yang Lain')
+//                    }
+//                } else {
+//                    press = 0;
+//                    false_notif('Mohon Maaf|Kartu Prabayar Anda Diterbitkan Oleh Bank Lain ('+bankName+')\nUntuk Sementara Kartu Anda Belum Dapat Digunakan Pada Mesin Ini')
+//                }
+//            }
+//        }
+//    }
 
     Text {
         id: small_notif
@@ -381,13 +458,50 @@ Base{
         id: popup_loading
     }
 
-
     GlobalFrame{
         id: global_frame
     }
 
+    PreloadCheckCard{
+        id: preload_check_card
+        NextButton{
+            id: cancel_button_preload
+            anchors.left: parent.left
+            anchors.leftMargin: 100
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 50
+            button_text: 'BATAL'
+            modeReverse: true
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('Press "BATAL"');
+                    my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
+                }
+            }
+        }
 
-
+        NextButton{
+            id: next_button_preload
+            anchors.right: parent.right
+            anchors.rightMargin: 100
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 50
+            button_text: 'LANJUT'
+            modeReverse: true
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('Press "LANJUT"');
+                    preload_check_card.close();
+                    if (press!='0') return;
+                    press = '1'
+                    popup_loading.open();
+                    _SLOT.start_check_balance();
+                }
+            }
+        }
+    }
 
 }
 

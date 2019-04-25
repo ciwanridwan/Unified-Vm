@@ -12,7 +12,7 @@ Base{
     property int textSize: 30
     property int showDuration: 10
     property var closeMode: 'closeWindow' // 'closeWindow', 'backToMain', 'backToPrev'
-//    visible: false
+    visible: false
 //    scale: visible ? 1.0 : 0.1
 //    Behavior on scale {
 //        NumberAnimation  { duration: 500 ; easing.type: Easing.InOutBounce  }

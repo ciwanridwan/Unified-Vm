@@ -146,84 +146,76 @@ def start_receive_note():
     global COLLECTED_CASH, CASH_HISTORY, IS_RECEIVING
     try:
         attempt = 0
-        param = GRG["RECEIVE"] + '|'
-        response, result = _Command.send_request(param=param, output=None)
-        # LOGGER.debug(('start_receive_note', 'send_command', str(response), str(result)))
-        if response == 0:
-            IS_RECEIVING = True
-            while True:
-                attempt += 1
-                _response, _result = _Command.get_response_with_handle(out=_Command.MO_REPORT, flush=KEY_RECEIVED,
-                                                                       module='GRG_Receive_Cash')
-                # LOGGER.debug(('start_receive_note', 'get_response', str(_response), str(_result)))
-                if _response == 0 and KEY_RECEIVED in _result:
-                    cash_in = _result.split('|')[1].split('=')[1]
-                    if cash_in in SMALL_NOTES_NOT_ALLOWED and _Global.TID != '110322':
-                        sleep(.25)
-                        param = GRG["REJECT"] + '|'
-                        _Command.send_request(param=param, output=None)
-                        GRG_SIGNDLER.SIGNAL_GRG_RECEIVE.emit('RECEIVE_GRG|EXCEED')
-                        break
-                    if is_exceed_payment(_MEI.DIRECT_PRICE_AMOUNT, cash_in, COLLECTED_CASH) is True:
-                        GRG_SIGNDLER.SIGNAL_GRG_RECEIVE.emit('RECEIVE_GRG|EXCEED')
-                        sleep(.25)
-                        param = GRG["REJECT"] + '|'
-                        _Command.send_request(param=param, output=None)
-                        LOGGER.info(('Exceed Payment Detected :', json.dumps({'ADD': cash_in,
-                                                                              'COLLECTED': COLLECTED_CASH,
-                                                                              'TARGET': _MEI.DIRECT_PRICE_AMOUNT})))
-                        break
+        IS_RECEIVING = True
+        while True:
+            attempt += 1
+            param = GRG["RECEIVE"] + '|'
+            _response, _result = _Command.send_request(param=param, output=None)
+            if _response == 0 and KEY_RECEIVED in _result:
+                cash_in = _result.split('|')[1].split('=')[1]
+                if cash_in in SMALL_NOTES_NOT_ALLOWED and _Global.TID != '110322':
+                    sleep(.25)
+                    param = GRG["REJECT"] + '|'
+                    _Command.send_request(param=param, output=None)
+                    GRG_SIGNDLER.SIGNAL_GRG_RECEIVE.emit('RECEIVE_GRG|EXCEED')
+                    break
+                if is_exceed_payment(_MEI.DIRECT_PRICE_AMOUNT, cash_in, COLLECTED_CASH) is True:
+                    GRG_SIGNDLER.SIGNAL_GRG_RECEIVE.emit('RECEIVE_GRG|EXCEED')
+                    sleep(.25)
+                    param = GRG["REJECT"] + '|'
+                    _Command.send_request(param=param, output=None)
+                    LOGGER.info(('Exceed Payment Detected :', json.dumps({'ADD': cash_in,
+                                                                          'COLLECTED': COLLECTED_CASH,
+                                                                          'TARGET': _MEI.DIRECT_PRICE_AMOUNT})))
+                    break
 
-                    # if COLLECTED_CASH >= _MEI.DIRECT_PRICE_AMOUNT:
-                    #     GRG_SIGNDLER.SIGNAL_GRG_RECEIVE.emit('RECEIVE_GRG|COMPLETE')
-                    #     break
-                    if COLLECTED_CASH < _MEI.DIRECT_PRICE_AMOUNT:
-                        # Call Store Function Here
-                        CASH_HISTORY.append(str(cash_in))
-                        COLLECTED_CASH += int(cash_in)
-                        GRG_SIGNDLER.SIGNAL_GRG_RECEIVE.emit('RECEIVE_GRG|'+str(COLLECTED_CASH))
-                        sleep(.25)
-                        param = GRG["STORE"] + '|'
-                        _Command.send_request(param=param, output=None)
-                        LOGGER.info(('Cash Status:', json.dumps({'ADD': cash_in,
-                                                                 'COLLECTED': COLLECTED_CASH,
-                                                                 'HISTORY': CASH_HISTORY})))
-                    if COLLECTED_CASH >= _MEI.DIRECT_PRICE_AMOUNT:
-                        GRG_SIGNDLER.SIGNAL_GRG_RECEIVE.emit('RECEIVE_GRG|COMPLETE')
-                        break
-                    else:
-                        sleep(.25)
-                        param = GRG["RECEIVE"] + '|'
-                        _Command.send_request(param=param, output=None)
-                if BAD_NOTES in _result:
-                    GRG_SIGNDLER.SIGNAL_GRG_RECEIVE.emit('RECEIVE_GRG|BAD_NOTES')
+                # if COLLECTED_CASH >= _MEI.DIRECT_PRICE_AMOUNT:
+                #     GRG_SIGNDLER.SIGNAL_GRG_RECEIVE.emit('RECEIVE_GRG|COMPLETE')
+                #     break
+                if COLLECTED_CASH < _MEI.DIRECT_PRICE_AMOUNT:
+                    # Call Store Function Here
+                    CASH_HISTORY.append(str(cash_in))
+                    COLLECTED_CASH += int(cash_in)
+                    GRG_SIGNDLER.SIGNAL_GRG_RECEIVE.emit('RECEIVE_GRG|'+str(COLLECTED_CASH))
+                    sleep(.25)
+                    param = GRG["STORE"] + '|'
+                    _Command.send_request(param=param, output=None)
+                    LOGGER.info(('Cash Status:', json.dumps({'ADD': cash_in,
+                                                             'COLLECTED': COLLECTED_CASH,
+                                                             'HISTORY': CASH_HISTORY})))
+                if COLLECTED_CASH >= _MEI.DIRECT_PRICE_AMOUNT:
+                    GRG_SIGNDLER.SIGNAL_GRG_RECEIVE.emit('RECEIVE_GRG|COMPLETE')
                     break
-                if CODE_JAM in _result:
-                    _Global.MEI_ERROR = 'GRG_DEVICE_JAM'
-                    GRG_SIGNDLER.SIGNAL_GRG_RECEIVE.emit('RECEIVE_GRG|JAMMED')
-                    LOGGER.warning(('GRG Jammed Detected :', json.dumps({'HISTORY': CASH_HISTORY,
-                                                                         'COLLECTED': COLLECTED_CASH,
-                                                                         'TARGET': _MEI.DIRECT_PRICE_AMOUNT})))
-                    # Call API To Force Update Into Server
-                    _Global.upload_device_state('mei', _Global.MEI_ERROR)
-                    sleep(2)
-                    init_grg()
-                    break
-                if attempt == MAX_EXECUTION_TIME:
-                    LOGGER.warning(('[BREAK] start_receive_note', str(attempt), str(MAX_EXECUTION_TIME)))
-                    GRG_SIGNDLER.SIGNAL_GRG_RECEIVE.emit('RECEIVE_GRG|TIMEOUT')
-                    break
-                if IS_RECEIVING is False:
-                    LOGGER.warning(('[BREAK] start_receive_note by Event', str(IS_RECEIVING)))
-                    GRG_SIGNDLER.SIGNAL_GRG_RECEIVE.emit('RECEIVE_GRG|TIMEOUT')
-                    break
+                # else:
+                #     sleep(.25)
+                #     param = GRG["RECEIVE"] + '|'
+                #     _Command.send_request(param=param, output=None)
+            if BAD_NOTES in _result:
+                GRG_SIGNDLER.SIGNAL_GRG_RECEIVE.emit('RECEIVE_GRG|BAD_NOTES')
+                break
+            if CODE_JAM in _result:
+                _Global.MEI_ERROR = 'GRG_DEVICE_JAM'
+                GRG_SIGNDLER.SIGNAL_GRG_RECEIVE.emit('RECEIVE_GRG|JAMMED')
+                LOGGER.warning(('GRG Jammed Detected :', json.dumps({'HISTORY': CASH_HISTORY,
+                                                                     'COLLECTED': COLLECTED_CASH,
+                                                                     'TARGET': _MEI.DIRECT_PRICE_AMOUNT})))
+                # Call API To Force Update Into Server
+                _Global.upload_device_state('mei', _Global.MEI_ERROR)
                 sleep(1)
-        else:
-            GRG_SIGNDLER.SIGNAL_GRG_RECEIVE.emit('RECEIVE_GRG|ERROR')
-            LOGGER.warning(('start_receive_note', str(response), str(result)))
+                init_grg()
+                break
+            if attempt == MAX_EXECUTION_TIME:
+                LOGGER.warning(('[BREAK] start_receive_note', str(attempt), str(MAX_EXECUTION_TIME)))
+                GRG_SIGNDLER.SIGNAL_GRG_RECEIVE.emit('RECEIVE_GRG|TIMEOUT')
+                break
+            if IS_RECEIVING is False:
+                LOGGER.warning(('[BREAK] start_receive_note by Event', str(IS_RECEIVING)))
+                GRG_SIGNDLER.SIGNAL_GRG_RECEIVE.emit('RECEIVE_GRG|TIMEOUT')
+                break
+            sleep(1)
     except Exception as e:
         GRG_SIGNDLER.SIGNAL_GRG_RECEIVE.emit('RECEIVE_GRG|ERROR')
-        LOGGER.warning(('start_receive_note', str(e)))
+        LOGGER.warning(e)
 
 
 def is_exceed_payment(target, value_in, current_value):
@@ -261,7 +253,7 @@ def stop_receive_note():
         CASH_HISTORY = []
     except Exception as e:
         GRG_SIGNDLER.SIGNAL_GRG_STOP.emit('STOP_GRG|ERROR')
-        LOGGER.warning(('stop_receive_note', str(e)))
+        LOGGER.warning(e)
 
 
 def start_get_status_grg():
@@ -280,7 +272,7 @@ def get_status_grg():
             LOGGER.warning(('get_status_grg', str(response), str(result)))
     except Exception as e:
         GRG_SIGNDLER.SIGNAL_GRG_STATUS.emit('STATUS_GRG|ERROR')
-        LOGGER.warning(('get_status_grg', str(e)))
+        LOGGER.warning(e)
 
 
 def log_book_cash(pid, amount):

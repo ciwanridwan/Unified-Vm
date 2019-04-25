@@ -104,37 +104,43 @@ def get_multiple_eject_status():
     CD_SIGNDLER.SIGNAL_MULTIPLE_EJECT.emit(eject_status)
 
 
-def start_multiple_eject(attempt):
-    _Tools.get_pool().apply_async(simply_eject, (attempt, ))
+def start_multiple_eject(attempt, multiply):
+    _Tools.get_pool().apply_async(simply_eject, (attempt, multiply, ))
 
 
-def simply_eject(attempt):
-    _cd_selected_port = None
-    try:
-        selected_port = CD_PORT_LIST[attempt]
-        # LOGGER.info(('_cd_selected_port :', _cd_selected_port))
-    except IndexError:
-        LOGGER.warning(('Failed to Select CD Port', selected_port))
-        CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|ERROR')
-        return
+def simply_eject(attempt, multiply):
+    # _cd_selected_port = None
+    # try:
+    #     selected_port = CD_PORT_LIST[attempt]
+    #     # LOGGER.info(('_cd_selected_port :', _cd_selected_port))
+    # except IndexError:
+    #     LOGGER.warning(('Failed to Select CD Port', attempt))
+    #     CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|ERROR')
+    #     return
     try:
         # command = CD_EXEC + " hold " + selected_port
         # Switch To V2
-        command = CD_EXEC_V2 + " card " + str(attempt)
-        process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
-        output = process.communicate()[0].decode('utf-8').strip().split("\r\n")
-        output = output[0].split(";")
-        response = json.loads(output[0])
-        LOGGER.debug(('simply_eject', 'command', command, 'output', output, 'response', response))
-        if 'ec' in response.keys():
-            if response['ec'] > -1:
-                CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|SUCCESS')
+        for eject in range(int(multiply)):
+            command = CD_EXEC_V2 + " card " + str(attempt)
+            process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
+            output = process.communicate()[0].decode('utf-8').strip().split("\r\n")
+            output = output[0].split(";")
+            response = json.loads(output[0])
+            LOGGER.debug(('simply_eject', eject, 'command', command, 'output', output, 'response', response))
+            if response.get('ec') is not None:
+                if response['ec'] > -1:
+                    if eject+1 == int(multiply):
+                        CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|SUCCESS')
+                    else:
+                        CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|PARTIAL')
+                        sleep(2)
+                        continue
+                else:
+                    set_false_output(attempt, 'DEVICE_NOT_OPEN|' + attempt, 'simply_eject')
+                    continue
             else:
-                set_false_output(attempt, 'DEVICE_NOT_OPEN|' + attempt, 'simply_eject')
-                return
-        else:
-            set_false_output(attempt, 'DEVICE_NOT_OPEN|'+attempt, 'simply_eject')
-            return
+                set_false_output(attempt, 'DEVICE_NOT_OPEN|'+attempt, 'simply_eject')
+                continue
     except Exception as e:
         set_false_output(attempt, str(e) + '|' + attempt, 'simply_eject')
 
