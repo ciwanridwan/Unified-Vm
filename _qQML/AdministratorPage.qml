@@ -40,6 +40,8 @@ Base{
         base.result_admin_print.connect(get_admin_action);
         base.result_init_grg.connect(get_admin_action);
         base.result_activation_bni.connect(get_admin_action);
+        base.result_auth_qprox.connect(ka_login_status);
+
     }
 
     Component.onDestruction:{
@@ -52,6 +54,8 @@ Base{
         base.result_admin_print.disconnect(get_admin_action);
         base.result_init_grg.disconnect(get_admin_action);
         base.result_activation_bni.disconnect(get_admin_action);
+        base.result_auth_qprox.disconnect(ka_login_status);
+
     }
 
     function do_action_signal(s){
@@ -60,10 +64,22 @@ Base{
         if (action.type=='changeStock'){
             popup_loading.open();
             _SLOT.start_change_product_stock(action.port, action.stock);
-            actionList.push(action)
+            actionList.push(action);
         }
     }
 
+    function ka_login_status(t){
+        console.log('ka_login_status', t);
+        popup_loading.close();
+        var result = t.split('|')[1]
+        if (result == 'ERROR'){
+            false_notif('Mohon Maaf|Login KA Mandiri Gagal, Kode Error ['+result+'], Silakan Coba Lagi');
+        } else if (result == 'SUCCESS'){
+            false_notif('Selamat|Login KA Mandiri Berhasil, Fitur Topup Mandiri Telah Diaktifkan');
+        } else {
+            false_notif('Mohon Maaf|Login KA Mandiri Gagal, Kode Error ['+result+'], Silakan Coba Lagi');
+        }
+    }
 
     function get_admin_action(a){
         console.log('get_admin_action', a);
@@ -108,9 +124,7 @@ Base{
             if (productData[2].status==103) _total_stock_103.labelContent = productData[2].stock.toString();
         }
         popup_loading.close();
-
     }
-
 
     function parse_user_data(){
         console.log('parse_user_data', JSON.stringify(userData));
@@ -310,50 +324,72 @@ Base{
     }
 
     AdminPanelButton{
-        id: activation_master_button
+        id: ka_login_button
         anchors.leftMargin: 15
         anchors.left: print_receipt_button.right
         anchors.top: parent.top
         anchors.topMargin: 15
         z: 10
-        button_text: 'activate 1'
+        button_text: 'ka login'
         visible: !popup_loading.visible
         modeReverse: true
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                _SLOT.user_action_log('Admin Page "Activate 1"');
+                _SLOT.user_action_log('Admin Page "KA Login"');
                 if (press != '0') return;
                 press = '1';
-                console.log('activation_master_button is pressed..!');
                 popup_loading.open();
-                _SLOT.start_master_activation_bni();
+                _SLOT.start_auth_ka();
             }
         }
     }
 
-    AdminPanelButton{
-        id: activation_slave_button
-        anchors.leftMargin: 15
-        anchors.left: activation_master_button.right
-        anchors.top: parent.top
-        anchors.topMargin: 15
-        z: 10
-        button_text: 'activate 2'
-        visible: !popup_loading.visible
-        modeReverse: true
-        MouseArea{
-            anchors.fill: parent
-            onClicked: {
-                _SLOT.user_action_log('Admin Page "Activate 2"');
-                if (press != '0') return;
-                press = '1';
-                console.log('activation_slave_button is pressed..!');
-                popup_loading.open();
-                _SLOT.start_slave_activation_bni();
-            }
-        }
-    }
+//    AdminPanelButton{
+//        id: activation_master_button
+//        anchors.leftMargin: 15
+//        anchors.left: print_receipt_button.right
+//        anchors.top: parent.top
+//        anchors.topMargin: 15
+//        z: 10
+//        button_text: 'activate 1'
+//        visible: !popup_loading.visible
+//        modeReverse: true
+//        MouseArea{
+//            anchors.fill: parent
+//            onClicked: {
+//                _SLOT.user_action_log('Admin Page "Activate 1"');
+//                if (press != '0') return;
+//                press = '1';
+//                console.log('activation_master_button is pressed..!');
+//                popup_loading.open();
+//                _SLOT.start_master_activation_bni();
+//            }
+//        }
+//    }
+
+//    AdminPanelButton{
+//        id: activation_slave_button
+//        anchors.leftMargin: 15
+//        anchors.left: activation_master_button.right
+//        anchors.top: parent.top
+//        anchors.topMargin: 15
+//        z: 10
+//        button_text: 'activate 2'
+//        visible: !popup_loading.visible
+//        modeReverse: true
+//        MouseArea{
+//            anchors.fill: parent
+//            onClicked: {
+//                _SLOT.user_action_log('Admin Page "Activate 2"');
+//                if (press != '0') return;
+//                press = '1';
+//                console.log('activation_slave_button is pressed..!');
+//                popup_loading.open();
+//                _SLOT.start_slave_activation_bni();
+//            }
+//        }
+//    }
 
     //==============================================================
     //PUT MAIN COMPONENT HERE
@@ -949,7 +985,6 @@ Base{
     }
 
 
-
     //==============================================================
 
 
@@ -974,7 +1009,8 @@ Base{
         }
     }
 
-    PopupLoading{
+
+    PopupLoadingCircle{
         id: popup_loading
     }
 

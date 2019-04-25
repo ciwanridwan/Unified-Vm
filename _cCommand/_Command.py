@@ -7,10 +7,12 @@ from time import sleep, time
 from _cConfig import _ConfigParser
 import win32file
 from _tTools import _Tools
-import win32api
-import pywintypes
-import win32con
+# import win32api
+# import pywintypes
+# import win32con
+import json
 import platform
+from _nNetwork import _NetworkAccess
 
 LOCK = threading.Lock()
 LOGGER = logging.getLogger()
@@ -153,7 +155,8 @@ def get_response_with_handle(out, timestamp=False, flush=None, module=None, repl
 
 
 def clear_content_of(file, pid=''):
-    open(file, 'w').close()
+    pass
+    # open(file, 'w').close()
     # LOGGER.debug(('[' + pid + ']', file))
 
 
@@ -177,7 +180,7 @@ def get_response(out):
 
 def send_command_with_handle(param=None, output=None, responding=True, flushing=MO_STATUS, wait_for=None, verify=False):
     global MI_GUI, MO_ERROR, MO_BALANCE, MO_KA_INFO, MO_REPORT, MO_STATUS
-    # LOGGER.debug(('[DEBUG] send_command_with_handle input: ', param, output))
+    # LOGGER.debug(('[DEBUG] send_request input: ', param, output))
     # param must be send using join of | char on each line
     r = _Tools.get_random_chars(length=5, chars='1234567890')
     if output is None:
@@ -220,6 +223,41 @@ def send_command_with_handle(param=None, output=None, responding=True, flushing=
         return response, result
     else:
         return 0, param
+
+
+LOCAL_URL = 'http://localhost:9000/service?type=json&CMD='
+
+
+def set_output(p):
+    __p = p[3:-1] if p[-1] == '|' else p[3:]
+    if __p[0] == '|':
+        __p = __p[1:]
+    return __p
+
+
+def send_request(param=None, output=None, responding=True, flushing=MO_STATUS, wait_for=None, verify=False):
+    __unused_param = {
+        'output': output,
+        'responding': responding,
+        'flushing': flushing,
+        'wait_for': wait_for,
+        'verify': verify
+    }
+    if param is None:
+        return -1, 'MISSING_PARAM'
+    ___cmd = param[:3]
+    if len(param) <= 4:
+        ___param = "0"
+    else:
+        ___param = set_output(param)
+    ___status, ___response = _NetworkAccess.local_get(LOCAL_URL+___cmd+'&param='+___param)
+    if ___status == 200 and ___response.get('response') is not None:
+        if ___response['result'] == '0000':
+            return 0, ___response['response']
+        else:
+            return -1, ___response['response']
+    else:
+        return -1, json.dumps(___response)
 
 
 def send_command(param=None, output=None):

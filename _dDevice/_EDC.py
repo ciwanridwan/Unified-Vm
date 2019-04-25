@@ -24,7 +24,8 @@ EDC = {
     "INVOICE": "204",
     "SETTLE_DEBIT": "205",
     "STOP": "206",
-    "SETTLE_CREDIT": "207"
+    "SETTLE_CREDIT": "207",
+    "GET_STATE": "208"
 }
 
 TEST_MODE = _Global.TEST_MODE
@@ -52,9 +53,9 @@ def init_edc_with_handle():
         _Global.EDC_ERROR = 'PORT_NOT_OPENED'
         return False
     param = EDC["OPEN"] + "|" + re.sub("\D", "", EDC_PORT)
-    response, result = _Command.send_command_with_handle(param=param, output=None)
-    LOGGER.debug(("init_edc : ", param, str(response), result))
-    OPEN_STATUS = True if response == 0 and '1' not in result else False
+    response, result = _Command.send_request(param=param, output=None)
+    LOGGER.debug((param, response, result))
+    OPEN_STATUS = True if response == 0 else False
     return OPEN_STATUS
 
 
@@ -83,16 +84,15 @@ def sale_edc(amount, trxid=None):
             if IS_PIR is True:
                 amount = str(int(int(amount)/1000))
             param = EDC["SALE"] + "|" + str(amount)
-            response, result = _Command.send_command_with_handle(param=param,
-                                                                 output=_Command.MO_REPORT,
-                                                                 flushing=_Command.MO_REPORT)
+            response, result = _Command.send_request(param=param,
+                                                     output=_Command.MO_REPORT,
+                                                     flushing=_Command.MO_REPORT)
+            LOGGER.debug((response, result))
             if response == 0:
-                LOGGER.info(("sale_edc : ", str(response), result))
                 handling_card(amount, trxid)
             else:
                 _Global.EDC_ERROR = 'SALE_ERROR'
                 E_SIGNDLER.SIGNAL_SALE_EDC.emit('SALE|ERROR')
-                LOGGER.warning(("RESPONSE : ", str(response), result))
         else:
             _Global.EDC_ERROR = 'PORT_NOT_OPENED'
             E_SIGNDLER.SIGNAL_SALE_EDC.emit('SALE|ERROR')
@@ -145,7 +145,8 @@ def handling_card(amount, trxid=None):
         if attempt >= MAX_ATTEMPTS:
             LOGGER.info(('[Break] by MAX_ATTEMPTS:', str(MAX_ATTEMPTS)))
             break
-        response, result = _Command.get_response_with_handle(out=_Command.MO_REPORT, module='EDC_Handling_Card'+pid)
+        # response, result = _Command.get_response_with_handle(out=_Command.MO_REPORT, module='EDC_Handling_Card'+pid)
+        response, result = _Command.send_request(param=EDC["GET_STATE"])
 
         if response == 0:
             if result not in result_list:
@@ -243,7 +244,7 @@ def disconnect_edc():
     param = EDC['STOP'] + '|'
     try:
         if not STANDBY_MODE:
-            response, result = _Command.send_command_with_handle(param=param, output=None)
+            response, result = _Command.send_request(param=param, output=None)
             # sleep(1)
             _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('CLOSE_LOADING')
             if response == 0:
@@ -333,7 +334,7 @@ def edc_settlement():
             else:
                 OPEN_STATUS = init_edc_with_handle()
         if OPEN_STATUS is True:
-            response, result = _Command.send_command_with_handle(param=param, output=None, flushing=_Command.MO_REPORT)
+            response, result = _Command.send_request(param=param, output=None, flushing=_Command.MO_REPORT)
             if response == 0 or EDC_TESTING_MODE is True:
                 handling_settlement('DEBIT')
                 LOGGER.info(("edc_settlement", str(response), result))
@@ -363,7 +364,7 @@ def edc_settlement_credit():
             else:
                 OPEN_STATUS = init_edc_with_handle()
         if OPEN_STATUS is True:
-            response, result = _Command.send_command_with_handle(param=param, output=None, flushing=_Command.MO_REPORT)
+            response, result = _Command.send_request(param=param, output=None, flushing=_Command.MO_REPORT)
             if response == 0 or EDC_TESTING_MODE is True:
                 handling_settlement('CREDIT')
                 LOGGER.info(("edc_settlement", str(response), result))

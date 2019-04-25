@@ -274,8 +274,8 @@ def start_slave_activation_bni():
 def refill_zero_bni(slot=1):
     _slot = slot - 1
     param = _QPROX.QPROX['REFILL_ZERO'] + '|' + str(_slot) + '|' + _QPROX.TID_BNI
-    response, result = _Command.send_command_with_handle(param=param, output=None)
-    if response == 0 and '1' not in result:
+    response, result = _Command.send_request(param=param, output=None)
+    if response == 0:
         _Global.NFC_ERROR = ''
         _QPROX.QP_SIGNDLER.SIGNAL_REFILL_ZERO.emit('REFILL_ZERO|SUCCESS')
         sleep(2)

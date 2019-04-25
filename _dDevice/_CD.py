@@ -70,18 +70,18 @@ def open_card_disp():
         _Global.CD1_ERROR = 'PORT_NOT_OPENED'
         return False
     param = CD["OPEN"] + "|" + CD_PORT1
-    response, result = _Command.send_command_with_handle(param=param, output=None)
-    LOGGER.debug(("open_card_disp : ", param, result))
+    response, result = _Command.send_request(param=param, output=None)
+    LOGGER.debug((param, result))
     # return True if '0' in status else False
-    return True if response == 0 and '1' not in result else False
+    return True if response == 0 else False
 
 
 def init_card_disp():
     global INIT_STATUS
     param = CD["INIT"] + "|"
-    response, result = _Command.send_command_with_handle(param=param, output=None)
-    LOGGER.debug(("init_card_disp : ", param, result))
-    INIT_STATUS = True if response == 0 and '1' not in result else False
+    response, result = _Command.send_request(param=param, output=None)
+    LOGGER.debug((param, result))
+    INIT_STATUS = True if response == 0 else False
     return INIT_STATUS
 
 
@@ -152,22 +152,22 @@ def eject_full_round(attempt):
     try:
         # Open CD Port
         param = CD["OPEN"] + "|" + _cd_selected_port
-        response, result = _Command.send_command_with_handle(param=param, output=None)
+        response, result = _Command.send_request(param=param, output=None)
         LOGGER.debug(("eject_full_round [OPEN] : ", param, result))
         # return True if '0' in status else False
-        if response == 0 and '1' not in result:
+        if response == 0:
             # Init CD Port
             sleep(1)
             param = CD["INIT"] + "|"
-            response, result = _Command.send_command_with_handle(param=param, output=None)
+            response, result = _Command.send_request(param=param, output=None)
             LOGGER.debug(("eject_full_round [INIT] : ", param, result))
-            if response == 0 and '1' not in result:
+            if response == 0:
                 # Eject From CD
                 sleep(1)
                 param = CD["MOVE"] + "|"
-                response, result = _Command.send_command_with_handle(param=param, output=None)
+                response, result = _Command.send_request(param=param, output=None)
                 LOGGER.debug(("eject_full_round [MOVE] : ", param, result))
-                if response == 0 and '1' not in result:
+                if response == 0:
                     CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|SUCCESS')
                 else:
                     set_false_output(attempt, 'DEVICE_NOT_MOVE|'+attempt)
@@ -175,7 +175,7 @@ def eject_full_round(attempt):
                 # Stop/Close The Connection Session
                 sleep(1)
                 param = CD["STOP"] + "|"
-                response, result = _Command.send_command_with_handle(param=param, output=None)
+                response, result = _Command.send_request(param=param, output=None)
                 LOGGER.debug(("eject_full_round [STOP] : ", param, result))
             else:
                 set_false_output(attempt, 'DEVICE_NOT_INIT|'+attempt)
@@ -213,10 +213,10 @@ def move_card_disp(attempt):
     if MULTIPLE_EJECT is True:
         param = CD["MOVE"] + "|"
     for x in range(attempt):
-        response, result = _Command.send_command_with_handle(param=param, output=None)
+        response, result = _Command.send_request(param=param, output=None)
         LOGGER.debug(("move_card_disp : ", param, result, str(x)))
         if x == (attempt-1):
-            if response == 0 and '1' not in result:
+            if response == 0:
                 CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|SUCCESS-' + str(x))
             else:
                 _Global.CD1_ERROR = 'FAILED_TO_EJECT'
@@ -236,9 +236,9 @@ def hold_card_disp():
         _Global.CD1_ERROR = 'DEVICE_NOT_INIT'
         return
     param = CD["HOLD"] + "|"
-    response, result = _Command.send_command_with_handle(param=param, output=None)
+    response, result = _Command.send_request(param=param, output=None)
     LOGGER.debug(("hold_card_disp : ", param, result))
-    if response == 0 and '1' not in result:
+    if response == 0:
         CD_SIGNDLER.SIGNAL_CD_HOLD.emit('SUCCESS')
     else:
         _Global.CD1_ERROR = 'FAILED_TO_HOLD_EJECT'
@@ -255,9 +255,9 @@ def stop_card_disp():
         _Global.CD1_ERROR = 'DEVICE_NOT_INIT'
         return
     param = CD["STOP"] + "|"
-    response, result = _Command.send_command_with_handle(param=param, output=None)
+    response, result = _Command.send_request(param=param, output=None)
     LOGGER.debug(("stop_card_disp : ", param, result))
-    if response == 0 and '1' not in result:
+    if response == 0:
         CD_SIGNDLER.SIGNAL_CD_STOP.emit('SUCCESS')
     else:
         _Global.CD1_ERROR = 'DEVICE_NOT_STOP'

@@ -50,8 +50,8 @@ def check_booking_code(param=None):
         BOOKING_CODE = p['booking_code'].upper()
         LF_NAME = p['lf_name'].upper()
         param = CMD["CHECK_CODE"] + "|" + BOOKING_CODE + "|" + LF_NAME + "|" + p['card_royalty'] + "|" + p['gender'].upper()
-        response, result = _Command.send_command_with_handle(param=param,
-                                                             output=_Command.MO_REPORT)
+        response, result = _Command.send_request(param=param,
+                                                 output=_Command.MO_REPORT)
         if response == 0:
             handling_booking_code()
         else:
@@ -231,9 +231,9 @@ def get_boarding_pass(param):
     try:
         seat_no = json.loads(param)['seat_no']
         param = CMD["GET_BOARDING"] + "|" + seat_no
-        response, result = _Command.send_command_with_handle(param=param,
-                                                             output=_Command.MO_REPORT,
-                                                             flushing=_Command.MO_REPORT)
+        response, result = _Command.send_request(param=param,
+                                                 output=_Command.MO_REPORT,
+                                                 flushing=_Command.MO_REPORT)
         if response == 0:
             handling_boarding_pass()
         else:

@@ -125,7 +125,6 @@ Rectangle{
         font.pixelSize:30
         color:"#ffffff"
         visible: isBoxNameActive
-
     }
 
     Text {
@@ -185,7 +184,6 @@ Rectangle{
 //        visible: !isPanelActive
 //        z: 10
 //    }
-
 
 
     Rectangle{

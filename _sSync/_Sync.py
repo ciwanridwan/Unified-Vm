@@ -51,7 +51,7 @@ def check_connection(url, param):
                 if modulus == 1:
                     # _SettlementService.start_do_bni_topup_settlement()
                     _url = URL + 'get/setting'
-                    LOGGER.info((_url, str(SETTING_PARAM)))
+                    # LOGGER.info((_url, str(SETTING_PARAM)))
                     s, r = _NetworkAccess.post_to_url(url=_url, param=SETTING_PARAM)
                     if s == 200 and r['result'] == 'OK':
                         _KioskService.update_kiosk_status(r)
@@ -60,8 +60,8 @@ def check_connection(url, param):
                 # if modulus % 5 == 0:
                 # os.system(sys.path[0] + '/_pPlayer/stop.bat')
                 # Handler BNI Topup Settlement
-                if modulus % 15 == 0:
-                    _SettlementService.start_do_bni_topup_settlement()
+                # if modulus % 15 == 0:
+                #     _SettlementService.start_do_bni_topup_settlement()
             except Exception as e:
                 LOGGER.debug(e)
         sleep(61.7)
@@ -100,7 +100,7 @@ def sync_machine_status():
                 if IDLE_MODE is True:
                     __param = _KioskService.machine_summary()
                     __param['on_usage'] = 'IDLE' if IDLE_MODE is True else 'ON_USED'
-                    LOGGER.info((__url, str(__param)))
+                    # LOGGER.info((__url, str(__param)))
                     _NetworkAccess.post_to_url(url=__url, param=__param)
                 else:
                     LOGGER.debug(('Sending Kiosk Status : ', str(IDLE_MODE)))
@@ -136,13 +136,13 @@ def sync_topup_records():
                     print('pyt : Re-Sync Topup Records Data...')
                     for t in topup_records:
                         status, response = _NetworkAccess.post_to_url(url=url, param=t)
-                        LOGGER.info(('sync_topup_records', json.dumps(t), str(status), str(response)))
+                        # LOGGER.info(('sync_topup_records', json.dumps(t), str(status), str(response)))
                         if status == 200 and response['id'] == t['rid']:
                             LOGGER.info(response)
                             t['key'] = t['rid']
                             _DAO.mark_sync(param=t, _table=_table_, _key='rid')
                         else:
-                            LOGGER.debug(response)
+                            LOGGER.warning(response)
         except Exception as e:
             LOGGER.warning(e)
         sleep(44.5)
@@ -169,7 +169,7 @@ def sync_data_transaction():
                             _DAO.mark_sync(param=t, _table=_table_, _key='trxid')
                             _DAO.update_product_status(param={'status': 1, 'pid': t['pid']})
                         else:
-                            LOGGER.debug(response)
+                            LOGGER.warning(response)
         except Exception as e:
             LOGGER.warning(e)
         sleep(99.9)
@@ -195,7 +195,7 @@ def sync_data_transaction_failure():
                             t['key'] = t['trxid']
                             _DAO.mark_sync(param=t, _table=_table_, _key='trxid')
                         else:
-                            LOGGER.debug(response)
+                            LOGGER.warning(response)
         except Exception as e:
             LOGGER.warning(e)
         sleep(99.9)
@@ -221,7 +221,7 @@ def sync_product_data():
                             p['key'] = p['pid']
                             _DAO.mark_sync(param=p, _table=_table_, _key='pid')
                         else:
-                            LOGGER.debug(response)
+                            LOGGER.warning(response)
         except Exception as e:
             LOGGER.warning(e)
         sleep(55.5)
@@ -247,7 +247,7 @@ def sync_sam_audit():
                             a['key'] = a['lid']
                             _DAO.mark_sync(param=a, _table=_table_, _key='lid')
                         else:
-                            LOGGER.debug(response)
+                            LOGGER.warning(response)
         except Exception as e:
             LOGGER.warning(e)
         sleep(77.7)
@@ -286,7 +286,7 @@ def sync_settlement_data(bank):
                             _DAO.update_settlement({'sid': s['sid'], 'status': 'TOPUP_PREPAID|CLOSED'})
                             LOGGER.info(response)
                         else:
-                            LOGGER.debug(response)
+                            LOGGER.warning(response)
         except Exception as e:
             LOGGER.warning(e)
         sleep(888.8)

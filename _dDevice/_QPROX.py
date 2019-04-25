@@ -93,7 +93,7 @@ def send_cryptogram(card_info, cyptogram, slot=1, bank='BNI'):
             LOGGER.warning(('send_cryptogram', str(cyptogram), 'WRONG_VALUE'))
             return False
         param = QPROX['SEND_CRYPTO'] + '|' + str(alias_slot) + '|' + str(card_info) + '|' + str(cyptogram)
-        response, result = _Command.send_command_with_handle(param=param, output=_Command.MO_REPORT)
+        response, result = _Command.send_request(param=param, output=_Command.MO_REPORT)
         LOGGER.debug(("send_cryptogram", result))
         if response == 0 and len(result) > 10:
             result = result.replace('#', '')
@@ -142,8 +142,8 @@ def get_card_info(slot=1, bank='BNI'):
         # slot is index/sequence 0 and 1
         _slot = slot - 1
         param = QPROX['PURSE_DATA_BNI'] + '|' + str(_slot)
-        response, result = _Command.send_command_with_handle(param=param, output=_Command.MO_REPORT)
-        LOGGER.debug(("get_card_info", result))
+        response, result = _Command.send_request(param=param, output=_Command.MO_REPORT)
+        LOGGER.debug(("init", result))
         if response == 0 and len(result) > 10:
             result = result.replace('#', '')
             output = {
@@ -160,7 +160,7 @@ def get_card_info(slot=1, bank='BNI'):
             if slot == 2:
                 BNI_CARD_NO_SLOT_2 = output['card_no']
                 _Global.BNI_SAM_2_NO = BNI_CARD_NO_SLOT_2
-            LOGGER.info(('get_card_info', str(slot), bank, str(output)))
+            LOGGER.info(('final', str(slot), bank, str(output)))
             return output
         else:
             _Global.NFC_ERROR = 'CHECK_CARD_INFO_BNI_ERROR_SLOT_'+str(slot)
@@ -173,14 +173,12 @@ def open_qprox():
     global OPEN_STATUS
     if QPROX_PORT is None:
         LOGGER.debug(("open_qprox port : ", QPROX_PORT))
-        _Global.NFC_ERROR = 'PORT_NOT_OPENED'
+        _Global.NFC_ERROR = 'PORT_NOT_DEFINED'
         return False
     param = QPROX["OPEN"] + "|" + QPROX_PORT
-    response, result = _Command.send_command_with_handle(param=param, output=None)
-    LOGGER.debug(("open_qprox : ", param, result))
-    print('pyt: open_qprox : ', result)
-    # return True if '0' in status else False
-    OPEN_STATUS = True if response == 0 and '1' not in result else False
+    response, result = _Command.send_request(param=param, output=None)
+    LOGGER.debug((param, result))
+    OPEN_STATUS = True if response == 0 else False
     return OPEN_STATUS
 
 
@@ -190,11 +188,8 @@ def start_disconnect_qprox():
 
 def disconnect_qprox():
     param = QPROX['STOP'] + '|'
-    response, result = _Command.send_command_with_handle(param=param, output=None)
-    if response == 0:
-        LOGGER.info(("disconnect_qprox : ", result))
-    else:
-        LOGGER.warning(("disconnect_qprox : ", result))
+    response, result = _Command.send_request(param=param, output=None)
+    LOGGER.debug((response, result))
 
 
 INIT_STATUS = False
@@ -210,7 +205,7 @@ def start_init_qprox():
 def init_qprox():
     global INIT_STATUS, INIT_LIST, INIT_TOPUP_BNI, INIT_TOPUP_MANDIRI
     if OPEN_STATUS is not True:
-        LOGGER.warning(('init_qprox', 'OPEN STATUS', str(OPEN_STATUS)))
+        LOGGER.warning(('OPEN STATUS', str(OPEN_STATUS)))
         _Global.NFC_ERROR = 'PORT_NOT_OPENED'
         return
     try:
@@ -219,8 +214,8 @@ def init_qprox():
                 if BANK['BANK'] == 'MANDIRI':
                     param = QPROX['INIT'] + '|' + QPROX_PORT + '|' + BANK['SAM'] + \
                             '|' + BANK['MID'] + '|' + BANK['TID']
-                    response, result = _Command.send_command_with_handle(param=param, output=None)
-                    if response == 0 and '1' not in result:
+                    response, result = _Command.send_request(param=param, output=None)
+                    if response == 0:
                         LOGGER.info((BANK['BANK'], result))
                         INIT_LIST.append(BANK)
                         INIT_STATUS = True
@@ -230,8 +225,8 @@ def init_qprox():
 
                 if BANK['BANK'] == 'BNI':
                     param = QPROX['UPDATE_TID_BNI'] + '|' + TID_BNI
-                    response, result = _Command.send_command_with_handle(param=param, output=None)
-                    if response == 0 and '1' not in result:
+                    response, result = _Command.send_request(param=param, output=None)
+                    if response == 0:
                         LOGGER.info((BANK['BANK'], result))
                         INIT_LIST.append(BANK)
                         INIT_STATUS = True
@@ -258,7 +253,7 @@ def debit_qprox(amount):
         _Global.NFC_ERROR = 'EMPTY_INIT_LIST'
         return
     param = QPROX['DEBIT'] + '|' + str(amount)
-    response, result = _Command.send_command_with_handle(param=param, output=_Command.MO_REPORT, wait_for=1.5)
+    response, result = _Command.send_request(param=param, output=_Command.MO_REPORT, wait_for=1.5)
     LOGGER.debug(("debit_qprox : ", result))
     # TODO check result
     if response == 0 and result is not None:
@@ -298,10 +293,10 @@ def auth_ka(mode='KA1'):
         _ka_pin = KA_PIN2
     param = QPROX['AUTH'] + '|' + QPROX_PORT + '|' + _slot + '|' + BANKS[0]['SAM'] + '|' + BANKS[0]['MID'] + '|' \
             + BANKS[0]['TID'] + '|' + _ka_pin + '|' + KL_PIN
-    response, result = _Command.send_command_with_handle(param=param, output=None)
+    response, result = _Command.send_request(param=param, output=None)
     LOGGER.debug(("auth_ka : ", result))
-    print('pyt: auth_ka : ', result)
-    if response == 0 and '1' not in result:
+    print('pyt: auth_ka mandiri : ', result)
+    if response == 0:
         INIT_TOPUP_MANDIRI = True
         ka_info()
         QP_SIGNDLER.SIGNAL_AUTH_QPROX.emit('AUTH_KA|SUCCESS')
@@ -359,7 +354,7 @@ def check_balance():
         QP_SIGNDLER.SIGNAL_BALANCE_QPROX.emit('BALANCE|' + json.dumps(output))
         return
     param = QPROX['BALANCE'] + '|'
-    response, result = _Command.send_command_with_handle(param=param, output=_Command.MO_REPORT, wait_for=1.5)
+    response, result = _Command.send_request(param=param, output=_Command.MO_REPORT, wait_for=1.5)
     LOGGER.debug(("check_balance : ", 'native', result))
     if response == 0 and '|' in result:
         output = {
@@ -414,7 +409,7 @@ def top_up(amount):
         _Global.NFC_ERROR = 'EMPTY_INIT_LIST'
         return
     param = QPROX['TOPUP'] + '|' + str(amount)
-    response, result = _Command.send_command_with_handle(param=param, output=_Command.MO_REPORT)
+    response, result = _Command.send_request(param=param, output=_Command.MO_REPORT)
     LOGGER.debug(("top_up", result))
     if response == 0 and '|' in result:
         result = result.replace('#', '')
@@ -514,13 +509,13 @@ def top_up_bni(amount, trxid, slot=None):
         slot = _Global.BNI_ACTIVE
         _slot = _Global.BNI_ACTIVE - 1
     param = QPROX['INIT_BNI'] + '|' + str(_slot) + '|' + TID_BNI
-    response, result = _Command.send_command_with_handle(param=param, output=_Command.MO_REPORT, wait_for=1.5)
+    response, result = _Command.send_request(param=param, output=_Command.MO_REPORT, wait_for=1.5)
     LOGGER.debug(("init_bni", result))
     print('pyt: top_up_bni > init_bni : ', result)
     if response == 0 and '12292' not in result:
         # Update : Add slot after value
         _param = QPROX['TOPUP_BNI'] + '|' + str(amount) + '|' + str(_slot)
-        _response, _result = _Command.send_command_with_handle(param=_param, output=_Command.MO_REPORT, wait_for=2)
+        _response, _result = _Command.send_request(param=_param, output=_Command.MO_REPORT, wait_for=2)
         print('pyt: top_up_bni > init_bni > update_bni : ', _result)
         __remarks = ''
         if _response == 0 and '|' in _result:
@@ -656,7 +651,7 @@ def ka_info():
         _Global.NFC_ERROR = 'EMPTY_INIT_LIST'
         return
     param = QPROX['KA_INFO'] + '|'
-    response, result = _Command.send_command_with_handle(param=param, output=_Command.MO_REPORT)
+    response, result = _Command.send_request(param=param, output=_Command.MO_REPORT)
     LOGGER.debug(("ka_info", result))
     if response == 0 and result is not None:
         MANDIRI_TOPUP_AMOUNT = int(result.split('|')[0])
@@ -681,7 +676,7 @@ def ka_info_bni(slot=1):
     # Slot defined as sequence
     _slot = slot - 1
     param = QPROX['KA_INFO_BNI'] + '|' + str(_slot)
-    response, result = _Command.send_command_with_handle(param=param, output=_Command.MO_REPORT, wait_for=1.5)
+    response, result = _Command.send_request(param=param, output=_Command.MO_REPORT, wait_for=1.5)
     LOGGER.debug(("ka_info_bni", str(slot), result))
     if response == 0 and (result is not None and result != ''):
         # BNI_TOPUP_AMOUNT = int(result.split('|')[0])
@@ -710,8 +705,8 @@ def ka_info_bni(slot=1):
 # def refill_zero_bni(slot=1):
 #     _slot = slot - 1
 #     param = QPROX['REFILL_ZERO'] + '|' + str(_slot) + '|' + TID_BNI
-#     response, result = _Command.send_command_with_handle(param=param, output=None)
-#     if response == 0 and '1' not in result:
+#     response, result = _Command.send_request(param=param, output=None)
+#     if response == 0:
 #         _Global.NFC_ERROR = ''
 #         QP_SIGNDLER.SIGNAL_REFILL_ZERO.emit('REFILL_ZERO|SUCCESS')
 #     else:
@@ -740,7 +735,7 @@ def create_online_info():
         _Global.NFC_ERROR = 'EMPTY_INIT_LIST'
         return
     param = QPROX['CREATE_ONLINE_INFO'] + '|'
-    response, result = _Command.send_command_with_handle(param=param, output=_Command.MO_REPORT)
+    response, result = _Command.send_request(param=param, output=_Command.MO_REPORT)
     LOGGER.debug(("create_online_info : ", result))
     if response == 0 and result is not None:
         ONLINE_INFO_RESULT = str(result)
@@ -761,7 +756,7 @@ def init_online():
         _Global.NFC_ERROR = 'EMPTY_INIT_LIST'
         return
     param = QPROX['INIT_ONLINE'] + '|' + ONLINE_INFO_RESULT.replace('.RQ1', '.RSP')
-    response, result = _Command.send_command_with_handle(param=param, output=_Command.MO_REPORT)
+    response, result = _Command.send_request(param=param, output=_Command.MO_REPORT)
     LOGGER.debug(("init_online : ", result))
     # TODO check result
     if response == 0 and result is not None:
@@ -795,22 +790,14 @@ def get_topup_readiness(mode='full'):
         topup_readiness['balance_mandiri'] = str(10000000)
         topup_readiness['balance_bni'] = str(8000000)
     else:
-        if mode == 'full':
-            # ka_info()
-            # sleep(1)
-            # ka_info_bni()
-            topup_readiness['mandiri'] = 'AVAILABLE' if INIT_TOPUP_MANDIRI is True else 'N/A'
-            topup_readiness['bni'] = 'AVAILABLE' if INIT_TOPUP_BNI is True else 'N/A'
-            topup_readiness['balance_mandiri'] = str(MANDIRI_TOPUP_AMOUNT)
-            topup_readiness['balance_bni'] = str(_Global.BNI_ACTIVE_WALLET_AMOUNT)
-        if mode == 'get_instant':
+        if mode == 'full' or mode == 'get_instant':
             topup_readiness['mandiri'] = 'AVAILABLE' if INIT_TOPUP_MANDIRI is True else 'N/A'
             topup_readiness['bni'] = 'AVAILABLE' if INIT_TOPUP_BNI is True else 'N/A'
             topup_readiness['balance_mandiri'] = str(MANDIRI_TOPUP_AMOUNT)
             topup_readiness['balance_bni'] = str(_Global.BNI_ACTIVE_WALLET_AMOUNT)
             topup_readiness['bni_wallet_1'] = str(_Global.BNI_SAM_1_WALLET)
-            topup_readiness['bni_wallet_1'] = str(_Global.BNI_SAM_2_WALLET)
+            topup_readiness['bni_wallet_2'] = str(_Global.BNI_SAM_2_WALLET)
     if SIGNAL_TOPUP_READINESS is True:
-        LOGGER.info(('get_topup_readiness', str(topup_readiness), str(mode)))
+        LOGGER.info((str(topup_readiness), str(mode)))
         QP_SIGNDLER.SIGNAL_GET_TOPUP_READINESS.emit(json.dumps(topup_readiness))
         SIGNAL_TOPUP_READINESS = False

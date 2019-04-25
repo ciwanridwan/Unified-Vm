@@ -91,7 +91,7 @@ def init_mei():
         return False
     _Command.get_response_with_handle(out=_Command.MO_STATUS, module='MEI_Connection_Init', flush=True)
     param = MEI["OPEN"] + "|" + MEI_PORT + "|" + TYPE_POWER
-    response, result = _Command.send_command_with_handle(param=param, output=None)
+    response, result = _Command.send_request(param=param, output=None)
     if response == 0:
         sleep(1)
         _, result = _Command.get_response_with_handle(out=_Command.MO_REPORT, module='MEI_Connection_Init')
@@ -145,7 +145,7 @@ def disconnect_mei():
                         break
                     sleep(WAITING_TIME)
                 param = MEI['STOP'] + '|'
-                response, result = _Command.send_command_with_handle(param=param, output=None)
+                response, result = _Command.send_request(param=param, output=None)
                 sleep(WAITING_TIME)
                 _KioskService.K_SIGNDLER.SIGNAL_GENERAL.emit('CLOSE_LOADING')
                 if response == 0:
@@ -192,7 +192,7 @@ def accept_mei(mode=None):
         if OPEN_STATUS is True:
             param = MEI["ACCEPT"] + "|"
             if mode is None:
-                response, result = _Command.send_command_with_handle(param=param, output=_Command.MO_BALANCE)
+                response, result = _Command.send_request(param=param, output=_Command.MO_BALANCE)
                 if response == 0:
                     if len(result) == 0:
                         result = "Waiting For Cash..."
@@ -213,7 +213,7 @@ def accept_mei(mode=None):
                     M_SIGNDLER.SIGNAL_ACCEPT_MEI.emit("ACCEPT|ERROR")
                     LOGGER.warning((str(response), str(result)))
             elif mode == 'RECONNECTING':
-                response, result = _Command.send_command_with_handle(param=param)
+                response, result = _Command.send_request(param=param)
                 print('pyt: reconnecting mei acceptance : ', result)
         else:
             _Global.MEI_ERROR = 'FAILED_TO_ACCEPT'
@@ -247,7 +247,7 @@ def retry_accept_mei():
     global COLLECTED_CASH, CASH_HISTORY, IS_RETURNED, IS_ACCEPTING
     try:
         param = MEI["ACCEPT"] + "|"
-        response, result = _Command.send_command_with_handle(param=param, output=_Command.MO_BALANCE)
+        response, result = _Command.send_request(param=param, output=_Command.MO_BALANCE)
         if response == 0:
             if len(result) == 0:
                 result = "Waiting For Cash #2..."
@@ -343,7 +343,7 @@ def handling_cash2():
             if '000' in cash_in:
                 # Adjust Function in Stacking Received Notes
                 if int(COLLECTED_CASH) < _amount:
-                    __r, __s = _Command.send_command_with_handle(param=MEI["STACK"] + "|", output=_Command.MO_REPORT)
+                    __r, __s = _Command.send_request(param=MEI["STACK"] + "|", output=_Command.MO_REPORT)
                     LOGGER.info(('Stacking Status: ', str(__s)))
                     if __r == 0 and 'STACKED' in __s:
                         CASH_HISTORY.append(str(cash_in))
@@ -416,7 +416,7 @@ def handling_cash55():
             if '000' in cash_in:
                 if int(COLLECTED_CASH) < _amount:
                     # Adjust Function in Stacking Received Notes
-                    __r, __s = _Command.send_command_with_handle(param=MEI["STACK"] + "|", output=_Command.MO_REPORT)
+                    __r, __s = _Command.send_request(param=MEI["STACK"] + "|", output=_Command.MO_REPORT)
                     LOGGER.info(('Stacking Status: ', str(__s)))
                     if __r == 0 and 'STACKED' in __s:
                         CASH_HISTORY.append(str(cash_in))
@@ -460,7 +460,7 @@ def dis_accept_mei():
     try:
         if OPEN_STATUS is True:
             param = MEI["DIS_ACCEPT"] + "|"
-            response, result = _Command.send_command_with_handle(param=param, output=_Command.MO_REPORT)
+            response, result = _Command.send_request(param=param, output=_Command.MO_REPORT)
             if response == 0:
                 # sleep(1)
                 M_SIGNDLER.SIGNAL_DIS_ACCEPT_MEI.emit('DIS_ACCEPT|SUCCESS')
@@ -492,7 +492,7 @@ def stack_mei(file_output=_Command.MO_REPORT):
     try:
         if OPEN_STATUS is True:
             param = MEI["STACK"] + "|"
-            response, result = _Command.send_command_with_handle(param=param, output=file_output)
+            response, result = _Command.send_request(param=param, output=file_output)
             if response == 0 and '000' in result:
                 result = result.split('#')[0]
                 CASH_HISTORY.append(str(result))
@@ -552,7 +552,7 @@ def return_mei(file_output=_Command.MO_REPORT):
     try:
         if OPEN_STATUS is True:
             param = MEI["RETURN"] + "|"
-            response, result = _Command.send_command_with_handle(param=param, output=file_output)
+            response, result = _Command.send_request(param=param, output=file_output)
             if response == 0:
                 M_SIGNDLER.SIGNAL_RETURN_MEI.emit('RETURN|' + str(result))
             else:
@@ -586,7 +586,7 @@ def store_es_mei():
             # sleep(WAITING_TIME*4)
             IS_STORING = True
             param = MEI["STORE_ES"] + "|"
-            response, result = _Command.send_command_with_handle(param=param, output=_Command.MO_REPORT)
+            response, result = _Command.send_request(param=param, output=_Command.MO_REPORT)
             if response == 0:
                 handling_storing_cash()
             else:
@@ -680,7 +680,7 @@ def return_es_mei():
     try:
         if OPEN_STATUS is True:
             param = MEI["RETURN_ES"] + "|"
-            response, result = _Command.send_command_with_handle(param=param, output=_Command.MO_REPORT)
+            response, result = _Command.send_request(param=param, output=_Command.MO_REPORT)
             if response == 0:
                 IS_RETURNED = True
                 # M_SIGNDLER.SIGNAL_RETURN_ES_MEI.emit('RETURN_ES|' + str(result))
@@ -744,7 +744,7 @@ def dispense_cou_mei():
     try:
         if OPEN_STATUS is True:
             param = MEI["DISPENSE_COU"] + "|"
-            response, result = _Command.send_command_with_handle(param=param, output=_Command.MO_REPORT)
+            response, result = _Command.send_request(param=param, output=_Command.MO_REPORT)
             if response == 0:
                 M_SIGNDLER.SIGNAL_DISPENSE_COU_MEI.emit('DISPENSE_COU|' + str(result))
             else:
@@ -769,7 +769,7 @@ def float_down_cou_mei():
     try:
         if OPEN_STATUS is True:
             param = MEI["FLOAT_DOWN_COU"] + "|"
-            response, result = _Command.send_command_with_handle(param=param, output=_Command.MO_REPORT)
+            response, result = _Command.send_request(param=param, output=_Command.MO_REPORT)
             if response == 0:
                 M_SIGNDLER.SIGNAL_FLOAT_DOWN_COU_MEI.emit('FLOAT_DOWN_COU|' + str(result))
             else:
@@ -794,7 +794,7 @@ def dispense_val_mei(amount):
     try:
         if OPEN_STATUS is True:
             param = MEI["DISPENSE_VAL"] + "|" + amount
-            response, result = _Command.send_command_with_handle(param=param, output=_Command.MO_REPORT)
+            response, result = _Command.send_request(param=param, output=_Command.MO_REPORT)
             if response == 0:
                 M_SIGNDLER.SIGNAL_DISPENSE_VAL_MEI.emit('DISPENSE_VAL|' + str(result))
             else:
@@ -819,7 +819,7 @@ def float_down_all_mei():
     try:
         if OPEN_STATUS is True:
             param = MEI["FLOAT_DOWN_ALL"] + "|"
-            response, result = _Command.send_command_with_handle(param=param, output=_Command.MO_REPORT)
+            response, result = _Command.send_request(param=param, output=_Command.MO_REPORT)
             if response == 0:
                 M_SIGNDLER.SIGNAL_FLOAT_DOWN_ALL_MEI.emit('FLOAT_DOWN_ALL|' + str(result))
             else:
@@ -844,7 +844,7 @@ def get_return_note():
     try:
         if OPEN_STATUS is True:
             param = MEI["RETURN_STAT"] + "|"
-            response, result = _Command.send_command_with_handle(param=param, output=_Command.MO_REPORT)
+            response, result = _Command.send_request(param=param, output=_Command.MO_REPORT)
             if response == 0:
                 M_SIGNDLER.SIGNAL_RETURN_STATUS.emit('RETURN_STAT|' + str(result))
             else:

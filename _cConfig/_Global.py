@@ -375,5 +375,8 @@ def sam_to_slot(no, bank='BNI'):
         return 'UNKNOWN_BANK'
 
 
-def save_sam_config():
-    _ConfigParser.set_value('QPROX', 'bni^active^slot', str(BNI_ACTIVE))
+def save_sam_config(bank='BNI'):
+    if bank == 'BNI':
+        _ConfigParser.set_value('QPROX', 'bni^active^slot', str(BNI_ACTIVE))
+    elif bank == 'MANDIRI':
+        _ConfigParser.set_value('QPROX', 'mandiri^active^slot', str(MANDIRI_ACTIVE))

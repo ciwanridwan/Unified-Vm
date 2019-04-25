@@ -15,12 +15,13 @@ Base{
     property var productCount2: 0
     property var productCount3: 0
     property var mandiriTopupWallet: 0
+    property bool mandiriTopupActive: false
+    property bool bniTopupActive: false
     property var bniTopupWallet: 0
     property bool kalogButton: false
     property bool withSlider: true
     property bool mandiriLogin: false
     isPanelActive: false
-
 
     Stack.onStatusChanged:{
         if(Stack.status == Stack.Activating){
@@ -33,13 +34,11 @@ Base{
                 show_tvc_loading.start();
             }
             kalogButton = false;
-//            slider.open();
             productCount1 = 0;
             productCount2 = 0;
             productCount3 = 0;
         }
         if(Stack.status==Stack.Deactivating){
-//            slider.close();
             show_tvc_loading.stop();
         }
     }
@@ -64,7 +63,6 @@ Base{
         base.result_topup_readiness.disconnect(topup_readiness);
         base.result_auth_qprox.disconnect(ka_login_status);
     }
-
 
     function ka_login_status(t){
         console.log('ka_login_status', t);
@@ -93,6 +91,8 @@ Base{
         var tr = JSON.parse(t);
         mandiriTopupWallet = parseInt(tr.balance_mandiri);
         bniTopupWallet = parseInt(tr.balance_bni);
+        if (tr.mandiri == 'AVAILABLE') mandiriTopupActive = true; mandiriLogin = true;
+        if (tr.bni == 'AVAILABLE') bniTopupActive = true;
     }
 
     function get_product_stock(p){
@@ -115,10 +115,7 @@ Base{
             if (productData[2].status==103 && parseInt(productData[2].stock) > 0) productCount3 = parseInt(productData[2].stock);
         }
         productCountAll = productCount1 + productCount2 + productCount3
-//        console.log('productCount1', productCount1);
-//        console.log('productCount2', productCount2);
-//        console.log('productCount3', productCount3);
-        console.log('product', productCount1, productCount2, productCount3, productCountAll);
+        console.log('product stock count : ', productCount1, productCount2, productCount3, productCountAll);
     }
 
     function get_kiosk_status(r){
@@ -136,16 +133,8 @@ Base{
             box_connection.text = kiosk.real_status;
             box_connection.color = 'red';
             kioskStatus = false;
-            not_authorized();
         }
-
-//        if (!slider.visible){
-//            console.log('Start Slider..!')
-//            slider.open()
-//        }
-
-        _SLOT.start_get_mandiri_login();
-
+        _SLOT.start_get_topup_readiness();
     }
 
     function not_authorized(){
@@ -158,13 +147,8 @@ Base{
         console.log("handle_general : ", result);
         if (result=='') return;
         if (result=='REBOOT'){
-//            loading_view.close();
-            notif_view.z = 99;
-            notif_view.isSuccess = false;
-            notif_view.closeButton = false;
-            notif_view.show_text = qsTr("Dear User");
-            notif_view.show_detail = qsTr("This Kiosk Machine will be rebooted in 30 seconds.");
-            notif_view.open();
+            switch_frame('aAsset/loading_static.png', 'Mohon Tunggu Mesin Akan Dimuat Ulang', 'Dalam 30 Detik', 'closeWindow', false )
+            return;
         }
     }
 
@@ -178,30 +162,43 @@ Base{
 
     function false_notif(param){
         press = '0';
-        standard_notif_view.z = 100;
-        standard_notif_view._button_text = 'tutup';
-        if (param==undefined){
-            standard_notif_view.show_text = "Mohon Maaf";
-            standard_notif_view.show_detail = "Terjadi Kesalahan Pada Sistem, Mohon Coba Lagi Beberapa Saat";
-        } else {
-            standard_notif_view.show_text = param.split('|')[0];
-            standard_notif_view.show_detail = param.split('|')[1];
-        }
-        standard_notif_view.open();
+        switch_frame('aAsset/smiley_down.png', 'Maaf Sementara Mesin Tidak Dapat Digunakan', '', 'backToMain', false )
+        return;
+//        standard_notif_view.z = 100;
+//        standard_notif_view._button_text = 'tutup';
+//        if (param==undefined){
+//            standard_notif_view.show_text = "Mohon Maaf";
+//            standard_notif_view.show_detail = "Terjadi Kesalahan Pada Sistem, Mohon Coba Lagi Beberapa Saat";
+//        } else {
+//            standard_notif_view.show_text = param.split('|')[0];
+//            standard_notif_view.show_detail = param.split('|')[1];
+//        }
+//        standard_notif_view.open();
     }
 
     function kalog_notif(param){
         press = '0';
-        kalogin_notif_view.z = 100;
-        kalogin_notif_view._button_text = 'login';
-        if (param==undefined){
-            kalogin_notif_view.show_text = "Dear Admin";
-            kalogin_notif_view.show_detail = "Silakan Tempelkan Kartu Login Terlebih Dahulu Untuk Aktivasi Fitur Topup";
-        } else {
-            kalogin_notif_view.show_text = param.split('|')[0];
-            kalogin_notif_view.show_detail = param.split('|')[1];
-        }
-        kalogin_notif_view.open();
+        switch_frame('aAsset/smiley_down.png', 'Maaf Sementara Mesin Tidak Dapat Untuk', 'Melakukan Pengisian Kartu', 'closeWindow', false )
+        return;
+//        kalogin_notif_view.z = 100;
+//        kalogin_notif_view._button_text = 'login';
+//        if (param==undefined){
+//            kalogin_notif_view.show_text = "Dear Admin";
+//            kalogin_notif_view.show_detail = "Silakan Tempelkan Kartu Login Terlebih Dahulu Untuk Aktivasi Fitur Topup";
+//        } else {
+//            kalogin_notif_view.show_text = param.split('|')[0];
+//            kalogin_notif_view.show_detail = param.split('|')[1];
+//        }
+//        kalogin_notif_view.open();
+    }
+
+    function switch_frame(imageSource, textMain, textSlave, closeMode, smallerText){
+        global_frame.imageSource = imageSource;
+        global_frame.textMain = textMain;
+        global_frame.textSlave = textSlave;
+        global_frame.closeMode = closeMode;
+        global_frame.smallerSlaveSize = smallerText;
+        global_frame.open();
     }
 
 //    LoadingViewNew{
@@ -223,7 +220,6 @@ Base{
 
     }
 
-
     Row{
         id: row_button
         anchors.verticalCenterOffset: 100
@@ -244,16 +240,12 @@ Base{
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('Press "Cek Saldo"');
-                    if (kioskStatus===true){
-                        if (press!="0") return;
-                        press = "1";
-                        my_layer.push(check_balance, {mandiriLogin: mandiriLogin});
-                        _SLOT.set_tvc_player("STOP");
-                        _SLOT.stop_idle_mode();
-                        show_tvc_loading.stop();
-                    } else {
-                        not_authorized();
-                    }
+                    if (press!="0") return;
+                    press = "1";
+                    my_layer.push(check_balance, {mandiriLogin: mandiriLogin});
+                    _SLOT.set_tvc_player("STOP");
+                    _SLOT.stop_idle_mode();
+                    show_tvc_loading.stop();
                 }
             }
         }
@@ -270,20 +262,16 @@ Base{
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('Press "TopUp Saldo"');
-                    if (kioskStatus===true){
-                        if (!mandiriLogin) {
-                            kalog_notif();
-                            return;
-                        }
-                        if (press!="0") return;
-                        press = "1";
-                        my_layer.push(topup_prepaid_denom);
-                        _SLOT.set_tvc_player("STOP");
-                        _SLOT.stop_idle_mode();
-                        show_tvc_loading.stop();
-                    } else {
-                        not_authorized();
+                    if (!mandiriTopupActive || mandiriTopupWallet == 0) {
+                        kalog_notif();
+                        return;
                     }
+                    if (press!="0") return;
+                    press = "1";
+                    my_layer.push(topup_prepaid_denom);
+                    _SLOT.set_tvc_player("STOP");
+                    _SLOT.stop_idle_mode();
+                    show_tvc_loading.stop();
                 }
             }
         }
@@ -303,16 +291,12 @@ Base{
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('Press "Beli Kartu"');
-                    if (kioskStatus===true){
-                        if (press!="0") return;
-                        press = "1";
-                        my_layer.push(shop_prepaid_card, {productData: productData, shop_type: 'shop', productCount: productCountAll});
-                        _SLOT.set_tvc_player("STOP");
-                        _SLOT.stop_idle_mode();
-                        show_tvc_loading.stop();
-                    } else {
-                        not_authorized();
-                    }
+                    if (press!="0") return;
+                    press = "1";
+                    my_layer.push(shop_prepaid_card, {productData: productData, shop_type: 'shop', productCount: productCountAll});
+                    _SLOT.set_tvc_player("STOP");
+                    _SLOT.stop_idle_mode();
+                    show_tvc_loading.stop();
                 }
             }
             Rectangle{

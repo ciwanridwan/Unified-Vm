@@ -29,7 +29,8 @@ GRG = {
     "STOP": "503",
     "STATUS": "504",
     "STORE": "505",
-    "REJECT": "506"
+    "REJECT": "506",
+    "GET_STATE": "507"
 }
 
 GRG_PORT = _Global.GRG_PORT
@@ -78,11 +79,11 @@ def init_grg():
     global OPEN_STATUS
     if GRG_PORT is None:
         LOGGER.debug(("init_grg port : ", GRG_PORT))
-        _Global.MEI_ERROR = 'GRG_FAILED_TO_OPENED'
+        _Global.MEI_ERROR = 'GRG_PORT_NOT_DEFINED'
         return False
     param = GRG["SET"] + '|' + GRG_PORT.replace('COM', '')
-    response, result = _Command.send_command_with_handle(param=param, output=None)
-    if response == 0 and '1' not in result:
+    response, result = _Command.send_request(param=param, output=None)
+    if response == 0:
         OPEN_STATUS = True
     LOGGER.info(("Starting GRG in Standby_Mode : ", str(OPEN_STATUS)))
     GRG_SIGNDLER.SIGNAL_GRG_INIT.emit('INIT_GRG|DONE')
@@ -146,9 +147,9 @@ def start_receive_note():
     try:
         attempt = 0
         param = GRG["RECEIVE"] + '|'
-        response, result = _Command.send_command_with_handle(param=param, output=None)
+        response, result = _Command.send_request(param=param, output=None)
         # LOGGER.debug(('start_receive_note', 'send_command', str(response), str(result)))
-        if response == 0 and '1' not in result:
+        if response == 0:
             IS_RECEIVING = True
             while True:
                 attempt += 1
@@ -160,14 +161,14 @@ def start_receive_note():
                     if cash_in in SMALL_NOTES_NOT_ALLOWED and _Global.TID != '110322':
                         sleep(.25)
                         param = GRG["REJECT"] + '|'
-                        _Command.send_command_with_handle(param=param, output=None)
+                        _Command.send_request(param=param, output=None)
                         GRG_SIGNDLER.SIGNAL_GRG_RECEIVE.emit('RECEIVE_GRG|EXCEED')
                         break
                     if is_exceed_payment(_MEI.DIRECT_PRICE_AMOUNT, cash_in, COLLECTED_CASH) is True:
                         GRG_SIGNDLER.SIGNAL_GRG_RECEIVE.emit('RECEIVE_GRG|EXCEED')
                         sleep(.25)
                         param = GRG["REJECT"] + '|'
-                        _Command.send_command_with_handle(param=param, output=None)
+                        _Command.send_request(param=param, output=None)
                         LOGGER.info(('Exceed Payment Detected :', json.dumps({'ADD': cash_in,
                                                                               'COLLECTED': COLLECTED_CASH,
                                                                               'TARGET': _MEI.DIRECT_PRICE_AMOUNT})))
@@ -183,7 +184,7 @@ def start_receive_note():
                         GRG_SIGNDLER.SIGNAL_GRG_RECEIVE.emit('RECEIVE_GRG|'+str(COLLECTED_CASH))
                         sleep(.25)
                         param = GRG["STORE"] + '|'
-                        _Command.send_command_with_handle(param=param, output=None)
+                        _Command.send_request(param=param, output=None)
                         LOGGER.info(('Cash Status:', json.dumps({'ADD': cash_in,
                                                                  'COLLECTED': COLLECTED_CASH,
                                                                  'HISTORY': CASH_HISTORY})))
@@ -193,7 +194,7 @@ def start_receive_note():
                     else:
                         sleep(.25)
                         param = GRG["RECEIVE"] + '|'
-                        _Command.send_command_with_handle(param=param, output=None)
+                        _Command.send_request(param=param, output=None)
                 if BAD_NOTES in _result:
                     GRG_SIGNDLER.SIGNAL_GRG_RECEIVE.emit('RECEIVE_GRG|BAD_NOTES')
                     break
@@ -245,8 +246,8 @@ def stop_receive_note():
     global COLLECTED_CASH, CASH_HISTORY, IS_RECEIVING
     try:
         param = GRG["STOP"] + '|'
-        response, result = _Command.send_command_with_handle(param=param, output=None)
-        if response == 0 and '1' not in result:
+        response, result = _Command.send_request(param=param, output=None)
+        if response == 0:
             IS_RECEIVING = False
             cash_received = {
                 'history': get_cash_history(),
@@ -270,7 +271,7 @@ def start_get_status_grg():
 def get_status_grg():
     try:
         param = GRG["STATUS"] + '|'
-        response, result = _Command.send_command_with_handle(param=param, output=_Command.MO_REPORT, wait_for=1.5)
+        response, result = _Command.send_request(param=param, output=_Command.MO_REPORT, wait_for=1.5)
         LOGGER.debug(('get_status_grg', str(response), str(result)))
         if response == 0 and result is not None:
             GRG_SIGNDLER.SIGNAL_GRG_STATUS.emit('STATUS_GRG|'+result)
