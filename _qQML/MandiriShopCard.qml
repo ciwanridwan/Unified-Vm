@@ -273,15 +273,9 @@ Base{
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                _SLOT.user_action_log('Press "ISI SALDO"');
-                if (!mandiriAvailable) {
-                    press = '0';
-                    switch_frame('aAsset/smiley_down.png', 'Maaf Sementara Mesin Tidak Dapat Untuk', 'Melakukan Pengisian Kartu', 'closeWindow', false )
-                    return;
-                }
+                _SLOT.user_action_log('Press "LANJUT"');
                 if (press!='0') return;
                 press = '1';
-                // Generate Data Before Move To Payment Layer
                 var globalDetails = get_cart_details('cash');
                 my_layer.push(mandiri_payment_process, {details: globalDetails});
             }
@@ -342,24 +336,13 @@ Base{
             date: new Date().toLocaleDateString(Qt.locale("id_ID"), Locale.ShortFormat),
             epoch: new Date().getTime()
         }
-        switch(shop_type){
-            case 'shop':
-                details.qty = itemCount;
-                details.value = productData[productIdx].sell_price.toString();
-                details.provider = productData[productIdx].name;
-                details.admin_fee = '0';
-                details.status = productData[productIdx].status;
-                details.raw = productData[productIdx];
-                return details;
-            case 'topup':
-                details.qty = 1;
-                details.value = cart.value;
-                details.provider = cart.provider;
-                details.admin_fee = cart.admin_fee;
-                details.status = '1';
-                details.raw = cart;
-                return details;
-        }
+        details.qty = itemCount;
+        details.value = productData[productIdx].sell_price.toString();
+        details.provider = productData[productIdx].name;
+        details.admin_fee = '0';
+        details.status = productData[productIdx].status;
+        details.raw = productData[productIdx];
+        return details;
     }
 
     function reset_button_color(){
