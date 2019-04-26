@@ -4,7 +4,7 @@ import QtGraphicalEffects 1.0
 import "base_function.js" as FUNC
 
 Base{
-    id: shop_prepaid_card
+    id: mandiri_shop_card
     property int timer_value: 300
     property var press: '0'
     property var cart: undefined
@@ -22,6 +22,15 @@ Base{
     property bool cashEnable: false
     property bool debitEnable: false
     property var cdReadiness: undefined
+
+    property variant availItems: []
+
+    property string cancelText: 'BATAL'
+    property string proceedText: 'LANJUT'
+    property bool frameWithButton: false
+    property var modeButtonPopup: 'check_balance';
+
+
     idx_bg: 2
     imgPanel: 'aAsset/beli_kartu.png'
     textPanel: 'Pembelian Kartu Prabayar'
@@ -38,11 +47,11 @@ Base{
             if (cart != undefined) {
                 console.log('cart', JSON.stringify(cart));
                 adminFee = cart.admin_fee;
-                _provider.labelContent = cart.provider;
-                _nominal.labelContent =  'Rp. ' + FUNC.insert_dot(cart.value) + ',-';
-                _biaya_admin.labelContent =  'Rp. ' + FUNC.insert_dot(cart.admin_fee) + ',-';
-                small_notif.text = '*Biaya Admin sebesar Rp. 1.500,- Dikenakan Untuk Tiap Transaksi Isi Ulang.';
-                small_notif.visible = true;
+//                _provider.labelContent = cart.provider;
+//                _nominal.labelContent =  'Rp. ' + FUNC.insert_dot(cart.value) + ',-';
+//                _biaya_admin.labelContent =  'Rp. ' + FUNC.insert_dot(cart.admin_fee) + ',-';
+//                small_notif.text = '*Biaya Admin sebesar Rp. 1.500,- Dikenakan Untuk Tiap Transaksi Isi Ulang.';
+//                small_notif.visible = true;
             }
 //            if (productData != undefined) {
 //                console.log('productData', JSON.stringify(productData));
@@ -53,11 +62,11 @@ Base{
             press = '0';
             productIdx = -1;
             isConfirm = false;
-
+            availItems = [];
         }
         if(Stack.status==Stack.Deactivating){
-            my_timer.stop()
-            loading_view.close()
+            my_timer.stop();
+//            loading_view.close()
         }
     }
 
@@ -83,7 +92,8 @@ Base{
         cdReadiness = JSON.parse(c);
         if (productData != undefined) {
             console.log('productData', JSON.stringify(productData));
-            parseDataProduct(productData);
+//            parseDataProduct(productData);
+            defineProductIndex(productData);
         }
     }
 
@@ -109,11 +119,11 @@ Base{
         console.log('get_status_multiple', m);
         if (m == 'AVAILABLE'){
             multipleEject = true;
-            small_notif.text = "*Silakan Tentukan Jumlah Kartu Yang Akan Dibeli.";
+//            small_notif.text = "*Silakan Tentukan Jumlah Kartu Yang Akan Dibeli.";
         } else {
-            small_notif.text = "*Saat Ini Anda Hanya Dapat Membeli 1 (satu) Kartu Tiap Sesi.";
+//            small_notif.text = "*Saat Ini Anda Hanya Dapat Membeli 1 (satu) Kartu Tiap Sesi.";
         }
-        small_notif.visible = true;
+//        small_notif.visible = true;
     }
 
     function get_balance(text){
@@ -172,36 +182,62 @@ Base{
         }
     }
 
-
-    Rectangle{
-        id: rec_timer
-        width:10
-        height:10
-        y:10
-        color:"transparent"
-        QtObject{
-            id:abc
-            property int counter
-            Component.onCompleted:{
-                abc.counter = timer_value
+    function defineProductIndex(products){
+        var items = products;
+        for(var x in items) {
+            var item_stock = items[x].stock;
+            var item_status = items[x].status;
+            if (cdReadiness != undefined){
+                if (item_status==101 && cdReadiness.port1 == 'N/A') item_stock = '0';
+                if (item_status==102 && cdReadiness.port2 == 'N/A') item_stock = '0';
+                if (item_status==103 && cdReadiness.port3 == 'N/A') item_stock = '0';
             }
+            if (parseInt(item_stock) > 0) availItems.push({index: x, stock: parseInt(item_stock)});
         }
 
-        Timer{
-            id:my_timer
-            interval:1000
-            repeat:true
-            running:true
-            triggeredOnStart:true
-            onTriggered:{
-                abc.counter -= 1
-                if(abc.counter < 0){
-                    my_timer.stop()
-                    my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }))
-                }
-            }
+        if (availItems.length == 0){
+            switch_frame('aAsset/smiley_down.png', 'Maaf Sementara Mesin Tidak Dapat Untuk', 'Melakukan Pembelian Kartu', 'backToMain', false )
+            return;
         }
+
+        var max = availItems.reduce(function (prev, current) {
+           return (prev.stock > current.stock) ? prev.index : current.index
+        });
+//        productIdx = availItems.indexOf(max);
+        productIdx = parseInt(max);
+        console.log('defined_index', max, productIdx);
     }
+
+
+//    Rectangle{
+//        id: rec_timer
+//        width:10
+//        height:10
+//        y:10
+//        color:"transparent"
+//        QtObject{
+//            id:abc
+//            property int counter
+//            Component.onCompleted:{
+//                abc.counter = timer_value
+//            }
+//        }
+
+//        Timer{
+//            id:my_timer
+//            interval:1000
+//            repeat:true
+//            running:true
+//            triggeredOnStart:true
+//            onTriggered:{
+//                abc.counter -= 1
+//                if(abc.counter < 0){
+//                    my_timer.stop()
+//                    my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }))
+//                }
+//            }
+//        }
+//    }
 
 
     BackButton{
@@ -210,10 +246,9 @@ Base{
         anchors.leftMargin: 120
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 50
-        z: 10
-        visible: !popup_loading.visible
+        visible: !popup_loading.visible && !global_frame.visible
+        button_text: 'BATAL'
         modeReverse: true
-
         MouseArea{
             anchors.fill: parent
             onClicked: {
@@ -222,25 +257,77 @@ Base{
         }
     }
 
+    NextButton{
+        id: next_button
+        anchors.right: parent.right
+        anchors.rightMargin: 100
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 50
+        button_text: 'LANJUT'
+        visible: !popup_loading.visible && !global_frame.visible
+        modeReverse: true
+        MouseArea{
+            anchors.fill: parent
+            onClicked: {
+                _SLOT.user_action_log('Press "ISI SALDO"');
+                if (!mandiriAvailable) {
+                    press = '0';
+                    switch_frame('aAsset/smiley_down.png', 'Maaf Sementara Mesin Tidak Dapat Untuk', 'Melakukan Pengisian Kartu', 'closeWindow', false )
+                    return;
+                }
+                if (press!='0') return;
+                press = '1';
+                // Generate Data Before Move To Payment Layer
+                var globalDetails = get_cart_details('cash');
+                my_layer.push(mandiri_payment_process, {details: globalDetails});
+            }
+        }
+    }
+
+
+
     //==============================================================
     //PUT MAIN COMPONENT HERE
 
     function open_preload_notif(){
-        false_notif('Penumpang YTH|Silakan Tempelkan Kartu Prabayar Anda Pada Reader Sebelum Melanjutkan');
+        press = '0';
+        switch_frame('aAsset/insert_money.png', 'Masukkan Uang Anda', '', 'closeWindow', false )
+        return;
     }
 
-    function false_notif(param){
+    function false_notif(closeMode, textSlave){
+        if (closeMode==undefined) closeMode = 'backToMain';
+        if (textSlave==undefined) textSlave = '';
         press = '0';
-        standard_notif_view.z = 100;
-        standard_notif_view._button_text = 'tutup';
-        if (param==undefined){
-            standard_notif_view.show_text = "Mohon Maaf";
-            standard_notif_view.show_detail = "Terjadi Kesalahan Pada Sistem, Mohon Coba Lagi Beberapa Saat";
-        } else {
-            standard_notif_view.show_text = param.split('|')[0];
-            standard_notif_view.show_detail = param.split('|')[1];
+        switch_frame('aAsset/smiley_down.png', 'Maaf Sementara Mesin Tidak Dapat Digunakan', textSlave, closeMode, false )
+        return;
+    }
+
+    function switch_frame(imageSource, textMain, textSlave, closeMode, smallerText){
+        frameWithButton = false;
+        if (closeMode.indexOf('|') > -1){
+            closeMode = closeMode.split('|')[0];
+            var timer = closeMode.split('|')[1];
+            global_frame.timerDuration = parseInt(timer);
         }
-        standard_notif_view.open();
+        global_frame.imageSource = imageSource;
+        global_frame.textMain = textMain;
+        global_frame.textSlave = textSlave;
+        global_frame.closeMode = closeMode;
+        global_frame.smallerSlaveSize = smallerText;
+        global_frame.withTimer = true;
+        global_frame.open();
+    }
+
+    function switch_frame_with_button(imageSource, textMain, textSlave, closeMode, smallerText){
+        frameWithButton = true;
+        global_frame.imageSource = imageSource;
+        global_frame.textMain = textMain;
+        global_frame.textSlave = textSlave;
+        global_frame.closeMode = closeMode;
+        global_frame.smallerSlaveSize = smallerText;
+        global_frame.withTimer = false;
+        global_frame.open();
     }
 
     function get_cart_details(channel){
@@ -259,7 +346,7 @@ Base{
                 details.admin_fee = '0';
                 details.status = productData[productIdx].status;
                 details.raw = productData[productIdx];
-                  return details;
+                return details;
             case 'topup':
                 details.qty = 1;
                 details.value = cart.value;
@@ -271,29 +358,8 @@ Base{
         }
     }
 
-//    Rectangle{
-//        id: main_base
-//        color: '#1D294D'
-//        radius: 50
-//        border.width: 0
-//        anchors.verticalCenterOffset: 50
-//        anchors.horizontalCenterOffset: 150
-//        anchors.verticalCenter: parent.verticalCenter
-//        anchors.horizontalCenter: parent.horizontalCenter
-//        opacity: .97
-//        width: 1100
-//        height: 900
-//        visible: !standard_notif_view.visible && !popup_loading.visible
-//    }
 
-    function switch_frame(imageSource, textMain, textSlave, closeMode, smallerText){
-        global_frame.imageSource = imageSource;
-        global_frame.textMain = textMain;
-        global_frame.textSlave = textSlave;
-        global_frame.closeMode = closeMode;
-        global_frame.smallerSlaveSize = smallerText;
-        global_frame.open();
-    }
+/*
 
     Text {
         id: main_title
@@ -312,7 +378,6 @@ Base{
         font.family: "Ubuntu"
         font.pixelSize: 45
     }
-
 
     Item{
         id: prod_item_view
@@ -461,36 +526,10 @@ Base{
         font.pixelSize: 20
     }
 
+*/
 
     //==============================================================
 
-//    ConfirmView{
-//        id: confirm_view
-//        show_text: "Dear Customer"
-//        show_detail: "Proceed This ?."
-//        z: 99
-//        MouseArea{
-//            id: ok_confirm_view
-//            x: 668; y:691
-//            width: 190; height: 50;
-//            onClicked: {
-//            }
-//        }
-//    }
-
-//    NotifView{
-//        id: notif_view
-//        isSuccess: false
-//        show_text: "Dear Customer"
-//        show_detail: "Please Ensure You have set Your plan correctly."
-//        z: 99
-//    }
-
-//    LoadingView{
-//        id:loading_view
-//        z: 99
-//        show_text: "Finding Flight..."
-//    }
 
     StandardNotifView{
         id: standard_notif_view
@@ -514,6 +553,47 @@ Base{
 
     GlobalFrame{
         id: global_frame
+        NextButton{
+            id: cancel_button_global
+            anchors.left: parent.left
+            anchors.leftMargin: 100
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 50
+            button_text: cancelText
+            modeReverse: true
+            visible: frameWithButton
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('Press "BATAL"');
+                    my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
+                }
+            }
+        }
+
+        NextButton{
+            id: next_button_global
+            anchors.right: parent.right
+            anchors.rightMargin: 100
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 50
+            button_text: proceedText
+            modeReverse: true
+            visible: frameWithButton
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('Press "LANJUT"');
+                    if (press!='0') return;
+                    press = '1'
+                    switch(modeButtonPopup){
+                    default:
+                        break;
+                    }
+                    popup_loading.open();
+                }
+            }
+        }
     }
 
     PreloadShopCard{
@@ -548,11 +628,6 @@ Base{
                 onClicked: {
                     _SLOT.user_action_log('Press "LANJUT"');
                     preload_shop_card.close();
-                    if (press!='0') return;
-                    press = '1'
-                    popup_loading.open();
-                    //TODO Define SLOT Function to be called
-//                    _SLOT.start_check_balance();
                 }
             }
         }

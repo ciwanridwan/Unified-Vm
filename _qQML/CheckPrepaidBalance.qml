@@ -139,7 +139,6 @@ Base{
         anchors.leftMargin: 100
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 50
-        z: 10
         button_text: 'BATAL'
         visible: !popup_loading.visible || !preload_check_card.visible
         modeReverse: true
@@ -160,6 +159,7 @@ Base{
         anchors.bottomMargin: 50
         button_text: 'ISI SALDO'
         modeReverse: true
+        visible: !popup_loading.visible || !preload_check_card.visible
         MouseArea{
             anchors.fill: parent
             onClicked: {
@@ -184,12 +184,12 @@ Base{
                         my_layer.push(topup_prepaid_denom, {cardData: _cardData});
 //                    } else if (ableTopupCode=='1008'){
 //                        press = 0;
-////                        false_notif('Mohon Maaf|Kartu BNI TapCash Anda Sudah Tidak Aktif\nSilakan Hubungi Bank BNI Terdekat')
+//                        false_notif('Mohon Maaf|Kartu BNI TapCash Anda Sudah Tidak Aktif\nSilakan Hubungi Bank BNI Terdekat')
 //                        switch_frame('aAsset/smiley_down.png', 'Maaf Kartu Anda Sudah Tidak Aktif', '', 'closeWindow', false );
 //                        return;
 //                    }  else if (ableTopupCode=='5106'){
 //                        press = 0;
-////                        false_notif('Mohon Maaf|Kartu BNI TapCash Anda Tidak Resmi\nSilakan Gunakan Kartu TapCash Yang Lain')
+//                        false_notif('Mohon Maaf|Kartu BNI TapCash Anda Tidak Resmi\nSilakan Gunakan Kartu TapCash Yang Lain')
 //                        switch_frame('aAsset/smiley_down.png', 'Maaf Kartu Anda Sudah Tidak Resmi', 'Gunakan Kartu lainnya', 'closeWindow', false );
 //                        return;
                     } else {
@@ -275,7 +275,7 @@ Base{
     Text {
         id: content_balance
         color: "white"
-        text: 'Rp ' + FUNC.insert_dot(balance)
+        text: (balance=='0') ? 'Rp 0' : 'Rp ' + FUNC.insert_dot(balance)
         anchors.right: parent.right
         anchors.rightMargin: 350
         anchors.top: parent.top
@@ -287,99 +287,101 @@ Base{
         font.pixelSize: 50
     }
 
+    /*
 
-//    Image{
-//        id: image_prepaid_card
-//        visible: !standard_notif_view.visible && !popup_loading.visible
-//        source: "aAsset/card_tj_original.png"
-//        width: 400
-//        height: 250
-//        anchors.horizontalCenterOffset: -150
-//        anchors.horizontalCenter: parent.horizontalCenter
-//        anchors.verticalCenter: parent.verticalCenter
-//        fillMode: Image.PreserveAspectFit
-//        Text{
-//            id: card_no_prepaid
-//            font.pixelSize: 16
-//            anchors.bottom: parent.bottom
-//            anchors.bottomMargin: 25
-//            anchors.left: parent.left
-//            anchors.leftMargin: 30
-//            color: 'black'
-//        }
-//    }
+    Image{
+        id: image_prepaid_card
+        visible: !standard_notif_view.visible && !popup_loading.visible
+        source: "aAsset/card_tj_original.png"
+        width: 400
+        height: 250
+        anchors.horizontalCenterOffset: -150
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
+        fillMode: Image.PreserveAspectFit
+        Text{
+            id: card_no_prepaid
+            font.pixelSize: 16
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 25
+            anchors.left: parent.left
+            anchors.leftMargin: 30
+            color: 'black'
+        }
+    }
 
-//    NextButton{
-//        id: check_button
-//        x: 242
-//        y: 732
-//        visible: !standard_notif_view.visible && !popup_loading.visible
-//        anchors.horizontalCenterOffset: -50
-//        anchors.bottom: parent.bottom
-//        anchors.bottomMargin: 200
-//        anchors.horizontalCenter: parent.horizontalCenter
-//        button_text: 'Cek Saldo'
-//        modeReverse: true
-//        MouseArea{
-//            anchors.fill: parent
-//            onClicked : {
-//                _SLOT.user_action_log('Press "Cek Saldo"');
-//                if (press!='0') return;
-//                press = '1'
-//                popup_loading.open();
-//                _SLOT.start_check_balance();
-//            }
-//        }
-//    }
+    NextButton{
+        id: check_button
+        x: 242
+        y: 732
+        visible: !standard_notif_view.visible && !popup_loading.visible
+        anchors.horizontalCenterOffset: -50
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 200
+        anchors.horizontalCenter: parent.horizontalCenter
+        button_text: 'Cek Saldo'
+        modeReverse: true
+        MouseArea{
+            anchors.fill: parent
+            onClicked : {
+                _SLOT.user_action_log('Press "Cek Saldo"');
+                if (press!='0') return;
+                press = '1'
+                popup_loading.open();
+                _SLOT.start_check_balance();
+            }
+        }
+    }
 
-//    NextButton{
-//        id: topup_button
-//        x: 542
-//        y: 732
-//        visible: !standard_notif_view.visible && !popup_loading.visible
-//        anchors.horizontalCenterOffset: 300
-//        anchors.bottom: parent.bottom
-//        anchors.bottomMargin: 200
-//        anchors.horizontalCenter: parent.horizontalCenter
-//        button_text: 'Isi Saldo'
-//        modeReverse: true
-//        MouseArea{
-//            anchors.fill: parent
-//            onClicked: {
-//                _SLOT.user_action_log('Press "Isi Saldo"');
-//                if (!mandiriLogin) {
-//                    false_notif('Mohon Maaf|Fitur Isi Ulang Belum Diaktifkan')
-//                    return;
-//                }
-//                if (press!='0') return;
-//                press = '1';
-//                if (bankName=='BNI'){
-//                    if (ableTopupCode=='0000'){
-//                        var _cardData = {
-//                            'balance': balance,
-//                            'card_no': cardNo,
-//                            'bank_type': bankType,
-//                            'imageSource': imageSource,
-//                            'notifSaldo': notif_saldo.text
-//                        }
-//                        my_layer.push(topup_prepaid_denom, {cardData: _cardData});
-//                    } else if (ableTopupCode=='1008'){
-//                        press = 0;
-//                        false_notif('Mohon Maaf|Kartu BNI TapCash Anda Sudah Tidak Aktif\nSilakan Hubungi Bank BNI Terdekat')
-//                    }  else if (ableTopupCode=='5106'){
-//                        press = 0;
-//                        false_notif('Mohon Maaf|Kartu BNI TapCash Anda Tidak Resmi\nSilakan Gunakan Kartu TapCash Yang Lain')
-//                    } else {
-//                        press = 0;
-//                        false_notif('Mohon Maaf|Terjadi Kesalahan Pada Kartu BNI TapCash Anda\nSilakan Gunakan Kartu TapCash Yang Lain')
-//                    }
-//                } else {
-//                    press = 0;
-//                    false_notif('Mohon Maaf|Kartu Prabayar Anda Diterbitkan Oleh Bank Lain ('+bankName+')\nUntuk Sementara Kartu Anda Belum Dapat Digunakan Pada Mesin Ini')
-//                }
-//            }
-//        }
-//    }
+    NextButton{
+        id: topup_button
+        x: 542
+        y: 732
+        visible: !standard_notif_view.visible && !popup_loading.visible
+        anchors.horizontalCenterOffset: 300
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 200
+        anchors.horizontalCenter: parent.horizontalCenter
+        button_text: 'Isi Saldo'
+        modeReverse: true
+        MouseArea{
+            anchors.fill: parent
+            onClicked: {
+                _SLOT.user_action_log('Press "Isi Saldo"');
+                if (!mandiriLogin) {
+                    false_notif('Mohon Maaf|Fitur Isi Ulang Belum Diaktifkan')
+                    return;
+                }
+                if (press!='0') return;
+                press = '1';
+                if (bankName=='BNI'){
+                    if (ableTopupCode=='0000'){
+                        var _cardData = {
+                            'balance': balance,
+                            'card_no': cardNo,
+                            'bank_type': bankType,
+                            'imageSource': imageSource,
+                            'notifSaldo': notif_saldo.text
+                        }
+                        my_layer.push(topup_prepaid_denom, {cardData: _cardData});
+                    } else if (ableTopupCode=='1008'){
+                        press = 0;
+                        false_notif('Mohon Maaf|Kartu BNI TapCash Anda Sudah Tidak Aktif\nSilakan Hubungi Bank BNI Terdekat')
+                    }  else if (ableTopupCode=='5106'){
+                        press = 0;
+                        false_notif('Mohon Maaf|Kartu BNI TapCash Anda Tidak Resmi\nSilakan Gunakan Kartu TapCash Yang Lain')
+                    } else {
+                        press = 0;
+                        false_notif('Mohon Maaf|Terjadi Kesalahan Pada Kartu BNI TapCash Anda\nSilakan Gunakan Kartu TapCash Yang Lain')
+                    }
+                } else {
+                    press = 0;
+                    false_notif('Mohon Maaf|Kartu Prabayar Anda Diterbitkan Oleh Bank Lain ('+bankName+')\nUntuk Sementara Kartu Anda Belum Dapat Digunakan Pada Mesin Ini')
+                }
+            }
+        }
+    }
+
 
     Text {
         id: small_notif
@@ -398,6 +400,8 @@ Base{
         font.family:"Ubuntu"
         font.pixelSize: 20
     }
+
+    */
 
 
     //==============================================================

@@ -19,6 +19,7 @@ Base{
     property var directTopup: undefined
     property var cardData: undefined
     property int stepMode: 0
+    property int cardBalance: 0
     property var totalPrice: 0
     property var globalCart
     property var selectedPayment: undefined
@@ -30,6 +31,13 @@ Base{
     property var bniWallet1: 0
     property var bniWallet2: 0
 
+    property string cancelText: 'BATAL'
+    property string proceedText: 'LANJUT'
+    property bool frameWithButton: false
+
+    property var smallDenomMandiri: '50000'
+    property var midDenomMandiri: '100000'
+    property var highDenomMandiri: '200000'
 
     // By Default Only Can Show 3 Denoms, Adjusted with below properties
     property int miniDenomValue: 10000
@@ -45,7 +53,7 @@ Base{
     Stack.onStatusChanged:{
         if(Stack.status==Stack.Activating){
             if (topupData==undefined) _SLOT.start_kiosk_get_topup_amount();
-            _SLOT.start_get_topup_readiness();
+//            _SLOT.start_get_topup_readiness();
             _SLOT.start_get_device_status();
             _SLOT.start_get_topup_status_instant();
             _SLOT.get_kiosk_price_setting();
@@ -53,13 +61,15 @@ Base{
             abc.counter = timer_value;
             my_timer.start();
             press = '0';
-            denomTopup = undefined
-            provider = undefined
-            globalDetails = undefined
+            cardBalance = 0;
+            denomTopup = undefined;
+            provider = undefined;
+            globalDetails = undefined;
+            frameWithButton = false;
         }
         if(Stack.status==Stack.Deactivating){
-            my_timer.stop()
-            loading_view.close()
+            my_timer.stop();
+//            loading_view.close()
         }
     }
 
@@ -95,9 +105,9 @@ Base{
         }
     }
 
-    function set_selected_payment(p){
-        console.log('set_selected_payment', p);
-        selectedPayment = p;
+    function set_selected_payment(denom, method){
+        console.log('set_selected_payment', denom, method);
+        selectedPayment = method;
         var details = {
             payment: selectedPayment,
             shop_type: shopType,
@@ -105,9 +115,18 @@ Base{
             date: new Date().toLocaleDateString(Qt.locale("id_ID"), Locale.ShortFormat),
             epoch: new Date().getTime()
         }
+        globalCart = {
+            value: denom,
+            provider: provider,
+            admin_fee: adminFee,
+            card_no: cardData.card_no,
+            prev_balance: cardData.balance,
+            bank_type: cardData.bank_type,
+            bank_name: cardData.bank_name,
+        }
         details.qty = 1;
-        details.value = globalCart.value;
-        details.provider = globalCart.provider;
+        details.value = denom;
+        details.provider = provider;
         details.admin_fee = adminFee;
         details.raw = globalCart;
         details.status = '1';
@@ -116,21 +135,22 @@ Base{
                 var get_denom = parseInt(details.value) - parseInt(adminFee);
                 details.denom = get_denom.toString();
                 details.final_balance = parseInt(details.denom) + parseInt(cardData.balance);
-                _payment_method.labelContent = 'Tunai';
-                _nominal.labelContent = 'Rp. ' +  FUNC.insert_dot(get_denom.toString()) + ',-';
-                _total_biaya.labelContent = 'Rp. ' +  FUNC.insert_dot(details.value.toString()) + ',-';
+//                _payment_method.labelContent = 'Tunai';
+//                _nominal.labelContent = 'Rp. ' +  FUNC.insert_dot(get_denom.toString()) + ',-';
+//                _total_biaya.labelContent = 'Rp. ' +  FUNC.insert_dot(details.value.toString()) + ',-';
                 break;
             case 'debit':
                 var total_pay = parseInt(details.value) + parseInt(adminFee);
                 details.denom = details.value;
                 details.final_balance = parseInt(details.denom) + parseInt(cardData.balance);
-                _payment_method.labelContent = 'Kartu Debit';
-                _total_biaya.labelContent = 'Rp. ' +  FUNC.insert_dot(total_pay.toString()) + ',-';
+//                _payment_method.labelContent = 'Kartu Debit';
+//                _total_biaya.labelContent = 'Rp. ' +  FUNC.insert_dot(total_pay.toString()) + ',-';
                 break;
         }
         globalDetails = details;
-        stepMode = 3;
-        press = '0'
+        // Move Layer To Payment Process
+        my_layer.push(mandiri_payment_process, {details: globalDetails});
+
     }
 
     function define_price(p){
@@ -143,10 +163,14 @@ Base{
     function topup_readiness(r){
         console.log('topup_readiness', r);
         var ready = JSON.parse(r)
-        if (ready.mandiri=='AVAILABLE') emoneyAvailable = true;
-        if (ready.bni=='AVAILABLE') tapcashAvailable = true;
         mandiriTopupWallet = parseInt(ready.balance_mandiri);
         bniTopupWallet = parseInt(ready.balance_bni);
+        if (ready.mandiri=='AVAILABLE') {
+            if (mandiriTopupWallet > 0) emoneyAvailable = true;
+        }
+        if (ready.bni=='AVAILABLE') {
+            if (bniTopupWallet > 0) tapcashAvailable = true;
+        }
         //TODO Show This Wallet Into Proper View
         bniWallet1 = ready.bni_wallet_1;
         bniWallet2 = ready.bni_wallet_2;
@@ -185,7 +209,7 @@ Base{
         }
         if (cashEnable && debitEnable){
             stepMode = 2;
-            _nominal.labelContent = 'Rp. ' +  FUNC.insert_dot(globalCart.value.toString()) + ',-';
+//            _nominal.labelContent = 'Rp. ' +  FUNC.insert_dot(globalCart.value.toString()) + ',-';
         } else if (cashEnable && !debitEnable){
             set_selected_payment('cash');
         } else if (!cashEnable && debitEnable){
@@ -209,18 +233,19 @@ Base{
     function get_balance(text){
         console.log('get_balance', text);
         press = '0';
-        standard_notif_view.buttonEnabled = true;
+//        standard_notif_view.buttonEnabled = true;
+        popup_loading.close();
         var result = text.split('|')[1];
         if (result == 'ERROR'){
             back_button.z = 999
-            popup_loading.close();
-            open_preload_notif('Mohon Maaf|Gagal Mendapatkan Saldo, Pastikan Kartu Prabayar Anda Sudah Ditempelkan Pada Reader', 'ulangi');
+            switch_frame('aAsset/insert_card_new.png', 'Anda tidak meletakkan kartu', 'ataupun kartu Anda tidak dapat digunakan', 'closeWindow', false );
             return;
         } else {
             var info = JSON.parse(result);
             var bankName = info.bank_name;
             var ableTopupCode = info.able_topup;
-            if (bankName=='BNI'){
+            cardBalance = parseInt(info.balance);
+            if (bankName=='MANDIRI'){
                 if (ableTopupCode=='0000'){
                     cardData = {
                         balance: info.balance,
@@ -229,23 +254,20 @@ Base{
                         bank_name: info.bank_name,
                     }
                     parse_cardData(cardData);
-                } else if (ableTopupCode=='1008'){
-                    back_button.z = 999
-                    popup_loading.close();
-                    open_preload_notif('Mohon Maaf|Kartu BNI TapCash Anda Sudah Tidak Aktif\nSilakan Hubungi Bank BNI Terdekat', 'coba lagi');
-                } else if (ableTopupCode=='5106'){
-                    back_button.z = 999
-                    popup_loading.close();
-                    open_preload_notif('Mohon Maaf|Kartu BNI TapCash Anda Tidak Resmi\nSilakan Gunakan Kartu TapCash Yang Lain', 'coba lagi');
+//                } else if (ableTopupCode=='1008'){
+//                    back_button.z = 999
+//                    open_preload_notif('Mohon Maaf|Kartu BNI TapCash Anda Sudah Tidak Aktif\nSilakan Hubungi Bank BNI Terdekat', 'coba lagi');
+//                } else if (ableTopupCode=='5106'){
+//                    back_button.z = 999
+//                    open_preload_notif('Mohon Maaf|Kartu BNI TapCash Anda Tidak Resmi\nSilakan Gunakan Kartu TapCash Yang Lain', 'coba lagi');
                 } else {
-                    back_button.z = 999
-                    popup_loading.close();
-                    open_preload_notif('Mohon Maaf|Terjadi Kesalahan Pada Kartu BNI TapCash Anda\nSilakan Gunakan Kartu TapCash Yang Lain', 'coba lagi');
-                }
+//                    back_button.z = 999
+                    switch_frame('aAsset/insert_card_new.png', 'Maaf terjadi kesalahan pada kartu Anda', 'gunakan kartu lainnya', 'closeWindow', false );
+                    return;                }
             } else {
-                back_button.z = 999
-                popup_loading.close();
-                open_preload_notif('Mohon Maaf|Kartu Prabayar Anda Diterbitkan Oleh Bank Lain ('+bankName+')\nUntuk Sementara Kartu Anda Belum Dapat Digunakan Pada Mesin Ini', 'coba lagi');
+//                back_button.z = 999
+                switch_frame('aAsset/insert_card_new.png', 'Anda tidak meletakkan kartu', 'ataupun kartu Anda tidak dapat digunakan', 'closeWindow', false );
+                return;
             }
         }
     }
@@ -256,21 +278,20 @@ Base{
         var last_balance = o.balance
         var bank_name = o.bank_name
         provider = 'TapCash BNI';
-        if (card_no.substring(0, 4) == '6032'){
-            bank_name = 'MANDIRI'
+        if (card_no.substring(0, 4) == '6032' || bank_name == 'MANDIRI'){
             provider = 'e-Money Mandiri';
-        } else if (card_no.substring(0, 4) == '7546'){
-            bank_name = 'BNI'
+        }
+        if (card_no.substring(0, 4) == '7546' || bank_name == 'BNI'){
             provider = 'TapCash BNI';
         }
-        init_topup_denom(bank_name);
-        stepMode = 1;
         shopType = 'topup';
+//        init_topup_denom(bank_name);
+//        stepMode = 1;
         // Assigning Wording Into Text Column
-        _shop_type.labelContent = 'Isi Ulang';
-        _provider.labelContent = provider;
-        _card_no.labelContent = card_no;
-        _last_balance.labelContent = 'Rp. ' +  FUNC.insert_dot(last_balance.toString()) + ',-';;
+//        _shop_type.labelContent = 'Isi Ulang';
+//        _provider.labelContent = provider;
+//        _card_no.labelContent = card_no;
+//        _last_balance.labelContent = 'Rp. ' +  FUNC.insert_dot(last_balance.toString()) + ',-';;
         popup_loading.close();
     }
 
@@ -327,33 +348,46 @@ Base{
     //==============================================================
     //PUT MAIN COMPONENT HERE
 
-    function open_preload_notif(t, b){
-        standard_notif_view.buttonEnabled = false;
-        if (t==undefined){
-            false_notif('Penumpang YTH|Silakan Tempelkan Kartu Prabayar Anda Pada Reader Sebelum Melanjutkan');
-        } else {
-            false_notif(t);
-        }
-        if (b==undefined){
-            standard_notif_view._button_text = 'lanjut';
-        } else {
-            standard_notif_view._button_text = b;
-        }
+    function open_preload_notif(){
+        preload_check_card.open();
     }
 
-    function false_notif(param){
+    function false_notif(closeMode, textSlave){
+        if (closeMode==undefined) closeMode = 'backToMain';
+        if (textSlave==undefined) textSlave = '';
         press = '0';
-        standard_notif_view.z = 100;
-        standard_notif_view._button_text = 'tutup';
-        if (param==undefined){
-            standard_notif_view.show_text = "Mohon Maaf";
-            standard_notif_view.show_detail = "Terjadi Kesalahan Pada Sistem, Mohon Coba Lagi Beberapa Saat";
-        } else {
-            standard_notif_view.show_text = param.split('|')[0];
-            standard_notif_view.show_detail = param.split('|')[1];
-        }
-        standard_notif_view.open();
+        switch_frame('aAsset/smiley_down.png', 'Maaf Sementara Mesin Tidak Dapat Digunakan', textSlave, closeMode, false )
+        return;
     }
+
+    function switch_frame(imageSource, textMain, textSlave, closeMode, smallerText){
+        frameWithButton = false;
+        if (closeMode.indexOf('|') > -1){
+            closeMode = closeMode.split('|')[0];
+            var timer = closeMode.split('|')[1];
+            global_frame.timerDuration = parseInt(timer);
+        }
+        global_frame.imageSource = imageSource;
+        global_frame.textMain = textMain;
+        global_frame.textSlave = textSlave;
+        global_frame.closeMode = closeMode;
+        global_frame.smallerSlaveSize = smallerText;
+        global_frame.withTimer = true;
+        global_frame.open();
+    }
+
+    function switch_frame_with_button(imageSource, textMain, textSlave, closeMode, smallerText){
+        frameWithButton = true;
+        global_frame.imageSource = imageSource;
+        global_frame.textMain = textMain;
+        global_frame.textSlave = textSlave;
+        global_frame.closeMode = closeMode;
+        global_frame.smallerSlaveSize = smallerText;
+        global_frame.withTimer = false;
+        global_frame.open();
+    }
+
+    /*
 
     Rectangle{
         id: main_base
@@ -389,7 +423,6 @@ Base{
         font.pixelSize: 45
         visible: !standard_notif_view.visible && !popup_loading.visible
     }
-
 
     Column{
         id: col_summary
@@ -520,7 +553,6 @@ Base{
         }
     }
 
-
     Text {
         id: small_notif
         x: 0
@@ -557,36 +589,131 @@ Base{
         font.pixelSize: 15
     }
 
+    */
 
-    //==============================================================
+    MainTitle{
+        anchors.top: parent.top
+        anchors.topMargin: 200
+        anchors.horizontalCenter: parent.horizontalCenter
+        show_text: 'Pilih nominal topup'
+        size_: 50
+        color_: "white"
 
-    ConfirmView{
-        id: confirm_view
-        show_text: "Dear Customer"
-        show_detail: "Proceed This ?."
-        z: 99
-        MouseArea{
-            id: ok_confirm_view
-            x: 668; y:691
-            width: 190; height: 50;
-            onClicked: {
+    }
+
+    Text {
+        id: label_current_balance
+        color: "white"
+        text: "Saldo Anda sekarang"
+        anchors.top: parent.top
+        anchors.topMargin: 325
+        anchors.left: parent.left
+        anchors.leftMargin: 350
+        wrapMode: Text.WordWrap
+        verticalAlignment: Text.AlignVCenter
+        horizontalAlignment: Text.AlignHCenter
+        font.family:"Ubuntu"
+        font.pixelSize: 50
+    }
+
+    Text {
+        id: content_current_balance
+        color: "white"
+        text: (cardBalance==0) ? 'Rp 0' : 'Rp ' + FUNC.insert_dot(cardBalance.toString())
+        anchors.right: parent.right
+        anchors.rightMargin: 350
+        anchors.top: parent.top
+        anchors.topMargin: 325
+        wrapMode: Text.WordWrap
+        verticalAlignment: Text.AlignVCenter
+        horizontalAlignment: Text.AlignRight
+        font.family:"Ubuntu"
+        font.pixelSize: 50
+    }
+
+    Column{
+        id: denom_button
+        width: 1220
+        height: 500
+        anchors.top: parent.top
+        anchors.topMargin: 450
+        anchors.horizontalCenter: parent.horizontalCenter
+        spacing: 60
+        MandiriDenomButton{
+            id: small_denom
+            width: parent.width
+            button_text: 'Rp ' + FUNC.insert_dot(smallDenomMandiri)
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('Press smallDenom "'+smallDenomMandiri+'"');
+                    if (press!='0') return;
+                    press = '1';
+                    set_selected_payment(smallDenomMandiri, 'cash');
+                }
+            }
+        }
+        MandiriDenomButton{
+            id: mid_denom
+            width: parent.width
+            button_text: 'Rp ' + FUNC.insert_dot(midDenomMandiri)
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('Press midDenom "'+midDenomMandiri+'"');
+                    if (press!='0') return;
+                    press = '1';
+                    set_selected_payment(midDenomMandiri, 'cash');
+                }
+            }
+        }
+        MandiriDenomButton{
+            id: high_denom
+            width: parent.width
+            button_text: 'Rp ' + FUNC.insert_dot(highDenomMandiri)
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('Press highDenom "'+highDenomMandiri+'"');
+                    if (press!='0') return;
+                    press = '1';
+                    set_selected_payment(highDenomMandiri, 'cash');
+                }
             }
         }
     }
 
-    NotifView{
-        id: notif_view
-        isSuccess: false
-        show_text: "Dear Customer"
-        show_detail: "Please Ensure You have set Your plan correctly."
-        z: 99
-    }
 
-    LoadingView{
-        id:loading_view
-        z: 99
-        show_text: "Finding Flight..."
-    }
+
+    //==============================================================
+
+//    ConfirmView{
+//        id: confirm_view
+//        show_text: "Dear Customer"
+//        show_detail: "Proceed This ?."
+//        z: 99
+//        MouseArea{
+//            id: ok_confirm_view
+//            x: 668; y:691
+//            width: 190; height: 50;
+//            onClicked: {
+//            }
+//        }
+//    }
+
+//    NotifView{
+//        id: notif_view
+//        isSuccess: false
+//        show_text: "Dear Customer"
+//        show_detail: "Please Ensure You have set Your plan correctly."
+//        z: 99
+//    }
+
+//    LoadingView{
+//        id:loading_view
+//        z: 99
+//        show_text: "Finding Flight..."
+//    }
 
     StandardNotifView{
         id: standard_notif_view
@@ -636,6 +763,101 @@ Base{
         id: popup_loading
     }
 
+    GlobalFrame{
+        id: global_frame
+        NextButton{
+            id: cancel_button_global
+            anchors.left: parent.left
+            anchors.leftMargin: 100
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 50
+            button_text: cancelText
+            modeReverse: true
+            visible: frameWithButton
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('Press "BATAL"');
+                    my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
+                }
+            }
+        }
+
+        NextButton{
+            id: next_button_global
+            anchors.right: parent.right
+            anchors.rightMargin: 100
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 50
+            button_text: proceedText
+            modeReverse: true
+            visible: frameWithButton
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('Press "LANJUT"');
+                    if (press!='0') return;
+                    press = '1'
+                    switch(modeButtonPopup){
+                    case 'retrigger_grg':
+                        _SLOT.start_grg_receive_note();
+                        break;
+                    case 'do_topup':
+                        perform_do_topup();
+                        break;
+                    case 'reprint':
+                        _SLOT.start_reprint_global();
+                        break;
+                    case 'check_balance':
+                        _SLOT.start_check_balance();
+                        break;
+                    }
+                    popup_loading.open();
+                }
+            }
+        }
+    }
+
+    PreloadCheckCard{
+        id: preload_check_card
+        NextButton{
+            id: cancel_button_preload
+            anchors.left: parent.left
+            anchors.leftMargin: 100
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 50
+            button_text: 'BATAL'
+            modeReverse: true
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('Press "BATAL"');
+                    my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
+                }
+            }
+        }
+
+        NextButton{
+            id: next_button_preload
+            anchors.right: parent.right
+            anchors.rightMargin: 100
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 50
+            button_text: 'LANJUT'
+            modeReverse: true
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('Press "LANJUT"');
+                    preload_check_card.close();
+                    if (press!='0') return;
+                    press = '1'
+                    popup_loading.open();
+                    _SLOT.start_check_balance();
+                }
+            }
+        }
+    }
 
 
 

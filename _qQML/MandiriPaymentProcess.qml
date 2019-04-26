@@ -20,6 +20,9 @@ Base{
     property bool topupSuccess: false
     property int reprintAttempt: 0
     property var uniqueCode: ''
+    property string cancelText: 'BATAL'
+    property string proceedText: 'LANJUT'
+    property bool frameWithButton: false
     idx_bg: 3
     imgPanel: 'aAsset/cash black.png'
     textPanel: 'Proses Pembayaran'
@@ -39,8 +42,7 @@ Base{
             topupSuccess = false;
             reprintAttempt = 0;
             define_first_notif();
-            //TEST_ONLY
-            //payment_complete('DEBUG_TEST')
+            frameWithButton = false;
         }
         if(Stack.status==Stack.Deactivating){
             my_timer.stop()
@@ -85,6 +87,7 @@ Base{
 
     function topup_result(t){
         console.log('topup_result', t);
+        global_frame.close();
         popup_loading.close();
         abc.counter = 30;
         my_timer.restart();
@@ -93,8 +96,9 @@ Base{
             _SLOT.start_do_topup_bni(slot_topup);
             console.log('do topup action for slot : ', slot_topup)
         } else if (t==undefined||t.indexOf('ERROR') > -1||t=='TOPUP_ERROR'){
-            slave_title.text = 'Silakan Ambil Struk Anda Di Bawah.\nJika Saldo Kartu Prabayar Anda Gagal Terisi, Silakan Hubungi Layanan Pelanggan.';
-            slave_title.visible = true;
+//            slave_title.text = 'Silakan Ambil Struk Anda Di Bawah.\nJika Saldo Kartu Prabayar Anda Gagal Terisi, Silakan Hubungi Layanan Pelanggan.';
+//            slave_title.visible = true;
+            switch_frame('aAsset/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Ambil Struk Transaksi Anda Hubungi Layanan Pelanggan', 'backToMain', true )
         } else {
             var output = t.split('|')
             var topupResponse = output[0]
@@ -104,29 +108,31 @@ Base{
                 details.topup_details = result;
                 cardNo = result.card_no;
                 lastBalance = result.last_balance;
-                card_no_prepaid.text = FUNC.insert_space_four(cardNo);
-                image_prepaid_card.source = "aAsset/tapcash-card.png";
-                notif_saldo.text = "Isi Ulang Berhasil.\nSaldo Kartu TapCash Anda\nRp. "+FUNC.insert_dot(lastBalance)+",-\nAmbil Struk Anda di Bawah."
                 _SLOT.start_store_topup_transaction(JSON.stringify(details));
-                //if (cardNo.substring(0, 4) == '6032'){
-                //  image_prepaid_card.source = "aAsset/emoney-card.png";
-                //  notif_saldo.text = "Isi Ulang Berhasil.\nSaldo Kartu e-Money Anda\nRp. "+FUNC.insert_dot(lastBalance)+",-\nAmbil Struk Anda di Bawah."
-                //} else if (cardNo.substring(0, 4) == '7546'){
-                //  image_prepaid_card.source = "aAsset/tapcash-card.png";
-                //  notif_saldo.text = "Isi Ulang Berhasil.\nSaldo Kartu TapCash Anda\nRp. "+FUNC.insert_dot(lastBalance)+",-\nAmbil Struk Anda di Bawah."
-                //}
-            } else if (topupResponse=='5106'||topupResponse=='5103'){
-                slave_title.text = 'Terdeteksi Kegagalan Pada Proses Isi Ulang Karena Kartu Tidak Sesuai.\nSilakan Ambil Struk Anda Di Bawah dan Hubungi Layanan Pelanggan.';
-                slave_title.visible = true;
-            } else if (topupResponse=='1008'){
-                slave_title.text = 'Terdeteksi Kegagalan Pada Proses Isi Ulang Karena Kartu Sudah Tidak Aktif.\nSilakan Ambil Struk Anda Di Bawah dan Hubungi Layanan Pelanggan.';
-                slave_title.visible = true;
-            } else if (topupResponse=='FFFE'){
-                slave_title.text = 'Terjadi Kegagalan Pada Proses Isi Ulang Karena Kartu Tidak Terdeteksi.\nSilakan Ambil Struk Anda Di Bawah dan Hubungi Layanan Pelanggan.';
-                slave_title.visible = true;
+                switch_frame('aAsset/take_receipt.png', 'Terima Kasih', 'Silakan Ambil Struk Transaksi Anda', 'backToMain', true )
+//                card_no_prepaid.text = FUNC.insert_space_four(cardNo);
+//                image_prepaid_card.source = "aAsset/tapcash-card.png";
+//                notif_saldo.text = "Isi Ulang Berhasil.\nSaldo Kartu TapCash Anda\nRp. "+FUNC.insert_dot(lastBalance)+",-\nAmbil Struk Anda di Bawah."
+//                if (cardNo.substring(0, 4) == '6032'){
+//                  image_prepaid_card.source = "aAsset/emoney-card.png";
+//                  notif_saldo.text = "Isi Ulang Berhasil.\nSaldo Kartu e-Money Anda\nRp. "+FUNC.insert_dot(lastBalance)+",-\nAmbil Struk Anda di Bawah."
+//                } else if (cardNo.substring(0, 4) == '7546'){
+//                  image_prepaid_card.source = "aAsset/tapcash-card.png";
+//                  notif_saldo.text = "Isi Ulang Berhasil.\nSaldo Kartu TapCash Anda\nRp. "+FUNC.insert_dot(lastBalance)+",-\nAmbil Struk Anda di Bawah."
+//                }
+//            } else if (topupResponse=='5106'||topupResponse=='5103'){
+//                slave_title.text = 'Terdeteksi Kegagalan Pada Proses Isi Ulang Karena Kartu Tidak Sesuai.\nSilakan Ambil Struk Anda Di Bawah dan Hubungi Layanan Pelanggan.';
+//                slave_title.visible = true;
+//            } else if (topupResponse=='1008'){
+//                slave_title.text = 'Terdeteksi Kegagalan Pada Proses Isi Ulang Karena Kartu Sudah Tidak Aktif.\nSilakan Ambil Struk Anda Di Bawah dan Hubungi Layanan Pelanggan.';
+//                slave_title.visible = true;
+//            } else if (topupResponse=='FFFE'){
+//                slave_title.text = 'Terjadi Kegagalan Pada Proses Isi Ulang Karena Kartu Tidak Terdeteksi.\nSilakan Ambil Struk Anda Di Bawah dan Hubungi Layanan Pelanggan.';
+//                slave_title.visible = true;
             } else {
-                slave_title.text = 'Silakan Ambil Struk Anda Di Bawah.\nJika Saldo Kartu Prabayar Anda Gagal Terisi, Silakan Hubungi Layanan Pelanggan.';
-                slave_title.visible = true;
+                switch_frame('aAsset/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Ambil Struk Transaksi Anda Hubungi Layanan Pelanggan', 'backToMain', true )
+//                slave_title.text = 'Silakan Ambil Struk Anda Di Bawah.\nJika Saldo Kartu Prabayar Anda Gagal Terisi, Silakan Hubungi Layanan Pelanggan.';
+//                slave_title.visible = true;
             }
         }
         _SLOT.start_sale_print_global();
@@ -165,16 +171,19 @@ Base{
     }
 
     function card_eject_result(r){
-        console.log('card_eject_result', r)
+        console.log('card_eject_result', r);
+        global_frame.close();
         popup_loading.close();
-        abc.counter = 10;
+        abc.counter = 15;
         my_timer.restart();
         if (r.indexOf('ERROR') > -1) {
-            slave_title.text = 'Silakan Ambil Struk Anda Di Bawah.\nJika Kartu Tidak Keluar, Silakan Hubungi Layanan Pelanggan.';
+//            slave_title.text = 'Silakan Ambil Struk Anda Di Bawah.\nJika Kartu Tidak Keluar, Silakan Hubungi Layanan Pelanggan.';
+            switch_frame('aAsset/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Ambil Struk Transaksi Anda Hubungi Layanan Pelanggan', 'backToMain', true )
         }
         if (r.indexOf('SUCCESS') > -1) {
-            var unit = details.qty.toString()
-            slave_title.text = 'Silakan Ambil Struk dan ' + unit + ' pcs Kartu Prabayar Baru Anda Di Bawah.';
+//            var qty = details.qty.toString()
+//            slave_title.text = 'Silakan Ambil Struk dan ' + unit + ' pcs Kartu Prabayar Baru Anda Di Bawah.';
+            switch_frame('aAsset/thumb_ok.png', 'Silakan Ambil Kartu dan Struk Transaksi Anda', 'Terima Kasih', 'backToMain', false )
         }
         _SLOT.start_sale_print_global();
     }
@@ -190,24 +199,30 @@ Base{
         isPaid = true;
 //        abc.counter = 15;
 //        my_timer.restart();
-        arrow_down.visible = false;
+//        arrow_down.visible = false;
 //        arrow_down.anchors.rightMargin = 900;
-        back_button.button_text = 'selesai';
-        back_button.visible = true;
+//        back_button.button_text = 'selesai';
+//        back_button.visible = true;
         switch(details.shop_type){
             case 'shop':
 //                var unit = details.qty.toString() change to details.status
-                var unit = details.status.toString()
-                _SLOT.start_multiple_eject(unit)
-                slave_title.text = 'Sedang Memproses Kartu Prabayar Baru Anda Dalam Beberapa Saat...'
+                var attempt = details.status.toString();
+                var multiply = details.qty.toString();
+                _SLOT.start_multiple_eject(attempt, multiply);
+                var textMain1 = 'Ambil Kartu Prabayar Anda Segera Setelah Keluar Dari Mesin'
+                switch_frame('aAsset/insert_card_new.png', textMain1, '', 'closeWindow|10', false )
+//                slave_title.text = 'Sedang Memproses Kartu Prabayar Baru Anda Dalam Beberapa Saat...'
                 break;
             case 'topup':
 //                open_preload_notif();
 //                modeButtonPopup = 'do_topup';
 //                standard_notif_view._button_text = 'lanjut';
 //                standard_notif_view.buttonEnabled = false;
+                var textMain2 = 'Letakkan kartu e-Money Anda di alat pembaca kartu yang bertanda'
+                var textSlave2 = 'Pastikan kartu Anda tetap berada di alat pembaca kartu sampai transaksi selesai'
+                switch_frame('aAsset/reader_sign.png', textMain2, textSlave2, 'closeWindow|10', false )
                 perform_do_topup();
-                slave_title.text = 'Sedang Memproses Isi Ulang Kartu Prabayar Anda...\nPastikan Kartu Prabayar Anda Masih Menempel Di Reader.'
+//                slave_title.text = 'Sedang Memproses Isi Ulang Kartu Prabayar Anda...\nPastikan Kartu Prabayar Anda Masih Menempel Di Reader.'
                 break;
         }
     }
@@ -218,7 +233,7 @@ Base{
         var grgResult = r.split('|')[1]
         if (grgFunction == 'RECEIVE_GRG'){
             if (grgResult == "ERROR" || grgResult == 'TIMEOUT' || grgResult == 'JAMMED'){
-                false_notif();
+                false_notif('closeWindow', 'Terjadi Kegagalan Pada Bill Acceptor');
                 if (receivedCash > 0){                    
                     print_failed_transaction('cash');
                 }
@@ -226,21 +241,27 @@ Base{
             } else if (grgResult == 'COMPLETE'){
 //                _SLOT.start_dis_accept_mei();
 //                _SLOT.start_store_es_mei();
-                _SLOT.stop_grg_receive_note()
+                _SLOT.stop_grg_receive_note();
                 back_button.visible = false;
+                popup_loading.textMain = 'Harap Tunggu Sebentar';
+                popup_loading.textSlave = 'Memproses Pemyimpanan Uang Anda';
                 popup_loading.open();
-                notif_text = qsTr('Mohon Tunggu, Memproses Penyimpanan Uang Anda.');
+//                notif_text = qsTr('Mohon Tunggu, Memproses Penyimpanan Uang Anda.');
             } else if (grgResult == 'EXCEED'){
-                false_notif('Mohon Maaf|Silakan Hanya Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi.\n(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)');
+//                false_notif('Mohon Maaf|Silakan Hanya Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi.\n(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)');
+//                standard_notif_view.buttonEnabled = false;
+//                standard_notif_view._button_text = 'coba lagi';
                 modeButtonPopup = 'retrigger_grg';
-                standard_notif_view.buttonEnabled = false;
-                standard_notif_view._button_text = 'coba lagi';
+                proceedText = 'COBA LAGI';
+                switch_frame_with_button('aAsset/insert_money.png', 'Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)', 'closeWindow', true );
                 return;
             } else if (grgResult == 'BAD_NOTES'){
-                false_notif('Mohon Maaf|Pastikan Uang Anda Dalam Kondisi Baik Dan Tidak Lusuh.\n(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)');
+//                false_notif('Mohon Maaf|Pastikan Uang Anda Dalam Kondisi Baik Dan Tidak Lusuh.\n(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)');
+//                standard_notif_view.buttonEnabled = false;
+//                standard_notif_view._button_text = 'coba lagi';
                 modeButtonPopup = 'retrigger_grg';
-                standard_notif_view.buttonEnabled = false;
-                standard_notif_view._button_text = 'coba lagi';
+                proceedText = 'COBA LAGI';
+                switch_frame_with_button('aAsset/insert_money.png', 'Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)', 'closeWindow', true );
                 return;
             } else {
                 receivedCash = parseInt(grgResult);
@@ -257,7 +278,7 @@ Base{
             }
         } else if (grgFunction == 'STATUS_GRG'){
             if(grgResult=='ERROR') {
-                false_notif();
+                false_notif('backToMain', 'Terjadi Kegagalan Pada Bill Acceptor');
                 return;
             }
         }
@@ -277,8 +298,10 @@ Base{
                 _SLOT.start_dis_accept_mei();
                 _SLOT.start_store_es_mei();
                 back_button.visible = false;
+                popup_loading.textMain = 'Harap Tunggu Sebentar'
+                popup_loading.textSlave = 'Memproses Pemyimpanan Uang Anda'
                 popup_loading.open();
-                notif_text = qsTr('Mohon Tunggu, Memproses Penyimpanan Uang Anda.');
+//                notif_text = qsTr('Mohon Tunggu, Memproses Penyimpanan Uang Anda.');
             } else {
                 receivedCash = parseInt(meiResult);
             }
@@ -305,7 +328,7 @@ Base{
         }
         var edcFunction = r.split('|')[0]
         var edcResult = r.split('|')[1]
-        if (edcFunction == "SUCCESS") {
+        if (edcFunction.indexOf('SUCCESS') > -1) {
             receivedCash = totalPrice;
             details.payment_details = JSON.parse(r.replace('SUCCESS|', ''));
             details.payment_received = totalPrice;
@@ -446,7 +469,6 @@ Base{
         }
     }
 
-
     Rectangle{
         id: rec_timer
         width:10
@@ -492,7 +514,7 @@ Base{
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 50
         z: 10
-        visible: !popup_loading.visible
+        visible: !popup_loading.visible && !global_frame.visible
         modeReverse: true
 
         MouseArea{
@@ -525,18 +547,38 @@ Base{
         return;
     }
 
-    function false_notif(param){
+    function false_notif(closeMode, textSlave){
+        if (closeMode==undefined) closeMode = 'backToMain';
+        if (textSlave==undefined) textSlave = '';
         press = '0';
-        switch_frame('aAsset/smiley_down.png', 'Maaf Sementara Mesin Tidak Dapat Digunakan', '', 'backToMain', false )
+        switch_frame('aAsset/smiley_down.png', 'Maaf Sementara Mesin Tidak Dapat Digunakan', textSlave, closeMode, false )
         return;
     }
 
     function switch_frame(imageSource, textMain, textSlave, closeMode, smallerText){
+        frameWithButton = false;
+        if (closeMode.indexOf('|') > -1){
+            closeMode = closeMode.split('|')[0];
+            var timer = closeMode.split('|')[1];
+            global_frame.timerDuration = parseInt(timer);
+        }
         global_frame.imageSource = imageSource;
         global_frame.textMain = textMain;
         global_frame.textSlave = textSlave;
         global_frame.closeMode = closeMode;
         global_frame.smallerSlaveSize = smallerText;
+        global_frame.withTimer = true;
+        global_frame.open();
+    }
+
+    function switch_frame_with_button(imageSource, textMain, textSlave, closeMode, smallerText){
+        frameWithButton = true;
+        global_frame.imageSource = imageSource;
+        global_frame.textMain = textMain;
+        global_frame.textSlave = textSlave;
+        global_frame.closeMode = closeMode;
+        global_frame.smallerSlaveSize = smallerText;
+        global_frame.withTimer = false;
         global_frame.open();
     }
 
@@ -862,6 +904,77 @@ Base{
 
     */
 
+
+    MainTitle{
+        anchors.top: parent.top
+        anchors.topMargin: 250
+        anchors.horizontalCenter: parent.horizontalCenter
+        show_text: 'Silakan Masukkan Uang Anda'
+        size_: 50
+        color_: "white"
+
+    }
+
+    Text {
+        id: label_money_in
+        color: "white"
+        text: "Uang Masuk                       :"
+        anchors.top: parent.top
+        anchors.topMargin: 400
+        anchors.left: parent.left
+        anchors.leftMargin: 200
+        wrapMode: Text.WordWrap
+        verticalAlignment: Text.AlignVCenter
+        horizontalAlignment: Text.AlignHCenter
+        font.family:"Ubuntu"
+        font.pixelSize: 50
+    }
+
+    Text {
+        id: content_money_in
+        color: "white"
+        text: (receivedCash==0) ? 'Rp 0' : 'Rp ' + FUNC.insert_dot(receivedCash.toString())
+        anchors.right: parent.right
+        anchors.rightMargin: 350
+        anchors.top: parent.top
+        anchors.topMargin: 400
+        wrapMode: Text.WordWrap
+        verticalAlignment: Text.AlignVCenter
+        horizontalAlignment: Text.AlignRight
+        font.family:"Ubuntu"
+        font.pixelSize: 50
+    }
+
+    Text {
+        id: label_target_money
+        color: "white"
+        text: "Total Pembayaran             :"
+        anchors.top: parent.top
+        anchors.topMargin: 550
+        anchors.left: parent.left
+        anchors.leftMargin: 200
+        wrapMode: Text.WordWrap
+        verticalAlignment: Text.AlignVCenter
+        horizontalAlignment: Text.AlignHCenter
+        font.family:"Ubuntu"
+        font.pixelSize: 50
+    }
+
+    Text {
+        id: content_balance
+        color: "white"
+        text: 'Rp ' + FUNC.insert_dot(totalPrice.toString())
+        anchors.right: parent.right
+        anchors.rightMargin: 350
+        anchors.top: parent.top
+        anchors.topMargin: 550
+        wrapMode: Text.WordWrap
+        verticalAlignment: Text.AlignVCenter
+        horizontalAlignment: Text.AlignRight
+        font.family:"Ubuntu"
+        font.pixelSize: 50
+    }
+
     //==============================================================
 
     StandardNotifView{
@@ -905,9 +1018,58 @@ Base{
 
     GlobalFrame{
         id: global_frame
+        NextButton{
+            id: cancel_button_global
+            anchors.left: parent.left
+            anchors.leftMargin: 100
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 50
+            button_text: cancelText
+            modeReverse: true
+            visible: frameWithButton
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('Press "BATAL"');
+                    my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
+                }
+            }
+        }
+
+        NextButton{
+            id: next_button_global
+            anchors.right: parent.right
+            anchors.rightMargin: 100
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 50
+            button_text: proceedText
+            modeReverse: true
+            visible: frameWithButton
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('Press "LANJUT"');
+                    if (press!='0') return;
+                    press = '1'
+                    switch(modeButtonPopup){
+                    case 'retrigger_grg':
+                        _SLOT.start_grg_receive_note();
+                        break;
+                    case 'do_topup':
+                        perform_do_topup();
+                        break;
+                    case 'reprint':
+                        _SLOT.start_reprint_global();
+                        break;
+                    case 'check_balance':
+                        _SLOT.start_check_balance();
+                        break;
+                    }
+                    popup_loading.open();
+                }
+            }
+        }
     }
-
-
 
 }
 

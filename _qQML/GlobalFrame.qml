@@ -9,10 +9,12 @@ Base{
     property var textSlave: 'Terima Kasih'
     property var imageSource: "aAsset/thumb_ok.png"
     property bool smallerSlaveSize: true
+    property bool withTimer: true
     property int textSize: 40
-    property int showDuration: 5
+    property int timerDuration: 5
+    property int showDuration: timerDuration
     property var closeMode: 'closeWindow' // 'closeWindow', 'backToMain', 'backToPrev'
-//    visible: false
+    visible: false
     opacity: visible ? 1.0 : 0.0
     Behavior on opacity {
         NumberAnimation  { duration: 500 ; easing.type: Easing.InOutQuad  }
@@ -69,7 +71,7 @@ Base{
         id: show_timer
         interval: 1000
         repeat: true
-        running: parent.visible
+        running: parent.visible && withTimer
         onTriggered: {
             showDuration -= 1;
             if (showDuration==0) {
@@ -91,11 +93,12 @@ Base{
 
     function open(){
         globalFrame.visible = true;
-        showDuration = 5;
+        showDuration = timerDuration;
         show_timer.start();
     }
 
     function close(){
         globalFrame.visible = false;
+        show_timer.stop();
     }
 }

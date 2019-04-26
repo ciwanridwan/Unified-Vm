@@ -10,7 +10,7 @@ Base{
     property var imageSource: "aAsset/reader_sign.png"
     property bool smallerSlaveSize: true
     property int textSize: 45
-//    visible: false
+    visible: false
     opacity: visible ? 1.0 : 0.0
     Behavior on opacity {
         NumberAnimation  { duration: 500 ; easing.type: Easing.InOutQuad  }
