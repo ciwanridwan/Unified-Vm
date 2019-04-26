@@ -233,9 +233,9 @@ Base{
         color: "white"
         text: "Nomor kartu Anda"
         anchors.top: parent.top
-        anchors.topMargin: 300
+        anchors.topMargin: 325
         anchors.left: parent.left
-        anchors.leftMargin: 200
+        anchors.leftMargin: 350
         wrapMode: Text.WordWrap
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
@@ -252,7 +252,7 @@ Base{
         anchors.right: parent.right
         anchors.rightMargin: 350
         anchors.top: parent.top
-        anchors.topMargin: 300
+        anchors.topMargin: 325
         wrapMode: Text.WordWrap
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignRight
@@ -262,13 +262,13 @@ Base{
     }
 
     Text {
-        id: card_balance
+        id: label_card_balance
         color: "white"
         text: "Saldo kartu Anda"
         anchors.top: parent.top
         anchors.topMargin: 450
         anchors.left: parent.left
-        anchors.leftMargin: 200
+        anchors.leftMargin: 350
         wrapMode: Text.WordWrap
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
