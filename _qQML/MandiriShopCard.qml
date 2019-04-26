@@ -30,6 +30,8 @@ Base{
     property bool frameWithButton: false
     property var modeButtonPopup: 'check_balance';
 
+    property var defaultItemPrice: 50000
+    property int boxSize: 80
 
     idx_bg: 2
     imgPanel: 'aAsset/beli_kartu.png'
@@ -187,12 +189,13 @@ Base{
         for(var x in items) {
             var item_stock = items[x].stock;
             var item_status = items[x].status;
+            var item_price = items[x].sell_price;
             if (cdReadiness != undefined){
                 if (item_status==101 && cdReadiness.port1 == 'N/A') item_stock = '0';
                 if (item_status==102 && cdReadiness.port2 == 'N/A') item_stock = '0';
                 if (item_status==103 && cdReadiness.port3 == 'N/A') item_stock = '0';
             }
-            if (parseInt(item_stock) > 0) availItems.push({index: x, stock: parseInt(item_stock)});
+            if (parseInt(item_stock) > 0) availItems.push({index: x, stock: parseInt(item_stock), price: parseInt(item_price)});
         }
 
         if (availItems.length == 0){
@@ -201,43 +204,44 @@ Base{
         }
 
         var max = availItems.reduce(function (prev, current) {
-           return (prev.stock > current.stock) ? prev.index : current.index
+           return (prev.stock > current.stock) ? prev : current
         });
-//        productIdx = availItems.indexOf(max);
-        productIdx = parseInt(max);
-        console.log('defined_index', max, productIdx);
+//        productIdx = parseInt(max);
+        productIdx = availItems.indexOf(max);
+        defaultItemPrice = availItems[productIdx].price;
+        console.log('defined_index', max, productIdx, defaultItemPrice);
     }
 
 
-//    Rectangle{
-//        id: rec_timer
-//        width:10
-//        height:10
-//        y:10
-//        color:"transparent"
-//        QtObject{
-//            id:abc
-//            property int counter
-//            Component.onCompleted:{
-//                abc.counter = timer_value
-//            }
-//        }
+    Rectangle{
+        id: rec_timer
+        width:10
+        height:10
+        y:10
+        color:"transparent"
+        QtObject{
+            id:abc
+            property int counter
+            Component.onCompleted:{
+                abc.counter = timer_value
+            }
+        }
 
-//        Timer{
-//            id:my_timer
-//            interval:1000
-//            repeat:true
-//            running:true
-//            triggeredOnStart:true
-//            onTriggered:{
-//                abc.counter -= 1
-//                if(abc.counter < 0){
-//                    my_timer.stop()
-//                    my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }))
-//                }
-//            }
-//        }
-//    }
+        Timer{
+            id:my_timer
+            interval:1000
+            repeat:true
+            running:true
+            triggeredOnStart:true
+            onTriggered:{
+                abc.counter -= 1
+                if(abc.counter < 0){
+                    my_timer.stop()
+                    my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }))
+                }
+            }
+        }
+    }
 
 
     BackButton{
@@ -356,6 +360,13 @@ Base{
                 details.raw = cart;
                 return details;
         }
+    }
+
+    function reset_button_color(){
+        count1.modeReverse = true;
+        count2.modeReverse = true;
+        count3.modeReverse = true;
+        count4.modeReverse = true;
     }
 
 
@@ -527,6 +538,206 @@ Base{
     }
 
 */
+
+
+    MainTitle{
+        anchors.top: parent.top
+        anchors.topMargin: 250
+        anchors.horizontalCenter: parent.horizontalCenter
+        show_text: 'Pilih Jumlah Pembelian Kartu'
+        size_: 50
+        color_: "white"
+
+    }
+
+    Text {
+        id: label_choose_qty
+        color: "white"
+        text: "Pilih jumlah kartu"
+        anchors.top: parent.top
+        anchors.topMargin: 400
+        anchors.left: parent.left
+        anchors.leftMargin: 250
+        wrapMode: Text.WordWrap
+        verticalAlignment: Text.AlignVCenter
+        horizontalAlignment: Text.AlignLeft
+        font.family:"Ubuntu"
+        font.pixelSize: 45
+    }
+
+    Row{
+        id: button_item
+        width: 500
+        height: 100
+        anchors.top: parent.top
+        anchors.topMargin: 475
+        anchors.left: parent.left
+        anchors.leftMargin: 250
+        spacing: 20
+
+        BoxTitle{
+            id: count1
+            boxColor: '#1D294D'
+            modeReverse: true
+            radius: boxSize/2
+            width: boxSize
+            height: boxSize
+            title_text: '1'
+            fontBold: true
+            fontSize: 40
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    itemCount = 1;
+                    reset_button_color();
+                    parent.modeReverse = false;
+                }
+            }
+        }
+
+        BoxTitle{
+            id: count2
+            boxColor: '#1D294D'
+            modeReverse: true
+            radius: boxSize/2
+            width: boxSize
+            height: boxSize
+            title_text: '2'
+            fontBold: true
+            fontSize: 40
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    itemCount = 2;
+                    reset_button_color();
+                    parent.modeReverse = false;
+                }
+            }
+        }
+
+        BoxTitle{
+            id: count3
+            boxColor: '#1D294D'
+            modeReverse: true
+            radius: boxSize/2
+            width: boxSize
+            height: boxSize
+            title_text: '3'
+            fontBold: true
+            fontSize: 40
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    itemCount = 3;
+                    reset_button_color();
+                    parent.modeReverse = false;
+                }
+            }
+        }
+
+        BoxTitle{
+            id: count4
+            boxColor: '#1D294D'
+            modeReverse: true
+            radius: boxSize/2
+            width: boxSize
+            height: boxSize
+            title_text: '4'
+            fontBold: true
+            fontSize: 40
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    itemCount = 4;
+                    reset_button_color();
+                    parent.modeReverse = false;
+                }
+            }
+        }
+
+    }
+
+    Text {
+        id: label_total_qty
+        color: "white"
+        text: "Total Kartu"
+        anchors.right: parent.right
+        anchors.rightMargin: 350
+        anchors.top: parent.top
+        anchors.topMargin: 400
+        wrapMode: Text.WordWrap
+        verticalAlignment: Text.AlignVCenter
+        horizontalAlignment: Text.AlignRight
+        font.family:"Ubuntu"
+        font.pixelSize: 45
+    }
+
+    Text {
+        id: label_total_pay
+        color: "white"
+        text: "Total Bayar"
+        anchors.right: parent.right
+        anchors.rightMargin: 350
+        anchors.top: parent.top
+        anchors.topMargin: 575
+        wrapMode: Text.WordWrap
+        verticalAlignment: Text.AlignVCenter
+        horizontalAlignment: Text.AlignRight
+        font.family:"Ubuntu"
+        font.pixelSize: 45
+    }
+
+    BoxTitle{
+        id: content_item_count
+        boxColor: '#1D294D'
+        modeReverse: true
+        anchors.top: parent.top
+        anchors.topMargin: 475
+        anchors.right: parent.right
+        anchors.rightMargin: 500
+        radius: boxSize/2
+        width: boxSize
+        height: boxSize
+        title_text: itemCount
+        fontBold: true
+        fontSize: 40
+
+    }
+
+    NextButton{
+        id: reset_button
+        width: boxSize*2
+        height: boxSize
+        radius: 20
+        anchors.right: parent.right
+        anchors.rightMargin: 300
+        anchors.top: parent.top
+        anchors.topMargin: 475
+        button_text: 'RESET'
+        modeReverse: true
+        MouseArea{
+            anchors.fill: parent
+            onClicked: {
+                itemCount = 1;
+                count1.modeReverse = false;
+            }
+        }
+    }
+
+    Text {
+        id: content_total_pay
+        color: "white"
+        text: 'Rp ' + FUNC.insert_dot((itemCount * defaultItemPrice).toString())
+        anchors.right: parent.right
+        anchors.rightMargin: 350
+        anchors.top: parent.top
+        anchors.topMargin: 650
+        wrapMode: Text.WordWrap
+        verticalAlignment: Text.AlignVCenter
+        horizontalAlignment: Text.AlignRight
+        font.family:"Ubuntu"
+        font.pixelSize: 50
+    }
 
     //==============================================================
 

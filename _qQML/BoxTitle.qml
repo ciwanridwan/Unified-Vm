@@ -7,12 +7,14 @@ Rectangle{
     color:"transparent"
     property string title_text: 'LANJUT'
     property bool modeReverse: false
+    property bool fontBold: false
     property int fontSize: 30
     property var boxColor: 'darkred'
 
     Rectangle{
         anchors.fill: parent
         color:(modeReverse) ? 'white' : boxColor
+        radius: parent.radius
     }
 
     Text {
