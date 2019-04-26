@@ -7,7 +7,7 @@ Base{
     id: check_prepaid_balance
     property int timer_value: 300
     property var press: '0'
-    property var cardNo: undefined
+    property var cardNo: ''
     property var balance: '0'
     property var topupData: undefined
     property var bankType: undefined
@@ -24,7 +24,7 @@ Base{
             my_timer.start();
             preload_check_card.open();
             press = '0';
-            cardNo = undefined;
+            cardNo = '';
             balance = 0;
             bankType = undefined;
             bankName = undefined;
@@ -66,7 +66,7 @@ Base{
         standard_notif_view.buttonEnabled = true;
         var result = text.split('|')[1];
         if (result == 'ERROR'){
-            cardNo = undefined;
+            cardNo = '';
             balance = 0;
             bankType = undefined;
             switch_frame('aAsset/insert_card_new.png', 'Anda tidak meletakkan kartu', 'ataupun kartu Anda tidak dapat digunakan', 'closeWindow', false );
@@ -140,7 +140,7 @@ Base{
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 50
         button_text: 'BATAL'
-        visible: !popup_loading.visible || !preload_check_card.visible
+        visible: !popup_loading.visible && !preload_check_card.visible
         modeReverse: true
         MouseArea{
             anchors.fill: parent
@@ -159,7 +159,7 @@ Base{
         anchors.bottomMargin: 50
         button_text: 'ISI SALDO'
         modeReverse: true
-        visible: !popup_loading.visible || !preload_check_card.visible
+        visible: !popup_loading.visible && !preload_check_card.visible
         MouseArea{
             anchors.fill: parent
             onClicked: {
@@ -240,12 +240,14 @@ Base{
         horizontalAlignment: Text.AlignHCenter
         font.family:"Ubuntu"
         font.pixelSize: 50
+        visible: !popup_loading.visible && !preload_check_card.visible
     }
 
     Text {
         id: content_card_no
+        width: 600
         color: "white"
-        text: ''
+        text: cardNo
         anchors.right: parent.right
         anchors.rightMargin: 350
         anchors.top: parent.top
@@ -255,6 +257,7 @@ Base{
         horizontalAlignment: Text.AlignRight
         font.family:"Ubuntu"
         font.pixelSize: 50
+        visible: !popup_loading.visible && !preload_check_card.visible
     }
 
     Text {
@@ -270,10 +273,12 @@ Base{
         horizontalAlignment: Text.AlignHCenter
         font.family:"Ubuntu"
         font.pixelSize: 50
+        visible: !popup_loading.visible && !preload_check_card.visible
     }
 
     Text {
         id: content_balance
+        width: 400
         color: "white"
         text: (balance=='0') ? 'Rp 0' : 'Rp ' + FUNC.insert_dot(balance)
         anchors.right: parent.right
@@ -285,6 +290,7 @@ Base{
         horizontalAlignment: Text.AlignRight
         font.family:"Ubuntu"
         font.pixelSize: 50
+        visible: !popup_loading.visible && !preload_check_card.visible
     }
 
     /*
@@ -406,33 +412,6 @@ Base{
 
     //==============================================================
 
-//    ConfirmView{
-//        id: confirm_view
-//        show_text: "Dear Customer"
-//        show_detail: "Proceed This ?."
-//        z: 99
-//        MouseArea{
-//            id: ok_confirm_view
-//            x: 668; y:691
-//            width: 190; height: 50;
-//            onClicked: {
-//            }
-//        }
-//    }
-
-//    NotifView{
-//        id: notif_view
-//        isSuccess: false
-//        show_text: "Dear Customer"
-//        show_detail: "Please Ensure You have set Your plan correctly."
-//        z: 99
-//    }
-
-//    LoadingView{
-//        id:loading_view
-//        z: 99
-//        show_text: "Finding Flight..."
-//    }
 
     StandardNotifView{
         id: standard_notif_view

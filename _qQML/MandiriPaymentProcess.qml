@@ -912,6 +912,7 @@ Base{
         show_text: 'Silakan Masukkan Uang Anda'
         size_: 50
         color_: "white"
+        visible: !global_frame.visible && !popup_loading.visible
 
     }
 
@@ -928,6 +929,7 @@ Base{
         horizontalAlignment: Text.AlignHCenter
         font.family:"Ubuntu"
         font.pixelSize: 50
+        visible: !global_frame.visible && !popup_loading.visible
     }
 
     Text {
@@ -943,6 +945,7 @@ Base{
         horizontalAlignment: Text.AlignRight
         font.family:"Ubuntu"
         font.pixelSize: 50
+        visible: !global_frame.visible && !popup_loading.visible
     }
 
     Text {
@@ -958,6 +961,7 @@ Base{
         horizontalAlignment: Text.AlignHCenter
         font.family:"Ubuntu"
         font.pixelSize: 50
+        visible: !global_frame.visible && !popup_loading.visible
     }
 
     Text {
@@ -973,6 +977,7 @@ Base{
         horizontalAlignment: Text.AlignRight
         font.family:"Ubuntu"
         font.pixelSize: 50
+        visible: !global_frame.visible && !popup_loading.visible
     }
 
     //==============================================================

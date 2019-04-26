@@ -530,6 +530,7 @@ Base{
         show_text: 'Pilih Jumlah Pembelian Kartu'
         size_: 50
         color_: "white"
+        visible: !global_frame.visible && !popup_loading.visible
 
     }
 
@@ -546,6 +547,7 @@ Base{
         horizontalAlignment: Text.AlignLeft
         font.family:"Ubuntu"
         font.pixelSize: 45
+        visible: !global_frame.visible && !popup_loading.visible
     }
 
     Row{
@@ -557,6 +559,7 @@ Base{
         anchors.left: parent.left
         anchors.leftMargin: 250
         spacing: 20
+        visible: !global_frame.visible && !popup_loading.visible
 
         BoxTitle{
             id: count1
@@ -650,9 +653,10 @@ Base{
         anchors.topMargin: 400
         wrapMode: Text.WordWrap
         verticalAlignment: Text.AlignVCenter
-        horizontalAlignment: Text.AlignRight
+        horizontalAlignment: Text.AlignLeft
         font.family:"Ubuntu"
         font.pixelSize: 45
+        visible: !global_frame.visible && !popup_loading.visible
     }
 
     Text {
@@ -665,9 +669,10 @@ Base{
         anchors.topMargin: 575
         wrapMode: Text.WordWrap
         verticalAlignment: Text.AlignVCenter
-        horizontalAlignment: Text.AlignRight
+        horizontalAlignment: Text.AlignLeft
         font.family:"Ubuntu"
         font.pixelSize: 45
+        visible: !global_frame.visible && !popup_loading.visible
     }
 
     BoxTitle{
@@ -684,6 +689,7 @@ Base{
         title_text: itemCount
         fontBold: true
         fontSize: 40
+        visible: !global_frame.visible && !popup_loading.visible
 
     }
 
@@ -698,9 +704,11 @@ Base{
         anchors.topMargin: 475
         button_text: 'RESET'
         modeReverse: true
+        visible: !global_frame.visible && !popup_loading.visible
         MouseArea{
             anchors.fill: parent
             onClicked: {
+                reset_button_color();
                 itemCount = 1;
                 count1.modeReverse = false;
             }
@@ -717,9 +725,10 @@ Base{
         anchors.topMargin: 650
         wrapMode: Text.WordWrap
         verticalAlignment: Text.AlignVCenter
-        horizontalAlignment: Text.AlignRight
+        horizontalAlignment: Text.AlignLeft
         font.family:"Ubuntu"
         font.pixelSize: 50
+        visible: !global_frame.visible && !popup_loading.visible
     }
 
     //==============================================================

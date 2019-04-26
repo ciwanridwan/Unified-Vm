@@ -356,7 +356,7 @@ def check_balance():
     param = QPROX['BALANCE'] + '|'
     response, result = _Command.send_request(param=param, output=_Command.MO_REPORT, wait_for=1.5)
     LOGGER.debug(("check_balance : ", 'native', result))
-    if response == 0 and '|' in result:
+    if response == 0 and len(result) > 4:
         output = {
             'balance': result.split('|')[0],
             'card_no': result.split('|')[1].replace('#', ''),
@@ -368,29 +368,6 @@ def check_balance():
         _Global.NFC_ERROR = ''
         QP_SIGNDLER.SIGNAL_BALANCE_QPROX.emit('BALANCE|' + json.dumps(output))
     else:
-        sleep(1)
-        i = 0
-        while True:
-            i += 1
-            _response, _result = _Command.get_response_with_handle(out=_Command.MO_REPORT)
-            LOGGER.debug(("check_balance : ", 'force', str(_result)))
-            if _response == 0 and '|' in _result:
-                output = {
-                    'balance': _result.split('|')[0],
-                    'card_no': _result.split('|')[1].replace('#', ''),
-                    'bank_type': result.split('|')[2].replace('#', ''),
-                    'bank_name': get_fw_bank(result.split('|')[2].replace('#', '')),
-                    'able_topup': result.split('|')[3].replace('#', ''),
-                }
-                LAST_BALANCE_CHECK = output
-                QP_SIGNDLER.SIGNAL_BALANCE_QPROX.emit('BALANCE|' + json.dumps(output))
-                _Global.NFC_ERROR = ''
-                break
-            if i == 10:
-                # _Global.NFC_ERROR = 'CHECK_BALANCE_ERROR'
-                QP_SIGNDLER.SIGNAL_BALANCE_QPROX.emit('BALANCE|ERROR')
-                break
-            sleep(1)
         QP_SIGNDLER.SIGNAL_BALANCE_QPROX.emit('BALANCE|ERROR')
 
 

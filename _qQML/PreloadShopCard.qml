@@ -11,7 +11,7 @@ Base{
     property var textQuard: 'sehingga, dana yang perlu dibayarkan oleh pembeli = Rp. 50.000 per kartu'
     property var imageSource: "aAsset/reader_sign.png"
     property bool smallerSlaveSize: true
-    property int textSize: 45
+    property int textSize: 40
     visible: false
     opacity: visible ? 1.0 : 0.0
     Behavior on opacity {
@@ -37,7 +37,7 @@ Base{
     Column{
         width: 1600
         height: 500
-        anchors.verticalCenterOffset: 100
+        anchors.verticalCenterOffset: 125
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         spacing: 30
@@ -55,7 +55,7 @@ Base{
         }
         Text{
             text: textSlave
-            horizontalAlignment: Text.AlignHCenter
+            horizontalAlignment: Text.AlignLeft
             width: parent.width
             wrapMode: Text.WordWrap
             font.pixelSize: (smallerSlaveSize) ? textSize-5: textSize
@@ -67,7 +67,7 @@ Base{
         }
         Text{
             text: textRebel
-            horizontalAlignment: Text.AlignHCenter
+            horizontalAlignment: Text.AlignLeft
             width: parent.width
             wrapMode: Text.WordWrap
             font.pixelSize: (smallerSlaveSize) ? textSize-5: textSize
@@ -79,7 +79,7 @@ Base{
         }
         Text{
             text: textQuard
-            horizontalAlignment: Text.AlignHCenter
+            horizontalAlignment: Text.AlignLeft
             width: parent.width
             wrapMode: Text.WordWrap
             font.pixelSize: (smallerSlaveSize) ? textSize-5: textSize
