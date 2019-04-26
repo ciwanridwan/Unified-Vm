@@ -82,7 +82,8 @@ Base{
             bankType = info.bank_type;
             bankName = info.bank_name;
             ableTopupCode = info.able_topup;
-            content_card_no.text = FUNC.insert_space_four(cardNo);
+            var cardNo__ = FUNC.insert_space_four(cardNo)
+            content_card_no.text = cardNo__.substring(0, cardNo__.length-4);
 //            if (bankName == 'MANDIRI'){
 //                image_prepaid_card.source = "aAsset/mandiri_emoney_card.png";
 //                imageSource = "aAsset/mandiri_emoney_card.png";
