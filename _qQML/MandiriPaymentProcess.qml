@@ -141,6 +141,8 @@ Base{
             }
         }
         _SLOT.start_sale_print_global();
+        abc.counter = 7;
+        my_timer.restart();
         // Check Manual Update SAM Saldo Here
         // if (topupSuccess) _SLOT.start_manual_topup_bni();
     }
@@ -195,6 +197,8 @@ Base{
         if (r == 'EJECT|SUCCESS') {
 //            var qty = details.qty.toString()
 //            slave_title.text = 'Silakan Ambil Struk dan ' + unit + ' pcs Kartu Prabayar Baru Anda Di Bawah.';
+            abc.counter = 7;
+            my_timer.restart();
             switch_frame('aAsset/thumb_ok.png', 'Silakan Ambil Kartu dan Struk Transaksi Anda', 'Terima Kasih', 'backToMain', false )
         }
         _SLOT.start_sale_print_global();
