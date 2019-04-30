@@ -57,6 +57,7 @@ Base{
             font.bold: false
             color: 'white'
             verticalAlignment: Text.AlignVCenter
+            horizontalAlignment: Text.AlignHCenter
             font.family:"Ubuntu"
 
         }

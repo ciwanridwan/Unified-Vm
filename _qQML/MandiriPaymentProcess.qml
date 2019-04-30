@@ -245,6 +245,7 @@ Base{
                 back_button.visible = false;
                 popup_loading.textMain = 'Harap Tunggu Sebentar';
                 popup_loading.textSlave = 'Memproses Pemyimpanan Uang Anda';
+                popup_loading.smallerSlaveSize = true;
                 popup_loading.open();
 //                notif_text = qsTr('Mohon Tunggu, Memproses Penyimpanan Uang Anda.');
             } else if (grgResult == 'EXCEED'){
@@ -453,7 +454,7 @@ Base{
         var epoch_string = details.epoch.toString();
         uniqueCode = epoch_string.substring(epoch_string.length-6);
         if (details.payment == 'cash') {
-            totalPrice = parseInt(details.value)
+            totalPrice = parseInt(details.value) * parseInt(details.qty);
             getDenom = totalPrice - adminFee;
             notif_text = 'Masukan Uang Tunai Anda Pada Bill Acceptor Di Bawah';
             _SLOT.start_set_direct_price(totalPrice.toString());
@@ -1059,18 +1060,21 @@ Base{
                     switch(modeButtonPopup){
                     case 'retrigger_grg':
                         _SLOT.start_grg_receive_note();
+                        open_preload_notif();
                         break;
                     case 'do_topup':
                         perform_do_topup();
+                        popup_loading.open();
                         break;
                     case 'reprint':
                         _SLOT.start_reprint_global();
+                        popup_loading.open();
                         break;
                     case 'check_balance':
                         _SLOT.start_check_balance();
+                        popup_loading.open();
                         break;
                     }
-                    popup_loading.open();
                 }
             }
         }

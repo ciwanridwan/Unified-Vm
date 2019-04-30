@@ -33,6 +33,8 @@ Base{
     property var defaultItemPrice: 50000
     property int boxSize: 80
 
+    property bool mainVisible: false
+
     idx_bg: 2
     imgPanel: 'aAsset/beli_kartu.png'
     textPanel: 'Pembelian Kartu Prabayar'
@@ -209,7 +211,7 @@ Base{
 //        productIdx = parseInt(max);
         productIdx = availItems.indexOf(max);
         defaultItemPrice = availItems[productIdx].price;
-        console.log('defined_index', max, productIdx, defaultItemPrice);
+        console.log('defined_index', JSON.stringify(max), productIdx, defaultItemPrice);
     }
 
 
@@ -530,7 +532,7 @@ Base{
         show_text: 'Pilih Jumlah Pembelian Kartu'
         size_: 50
         color_: "white"
-        visible: !global_frame.visible && !popup_loading.visible
+        visible: !global_frame.visible && !popup_loading.visible && mainVisible
 
     }
 
@@ -547,7 +549,7 @@ Base{
         horizontalAlignment: Text.AlignLeft
         font.family:"Ubuntu"
         font.pixelSize: 45
-        visible: !global_frame.visible && !popup_loading.visible
+        visible: !global_frame.visible && !popup_loading.visible && mainVisible
     }
 
     Row{
@@ -559,7 +561,7 @@ Base{
         anchors.left: parent.left
         anchors.leftMargin: 250
         spacing: 20
-        visible: !global_frame.visible && !popup_loading.visible
+        visible: !global_frame.visible && !popup_loading.visible && mainVisible
 
         BoxTitle{
             id: count1
@@ -656,7 +658,7 @@ Base{
         horizontalAlignment: Text.AlignLeft
         font.family:"Ubuntu"
         font.pixelSize: 45
-        visible: !global_frame.visible && !popup_loading.visible
+        visible: !global_frame.visible && !popup_loading.visible && mainVisible
     }
 
     Text {
@@ -672,7 +674,7 @@ Base{
         horizontalAlignment: Text.AlignLeft
         font.family:"Ubuntu"
         font.pixelSize: 45
-        visible: !global_frame.visible && !popup_loading.visible
+        visible: !global_frame.visible && !popup_loading.visible && mainVisible
     }
 
     BoxTitle{
@@ -689,7 +691,7 @@ Base{
         title_text: itemCount
         fontBold: true
         fontSize: 40
-        visible: !global_frame.visible && !popup_loading.visible
+        visible: !global_frame.visible && !popup_loading.visible && mainVisible
 
     }
 
@@ -704,7 +706,7 @@ Base{
         anchors.topMargin: 475
         button_text: 'RESET'
         modeReverse: true
-        visible: !global_frame.visible && !popup_loading.visible
+        visible: !global_frame.visible && !popup_loading.visible && mainVisible
         MouseArea{
             anchors.fill: parent
             onClicked: {
@@ -728,7 +730,7 @@ Base{
         horizontalAlignment: Text.AlignLeft
         font.family:"Ubuntu"
         font.pixelSize: 50
-        visible: !global_frame.visible && !popup_loading.visible
+        visible: !global_frame.visible && !popup_loading.visible && mainVisible
     }
 
     //==============================================================
@@ -830,6 +832,7 @@ Base{
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('Press "LANJUT"');
+                    mainVisible = true;
                     preload_shop_card.close();
                 }
             }

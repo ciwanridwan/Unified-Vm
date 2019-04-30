@@ -94,8 +94,9 @@ def init_grg():
 
 KEY_RECEIVED = 'Received=IDR'
 CODE_JAM = '14439'
-BAD_NOTES = 'acDevReturn:|acReserve:|'
+TIMEOUT_BAD_NOTES = 'acDevReturn:|acReserve:|'
 SMALL_NOTES_NOT_ALLOWED = ['1000', '2000', '5000']
+UNKNOWN_ITEM = 'Received=CNY|Denomination=0|'
 
 
 def start_grg_receive_note():
@@ -190,7 +191,10 @@ def start_receive_note():
                 #     sleep(.25)
                 #     param = GRG["RECEIVE"] + '|'
                 #     _Command.send_request(param=param, output=None)
-            if BAD_NOTES in _result:
+            if TIMEOUT_BAD_NOTES in _result or UNKNOWN_ITEM in _result:
+                if TIMEOUT_BAD_NOTES in _result:
+                    param = GRG["STOP"] + '|'
+                    _Command.send_request(param=param, output=None)
                 GRG_SIGNDLER.SIGNAL_GRG_RECEIVE.emit('RECEIVE_GRG|BAD_NOTES')
                 break
             if CODE_JAM in _result:
@@ -230,7 +234,6 @@ def is_exceed_payment(target, value_in, current_value):
 
 def stop_grg_receive_note():
     # log_book_cash('', get_collected_cash())
-    sleep(1.5)
     _Tools.get_pool().apply_async(stop_receive_note)
 
 

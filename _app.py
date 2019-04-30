@@ -700,15 +700,15 @@ def init_setting():
     setting['db'] = _ConfigParser.get_value('TERMINAL', 'DB')
     setting['display'] = get_screen_resolution()
     setting['devices'] = _Global.get_devices()
-    setting['tid'] = _ConfigParser.get_value('TERMINAL', 'tid')
+    setting['tid'] = _Global.TID
     setting['prepaid'] = _QPROX.BANKS
-    setting['server'] = _ConfigParser.get_value('TERMINAL', 'backend^server')
+    setting['server'] = _Global.BACKEND_URL
     setting['reloadService'] = _Global.RELOAD_SERVICE
     setting['sftp'] = _Global.SFTP
     setting['ftp'] = _Global.FTP
     setting['testUsage'] = _Global.TEST_MODE
     setting['bankConfig'] = _Global.BANKS
-    setting['serviceVersion'] = _Global.SERVICE_VERSION
+    setting['serviceVersion'] = _Global.get_service_version()
     # pprint(setting)
 
 

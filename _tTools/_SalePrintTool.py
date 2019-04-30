@@ -30,7 +30,7 @@ class SPrintToolSignalHandler(QObject):
 
 SPRINTTOOL_SIGNDLER = SPrintToolSignalHandler()
 PATH = os.path.join(sys.path[0], '_pPDF')
-LOGO_PATH = os.path.join(sys.path[0], '_aAsset', 'inacraft_logo.gif')
+LOGO_PATH = os.path.join(sys.path[0], '_aAsset', 'mandiri_logo.gif')
 
 
 def get_paper_size(ls=None):
@@ -53,7 +53,7 @@ class PDF(FPDF):
         # Logo
         self.image(LOGO_PATH, 25, 5, 30)
         # Line break
-        self.ln(SPACING*3)
+        self.ln(SPACING)
         self.set_font(USED_FONT, '', HEADER_FONT_SIZE)
         self.ln(SPACING)
         self.cell(MARGIN_LEFT, HEADER_FONT_SIZE, 'VM ID : '+_KioskService.TID, 0, 0, 'C')

@@ -5,6 +5,7 @@ from _cConfig import _ConfigParser
 from _tTools import _Tools
 from _nNetwork import _NetworkAccess
 from _dDAO import _DAO
+from time import *
 import os
 
 LOGGER = logging.getLogger()
@@ -22,7 +23,22 @@ TEST_MODE = True if _ConfigParser.get_set_value('TERMINAL', 'test^usage', '0') =
 RELOAD_SERVICE = True if _ConfigParser.get_set_value('TERMINAL', 'reload^service', '0') == '1' else False
 TID = _ConfigParser.get_value('TERMINAL', 'tid')
 
-SERVICE_VERSION = open(os.path.join('C:\\', '_SOCKET_', 'SERVICE.VER'), 'r').readlines()[-1].replace('\n', '')
+# SERVICE_VERSION = open(os.path.join('C:\\', '_SOCKET_', 'SERVICE.VER'), 'r').readlines()[-1].replace('\n', '')
+SERVICE_VERSION = 'N/A'
+
+
+def get_service_version():
+    global SERVICE_VERSION
+    ___stat = -1
+    ___resp = None
+    try:
+        # sleep(3)
+        ___stat, ___resp = _NetworkAccess.get_local(SERVICE_URL + '999&param=0')
+        if ___stat == 200:
+            SERVICE_VERSION = ___resp['Response']
+    except Exception as e:
+        LOGGER.warning((___stat, ___resp, e))
+
 
 BNI_TOPUP_AMOUNT = _ConfigParser.get_set_value('QPROX', 'amount^topup', '500000')
 BNI_ACTIVE_WALLET_AMOUNT = 0

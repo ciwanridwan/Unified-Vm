@@ -27,7 +27,7 @@ class PrintToolSignalHandler(QObject):
 
 PRINTTOOL_SIGNDLER = PrintToolSignalHandler()
 PATH = os.path.join(sys.path[0], '_pPDF')
-LOGO_PATH = os.path.join(sys.path[0], 'receipt_logo.gif')
+LOGO_PATH = os.path.join(sys.path[0], 'mandiri_logo.gif')
 
 
 def get_paper_size(ls=None):
