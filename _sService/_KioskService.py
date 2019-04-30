@@ -751,10 +751,11 @@ def store_transaction_global(param, retry=False):
                 K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('PAYMENT_FAILED_CANCEL_TRIGGERED')
                 return
 
+            _total_price = int(GLOBAL_TRANSACTION_DATA['value']) * int(GLOBAL_TRANSACTION_DATA['qty'])
             _param = {
                 'pid': PID_SALE,
                 'name': GLOBAL_TRANSACTION_DATA['provider'],
-                'price': int(GLOBAL_TRANSACTION_DATA['value']),
+                'price': _total_price,
                 'details': param,
                 'status': 1
             }
@@ -792,16 +793,19 @@ def store_transaction_global(param, retry=False):
             _DAO.update_product_stock(_param_stock)
             K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|UPDATE_PRODUCT_STOCK-' + _param_stock['pid'])
             _key = 'SALE_' + _key
+        else:
+            _key = 'TOPUP_' + _key
         __notes = json.dumps(GLOBAL_TRANSACTION_DATA['payment_details']) if len(MEI_HISTORY) == 0 else MEI_HISTORY
+        __total_price = int(_param['price']) * int(_param['qty'])
         __param = {
             'trxid': _trxid,
             'tid': TID,
             'mid': '',
             'pid': _param['pid'],
-            # 'tpid': get_tpid(string=_key), Change To Hardcoded
-            'tpid': '819316acd00b4bf5b153ee7414e727d4',
-            'sale': _param['price'],
-            'amount': _param['price'],
+            # 'tpid': get_tpid(string=_key),
+            'tpid': '713251f9e9694c629147f57b64e79d35' if _key == 'SALE_EMONEY' else 'deeb4e043fcd11e8b4670ed5f89f718b',
+            'sale': __total_price,
+            'amount': __total_price,
             'cardNo': GLOBAL_TRANSACTION_DATA['payment_details'].get('card_no', ''),
             'paymentType': get_payment(GLOBAL_TRANSACTION_DATA['payment']),
             'paymentNotes': __notes,
