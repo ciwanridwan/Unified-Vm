@@ -22,7 +22,9 @@ Base{
     property var uniqueCode: ''
     property string cancelText: 'BATAL'
     property string proceedText: 'LANJUT'
-    property bool frameWithButton: false
+    property bool frameWithButton: false    
+    property int attemptCD: 0
+
     idx_bg: 3
     imgPanel: 'aAsset/cash black.png'
     textPanel: 'Proses Pembayaran'
@@ -41,6 +43,7 @@ Base{
             modeButtonPopup = 'check_balance'
             topupSuccess = false;
             reprintAttempt = 0;
+            attemptCD = 0;
             define_first_notif();
             frameWithButton = false;
         }
@@ -174,13 +177,19 @@ Base{
         console.log('card_eject_result', r);
         global_frame.close();
         popup_loading.close();
-        abc.counter = 15;
+        abc.counter = 30;
         my_timer.restart();
-        if (r.indexOf('ERROR') > -1) {
+        if (r=='EJECT|PARTIAL'){
+            attemptCD -= 1;
+            switch_frame('aAsset/take_card.png', 'Silakan Ambil Kartu Anda', 'Kemudian Tekan Tombol Lanjut', 'closeWindow', true );
+            modeButtonPopup = 'retrigger_card';
+            return;
+        }
+        if (r == 'EJECT|ERROR') {
 //            slave_title.text = 'Silakan Ambil Struk Anda Di Bawah.\nJika Kartu Tidak Keluar, Silakan Hubungi Layanan Pelanggan.';
             switch_frame('aAsset/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Ambil Struk Transaksi Anda Hubungi Layanan Pelanggan', 'backToMain', true )
         }
-        if (r.indexOf('SUCCESS') > -1) {
+        if (r == 'EJECT|SUCCESS') {
 //            var qty = details.qty.toString()
 //            slave_title.text = 'Silakan Ambil Struk dan ' + unit + ' pcs Kartu Prabayar Baru Anda Di Bawah.';
             switch_frame('aAsset/thumb_ok.png', 'Silakan Ambil Kartu dan Struk Transaksi Anda', 'Terima Kasih', 'backToMain', false )
@@ -206,11 +215,12 @@ Base{
         switch(details.shop_type){
             case 'shop':
 //                var unit = details.qty.toString() change to details.status
+                attemptCD = details.qty;
                 var attempt = details.status.toString();
                 var multiply = details.qty.toString();
                 _SLOT.start_multiple_eject(attempt, multiply);
-                var textMain1 = 'Ambil Kartu Prabayar Anda Segera Setelah Keluar Dari Mesin'
-                switch_frame('aAsset/insert_card_new.png', textMain1, '', 'closeWindow|10', false )
+//                var textMain1 = 'Ambil Kartu Prabayar Anda Segera Setelah Keluar Dari Mesin'
+//                switch_frame('aAsset/insert_card_new.png', textMain1, '', 'closeWindow|10', false )
 //                slave_title.text = 'Sedang Memproses Kartu Prabayar Baru Anda Dalam Beberapa Saat...'
                 break;
             case 'topup':
@@ -1068,6 +1078,11 @@ Base{
                         break;
                     case 'reprint':
                         _SLOT.start_reprint_global();
+                        popup_loading.open();
+                        break;
+                    case 'retrigger_card':
+                        var attempt = details.status.toString();
+                        _SLOT.start_multiple_eject(attempt, attemptCD.toString());
                         popup_loading.open();
                         break;
                     case 'check_balance':

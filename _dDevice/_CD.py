@@ -120,27 +120,22 @@ def simply_eject(attempt, multiply):
     try:
         # command = CD_EXEC + " hold " + selected_port
         # Switch To V2
-        for eject in range(int(multiply)):
-            command = CD_EXEC_V2 + " card " + str(attempt)
-            process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
-            output = process.communicate()[0].decode('utf-8').strip().split("\r\n")
-            output = output[0].split(";")
-            response = json.loads(output[0])
-            LOGGER.debug(('simply_eject', eject, 'command', command, 'output', output, 'response', response))
-            if response.get('ec') is not None:
-                if response['ec'] > -1:
-                    if eject+1 == int(multiply):
-                        CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|SUCCESS')
-                    else:
-                        CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|PARTIAL')
-                        sleep(2)
-                        continue
+        command = CD_EXEC_V2 + " card " + str(attempt)
+        process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
+        output = process.communicate()[0].decode('utf-8').strip().split("\r\n")
+        output = output[0].split(";")
+        response = json.loads(output[0])
+        LOGGER.debug(('simply_eject', eject, 'command', command, 'output', output, 'response', response))
+        if response.get('ec') is not None:
+            if response['ec'] > -1:
+                if multiply == '1':
+                    CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|SUCCESS')
                 else:
-                    set_false_output(attempt, 'DEVICE_NOT_OPEN|' + attempt, 'simply_eject')
-                    continue
+                    CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|PARTIAL')
             else:
-                set_false_output(attempt, 'DEVICE_NOT_OPEN|'+attempt, 'simply_eject')
-                continue
+                set_false_output(attempt, 'DEVICE_NOT_OPEN|' + attempt, 'simply_eject')
+        else:
+            set_false_output(attempt, 'DEVICE_NOT_OPEN|' + attempt, 'simply_eject')
     except Exception as e:
         set_false_output(attempt, str(e)+'|'+attempt, 'simply_eject')
 
