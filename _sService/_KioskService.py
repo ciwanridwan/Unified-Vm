@@ -796,7 +796,7 @@ def store_transaction_global(param, retry=False):
         else:
             _key = 'TOPUP_' + _key
         __notes = json.dumps(GLOBAL_TRANSACTION_DATA['payment_details']) if len(MEI_HISTORY) == 0 else MEI_HISTORY
-        __total_price = int(GLOBAL_TRANSACTION_DATA['price']) * int(GLOBAL_TRANSACTION_DATA['qty'])
+        __total_price = int(GLOBAL_TRANSACTION_DATA['value']) * int(GLOBAL_TRANSACTION_DATA['qty'])
         __param = {
             'trxid': _trxid,
             'tid': TID,

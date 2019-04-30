@@ -264,15 +264,16 @@ def sale_print_global(ext='.pdf'):
             else:
                 pdf.ln(tiny_space)
                 pdf.set_font(USED_FONT, '', line_size)
-                price_unit = str(int(int(p['value'])/p['qty']))
+                # price_unit = str(int(int(p['value'])/p['qty']))
                 # sub_total = p['value']
                 # if p['payment'] == 'cash' and p['shop_type'] == 'topup':
                 #     sub_total = str(int(p['value']) - int(p['admin_fee']))
                 #     price_unit = str(int(int(sub_total) / p['qty']))
-                pdf.cell(padding_left, 0, str(p['qty']) + ' x ' + clean_number(price_unit), 0, 0, 'R')
+                pdf.cell(padding_left, 0, str(p['qty']) + ' x ' + clean_number(p['value']), 0, 0, 'R')
                 pdf.ln(extra_size)
                 pdf.set_font(USED_FONT, '', extra_size+2)
-                pdf.cell(0, 0, 'TOTAL: Rp. ' + clean_number(p['value']), 0, 0, 'L')
+                total_pay = str(int(int(p['value']) * int(p['qty'])))
+                pdf.cell(0, 0, 'TOTAL: Rp. ' + clean_number(total_pay), 0, 0, 'L')
         else:
             pdf.ln(tiny_space)
             pdf.set_font(USED_FONT, '', line_size)

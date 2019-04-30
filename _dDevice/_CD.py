@@ -125,7 +125,7 @@ def simply_eject(attempt, multiply):
         output = process.communicate()[0].decode('utf-8').strip().split("\r\n")
         output = output[0].split(";")
         response = json.loads(output[0])
-        LOGGER.debug(('simply_eject', eject, 'command', command, 'output', output, 'response', response))
+        LOGGER.debug(('simply_eject', command, 'output', output, 'response', response))
         if response.get('ec') is not None:
             if response['ec'] > -1:
                 if multiply == '1':

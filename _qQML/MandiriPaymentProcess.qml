@@ -22,7 +22,8 @@ Base{
     property var uniqueCode: ''
     property string cancelText: 'BATAL'
     property string proceedText: 'LANJUT'
-    property bool frameWithButton: false    
+    property bool frameWithButton: false
+    property bool centerOnlyButton: false
     property int attemptCD: 0
 
     idx_bg: 3
@@ -46,6 +47,7 @@ Base{
             attemptCD = 0;
             define_first_notif();
             frameWithButton = false;
+            centerOnlyButton = false;
         }
         if(Stack.status==Stack.Deactivating){
             my_timer.stop()
@@ -181,7 +183,8 @@ Base{
         my_timer.restart();
         if (r=='EJECT|PARTIAL'){
             attemptCD -= 1;
-            switch_frame('aAsset/take_card.png', 'Silakan Ambil Kartu Anda', 'Kemudian Tekan Tombol Lanjut', 'closeWindow', true );
+            switch_frame('aAsset/take_card.png', 'Silakan Ambil Kartu Anda', 'Kemudian Tekan Tombol Lanjut', 'closeWindow|25', true );
+            centerOnlyButton = true;
             modeButtonPopup = 'retrigger_card';
             return;
         }
@@ -1055,12 +1058,12 @@ Base{
         NextButton{
             id: next_button_global
             anchors.right: parent.right
-            anchors.rightMargin: 100
+            anchors.rightMargin: (centerOnlyButton) ? 825 : 100
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 50
+            anchors.bottomMargin: (centerOnlyButton) ? 100 : 50
             button_text: proceedText
             modeReverse: true
-            visible: frameWithButton
+            visible: frameWithButton || centerOnlyButton
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
@@ -1083,6 +1086,7 @@ Base{
                     case 'retrigger_card':
                         var attempt = details.status.toString();
                         _SLOT.start_multiple_eject(attempt, attemptCD.toString());
+                        centerOnlyButton = false;
                         popup_loading.open();
                         break;
                     case 'check_balance':
