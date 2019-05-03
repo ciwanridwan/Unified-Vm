@@ -41,7 +41,7 @@ def get_service_version():
 
 
 BNI_TOPUP_AMOUNT = _ConfigParser.get_set_value('QPROX', 'amount^topup', '500000')
-BNI_ACTIVE_WALLET_AMOUNT = 0
+BNI_ACTIVE_WALLET = 0
 
 CD_PORT_LIST = {
     '101': CD_PORT1,
@@ -138,10 +138,20 @@ FTP = {
 
 }
 
+KA_PIN1 = _ConfigParser.get_value('QPROX', 'ka^pin1')
+KA_PIN2 = _ConfigParser.get_value('QPROX', 'ka^pin2')
+KL_PIN = _ConfigParser.get_value('QPROX', 'kl^pin')
+KA_NIK = _ConfigParser.get_set_value('QPROX', 'ka^nik', '2345')
+
 # WALLET STATUS
 # Assigned From QPROX Module
-MANDIRI_WALLET = 0
-MANDIRI_ACTIVE = 0
+MANDIRI_WALLET_1 = 0
+MANDIRI_WALLET_2 = 0
+MANDIRI_ACTIVE_WALLET = 0
+MANDIRI_ACTIVE = int(_ConfigParser.get_set_value('QPROX', 'mandiri^active^slot', '1'))
+MANDIRI_NO_1 = ''
+MANDIRI_NO_2 = ''
+
 BNI_SAM_1_WALLET = 0
 BNI_SAM_2_WALLET = 0
 BNI_ACTIVE = int(_ConfigParser.get_set_value('QPROX', 'bni^active^slot', '1'))
@@ -242,6 +252,33 @@ def upload_device_state(device, status):
         return False
     except Exception as e:
         LOGGER.warning(("upload_device_state : ", e))
+        return False
+
+
+def start_upload_mandiri_wallet():
+    _Tools.get_pool().apply_async(upload_mandiri_wallet)
+
+
+def upload_mandiri_wallet():
+    try:
+        param = {
+            'bank_name': 'MANDIRI',
+            'active_wallet': MANDIRI_ACTIVE,
+            'bank_tid': TID_MAN,
+            'bank_mid': MID_MAN,
+            'wallet_1': MANDIRI_WALLET_1,
+            "wallet_2": MANDIRI_WALLET_2,
+            "card_no_1": MANDIRI_NO_1,
+            "card_no_2": MANDIRI_NO_2
+        }
+        status, response = _NetworkAccess.post_to_url(BACKEND_URL + 'update/wallet-state', param)
+        LOGGER.info(("upload_mandiri_wallet : ", response, str(param)))
+        if status == 200 and response['result'] == 'OK':
+            return True
+        else:
+            return False
+    except Exception as e:
+        LOGGER.warning(("upload_mandiri_wallet : ", e))
         return False
 
 

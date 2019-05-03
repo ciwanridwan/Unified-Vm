@@ -178,9 +178,9 @@ class SlotHandler(QObject):
         _QPROX.start_check_balance()
     start_check_balance = pyqtSlot()(start_check_balance)
 
-    def start_top_up(self, amount):
-        _QPROX.start_top_up(amount)
-    start_top_up = pyqtSlot(str)(start_top_up)
+    def start_top_up_mandiri(self, amount, trxid):
+        _QPROX.start_top_up_mandiri(amount, trxid)
+    start_top_up_mandiri = pyqtSlot(str, str)(start_top_up_mandiri)
 
     def start_ka_info(self):
         _QPROX.start_ka_info()

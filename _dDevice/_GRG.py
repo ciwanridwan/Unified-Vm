@@ -239,11 +239,11 @@ def stop_grg_receive_note():
 
 def stop_receive_note():
     global COLLECTED_CASH, CASH_HISTORY, IS_RECEIVING
+    IS_RECEIVING = False
     try:
         param = GRG["STOP"] + '|'
         response, result = _Command.send_request(param=param, output=None)
         if response == 0:
-            IS_RECEIVING = False
             cash_received = {
                 'history': get_cash_history(),
                 'total': get_collected_cash()

@@ -228,8 +228,8 @@ def machine_summary():
         'cd1_error': _Global.CD1_ERROR,
         'cd2_error': _Global.CD2_ERROR,
         'cd3_error': _Global.CD3_ERROR,
-        'mandiri_wallet': str(_Global.MANDIRI_WALLET),
-        'bni_wallet': str(_Global.BNI_ACTIVE_WALLET_AMOUNT),
+        'mandiri_wallet': str(_Global.MANDIRI_ACTIVE_WALLET),
+        'bni_wallet': str(_Global.BNI_ACTIVE_WALLET),
         'bri_wallet': str(_Global.BRI_WALLET),
         'bca_wallet': str(_Global.BCA_WALLET),
         'dki_wallet': str(_Global.DKI_WALLET),
@@ -921,24 +921,26 @@ def save_cash_local(amount, mode='normal'):
         return False
 
 
-def first_init_call():
-    LOGGER.info(('first_init_call', 'START'))
+def reset_db_record():
+    LOGGER.info(('reset_db_record', 'START'))
     try:
-        _DAO.flush_table('TopUpRecords')
+        # _DAO.flush_table('TopUpRecords', ' tid <> "'+_Global.TID+'" ')
+        # time.sleep(1)
+        _DAO.flush_table('Receipts', ' tiboxId <> "'+_Global.TID+'" ')
         time.sleep(1)
-        _DAO.flush_table('Receipts')
+        _DAO.flush_table('Settlement', ' tid <> "'+_Global.TID+'" AND status NOT LIKE "%EDC%" ')
         time.sleep(1)
-        _DAO.flush_table('Settlement')
+        _DAO.flush_table('Cash', ' tid <> "'+_Global.TID+'" ')
+        # time.sleep(1)
+        # _DAO.flush_table('Product')
         time.sleep(1)
-        _DAO.flush_table('Cash')
+        _DAO.flush_table('Transactions', ' tid <> "'+_Global.TID+'" ')
         time.sleep(1)
-        _DAO.flush_table('Product')
-        time.sleep(1)
-        _DAO.flush_table('Transactions')
-        LOGGER.info(('first_init_call', 'FINISH'))
+        _DAO.flush_table('TransactionFailure', ' tid <> "'+_Global.TID+'" ')
+        LOGGER.info(('reset_db_record', 'FINISH'))
         return 'FIRST_INIT_CLEANUP_SUCCESS'
     except Exception as e:
-        LOGGER.warning(('first_init_call', str(e)))
+        LOGGER.warning(('reset_db_record', str(e)))
         return 'FIRST_INIT_CLEANUP_FAILED'
 
 

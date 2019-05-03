@@ -184,6 +184,7 @@ Base{
         abc.counter = 30;
         my_timer.restart();
         if (r=='EJECT|PARTIAL'){
+            press = '0';
             attemptCD -= 1;
             switch_frame('aAsset/take_card.png', 'Silakan Ambil Kartu Anda', 'Kemudian Tekan Tombol Lanjut', 'closeWindow|25', true );
             centerOnlyButton = true;
@@ -279,7 +280,7 @@ Base{
 //                standard_notif_view._button_text = 'coba lagi';
                 modeButtonPopup = 'retrigger_grg';
                 proceedText = 'COBA LAGI';
-                switch_frame_with_button('aAsset/insert_money.png', 'Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)', 'closeWindow', true );
+                switch_frame_with_button('aAsset/insert_money.png', 'Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)', 'closeWindow|30', true );
                 return;
             } else {
                 receivedCash = parseInt(grgResult);
@@ -451,7 +452,7 @@ Base{
         var amount = getDenom.toString();
         var structId = details.shop_type + details.epoch.toString();
         if (provider.indexOf('Mandiri') > -1 || cardNo.substring(0, 4) == '6032'){
-            _SLOT.start_top_up(amount);
+            _SLOT.start_top_up_mandiri(amount, structId);
         } else if (provider.indexOf('BNI') > -1 || cardNo.substring(0, 4) == '7546'){
             _SLOT.start_top_up_bni(amount, structId);
         }

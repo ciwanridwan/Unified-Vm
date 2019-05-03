@@ -257,6 +257,8 @@ def send_request(param=None, output=None, responding=True, flushing=MO_STATUS, w
         # {"Result":"0","Command":"000","Parameter":"com4","Response":null,"ErrorDesc":"Sukses"}
         if ___resp.get('Command') == ___cmd and ___resp.get('Parameter') == ___param:
             ___output = ___resp.get('Response') if ___resp.get('Response') is not None else ___resp.get('Result')
+            # if output is None:
+            #     ___output = ___resp.get('Result')
             return 0, ___output
         else:
             return -1, json.dumps(___resp)

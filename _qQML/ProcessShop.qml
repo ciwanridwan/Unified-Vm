@@ -409,7 +409,7 @@ Base{
         var amount = getDenom.toString();
         var structId = details.shop_type + details.epoch.toString();
         if (provider.indexOf('Mandiri') > -1 || cardNo.substring(0, 4) == '6032'){
-            _SLOT.start_top_up(amount);
+            _SLOT.start_top_up_mandiri(amount);
         } else if (provider.indexOf('BNI') > -1 || cardNo.substring(0, 4) == '7546'){
             _SLOT.start_top_up_bni(amount, structId);
         }

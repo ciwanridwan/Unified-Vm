@@ -355,12 +355,7 @@ def handle_tasks(tasks):
                 result = 'FAILED_EXECUTED_VM_ON_USED'
             update_task(task, result)
         if task['taskName'] == 'RESET_DB':
-            result = 'DISABLED_FOR_TEST_MODE'
-            if not _Global.TEST_MODE:
-                if IDLE_MODE is True:
-                    result = _KioskService.first_init_call()
-                else:
-                    result = 'FAILED_EXECUTED_VM_ON_USED'
+            result = _KioskService.reset_db_record()
             update_task(task, result)
         if task['taskName'] == 'DO_TOPUP_BNI_1' or 'DO_TOPUP_BNI_2':
             _slot = int(task['taskName'][-1])

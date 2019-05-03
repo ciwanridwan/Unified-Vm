@@ -273,37 +273,31 @@ Port, Slot, PIN SAM, Institution, Terminal, PIN KA, PIN KL,
 COM1, 01, 0123456789abcdef, 00010002, 20010203, 20010203
 '''
 
-KA_PIN1 = _ConfigParser.get_value('QPROX', 'ka^pin1')
-KA_PIN2 = _ConfigParser.get_value('QPROX', 'ka^pin2')
-KL_PIN = _ConfigParser.get_value('QPROX', 'kl^pin')
-KA_NIK = _ConfigParser.get_set_value('QPROX', 'ka^nik', '2345')
 
-
-def auth_ka(mode='KA1'):
+def auth_ka():
     global INIT_TOPUP_MANDIRI
     if len(INIT_LIST) == 0:
         LOGGER.warning(('auth_ka', 'INIT_LIST', str(INIT_LIST)))
         QP_SIGNDLER.SIGNAL_AUTH_QPROX.emit('AUTH_KA|ERROR')
         _Global.NFC_ERROR = 'EMPTY_INIT_LIST'
         return
-    _slot = '1'
-    _ka_pin = KA_PIN1
-    if mode != 'KA1':
-        _slot = '2'
-        _ka_pin = KA_PIN2
-    param = QPROX['AUTH'] + '|' + QPROX_PORT + '|' + _slot + '|' + BANKS[0]['SAM'] + '|' + BANKS[0]['MID'] + '|' \
-            + BANKS[0]['TID'] + '|' + _ka_pin + '|' + KL_PIN
+    _slot = str(_Global.MANDIRI_ACTIVE)
+    _ka_pin = _Global.KA_PIN1
+    if _slot == '2':
+        _ka_pin = _Global.KA_PIN2
+    param = QPROX['AUTH'] + '|' + QPROX_PORT + '|' + _slot + '|' + BANKS[0]['SAM'] + '|' + BANKS[0]['MID'] + '|' + \
+            BANKS[0]['TID'] + '|' + _ka_pin + '|' + _Global.KL_PIN
     response, result = _Command.send_request(param=param, output=None)
-    LOGGER.debug(("auth_ka : ", result))
-    print('pyt: auth_ka mandiri : ', result)
+    LOGGER.debug(("auth_ka : ", _slot, result))
+    # print('pyt: auth_ka mandiri : ', result)
     if response == 0:
         INIT_TOPUP_MANDIRI = True
-        ka_info()
+        ka_info_mandiri(slot=_slot)
         QP_SIGNDLER.SIGNAL_AUTH_QPROX.emit('AUTH_KA|SUCCESS')
-        # # print('pyt: auth_ka NIK : ', result)
+        # print('pyt: auth_ka NIK : ', result)
         # if KA_NIK in result:
         #     INIT_TOPUP_MANDIRI = True
-        #     ka_info()
+        #     ka_info_mandiri()
         #     QP_SIGNDLER.SIGNAL_AUTH_QPROX.emit('AUTH_KA|SUCCESS')
         # else:
         #     QP_SIGNDLER.SIGNAL_AUTH_QPROX.emit('AUTH_KA|'+str(result))
@@ -371,38 +365,89 @@ def check_balance():
         QP_SIGNDLER.SIGNAL_BALANCE_QPROX.emit('BALANCE|ERROR')
 
 
-def start_top_up(amount):
-    _Tools.get_pool().apply_async(top_up, (amount,))
+def start_top_up_mandiri(amount, trxid):
+    _Tools.get_pool().apply_async(top_up_mandiri, (amount, trxid,))
 
 '''
 OUTPUT = Balance, Report SAM, Report KA, Card Number
 '''
 
 
-def top_up(amount):
+def top_up_mandiri(amount, trxid='', slot=None):
     if len(INIT_LIST) == 0:
-        LOGGER.warning(('top_up', 'INIT_LIST', str(INIT_LIST)))
+        LOGGER.warning(('top_up_mandiri', 'INIT_LIST', str(INIT_LIST)))
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
         _Global.NFC_ERROR = 'EMPTY_INIT_LIST'
         return
+    if slot is None:
+        slot = str(_Global.MANDIRI_ACTIVE)
     param = QPROX['TOPUP'] + '|' + str(amount)
-    response, result = _Command.send_request(param=param, output=_Command.MO_REPORT)
-    LOGGER.debug(("top_up", result))
-    if response == 0 and '|' in result:
-        result = result.replace('#', '')
+    _response, _result = _Command.send_request(param=param, output=_Command.MO_REPORT)
+    if _response == 0 and '|' in _result:
+        __data = _result.split('|')
+        __status = __data[0]
+        __remarks = ''
+        if __status == '0000':
+            __remarks = __data[5]
+        if __status in ERROR_TOPUP.keys():
+            __remarks += '|'+ERROR_TOPUP[__status]
+        # status='0000' -> success
+        # samCardNo='7546130000013640'
+        # samPrevBalance='100000'
+        # samLastBalance='90000'
+        # reportSAM='75461300000136407546130000013640010002EE0003520000647A0F127A0EAE2D944C9D04B5E8816DCE7F381E8480010701000009000009000007010002EE00000088889999E7C0A8568C598500AB3DFE1320FCBDE369D72A9D48B835AB00035204B5E8816D04B5E8816DCE7F380000090000090000754646000000159675464600000015965017CE0054DB8D88'
+        # topupCardNo='7546460000001596'
+        # topupPrevBalance='1000'
+        # topupLastBalance='11000'
+        # 0000| -> 0
+        # 7546000001023442| -> 1
+        # 556900| -> 2
+        # 556899| -> 3
+        # 1| -> 4
+        # 75460000010567757546000001056775010C79B40C81840007D00F42400F3A702BA49F3600B6FFC692431D360F424001070100005A00002F000007010C79B40007D0888899996551465F2B1393685E20873C706ED28A2DB9825BF242CC3F0C818400B6FFC69200B6FFC692431D3600005A00002F000075460000000000480000000000000048E7AADAEBF223F5C4|
+        # 7546000001056775| -> 6
+        # 8912| -> 7
+        # 8913 -> 8
+        # topup_last_balance = str(int(__data[2].lstrip('0')) + int(amount))
+        __samLastBalance = __data[3].lstrip('0')
+        __report_sam = __data[5]
+        # if __status == 'FFFE' and __data[2].lstrip('0') == __data[3].lstrip('0'):
+        #     # __samLastBalance = str(int(__data[2].lstrip('0')) - int(amount))
+        #     __report_sam = 'CARD_NOT_EXIST'
         output = {
-            'last_balance': result.split('|')[0],
-            'report_sam': result.split('|')[1],
-            'report_ka': result.split('|')[2],
-            'card_no': result.split('|')[3],
+            'last_balance': __data[8].lstrip('0'),
+            'report_sam': __report_sam.split('#')[1],
+            'card_no': __data[6],
+            'report_ka': __report_sam.split('#')[0],
             'bank_id': '1',
             'bank_name': 'MANDIRI',
         }
         # Update Local Mandiri Wallet
-        _Global.MANDIRI_WALLET = _Global.MANDIRI_WALLET - int(amount)
-        LOGGER.info(('top_up_mandiri', str(output), result))
+        if slot == '1':
+            _Global.MANDIRI_WALLET_1 = _Global.MANDIRI_WALLET_1 - int(amount)
+            _Global.MANDIRI_ACTIVE_WALLET = _Global.MANDIRI_WALLET_1
+        if slot == '2':
+            _Global.MANDIRI_WALLET_2 = _Global.MANDIRI_WALLET_2 - int(amount)
+            _Global.MANDIRI_ACTIVE_WALLET = _Global.MANDIRI_WALLET_2
+        LOGGER.info(('top_up_mandiri', slot, str(output), _result))
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|' + json.dumps(output))
+        param = {
+            'trxid': trxid,
+            'samCardNo': __data[1],
+            'samCardSlot': slot,
+            'samPrevBalance': __data[2].lstrip('0'),
+            'samLastBalance': __samLastBalance,
+            'topupCardNo': __data[6],
+            'topupPrevBalance': __data[7].lstrip('0'),
+            'topupLastBalance': __data[8].lstrip('0'),
+            'status': __status,
+            'remarks': __remarks,
+        }
+        _Global.store_upload_sam_audit(param)
+        # Update to server
+        _Global.upload_mandiri_wallet()
     else:
+        LOGGER.warning(("top_up_mandiri", slot, _result))
         _Global.NFC_ERROR = 'TOPUP_MANDIRI_ERROR'
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
 
@@ -440,11 +485,11 @@ def get_bni_wallet_status(upload=True):
                 break
             sleep(1)
         if _Global.BNI_ACTIVE == 1:
-            _Global.BNI_ACTIVE_WALLET_AMOUNT = _Global.BNI_SAM_1_WALLET
+            _Global.BNI_ACTIVE_WALLET = _Global.BNI_SAM_1_WALLET
             # BNI_TOPUP_AMOUNT = _Global.BNI_SAM_1_WALLET
             LOGGER.info(('get_bni_wallet_status', str(_Global.BNI_ACTIVE), str(_Global.BNI_SAM_1_WALLET)))
         if _Global.BNI_ACTIVE == 2:
-            _Global.BNI_ACTIVE_WALLET_AMOUNT = _Global.BNI_SAM_2_WALLET
+            _Global.BNI_ACTIVE_WALLET = _Global.BNI_SAM_2_WALLET
             # BNI_TOPUP_AMOUNT = _Global.BNI_SAM_2_WALLET
             LOGGER.info(('get_bni_wallet_status', str(_Global.BNI_ACTIVE), str(_Global.BNI_SAM_2_WALLET)))
         if upload is True:
@@ -460,13 +505,13 @@ def update_bni_wallet(slot, amount, last_balance=None):
             _Global.BNI_SAM_1_WALLET = _Global.BNI_SAM_1_WALLET - int(amount)
         else:
             _Global.BNI_SAM_1_WALLET = int(last_balance)
-        _Global.BNI_ACTIVE_WALLET_AMOUNT = _Global.BNI_SAM_1_WALLET
+        _Global.BNI_ACTIVE_WALLET = _Global.BNI_SAM_1_WALLET
     if slot == 2:
         if last_balance is None:
             _Global.BNI_SAM_2_WALLET = _Global.BNI_SAM_2_WALLET - int(amount)
         else:
             _Global.BNI_SAM_2_WALLET = int(last_balance)
-        _Global.BNI_ACTIVE_WALLET_AMOUNT = _Global.BNI_SAM_2_WALLET
+        _Global.BNI_ACTIVE_WALLET = _Global.BNI_SAM_2_WALLET
     # Do Upload To Server
     _Global.upload_bni_wallet()
 
@@ -477,6 +522,7 @@ ERROR_TOPUP = {
     '1008': 'ERROR_INACTIVECARD',
     'FFFE': 'CARD_NOT_EXIST',
     '1004': 'PROCESS_TIMEOUT',
+    'FFFD': 'PROCESS_NOT_FINISHED',
 }
 
 
@@ -536,7 +582,7 @@ def top_up_bni(amount, trxid, slot=None):
             }
             update_bni_wallet(slot, amount, __samLastBalance)
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit(__status+'|'+json.dumps(output))
-            LOGGER.info(('top_up_bni', str(output)))
+            LOGGER.info(('top_up_bni', trxid, slot, str(output)))
             param = {
                 'trxid': trxid,
                 'samCardNo': __data[1],
@@ -552,56 +598,56 @@ def top_up_bni(amount, trxid, slot=None):
             _Global.store_upload_sam_audit(param)
             _Global.TRIGGER_MANUAL_TOPUP = True
         else:
-            i = 0
-            while True:
-                i += 1
-                _response, _result = _Command.get_response_with_handle(out=_Command.MO_REPORT)
-                LOGGER.debug(("check_balance : ", 'force', str(_result)))
-                __remarks = ''
-                if _response == 0 and '|' in _result:
-                    _result = _result.replace('#', '')
-                    __data = _result.split('|')
-                    __status = __data[0]
-                    if __status == '0000':
-                        __remarks = __data[5]
-                    if __status in ERROR_TOPUP.keys():
-                        __remarks = ERROR_TOPUP[__status]
-                    __samLastBalance = __data[3].lstrip('0')
-                    __report_sam = __data[5]
-                    if __status == 'FFFE' and __data[2].lstrip('0') == __data[3].lstrip('0'):
-                        # __samLastBalance = str(int(__data[2].lstrip('0')) - int(amount))
-                        __report_sam = 'CARD_NOT_EXIST'
-                    output = {
-                        'last_balance': __data[8].lstrip('0'),
-                        'report_sam': __report_sam,
-                        'card_no': __data[6],
-                        'report_ka': 'N/A',
-                        'bank_id': '2',
-                        'bank_name': 'BNI',
-                    }
-                    update_bni_wallet(slot, amount, __samLastBalance)
-                    QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit(__status + '|' + json.dumps(output))
-                    LOGGER.info(('top_up_bni', str(output)))
-                    param = {
-                        'trxid': trxid,
-                        'samCardNo': __data[1],
-                        'samCardSlot': slot,
-                        'samPrevBalance': __data[2].lstrip('0'),
-                        'samLastBalance': __samLastBalance,
-                        'topupCardNo': __data[6],
-                        'topupPrevBalance': __data[7].lstrip('0'),
-                        'topupLastBalance': __data[8].lstrip('0'),
-                        'status': __status,
-                        'remarks': __remarks,
-                    }
-                    _Global.store_upload_sam_audit(param)
-                    _Global.TRIGGER_MANUAL_TOPUP = True
-                    break
-                if i == 10:
-                    # _Global.NFC_ERROR = 'CHECK_BALANCE_ERROR'
-                    QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
-                    break
-                sleep(1)
+            # i = 0
+            # while True:
+            #     i += 1
+            #     _response, _result = _Command.get_response_with_handle(out=_Command.MO_REPORT)
+            #     LOGGER.debug(("check_balance : ", 'force', str(_result)))
+            #     __remarks = ''
+            #     if _response == 0 and '|' in _result:
+            #         _result = _result.replace('#', '')
+            #         __data = _result.split('|')
+            #         __status = __data[0]
+            #         if __status == '0000':
+            #             __remarks = __data[5]
+            #         if __status in ERROR_TOPUP.keys():
+            #             __remarks = ERROR_TOPUP[__status]
+            #         __samLastBalance = __data[3].lstrip('0')
+            #         __report_sam = __data[5]
+            #         if __status == 'FFFE' and __data[2].lstrip('0') == __data[3].lstrip('0'):
+            #             # __samLastBalance = str(int(__data[2].lstrip('0')) - int(amount))
+            #             __report_sam = 'CARD_NOT_EXIST'
+            #         output = {
+            #             'last_balance': __data[8].lstrip('0'),
+            #             'report_sam': __report_sam,
+            #             'card_no': __data[6],
+            #             'report_ka': 'N/A',
+            #             'bank_id': '2',
+            #             'bank_name': 'BNI',
+            #         }
+            #         update_bni_wallet(slot, amount, __samLastBalance)
+            #         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit(__status + '|' + json.dumps(output))
+            #         LOGGER.info(('top_up_bni', str(output)))
+            #         param = {
+            #             'trxid': trxid,
+            #             'samCardNo': __data[1],
+            #             'samCardSlot': slot,
+            #             'samPrevBalance': __data[2].lstrip('0'),
+            #             'samLastBalance': __samLastBalance,
+            #             'topupCardNo': __data[6],
+            #             'topupPrevBalance': __data[7].lstrip('0'),
+            #             'topupLastBalance': __data[8].lstrip('0'),
+            #             'status': __status,
+            #             'remarks': __remarks,
+            #         }
+            #         _Global.store_upload_sam_audit(param)
+            #         _Global.TRIGGER_MANUAL_TOPUP = True
+            #         break
+            #     if i == 10:
+            #         # _Global.NFC_ERROR = 'CHECK_BALANCE_ERROR'
+            #         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
+            #         break
+            #     sleep(1)
             # LOGGER.warning(('top_up_bni', 'UPDATE_BNI', _result))
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
             # _Global.NFC_ERROR = 'INIT_TOPUP_BNI_ERROR'
@@ -612,7 +658,7 @@ def top_up_bni(amount, trxid, slot=None):
 
 
 def start_ka_info():
-    _Tools.get_pool().apply_async(ka_info)
+    _Tools.get_pool().apply_async(ka_info_mandiri)
 
 '''
 OUTPUT = Limit TopUp, Main Counter, History Counter
@@ -620,20 +666,27 @@ OUTPUT = Limit TopUp, Main Counter, History Counter
 MANDIRI_TOPUP_AMOUNT = 0
 
 
-def ka_info():
+def ka_info_mandiri(slot=None):
     global MANDIRI_TOPUP_AMOUNT
     if len(INIT_LIST) == 0:
-        LOGGER.warning(('ka_info', 'INIT_LIST', str(INIT_LIST)))
+        LOGGER.warning(('ka_info_mandiri', 'INIT_LIST', str(INIT_LIST)))
         QP_SIGNDLER.SIGNAL_KA_INFO_QPROX.emit('KA_INFO|ERROR')
         _Global.NFC_ERROR = 'EMPTY_INIT_LIST'
         return
+    if slot is None:
+        slot = str(_Global.MANDIRI_ACTIVE)
     param = QPROX['KA_INFO'] + '|'
     response, result = _Command.send_request(param=param, output=_Command.MO_REPORT)
-    LOGGER.debug(("ka_info", result))
+    LOGGER.debug(("ka_info_mandiri", slot, result))
     if response == 0 and result is not None:
         MANDIRI_TOPUP_AMOUNT = int(result.split('|')[0])
-        _Global.MANDIRI_WALLET = MANDIRI_TOPUP_AMOUNT
-        _Global.MANDIRI_ACTIVE = 1
+        _Global.MANDIRI_ACTIVE_WALLET = MANDIRI_TOPUP_AMOUNT
+        if slot == '1':
+            _Global.MANDIRI_WALLET_1 = MANDIRI_TOPUP_AMOUNT
+            _Global.MANDIRI_ACTIVE = 1
+        if slot == '2':
+            _Global.MANDIRI_WALLET_2 = MANDIRI_TOPUP_AMOUNT
+            _Global.MANDIRI_ACTIVE = 2
         QP_SIGNDLER.SIGNAL_KA_INFO_QPROX.emit('KA_INFO|' + str(result))
     else:
         _Global.NFC_ERROR = 'KA_INFO_MANDIRI_ERROR'
@@ -646,7 +699,7 @@ BNI_TOPUP_AMOUNT = 0
 def ka_info_bni(slot=1):
     global BNI_TOPUP_AMOUNT
     # if len(INIT_LIST) == 0 and init_check is True:
-    #     LOGGER.warning(('ka_info', 'INIT_LIST', str(INIT_LIST)))
+    #     LOGGER.warning(('ka_info_mandiri', 'INIT_LIST', str(INIT_LIST)))
     #     QP_SIGNDLER.SIGNAL_KA_INFO_QPROX.emit('KA_INFO|ERROR')
     #     _Global.NFC_ERROR = 'EMPTY_INIT_LIST'
     #     return
@@ -659,10 +712,10 @@ def ka_info_bni(slot=1):
         # BNI_TOPUP_AMOUNT = int(result.split('|')[0])
         if slot == 1:
             _Global.BNI_SAM_1_WALLET = int(result.split('|')[0])
-            _Global.BNI_ACTIVE_WALLET_AMOUNT = _Global.BNI_SAM_1_WALLET
+            _Global.BNI_ACTIVE_WALLET = _Global.BNI_SAM_1_WALLET
         if slot == 2:
             _Global.BNI_SAM_2_WALLET = int(result.split('|')[0])
-            _Global.BNI_ACTIVE_WALLET_AMOUNT = _Global.BNI_SAM_2_WALLET
+            _Global.BNI_ACTIVE_WALLET = _Global.BNI_SAM_2_WALLET
         QP_SIGNDLER.SIGNAL_KA_INFO_QPROX.emit('KA_INFO|' + str(result))
     else:
         _Global.NFC_ERROR = 'KA_INFO_BNI_ERROR'
@@ -770,8 +823,8 @@ def get_topup_readiness(mode='full'):
         if mode == 'full' or mode == 'get_instant':
             topup_readiness['mandiri'] = 'AVAILABLE' if INIT_TOPUP_MANDIRI is True else 'N/A'
             topup_readiness['bni'] = 'AVAILABLE' if INIT_TOPUP_BNI is True else 'N/A'
-            topup_readiness['balance_mandiri'] = str(MANDIRI_TOPUP_AMOUNT)
-            topup_readiness['balance_bni'] = str(_Global.BNI_ACTIVE_WALLET_AMOUNT)
+            topup_readiness['balance_mandiri'] = str(_Global.MANDIRI_ACTIVE_WALLET)
+            topup_readiness['balance_bni'] = str(_Global.BNI_ACTIVE_WALLET)
             topup_readiness['bni_wallet_1'] = str(_Global.BNI_SAM_1_WALLET)
             topup_readiness['bni_wallet_2'] = str(_Global.BNI_SAM_2_WALLET)
     if SIGNAL_TOPUP_READINESS is True:
