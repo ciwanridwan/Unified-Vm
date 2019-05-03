@@ -8,6 +8,7 @@ import logging
 from _tTools import _Tools
 from time import sleep
 import json
+from _nNetwork import _NetworkAccess
 
 LOGGER = logging.getLogger()
 QPROX_PORT = _Global.QPROX_PORT
@@ -800,13 +801,18 @@ def init_online():
 
 
 def do_update_limit_mandiri(rsp):
-    _url = ''
-    _param = {
-
-    }
-    # TODO HIT LOOP API TO UPDATE BALANCE THE KA MANDIRI
-    _resp, _res = 1, 1
-    pass
+    while True:
+        _url = 'http://103.28.14.188/bridge-service/filecheck.php?content=1&no_correction=1'
+        _param = {
+            'ext': '.RSP',
+            'file_path': '/home/ftpuser/TopUpOffline/UpdateRequestDownload/'+rsp
+        }
+        _stat, _res = _NetworkAccess.post_to_url(_url, _param)
+        if _stat == 200 and _res['status'] == 0 and _res['file'] is True:
+            ___content_rsp = _res['content']
+            #TODO CALL UPDATE LIMIT API
+            break
+        sleep(15)
 
 
 def start_get_topup_readiness():
