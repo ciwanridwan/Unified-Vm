@@ -801,15 +801,18 @@ def init_online():
 
 
 def do_update_limit_mandiri(rsp):
+    attempt = 0
     while True:
+        attempt += 1
         _url = 'http://103.28.14.188/bridge-service/filecheck.php?content=1&no_correction=1'
         _param = {
             'ext': '.RSP',
             'file_path': '/home/ftpuser/TopUpOffline/UpdateRequestDownload/'+rsp
         }
         _stat, _res = _NetworkAccess.post_to_url(_url, _param)
+        LOGGER.debug((attempt, rsp, _stat, _res))
         if _stat == 200 and _res['status'] == 0 and _res['file'] is True:
-            ___content_rsp = _res['content']
+            __content_rsp = _res['content']
             #TODO CALL UPDATE LIMIT API
             break
         sleep(15)
