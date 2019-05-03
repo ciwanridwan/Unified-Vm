@@ -149,8 +149,8 @@ MANDIRI_WALLET_1 = 0
 MANDIRI_WALLET_2 = 0
 MANDIRI_ACTIVE_WALLET = 0
 MANDIRI_ACTIVE = int(_ConfigParser.get_set_value('QPROX', 'mandiri^active^slot', '1'))
-MANDIRI_NO_1 = ''
-MANDIRI_NO_2 = ''
+MANDIRI_NO_1 = _ConfigParser.get_set_value('QPROX', 'mandiri^sam^uid^1', '---')
+MANDIRI_NO_2 = _ConfigParser.get_set_value('QPROX', 'mandiri^sam^uid^2', '---')
 
 BNI_SAM_1_WALLET = 0
 BNI_SAM_2_WALLET = 0
@@ -173,6 +173,16 @@ WEBCAM_ERROR = ''
 CD1_ERROR = ''
 CD2_ERROR = ''
 CD3_ERROR = ''
+
+
+def set_mandiri_uid(slot, uid):
+    global MANDIRI_NO_1, MANDIRI_NO_2
+    if slot == '1':
+        MANDIRI_NO_1 = uid
+        _ConfigParser.set_value('QPROX', 'mandiri^sam^uid^1', uid)
+    if slot == '2':
+        MANDIRI_NO_2 = uid
+        _ConfigParser.set_value('QPROX', 'mandiri^sam^uid^2', uid)
 
 
 def digit_in(s):

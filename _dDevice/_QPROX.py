@@ -443,6 +443,7 @@ def top_up_mandiri(amount, trxid='', slot=None):
             'status': __status,
             'remarks': __remarks,
         }
+        _Global.set_mandiri_uid(slot, __report_sam.split('#')[0][:14])
         _Global.store_upload_sam_audit(param)
         # Update to server
         _Global.upload_mandiri_wallet()
@@ -759,20 +760,22 @@ ONLINE_INFO_RESULT = None
 
 def create_online_info():
     global ONLINE_INFO_RESULT
-    if len(INIT_LIST) == 0:
-        LOGGER.warning(('create_online_info', 'INIT_LIST', str(INIT_LIST)))
-        QP_SIGNDLER.SIGNAL_ONLINE_INFO_QPROX.emit('CREATE_ONLINE_INFO|ERROR')
-        _Global.NFC_ERROR = 'EMPTY_INIT_LIST'
-        return
+    # if len(INIT_LIST) == 0:
+    #     LOGGER.warning(('create_online_info', 'INIT_LIST', str(INIT_LIST)))
+    #     QP_SIGNDLER.SIGNAL_ONLINE_INFO_QPROX.emit('CREATE_ONLINE_INFO|ERROR')
+    #     _Global.NFC_ERROR = 'EMPTY_INIT_LIST'
+    #     return
     param = QPROX['CREATE_ONLINE_INFO'] + '|'
-    response, result = _Command.send_request(param=param, output=_Command.MO_REPORT)
+    response, result = _Command.send_request(param=param, output=None)
     LOGGER.debug(("create_online_info : ", result))
     if response == 0 and result is not None:
         ONLINE_INFO_RESULT = str(result)
-        QP_SIGNDLER.SIGNAL_ONLINE_INFO_QPROX.emit('CREATE_ONLINE_INFO|' + str(result))
+        # QP_SIGNDLER.SIGNAL_ONLINE_INFO_QPROX.emit('CREATE_ONLINE_INFO|' + str(result))
+        return ONLINE_INFO_RESULT
     else:
         _Global.NFC_ERROR = 'CREATE_ONLINE_INFO_ERROR'
-        QP_SIGNDLER.SIGNAL_ONLINE_INFO_QPROX.emit('CREATE_ONLINE_INFO|ERROR')
+        # QP_SIGNDLER.SIGNAL_ONLINE_INFO_QPROX.emit('CREATE_ONLINE_INFO|ERROR')
+        return False
 
 
 def start_init_online():
@@ -794,6 +797,16 @@ def init_online():
     else:
         _Global.NFC_ERROR = 'INIT_ONLINE_ERROR'
         QP_SIGNDLER.SIGNAL_INIT_ONLINE_QPROX.emit('INIT_ONLINE|ERROR')
+
+
+def do_update_limit_mandiri(rsp):
+    _url = ''
+    _param = {
+
+    }
+    # TODO HIT LOOP API TO UPDATE BALANCE THE KA MANDIRI
+    _resp, _res = 1, 1
+    pass
 
 
 def start_get_topup_readiness():

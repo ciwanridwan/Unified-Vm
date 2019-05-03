@@ -5,6 +5,7 @@ import sys
 import logging
 import paramiko
 from _cConfig import _Global
+from time import sleep
 
 LOGGER = logging.getLogger()
 SFTP_SERVER = _Global.SFTP['host']
@@ -51,9 +52,18 @@ def send_file(filename, local_path, remote_path=None):
     if SFTP is None:
         init_sftp()
     try:
+        if type(filename) == list:
+            filename = filename[0]
         remote_path = os.path.join(remote_path, filename)
         LOGGER.debug(('send_file', filename, local_path, remote_path))
         SFTP.put(local_path, remote_path)
+        if type(filename) == list and len(filename) > 1:
+            filename = filename[1]
+            local_path = local_path.replace('.TXT', '.OK')
+            remote_path = os.path.join(remote_path, filename)
+            LOGGER.debug(('send_file', filename, local_path, remote_path))
+            sleep(1)
+            SFTP.put(local_path, remote_path)
         result = True
     except Exception as e:
         LOGGER.warning(('send_file', str(e)))
