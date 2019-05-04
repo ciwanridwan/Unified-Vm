@@ -509,7 +509,8 @@ Base{
             running:true
             triggeredOnStart:true
             onTriggered:{
-                abc.counter -= 1
+                abc.counter -= 1;
+                notice_no_change.modeReverse = (abc.counter % 2 == 0) ? true : false;
                 if(abc.counter < 0){
                     if (details.payment=='cash' && !isPaid) {
                         _SLOT.stop_grg_receive_note();
@@ -519,8 +520,8 @@ Base{
                         }
     //                    _SLOT.start_dis_accept_mei();
                     }
-                    my_timer.stop()
-                    my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }))
+                    my_timer.stop();
+                    my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
                 }
             }
         }
@@ -1011,7 +1012,7 @@ Base{
         anchors.bottomMargin: 200
         anchors.horizontalCenter: parent.horizontalCenter
         title_text: 'MESIN INI TIDAK MENYEDIAKAN KEMBALIAN UANG'
-        modeReverse: (abc.counter %2 == 0) ? true : false
+//        modeReverse: (abc.counter %2 == 0) ? true : false
         boxColor: '#1D294D'
 
     }
