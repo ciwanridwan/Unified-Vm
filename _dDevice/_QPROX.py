@@ -293,6 +293,7 @@ def auth_ka(_slot=None):
     LOGGER.debug(("auth_ka : ", _slot, result))
     if response == 0:
         INIT_TOPUP_MANDIRI = True
+        _slot = _Global.get_active_sam(bank='MANDIRI')
         ka_info_mandiri(slot=_slot)
         QP_SIGNDLER.SIGNAL_AUTH_QPROX.emit('AUTH_KA|SUCCESS')
         # print('pyt: auth_ka NIK : ', result)
@@ -683,20 +684,13 @@ def ka_info_mandiri(slot=None):
     if response == 0 and result is not None:
         MANDIRI_TOPUP_AMOUNT = int(result.split('|')[0])
         _Global.MANDIRI_ACTIVE_WALLET = MANDIRI_TOPUP_AMOUNT
-        if _Global.MANDIRI_REVERSE_SLOT_MODE is False:
-            if slot == '1':
-                _Global.MANDIRI_WALLET_1 = MANDIRI_TOPUP_AMOUNT
-                _Global.MANDIRI_ACTIVE = 1
-            elif slot == '2':
-                _Global.MANDIRI_WALLET_2 = MANDIRI_TOPUP_AMOUNT
-                _Global.MANDIRI_ACTIVE = 2
-        else:
-            if slot == '2':
-                _Global.MANDIRI_WALLET_1 = MANDIRI_TOPUP_AMOUNT
-                _Global.MANDIRI_ACTIVE = 1
-            elif slot == '1':
-                _Global.MANDIRI_WALLET_2 = MANDIRI_TOPUP_AMOUNT
-                _Global.MANDIRI_ACTIVE = 2
+        if slot == '1':
+            _Global.MANDIRI_WALLET_1 = MANDIRI_TOPUP_AMOUNT
+            _Global.MANDIRI_ACTIVE = 1
+        elif slot == '2':
+            _Global.MANDIRI_WALLET_2 = MANDIRI_TOPUP_AMOUNT
+            _Global.MANDIRI_ACTIVE = 2
+        _Global.save_sam_config(bank='MANDIRI')
         QP_SIGNDLER.SIGNAL_KA_INFO_QPROX.emit('KA_INFO|' + str(result))
     else:
         _Global.NFC_ERROR = 'KA_INFO_MANDIRI_ERROR'
