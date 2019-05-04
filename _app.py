@@ -29,6 +29,7 @@ from _tTools import _SalePrintTool
 from _sService import _ProductService
 from _dDevice import _GRG
 from _sService import _TopupService
+from _sService import _SettlementService
 
 
 print("""
@@ -450,6 +451,10 @@ class SlotHandler(QObject):
         _KioskService.user_action_log(log)
     user_action_log = pyqtSlot(str)(user_action_log)
 
+    def start_do_mandiri_topup_settlement(self):
+        _SettlementService.start_do_mandiri_topup_settlement()
+    start_do_mandiri_topup_settlement = pyqtSlot()(start_do_mandiri_topup_settlement)
+
 
 def s_handler():
     _KioskService.K_SIGNDLER.SIGNAL_GET_FILE_LIST.connect(view.rootObject().result_get_file_list)
@@ -529,6 +534,7 @@ def s_handler():
     _GRG.GRG_SIGNDLER.SIGNAL_GRG_INIT.connect(view.rootObject().result_init_grg)
     _QPROX.QP_SIGNDLER.SIGNAL_REFILL_ZERO.connect(view.rootObject().result_activation_bni)
     _CD.CD_SIGNDLER.SIGNAL_CD_READINESS.connect(view.rootObject().result_cd_readiness)
+    _SettlementService.ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.connect(view.rootObject().result_mandiri_settlement)
 
 
 LOGGER = None

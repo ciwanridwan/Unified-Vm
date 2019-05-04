@@ -92,6 +92,7 @@ Rectangle {
     signal result_init_grg(string str)
     signal result_activation_bni(string str)
     signal result_cd_readiness(string str)
+    signal result_mandiri_settlement(string str)
 
     //==================================================================================================//
 

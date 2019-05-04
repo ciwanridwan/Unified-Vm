@@ -16,6 +16,7 @@ from _dDevice import _QPROX
 
 class SettlementSignalHandler(QObject):
     __qualname__ = 'SettlementSignalHandler'
+    SIGNAL_MANDIRI_SETTLEMENT = pyqtSignal(str)
 
 
 ST_SIGNDLER = SettlementSignalHandler()
@@ -215,9 +216,9 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None):
                 x += 1
                 remarks = json.loads(settle['remarks'])
                 _all_amount += int(remarks['value'])
-                _filecontent += settle['reportSAM'] + __shift + str(x).zfill(6) + '|'
+                _filecontent += settle['reportSAM'] + __shift + str(x).zfill(6) + chr(3) + '|'
             _header = 'PREPAID' + str(len(settlements) + 2).zfill(8) + str(_all_amount).zfill(12) + __shift + \
-                      _Global.MID_MAN + datetime.now().strftime('%d%m%Y') + '|'
+                      _Global.MID_MAN + datetime.now().strftime('%d%m%Y') + chr(3) + '|'
             _filecontent = _header + _filecontent
             _trailer = _Global.MID_MAN + str(len(settlements)).zfill(8)
             _filecontent += _trailer
@@ -281,9 +282,9 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None):
                 x += 1
                 remarks = json.loads(settle['remarks'])
                 _all_amount += int(remarks['value'])
-                _filecontent += settle['reportKA'] + __shift + str(x).zfill(6) + '|'
+                _filecontent += settle['reportKA'] + __shift + str(x).zfill(6) + chr(3) + '|'
             _header = 'ADMINCARD' + str(len(settlements) + 2).zfill(8) + str(_all_amount).zfill(12) + __shift + \
-                      _Global.MID_MAN + datetime.now().strftime('%d%m%Y') + '|'
+                      _Global.MID_MAN + datetime.now().strftime('%d%m%Y') + chr(3) + '|'
             _filecontent = _header + _filecontent
             _trailer = _Global.MID_MAN + str(len(settlements)).zfill(8)
             _filecontent += _trailer
@@ -339,11 +340,14 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None):
 
 
 def start_do_bni_topup_settlement():
-    _Tools.get_pool().apply_async(do_settlement_for, ('BNI', ))
+    bank = 'BNI'
+    _Tools.get_pool().apply_async(do_settlement_for, (bank, ))
 
 
 def start_do_mandiri_topup_settlement():
-    _Tools.get_pool().apply_async(do_settlement_for, ('MANDIRI', ))
+    bank = 'MANDIRI'
+    _Tools.get_pool().apply_async(do_settlement_for, (bank, ))
+    ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TRIGGERED')
 
 
 def do_settlement_for(bank='BNI'):
@@ -364,6 +368,8 @@ def do_settlement_for(bank='BNI'):
             return
         return push_settlement_data(_param)
     elif bank == 'MANDIRI':
+        _QPROX.auth_ka(_Global.get_active_sam(bank='MANDIRI'))
+        # ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|AUTH_KA')
         if _Tools.is_online(source='mandiri_settlement') is False:
             return
         # if _SFTPAccess.SFTP is not None:
@@ -375,33 +381,40 @@ def do_settlement_for(bank='BNI'):
         _param_sett = create_settlement_file(bank=bank, mode='TOPUP')
         if _param_sett is False:
             return
+        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|CREATE_FILE_SETTLEMENT')
         _file_ok = _param_sett['filename'].replace('.TXT', '.OK')
         _push_file_sett = upload_settlement_file(filename=[_param_sett['filename'], _file_ok],
                                                  local_path=_param_sett['path_file'],
                                                  remote_path='/home/ftpuser/TopUpOffline/Sett_Macin')
         if _push_file_sett is False:
             return
+        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|UPLOAD_FILE_SETTLEMENT')
         _param_ka = create_settlement_file(bank=bank, mode='KA')
         if _param_ka is False:
             return
+        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|CREATE_FILE_KA_SETTLEMENT')
         _param_ka_ok = _param_ka['filename'].replace('.TXT', '.OK')
         _push_file_kalog = upload_settlement_file(filename=[_param_ka['filename'], _param_ka_ok],
                                                   local_path=_param_ka['path_file'],
                                                   remote_path='/home/ftpuser/TopUpOffline/Kalog_Macin')
         if _push_file_kalog is False:
             return
-
+        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|UPLOAD_FILE_KA_SETTLEMENT')
         _rq1 = _QPROX.create_online_info()
         if _rq1 is False:
             return
+        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|GENERATE_RQ1_SETTLEMENT')
         _file_rq1 = mandiri_create_rq1(content=_rq1)
         if _file_rq1 is False:
             return
+        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|CREATE_FILE_RQ1_SETTLEMENT')
         _push_rq1 = upload_settlement_file(filename=_file_rq1['filename'],
                                            local_path=_file_rq1['path_file'],
                                            remote_path='/home/ftpuser/TopUpOffline/UpdateRequestIn')
         if _push_rq1 is False:
             return
+        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|UPLOAD_FILE_RQ1_SETTLEMENT')
+        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|WAITING_RSP_UPDATE')
         _QPROX.do_update_limit_mandiri(_push_rq1['rsp'])
     else:
         return

@@ -275,14 +275,15 @@ COM1, 01, 0123456789abcdef, 00010002, 20010203, 20010203
 '''
 
 
-def auth_ka():
+def auth_ka(_slot=None):
     global INIT_TOPUP_MANDIRI
     if len(INIT_LIST) == 0:
         LOGGER.warning(('auth_ka', 'INIT_LIST', str(INIT_LIST)))
         QP_SIGNDLER.SIGNAL_AUTH_QPROX.emit('AUTH_KA|ERROR')
         _Global.NFC_ERROR = 'EMPTY_INIT_LIST'
         return
-    _slot = str(_Global.MANDIRI_ACTIVE)
+    if _slot is None:
+        _slot = str(_Global.MANDIRI_ACTIVE)
     _ka_pin = _Global.KA_PIN1
     if _slot == '2':
         _ka_pin = _Global.KA_PIN2
@@ -290,7 +291,6 @@ def auth_ka():
             BANKS[0]['TID'] + '|' + _ka_pin + '|' + _Global.KL_PIN
     response, result = _Command.send_request(param=param, output=None)
     LOGGER.debug(("auth_ka : ", _slot, result))
-    # print('pyt: auth_ka mandiri : ', result)
     if response == 0:
         INIT_TOPUP_MANDIRI = True
         ka_info_mandiri(slot=_slot)
@@ -683,12 +683,20 @@ def ka_info_mandiri(slot=None):
     if response == 0 and result is not None:
         MANDIRI_TOPUP_AMOUNT = int(result.split('|')[0])
         _Global.MANDIRI_ACTIVE_WALLET = MANDIRI_TOPUP_AMOUNT
-        if slot == '1':
-            _Global.MANDIRI_WALLET_1 = MANDIRI_TOPUP_AMOUNT
-            _Global.MANDIRI_ACTIVE = 1
-        if slot == '2':
-            _Global.MANDIRI_WALLET_2 = MANDIRI_TOPUP_AMOUNT
-            _Global.MANDIRI_ACTIVE = 2
+        if _Global.MANDIRI_REVERSE_SLOT_MODE is False:
+            if slot == '1':
+                _Global.MANDIRI_WALLET_1 = MANDIRI_TOPUP_AMOUNT
+                _Global.MANDIRI_ACTIVE = 1
+            elif slot == '2':
+                _Global.MANDIRI_WALLET_2 = MANDIRI_TOPUP_AMOUNT
+                _Global.MANDIRI_ACTIVE = 2
+        else:
+            if slot == '2':
+                _Global.MANDIRI_WALLET_1 = MANDIRI_TOPUP_AMOUNT
+                _Global.MANDIRI_ACTIVE = 1
+            elif slot == '1':
+                _Global.MANDIRI_WALLET_2 = MANDIRI_TOPUP_AMOUNT
+                _Global.MANDIRI_ACTIVE = 2
         QP_SIGNDLER.SIGNAL_KA_INFO_QPROX.emit('KA_INFO|' + str(result))
     else:
         _Global.NFC_ERROR = 'KA_INFO_MANDIRI_ERROR'
@@ -756,11 +764,12 @@ def start_create_online_info():
 OUTPUT = 0001000120010277010108201713140108201713142094.RQ1
 '''
 
-ONLINE_INFO_RESULT = None
+PREV_RQ1_DATA = None
+PREV_RQ1_SLOT = None
 
 
 def create_online_info():
-    global ONLINE_INFO_RESULT
+    global PREV_RQ1_DATA, PREV_RQ1_SLOT
     # if len(INIT_LIST) == 0:
     #     LOGGER.warning(('create_online_info', 'INIT_LIST', str(INIT_LIST)))
     #     QP_SIGNDLER.SIGNAL_ONLINE_INFO_QPROX.emit('CREATE_ONLINE_INFO|ERROR')
@@ -770,9 +779,10 @@ def create_online_info():
     response, result = _Command.send_request(param=param, output=None)
     LOGGER.debug(("create_online_info : ", result))
     if response == 0 and result is not None:
-        ONLINE_INFO_RESULT = str(result)
+        PREV_RQ1_DATA = str(result)
+        PREV_RQ1_SLOT = _Global.MANDIRI_ACTIVE
         # QP_SIGNDLER.SIGNAL_ONLINE_INFO_QPROX.emit('CREATE_ONLINE_INFO|' + str(result))
-        return ONLINE_INFO_RESULT
+        return PREV_RQ1_DATA
     else:
         _Global.NFC_ERROR = 'CREATE_ONLINE_INFO_ERROR'
         # QP_SIGNDLER.SIGNAL_ONLINE_INFO_QPROX.emit('CREATE_ONLINE_INFO|ERROR')
@@ -783,37 +793,45 @@ def start_init_online():
     _Tools.get_pool().apply_async(init_online)
 
 
-def init_online():
-    if len(INIT_LIST) == 0:
-        LOGGER.warning(('init_online', 'INIT_LIST', str(INIT_LIST)))
-        QP_SIGNDLER.SIGNAL_INIT_ONLINE_QPROX.emit('INIT_ONLINE|ERROR')
-        _Global.NFC_ERROR = 'EMPTY_INIT_LIST'
+def init_online(rsp=None, slot=None):
+    # if len(INIT_LIST) == 0:
+    #     LOGGER.warning(('init_online', 'INIT_LIST', str(INIT_LIST)))
+    #     QP_SIGNDLER.SIGNAL_INIT_ONLINE_QPROX.emit('INIT_ONLINE|ERROR')
+    #     _Global.NFC_ERROR = 'EMPTY_INIT_LIST'
+    #     return
+    if rsp is None:
+        LOGGER.warning(("[FAILED] init_online : ", rsp))
         return
-    param = QPROX['INIT_ONLINE'] + '|' + ONLINE_INFO_RESULT.replace('.RQ1', '.RSP')
-    response, result = _Command.send_request(param=param, output=_Command.MO_REPORT)
-    LOGGER.debug(("init_online : ", result))
-    # TODO check result
+    param = QPROX['INIT_ONLINE'] + '|' + slot + '|' + rsp + '|'
+    response, result = _Command.send_request(param=param, output=None)
+    LOGGER.debug(("init_online : ", rsp, slot, result, response))
     if response == 0 and result is not None:
-        QP_SIGNDLER.SIGNAL_INIT_ONLINE_QPROX.emit('INIT_ONLINE|' + str(result))
+        QP_SIGNDLER.SIGNAL_INIT_ONLINE_QPROX.emit('INIT_ONLINE|SUCCESS')
+        return True
     else:
         _Global.NFC_ERROR = 'INIT_ONLINE_ERROR'
         QP_SIGNDLER.SIGNAL_INIT_ONLINE_QPROX.emit('INIT_ONLINE|ERROR')
+        return False
 
 
 def do_update_limit_mandiri(rsp):
     attempt = 0
+    _url = 'http://103.28.14.188/bridge-service/filecheck.php?content=1&no_correction=1'
+    _param = {
+        'ext': '.RSP',
+        'file_path': '/home/ftpuser/TopUpOffline/UpdateRequestDownload/'+rsp
+    }
     while True:
         attempt += 1
-        _url = 'http://103.28.14.188/bridge-service/filecheck.php?content=1&no_correction=1'
-        _param = {
-            'ext': '.RSP',
-            'file_path': '/home/ftpuser/TopUpOffline/UpdateRequestDownload/'+rsp
-        }
         _stat, _res = _NetworkAccess.post_to_url(_url, _param)
         LOGGER.debug((attempt, rsp, _stat, _res))
         if _stat == 200 and _res['status'] == 0 and _res['file'] is True:
-            __content_rsp = _res['content']
-            #TODO CALL UPDATE LIMIT API
+            __content_rq1 = _res['content'].split('#')[0]
+            if PREV_RQ1_DATA == __content_rq1:
+                __content_rsp = _res['content'].split('#')[1]
+                init_online(__content_rsp, PREV_RQ1_SLOT)
+            else:
+                LOGGER.warning(('[DETECTED] RQ1 NOT MATCH', PREV_RQ1_DATA, __content_rq1))
             break
         sleep(15)
 

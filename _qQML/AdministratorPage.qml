@@ -41,6 +41,7 @@ Base{
         base.result_init_grg.connect(get_admin_action);
         base.result_activation_bni.connect(get_admin_action);
         base.result_auth_qprox.connect(ka_login_status);
+        base.result_mandiri_settlement.connect(get_admin_action);
 
     }
 
@@ -55,6 +56,7 @@ Base{
         base.result_init_grg.disconnect(get_admin_action);
         base.result_activation_bni.disconnect(get_admin_action);
         base.result_auth_qprox.disconnect(ka_login_status);
+        base.result_mandiri_settlement.disconnect(get_admin_action);
 
     }
 
@@ -97,7 +99,11 @@ Base{
             false_notif('Dear '+userData.first_name+'|Sedang Memproses Perubahan Stok Pada Peladen Pusat\nSilakan Tunggu Beberapa Saat');
         } else if (a=='REFILL_ZERO|SUCCESS'){
             false_notif('Dear '+userData.first_name+'|Siapkan Kartu Master BNI Dan Segera Tempelkan Pada Reader');
-        }else {
+        } else if (a.indexOf('MANDIRI_SETTLEMENT') > -1){
+            var r = a.split('|')[1]
+            false_notif('Dear '+userData.first_name+'|Status Proses Settlement Mandiri...\n['+r+']');
+            if (r!='WAITING_RSP_UPDATE') return;
+        } else {
             false_notif('Dear '+userData.first_name+'|Terjadi Kesalahan Dengan Kode:\n'+a);
         }
         press = '0';
@@ -345,28 +351,28 @@ Base{
         }
     }
 
-//    AdminPanelButton{
-//        id: activation_master_button
-//        anchors.leftMargin: 15
-//        anchors.left: print_receipt_button.right
-//        anchors.top: parent.top
-//        anchors.topMargin: 15
-//        z: 10
-//        button_text: 'activate 1'
-//        visible: !popup_loading.visible
-//        modeReverse: true
-//        MouseArea{
-//            anchors.fill: parent
-//            onClicked: {
-//                _SLOT.user_action_log('Admin Page "Activate 1"');
-//                if (press != '0') return;
-//                press = '1';
-//                console.log('activation_master_button is pressed..!');
-//                popup_loading.open();
-//                _SLOT.start_master_activation_bni();
-//            }
-//        }
-//    }
+    AdminPanelButton{
+        id: mandiri_settlement_button
+        anchors.leftMargin: 15
+        anchors.left: ka_login_button.right
+        anchors.top: parent.top
+        anchors.topMargin: 15
+        z: 10
+        button_text: 'settlement'
+        visible: !popup_loading.visible
+        modeReverse: true
+        MouseArea{
+            anchors.fill: parent
+            onClicked: {
+                _SLOT.user_action_log('Admin Page "Settlement"');
+                if (press != '0') return;
+                press = '1';
+                console.log('mandiri_settlement_button is pressed..!');
+                popup_loading.open();
+                _SLOT.start_do_mandiri_topup_settlement();
+            }
+        }
+    }
 
 //    AdminPanelButton{
 //        id: activation_slave_button

@@ -361,6 +361,12 @@ def handle_tasks(tasks):
             _slot = int(task['taskName'][-1])
             result = _TopupService.do_topup_bni(slot=_slot, force=True)
             update_task(task, result)
+        if task['taskName'] == 'DO_SETTLEMENT_MANDIRI':
+            result = 'FAILED_EXECUTED_VM_ON_USED'
+            if IDLE_MODE is True:
+                _SettlementService.start_do_mandiri_topup_settlement()
+                result = 'TRIGGERED_INTO_SYSTEM'
+            update_task(task, result)
         if task['taskName'] == 'SAM_TO_SLOT_1' or 'SAM_TO_SLOT_2':
             _slot = int(task['taskName'][-1])
             result = _Global.sam_to_slot(_slot)
