@@ -101,8 +101,12 @@ Base{
             false_notif('Dear '+userData.first_name+'|Siapkan Kartu Master BNI Dan Segera Tempelkan Pada Reader');
         } else if (a.indexOf('MANDIRI_SETTLEMENT') > -1){
             var r = a.split('|')[1]
-            false_notif('Dear '+userData.first_name+'|Status Proses Settlement Mandiri...\n['+r+']');
-            if (r!='WAITING_RSP_UPDATE') return;
+            if (r.indexOf('FAILED') > -1){
+                false_notif('Dear '+userData.first_name+'|Terjadi Kegagalan Pada Settlement Mandiri!\nKode Error ['+r+']');
+            } else {
+                false_notif('Dear '+userData.first_name+'|Status Proses Settlement Mandiri...\n['+r+']');
+                if (r!='WAITING_RSP_UPDATE') return;
+            }
         } else {
             false_notif('Dear '+userData.first_name+'|Terjadi Kesalahan Dengan Kode:\n'+a);
         }

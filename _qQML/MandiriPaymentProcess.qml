@@ -999,6 +999,23 @@ Base{
         visible: !global_frame.visible && !popup_loading.visible
     }
 
+    BoxTitle{
+        id: notice_no_change
+        width: 1000
+        height: 100
+        visible: !isPaid
+        radius: 50
+        fontSize: 40
+        border.width: 0
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 200
+        anchors.horizontalCenter: parent.horizontalCenter
+        title_text: 'MESIN INI TIDAK MENYEDIAKAN KEMBALIAN UANG'
+        modeReverse: (abc.counter %2 == 0) ? true : false
+        boxColor: '#1D294D'
+
+    }
+
     //==============================================================
 
     StandardNotifView{

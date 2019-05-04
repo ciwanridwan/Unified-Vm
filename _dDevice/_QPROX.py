@@ -670,14 +670,14 @@ MANDIRI_TOPUP_AMOUNT = 0
 
 def ka_info_mandiri(slot=None):
     global MANDIRI_TOPUP_AMOUNT
-    if len(INIT_LIST) == 0:
-        LOGGER.warning(('ka_info_mandiri', 'INIT_LIST', str(INIT_LIST)))
-        QP_SIGNDLER.SIGNAL_KA_INFO_QPROX.emit('KA_INFO|ERROR')
-        _Global.NFC_ERROR = 'EMPTY_INIT_LIST'
-        return
+    # if len(INIT_LIST) == 0:
+    #     LOGGER.warning(('ka_info_mandiri', 'INIT_LIST', str(INIT_LIST)))
+    #     QP_SIGNDLER.SIGNAL_KA_INFO_QPROX.emit('KA_INFO|ERROR')
+    #     _Global.NFC_ERROR = 'EMPTY_INIT_LIST'
+    #     return
     if slot is None:
         slot = str(_Global.MANDIRI_ACTIVE)
-    param = QPROX['KA_INFO'] + '|'
+    param = QPROX['KA_INFO'] + '|' + slot + '|'
     response, result = _Command.send_request(param=param, output=_Command.MO_REPORT)
     LOGGER.debug(("ka_info_mandiri", slot, result))
     if response == 0 and result is not None:
@@ -768,16 +768,18 @@ PREV_RQ1_DATA = None
 PREV_RQ1_SLOT = None
 
 
-def create_online_info():
+def create_online_info(slot=None):
     global PREV_RQ1_DATA, PREV_RQ1_SLOT
     # if len(INIT_LIST) == 0:
     #     LOGGER.warning(('create_online_info', 'INIT_LIST', str(INIT_LIST)))
     #     QP_SIGNDLER.SIGNAL_ONLINE_INFO_QPROX.emit('CREATE_ONLINE_INFO|ERROR')
     #     _Global.NFC_ERROR = 'EMPTY_INIT_LIST'
     #     return
-    param = QPROX['CREATE_ONLINE_INFO'] + '|'
+    if slot is None:
+        slot = str(_Global.MANDIRI_ACTIVE)
+    param = QPROX['CREATE_ONLINE_INFO'] + '|' + slot + '|'
     response, result = _Command.send_request(param=param, output=None)
-    LOGGER.debug(("create_online_info : ", result))
+    LOGGER.debug(("create_online_info : ", slot, result))
     if response == 0 and result is not None:
         PREV_RQ1_DATA = str(result)
         PREV_RQ1_SLOT = _Global.MANDIRI_ACTIVE

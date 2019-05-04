@@ -12,6 +12,7 @@ from _tTools import _Tools
 from _nNetwork import _NetworkAccess
 from _nNetwork import _SFTPAccess
 from _dDevice import _QPROX
+from time import sleep
 
 
 class SettlementSignalHandler(QObject):
@@ -368,10 +369,10 @@ def do_settlement_for(bank='BNI'):
             return
         return push_settlement_data(_param)
     elif bank == 'MANDIRI':
-        _QPROX.auth_ka(_Global.get_active_sam(bank='MANDIRI'))
-        # ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|AUTH_KA')
         if _Tools.is_online(source='mandiri_settlement') is False:
+            ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_NO_INTENET_CONNECTION')
             return
+        _QPROX.auth_ka(_Global.get_active_sam(bank='MANDIRI'))
         # if _SFTPAccess.SFTP is not None:
         #     _SFTPAccess.close_sftp()
         # _SFTPAccess.init_sftp()
@@ -380,6 +381,7 @@ def do_settlement_for(bank='BNI'):
         #     return
         _param_sett = create_settlement_file(bank=bank, mode='TOPUP')
         if _param_sett is False:
+            ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_CREATE_FILE_SETTLEMENT')
             return
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|CREATE_FILE_SETTLEMENT')
         _file_ok = _param_sett['filename'].replace('.TXT', '.OK')
@@ -387,10 +389,12 @@ def do_settlement_for(bank='BNI'):
                                                  local_path=_param_sett['path_file'],
                                                  remote_path='/home/ftpuser/TopUpOffline/Sett_Macin')
         if _push_file_sett is False:
+            ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_UPLOAD_FILE_SETTLEMENT')
             return
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|UPLOAD_FILE_SETTLEMENT')
         _param_ka = create_settlement_file(bank=bank, mode='KA')
         if _param_ka is False:
+            ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_CREATE_FILE_KA_SETTLEMENT')
             return
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|CREATE_FILE_KA_SETTLEMENT')
         _param_ka_ok = _param_ka['filename'].replace('.TXT', '.OK')
@@ -398,22 +402,27 @@ def do_settlement_for(bank='BNI'):
                                                   local_path=_param_ka['path_file'],
                                                   remote_path='/home/ftpuser/TopUpOffline/Kalog_Macin')
         if _push_file_kalog is False:
+            ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_UPLOAD_FILE_KA_SETTLEMENT')
             return
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|UPLOAD_FILE_KA_SETTLEMENT')
         _rq1 = _QPROX.create_online_info()
         if _rq1 is False:
+            ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_GENERATE_RQ1_SETTLEMENT')
             return
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|GENERATE_RQ1_SETTLEMENT')
         _file_rq1 = mandiri_create_rq1(content=_rq1)
         if _file_rq1 is False:
+            ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_CREATE_FILE_RQ1_SETTLEMENT')
             return
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|CREATE_FILE_RQ1_SETTLEMENT')
         _push_rq1 = upload_settlement_file(filename=_file_rq1['filename'],
                                            local_path=_file_rq1['path_file'],
                                            remote_path='/home/ftpuser/TopUpOffline/UpdateRequestIn')
         if _push_rq1 is False:
+            ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_UPLOAD_FILE_RQ1_SETTLEMENT')
             return
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|UPLOAD_FILE_RQ1_SETTLEMENT')
+        sleep(1)
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|WAITING_RSP_UPDATE')
         _QPROX.do_update_limit_mandiri(_push_rq1['rsp'])
     else:
