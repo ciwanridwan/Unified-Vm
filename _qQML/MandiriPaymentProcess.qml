@@ -104,6 +104,10 @@ Base{
 //            slave_title.text = 'Silakan Ambil Struk Anda Di Bawah.\nJika Saldo Kartu Prabayar Anda Gagal Terisi, Silakan Hubungi Layanan Pelanggan.';
 //            slave_title.visible = true;
             switch_frame('aAsset/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Ambil Struk Transaksi Anda Hubungi Layanan Pelanggan', 'backToMain', true )
+        } else if (t=='TOPUP_FAILED_CARD_NOT_MATCH'){
+            switch_frame('aAsset/smiley_down.png', 'Terjadi Kesalahan', 'Terdeteksi Perbedaan Kartu Saat Isi Ulang', 'backToMain', true )
+            // Sementara Digagalkan dan Tidak Bisa Diulang
+            // return;
         } else {
             var output = t.split('|')
             var topupResponse = output[0]
