@@ -391,6 +391,10 @@ def top_up_mandiri(amount, trxid='', slot=None):
         __remarks = ''
         if __status == '0000':
             __remarks = __data[5]
+        if __status == '6969':
+            LOGGER.warning(('TOPUP_FAILED_CARD_NOT_MATCH', LAST_BALANCE_CHECK))
+            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_FAILED_CARD_NOT_MATCH')
+            return
         if __status in ERROR_TOPUP.keys():
             __remarks += '|'+ERROR_TOPUP[__status]
         # status='0000' -> success
