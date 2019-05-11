@@ -78,7 +78,7 @@ class GeneralPDF(FPDF):
     def header(self):
         self.set_font(USED_FONT, '', 7)
         self.ln(3)
-        self.cell(MARGIN_LEFT, 7, 'VM ACCESS REPORT', 0, 0, 'C')
+        self.cell(MARGIN_LEFT, 7, 'COLLECTION REPORT', 0, 0, 'C')
         self.ln(3)
         self.cell(MARGIN_LEFT, 7, 'VM ID : '+_KioskService.TID, 0, 0, 'C')
         self.ln(3)
@@ -491,51 +491,65 @@ def rotate_pdf(path_file):
         LOGGER.warning(str(e))
         return None
 
+# -------------------------
+CARD_SALE = 50000
+# -------------------------
 
 def get_admin_data():
     global CARD_ADJUSTMENT
     __data = dict()
     try:
         __data['trx_top10k'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale = 10000 '
-                                                 ' AND bankMid = "" AND bankTid = "" ')[0]['__']
+                                                 ' AND bankMid = "" AND bankTid = "" AND pid like "topup%" ')[0]['__']
         __data['trx_top20k'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale = 20000 '
-                                                 ' AND bankMid = "" AND bankTid = "" ')[0]['__']
+                                                 ' AND bankMid = "" AND bankTid = "" AND pid like "topup%" ')[0]['__']
         __data['trx_top50k'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale = 50000 '
-                                                 ' AND bankMid = "" AND bankTid = "" ')[0]['__']
+                                                 ' AND bankMid = "" AND bankTid = "" AND pid like "topup%" ')[0]['__']
         __data['trx_top100k'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale = 100000 '
-                                                  'AND bankMid = "" AND bankTid = "" ')[0]['__']
+                                                  'AND bankMid = "" AND bankTid = "" AND pid like "topup%" ')[0]['__']
+        __data['trx_top200k'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale = 200000 '
+                                                  'AND bankMid = "" AND bankTid = "" AND pid like "topup%" ')[0]['__']
         __data['amt_top10k'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE '
                                                  ' bankMid = "" AND bankTid = "" AND '
-                                                 ' sale = 10000 ')[0]['__']
+                                                 ' sale = 10000 AND pid like "topup%"')[0]['__']
         __data['amt_top20k'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE '
                                                  ' bankMid = "" AND bankTid = "" AND '
-                                                 ' sale = 20000 ')[0]['__']
+                                                 ' sale = 20000 AND pid like "topup%"')[0]['__']
         __data['amt_top50k'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE '
                                                  ' bankMid = ""  AND bankTid = "" AND '
-                                                 ' sale = 50000 ')[0]['__']
+                                                 ' sale = 50000 AND pid like "topup%" ')[0]['__']
         __data['amt_top100k'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE '
                                                   ' bankMid = "" AND bankTid = "" AND '
-                                                  ' sale = 100000 ')[0]['__']
-        __data['amt_card10k'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE '
+                                                  ' sale = 100000 AND pid like "topup%" ')[0]['__']
+        __data['amt_top200k'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE '
                                                   ' bankMid = "" AND bankTid = "" AND '
-                                                  ' sale = 30000 ')[0]['__']
-        __data['trx_card10k'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale = 30000 '
-                                                  ' AND bankMid = "" AND bankTid = "" ')[0]['__']
+                                                  ' sale = 200000 AND pid like "topup%" ')[0]['__']
+        __data['amt_card'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE '
+                                               ' bankMid = "" AND bankTid = "" AND sale = ' + str(CARD_SALE) +
+                                               ' AND  pid like "shop%" ')[0]['__']
+        __data['trx_card'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale = ' + str(CARD_SALE) +
+                                               ' AND bankMid = "" AND bankTid = "" AND pid like "shop%" ')[0]['__']
         __data['slot1'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE '
-                                            'status = 101 ')[0]['__']
+                                            ' status = 101 ')[0]['__']
         __data['slot2'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE '
-                                            'status = 102 ')[0]['__']
+                                            ' status = 102 ')[0]['__']
         __data['slot3'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE '
-                                            'status = 103 ')[0]['__']
+                                            ' status = 103 ')[0]['__']
         __data['all_cash'] = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __ FROM Cash WHERE  '
                                                ' collectedAt = 19900901 ')[0]['__']
-        __data['all_amount'] = int(__data['amt_card10k']) + int(__data['amt_top10k']) + int(__data['amt_top20k']) + \
-                               int(__data['amt_top50k']) + int(__data['amt_top100k'])
+        __data['all_amount'] = int(__data['amt_card']) + int(__data['amt_top10k']) + int(__data['amt_top20k']) + \
+                               int(__data['amt_top50k']) + int(__data['amt_top100k'] + int(__data['amt_top200k']))
         __data['failed_amount'] = int(__data['all_cash']) - int(__data['all_amount'])
         # SELECT sum(amount) as total FROM Cash WHERE collectedAt is null
         __data['init_slot1'] = __data['slot1']
         __data['init_slot2'] = __data['slot2']
         __data['init_slot3'] = __data['slot3']
+        __data['sam_1_balance'] = '0'
+        __data['sam_2_balance'] = '0'
+        # Status Bank BNI in Global
+        if _Global.BANKS[1]['STATUS'] is True:
+            __data['sam_1_balance'] = str(_Global.BNI_SAM_1_WALLET)
+            __data['sam_2_balance'] = str(_Global.BNI_SAM_2_WALLET)
         if len(_ProductService.LAST_UPDATED_STOCK) > 0:
             CARD_ADJUSTMENT = json.dumps(_ProductService.LAST_UPDATED_STOCK)
             for update in _ProductService.LAST_UPDATED_STOCK:
@@ -620,10 +634,10 @@ def admin_print_global(struct_id, ext='.pdf'):
         pdf.cell(padding_left, 0, 'CARD SALE', 0, 0, 'L')
         pdf.ln(tiny_space)
         pdf.set_font(USED_FONT, '', line_size)
-        qty_card = s['trx_card10k']
-        total_card = str(int(qty_card) * 30000)
+        qty_card = s['trx_card']
+        total_card = str(int(qty_card) * CARD_SALE)
         pdf.cell(padding_left, 0,
-                 '- Jaklingko10K : '+str(qty_card)+' x 30.000 = ', 0, 0, 'L')
+                 '- New Sale : '+str(qty_card)+' x '+clean_number(CARD_SALE)+' = ', 0, 0, 'L')
         pdf.ln(tiny_space-1)
         pdf.set_font(USED_FONT, '', line_size)
         pdf.cell(padding_left, 0, '                 Rp. '+clean_number(total_card), 0, 0, 'L')
@@ -631,11 +645,12 @@ def admin_print_global(struct_id, ext='.pdf'):
         pdf.set_font(USED_FONT, '', line_size)
         pdf.cell(padding_left, 0, 'TOPUP', 0, 0, 'L')
         pdf.ln(tiny_space)
-        pdf.set_font(USED_FONT, '', line_size)
-        qty_t10k = s['trx_top10k']
-        total_t10k = str(int(qty_t10k) * 10000)
-        pdf.cell(padding_left, 0,
-                 '- 10K : '+str(qty_t10k)+' x 10.000 = Rp. '+clean_number(total_t10k), 0, 0, 'L')
+        if not _Global.BANKS[0]['STATUS']:
+            pdf.set_font(USED_FONT, '', line_size)
+            qty_t10k = s['trx_top10k']
+            total_t10k = str(int(qty_t10k) * 10000)
+            pdf.cell(padding_left, 0,
+                     '- 10K : '+str(qty_t10k)+' x 10.000 = Rp. '+clean_number(total_t10k), 0, 0, 'L')
         pdf.ln(tiny_space)
         pdf.set_font(USED_FONT, '', line_size)
         qty_t20k = s['trx_top20k']
@@ -654,6 +669,12 @@ def admin_print_global(struct_id, ext='.pdf'):
         total_t100k = str(int(qty_t100k) * 100000)
         pdf.cell(padding_left, 0,
                  '- 100K : '+str(qty_t100k)+' x 100.000 = Rp. '+clean_number(total_t100k), 0, 0, 'L')
+        if _Global.BANKS[0]['STATUS']:
+            pdf.set_font(USED_FONT, '', line_size)
+            qty_t200k = s['trx_top200k']
+            total_t200k = str(int(qty_t200k) * 200000)
+            pdf.cell(padding_left, 0,
+                     '- 200K : '+str(qty_t200k)+' x 200.000 = Rp. '+clean_number(total_t200k), 0, 0, 'L')
         pdf.ln(line_size)
         pdf.set_font(USED_FONT, '', line_size)
         pdf.cell(padding_left, 0, 'CARD UPDATE', 0, 0, 'L')
@@ -675,6 +696,12 @@ def admin_print_global(struct_id, ext='.pdf'):
         pdf.ln(line_size+1)
         pdf.set_font(USED_FONT, '', line_size)
         pdf.cell(padding_left, 0, 'Failed TRX : Rp. ' + clean_number(str(s['failed_amount'])), 0, 0, 'L')
+        pdf.ln(line_size+1)
+        pdf.set_font(USED_FONT, '', line_size)
+        pdf.cell(padding_left, 0, 'SAM 1 Balance : Rp. ' + clean_number(str(s['sam_1_balance'])), 0, 0, 'L')
+        pdf.ln(line_size+1)
+        pdf.set_font(USED_FONT, '', line_size)
+        pdf.cell(padding_left, 0, 'SAM 2 Balance : Rp. ' + clean_number(str(s['sam_2_balance'])), 0, 0, 'L')
         pdf.set_font(USED_FONT, '', line_size+3)
         pdf.ln(tiny_space)
         total_amount = str(s['all_amount'])
@@ -704,25 +731,34 @@ def admin_print_global(struct_id, ext='.pdf'):
 def mark_sync_collected_data(s):
     if s is not False:
         if int(s['trx_top10k']) > 0:
-            _DAO.custom_update(' UPDATE Transactions SET bankMid = "999", bankTid = "999" WHERE sale = 10000 ')
+            _DAO.custom_update(' UPDATE Transactions SET bankMid = "999", bankTid = "999" WHERE sale = 10000 '
+                               ' AND pid like "topup%" ')
             sleep(.25)
         if int(s['trx_top20k']) > 0:
-            _DAO.custom_update(' UPDATE Transactions SET bankMid = "999", bankTid = "999" WHERE sale = 20000 ')
+            _DAO.custom_update(' UPDATE Transactions SET bankMid = "999", bankTid = "999" WHERE sale = 20000 '
+                               ' AND pid like "topup%" ')
             sleep(.25)
         if int(s['trx_top50k']) > 0:
-            _DAO.custom_update(' UPDATE Transactions SET bankMid = "999", bankTid = "999" WHERE sale = 50000 ')
+            _DAO.custom_update(' UPDATE Transactions SET bankMid = "999", bankTid = "999" WHERE sale = 50000 '
+                               ' AND pid like "topup%" ')
             sleep(.25)
         if int(s['trx_top100k']) > 0:
-            _DAO.custom_update(' UPDATE Transactions SET bankMid = "999", bankTid = "999" WHERE sale = 100000 ')
+            _DAO.custom_update(' UPDATE Transactions SET bankMid = "999", bankTid = "999" WHERE sale = 100000 '
+                               ' AND pid like "topup%" ')
             sleep(.25)
-        if int(s['trx_card10k']) > 0:
-            _DAO.custom_update(' UPDATE Transactions SET bankMid = "999", bankTid = "999" WHERE sale = 30000 ')
+        if int(s['trx_top200k']) > 0:
+            _DAO.custom_update(' UPDATE Transactions SET bankMid = "999", bankTid = "999" WHERE sale = 200000 '
+                               ' AND pid like "topup%" ')
+            sleep(.25)
+        if int(s['trx_card']) > 0:
+            _DAO.custom_update(' UPDATE Transactions SET bankMid = "999", bankTid = "999" WHERE sale = ' +
+                               str(CARD_SALE) + ' AND pid like "shop%" ')
         operator = 'OPERATOR'
         if _UserService.USER is not None:
             operator = _UserService.USER['first_name']
         # Reset Cash Log
         _DAO.custom_update(
-            ' UPDATE Cash SET collectedAt = ' + str(_Tools.now()) + ', collectedUser = "' + str(operator) + '"  '
+            ' UPDATE Cash SET collectedAt = ' + str(_Tools.now()) + ', collectedUser = "' + str(operator) +
             ' WHERE collectedAt = 19900901 ')
         return True
     else:
