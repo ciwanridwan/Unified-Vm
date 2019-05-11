@@ -495,6 +495,7 @@ def rotate_pdf(path_file):
 CARD_SALE = 50000
 # -------------------------
 
+
 def get_admin_data():
     global CARD_ADJUSTMENT
     __data = dict()
@@ -547,9 +548,9 @@ def get_admin_data():
         __data['sam_1_balance'] = '0'
         __data['sam_2_balance'] = '0'
         # Status Bank BNI in Global
-        if _Global.BANKS[1]['STATUS'] is True:
-            __data['sam_1_balance'] = str(_Global.BNI_SAM_1_WALLET)
-            __data['sam_2_balance'] = str(_Global.BNI_SAM_2_WALLET)
+        if _Global.BANKS[0]['STATUS'] is True:
+            __data['sam_1_balance'] = str(_Global.MANDIRI_WALLET_1)
+            __data['sam_2_balance'] = str(_Global.MANDIRI_WALLET_2)
         if len(_ProductService.LAST_UPDATED_STOCK) > 0:
             CARD_ADJUSTMENT = json.dumps(_ProductService.LAST_UPDATED_STOCK)
             for update in _ProductService.LAST_UPDATED_STOCK:
