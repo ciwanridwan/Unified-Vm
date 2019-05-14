@@ -638,7 +638,7 @@ def admin_print_global(struct_id, ext='.pdf'):
         qty_card = s['trx_card']
         total_card = str(int(qty_card) * CARD_SALE)
         pdf.cell(padding_left, 0,
-                 '- New Sale : '+str(qty_card)+' x '+clean_number(CARD_SALE)+' = ', 0, 0, 'L')
+                 '- e-Money : '+str(qty_card)+' x '+clean_number(CARD_SALE)+' = ', 0, 0, 'L')
         pdf.ln(tiny_space-1)
         pdf.set_font(USED_FONT, '', line_size)
         pdf.cell(padding_left, 0, '                 Rp. '+clean_number(total_card), 0, 0, 'L')
@@ -706,6 +706,8 @@ def admin_print_global(struct_id, ext='.pdf'):
         pdf.set_font(USED_FONT, '', line_size+3)
         pdf.ln(tiny_space)
         total_amount = str(s['all_amount'])
+        if total_amount == '0':
+            total_amount = str(s['failed_amount'])
         pdf.cell(padding_left, 0, 'TOTAL CASH = Rp. ' + clean_number(total_amount), 0, 0, 'L')
         # End Layouting
         pdf_file = get_path(file_name+ext)
