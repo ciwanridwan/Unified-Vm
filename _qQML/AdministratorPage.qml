@@ -362,7 +362,7 @@ Base{
         anchors.top: parent.top
         anchors.topMargin: 15
         z: 10
-        button_text: 'settlement'
+        button_text: 'settle'
         visible: !popup_loading.visible
         modeReverse: true
         MouseArea{
@@ -374,6 +374,29 @@ Base{
                 console.log('mandiri_settlement_button is pressed..!');
                 popup_loading.open();
                 _SLOT.start_do_mandiri_topup_settlement();
+            }
+        }
+    }
+
+    AdminPanelButton{
+        id: mandiri_dummy_settlement_button
+        anchors.leftMargin: 15
+        anchors.left: mandiri_settlement_button.right
+        anchors.top: parent.top
+        anchors.topMargin: 15
+        z: 10
+        button_text: 'dummy'
+        visible: !popup_loading.visible
+        modeReverse: true
+        MouseArea{
+            anchors.fill: parent
+            onClicked: {
+                _SLOT.user_action_log('Admin Page "Dummy Settlement"');
+                if (press != '0') return;
+                press = '1';
+                console.log('mandiri_dummy_settlement_button is pressed..!');
+                popup_loading.open();
+                _SLOT.start_dummy_mandiri_topup_settlement();
             }
         }
     }
@@ -931,7 +954,7 @@ Base{
            onClicked: {
                _SLOT.user_action_log('Admin Page "Test Slot 1"');
                console.log('Test Slot 1 Button is Pressed..!');
-               _SLOT.start_multiple_eject('101');
+               _SLOT.start_multiple_eject('101', '1');
            }
        }
     }
@@ -953,7 +976,7 @@ Base{
            onClicked: {
                _SLOT.user_action_log('Admin Page "Test Slot 2"');
                console.log('Test Slot 2 Button is Pressed..!');
-               _SLOT.start_multiple_eject('102');
+               _SLOT.start_multiple_eject('102', '1');
            }
        }
     }
@@ -975,7 +998,7 @@ Base{
            onClicked: {
                _SLOT.user_action_log('Admin Page "Test Slot 3"');
                console.log('Test Slot 3 Button is Pressed..!');
-               _SLOT.start_multiple_eject('103');
+               _SLOT.start_multiple_eject('103', '1');
            }
        }
     }

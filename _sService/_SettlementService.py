@@ -111,7 +111,7 @@ MANDIRI_LAST_TIMESTAMP = ''
 MANDIRI_LAST_FILENAME = ''
 
 
-def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None):
+def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, dummy=False):
     global GLOBAL_SETTLEMENT, MANDIRI_LAST_TIMESTAMP, MANDIRI_LAST_FILENAME
     if bank == 'BNI' and mode == 'TOPUP':
         try:
@@ -199,15 +199,16 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None):
                 output_path = FILE_PATH
             settlements = _DAO.get_query_from('TopUpRecords', ' syncFlag=1 AND reportKA <> "N/A" ')
             GLOBAL_SETTLEMENT = settlements
-            if len(settlements) == 0:
+            if len(settlements) == 0 and dummy is False:
                 LOGGER.warning(('No Data For Settlement', bank, mode, str(settlements)))
                 return False
             __shift = '0002'
             __seq = '02'
             __timestamp = datetime.now().strftime('%d%m%Y%H%M')
             MANDIRI_LAST_TIMESTAMP = __timestamp
-            __ds = __timestamp[-4:]
-            _filename = _Global.MID_MAN + __shift + _Global.TID_MAN + __seq + (__timestamp * 2) + __ds + '.TXT'
+            __raw = _Global.MID_MAN + __shift + _Global.TID_MAN + __seq + (__timestamp * 2) + 'MDDCOID'[::-1] + '.txt'
+            __ds = str(_Tools.get_ds(__raw))
+            _filename = _Global.MID_MAN + __shift + _Global.TID_MAN + __seq + (__timestamp * 2) + __ds + '.txt'
             MANDIRI_LAST_FILENAME = _filename
             LOGGER.info(('Create Settlement Filename', bank, mode, _filename))
             _filecontent = ''
@@ -232,7 +233,7 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None):
                     else:
                         f.write(line)
                 f.close()
-            _file_created_ok = os.path.join(output_path, _filename.replace('.TXT', '.OK'))
+            _file_created_ok = os.path.join(output_path, _filename.replace('.txt', '.ok'))
             with open(_file_created_ok, 'w+') as f_ok:
                 f_ok.write('')
                 f_ok.close()
@@ -266,7 +267,7 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None):
                 output_path = FILE_PATH
             settlements = _DAO.get_query_from('TopUpRecords', ' syncFlag=3 AND reportKA <> "N/A" ')
             # GLOBAL_SETTLEMENT = settlements
-            if len(settlements) == 0:
+            if len(settlements) == 0 and dummy is False:
                 LOGGER.warning(('No Data For Settlement', bank, mode, str(settlements)))
                 return False
             __shift = '0002'
@@ -298,7 +299,7 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None):
                     else:
                         f.write(line)
                 f.close()
-            _file_created_ok = os.path.join(output_path, _filename.replace('.TXT', '.OK'))
+            _file_created_ok = os.path.join(output_path, _filename.replace('.txt', '.ok'))
             with open(_file_created_ok, 'w+') as f_ok:
                 f_ok.write('')
                 f_ok.close()
@@ -351,7 +352,14 @@ def start_do_mandiri_topup_settlement():
     ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TRIGGERED')
 
 
-def do_settlement_for(bank='BNI'):
+def start_dummy_mandiri_topup_settlement():
+    bank = 'MANDIRI'
+    dummy = True
+    _Tools.get_pool().apply_async(do_settlement_for, (bank, dummy, ))
+    ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TRIGGERED')
+
+
+def do_settlement_for(bank='BNI', dummy=False):
     if bank == 'BNI':
         if _Tools.is_online(source='bni_settlement') is False:
             return
@@ -379,7 +387,7 @@ def do_settlement_for(bank='BNI'):
         # if _SFTPAccess.SFTP is None:
         #     LOGGER.warning(('do_settlement_for', bank, 'failed cannot init SFTP'))
         #     return
-        _param_sett = create_settlement_file(bank=bank, mode='TOPUP')
+        _param_sett = create_settlement_file(bank=bank, mode='TOPUP', dummy=dummy)
         if _param_sett is False:
             ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_CREATE_FILE_SETTLEMENT')
             return
@@ -387,12 +395,12 @@ def do_settlement_for(bank='BNI'):
         _file_ok = _param_sett['filename'].replace('.TXT', '.OK')
         _push_file_sett = upload_settlement_file(filename=[_param_sett['filename'], _file_ok],
                                                  local_path=_param_sett['path_file'],
-                                                 remote_path='/home/ftpuser/TopUpOffline/Sett_Macin')
+                                                 remote_path='/home/ftpuser/TopUpOffline/Sett_Macin_DEV')
         if _push_file_sett is False:
             ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_UPLOAD_FILE_SETTLEMENT')
             return
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|UPLOAD_FILE_SETTLEMENT')
-        _param_ka = create_settlement_file(bank=bank, mode='KA')
+        _param_ka = create_settlement_file(bank=bank, mode='KA', dummy=dummy)
         if _param_ka is False:
             ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_CREATE_FILE_KA_SETTLEMENT')
             return
@@ -400,7 +408,7 @@ def do_settlement_for(bank='BNI'):
         _param_ka_ok = _param_ka['filename'].replace('.TXT', '.OK')
         _push_file_kalog = upload_settlement_file(filename=[_param_ka['filename'], _param_ka_ok],
                                                   local_path=_param_ka['path_file'],
-                                                  remote_path='/home/ftpuser/TopUpOffline/Kalog_Macin')
+                                                  remote_path='/home/ftpuser/TopUpOffline/Kalog_Macin_DEV')
         if _push_file_kalog is False:
             ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_UPLOAD_FILE_KA_SETTLEMENT')
             return
@@ -417,7 +425,7 @@ def do_settlement_for(bank='BNI'):
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|CREATE_FILE_RQ1_SETTLEMENT')
         _push_rq1 = upload_settlement_file(filename=_file_rq1['filename'],
                                            local_path=_file_rq1['path_file'],
-                                           remote_path='/home/ftpuser/TopUpOffline/UpdateRequestIn')
+                                           remote_path='/home/ftpuser/TopUpOffline/UpdateRequestIn_DEV')
         if _push_rq1 is False:
             ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_UPLOAD_FILE_RQ1_SETTLEMENT')
             return

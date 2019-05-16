@@ -87,3 +87,10 @@ def file2crc32(filename):
 def is_online(source=''):
     return _NetworkAccess.is_online(source=source)
 
+
+def get_ds(string, length=4):
+    salt = 'MDDCOID'
+    __ = abs(hash(string+salt)) % (10 ** length)
+    LOGGER.debug(('length', length, 'hash', __, 'string', string_salt))
+    return __
+
