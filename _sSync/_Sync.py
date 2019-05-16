@@ -408,16 +408,14 @@ def start_sync_product_stock():
 
 def start_get_product_stock():
     _url = URL + 'get/product-stock'
-    while True:
-        if _Tools.is_online(source='start_get_product_stock') is True and IDLE_MODE is True:
-            s, r = _NetworkAccess.get_from_url(url=_url)
-            if s == 200 and r['result'] == 'OK':
-                products = r['data']
-                _DAO.flush_table('ProductStock')
-                for product in products:
-                    _DAO.insert_product_stock(product)
-                _KioskService.get_product_stock()
-        sleep(66.6)
+    if _Tools.is_online(source='start_get_product_stock') is True and IDLE_MODE is True:
+        s, r = _NetworkAccess.get_from_url(url=_url)
+        if s == 200 and r['result'] == 'OK':
+            products = r['data']
+            _DAO.flush_table('ProductStock')
+            for product in products:
+                _DAO.insert_product_stock(product)
+            _KioskService.get_product_stock()
 
 
 def start_get_topup_amount():

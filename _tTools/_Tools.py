@@ -88,9 +88,10 @@ def is_online(source=''):
     return _NetworkAccess.is_online(source=source)
 
 
-def get_ds(string, length=4):
+def get_ds(string, length=4, log=False):
     salt = 'MDDCOID'
     __ = abs(hash(string+salt)) % (10 ** length)
-    LOGGER.debug(('length', length, 'hash', __, 'string', string_salt))
+    if log is True:
+        LOGGER.debug(('length', length, 'hash', __, 'string', str(string+salt)))
     return __
 
