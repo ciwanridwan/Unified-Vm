@@ -547,6 +547,11 @@ def get_admin_data():
         __data['init_slot3'] = __data['slot3']
         __data['sam_1_balance'] = '0'
         __data['sam_2_balance'] = '0'
+        __notes = []
+        for money in _DAO.custom_query(' SELECT paymentNotes AS note FROM Transactions WHERE paymentType = "MEI" '
+                                       ' AND bankMid = "" AND bankTid = "" '):
+            __notes.append(json.loads(money['note'])['history'])
+        __data['notes_summary'] = '|'.join(__notes)
         # Status Bank BNI in Global
         if _Global.BANKS[0]['STATUS'] is True:
             __data['sam_1_balance'] = str(_Global.MANDIRI_WALLET_1)

@@ -930,6 +930,8 @@ def reset_db_record():
         time.sleep(1)
         _DAO.flush_table('Settlement', ' tid <> "'+_Global.TID+'" AND status NOT LIKE "%EDC%" ')
         time.sleep(1)
+        _DAO.custom_update(' UPDATE Settlement SET status = "EDC|VOID" WHERE status LIKE "%EDC%" AND tid <> "'+_Global.TID+'" ')
+        time.sleep(1)
         _DAO.flush_table('Cash', ' tid <> "'+_Global.TID+'" ')
         # time.sleep(1)
         # _DAO.flush_table('Product')
