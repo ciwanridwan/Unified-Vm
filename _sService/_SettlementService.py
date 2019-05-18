@@ -380,7 +380,7 @@ def do_settlement_for(bank='BNI', dummy=False):
         if _Tools.is_online(source='mandiri_settlement') is False:
             ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_NO_INTENET_CONNECTION')
             return
-        _QPROX.auth_ka(_Global.get_active_sam(bank='MANDIRI'))
+        _QPROX.auth_ka(_slot=_Global.get_active_sam(bank='MANDIRI', reverse=False), initial=False)
         # if _SFTPAccess.SFTP is not None:
         #     _SFTPAccess.close_sftp()
         # _SFTPAccess.init_sftp()

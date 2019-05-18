@@ -378,6 +378,9 @@ def handle_tasks(tasks):
         if task['taskName'] == 'RESET_STOCK_PRODUCT':
             _DAO.clear_stock_product()
             update_task(task, 'RESET_STOCK_PRODUCT_SUCCESS')
+        if task['taskName'] == 'REMOTE_UPDATE_STOCK':
+            result = start_get_product_stock()
+            update_task(task, result)
         if task['taskName'] == 'UPDATE_KIOSK':
             update_task(task)
             _url = URL + 'get/setting'
@@ -408,7 +411,7 @@ def start_sync_product_stock():
 
 def start_get_product_stock():
     _url = URL + 'get/product-stock'
-    if _Tools.is_online(source='start_get_product_stock') is True and IDLE_MODE is True:
+    if _Tools.is_online(source='start_get_product_stock') is True:
         s, r = _NetworkAccess.get_from_url(url=_url)
         if s == 200 and r['result'] == 'OK':
             products = r['data']
@@ -416,6 +419,11 @@ def start_get_product_stock():
             for product in products:
                 _DAO.insert_product_stock(product)
             _KioskService.get_product_stock()
+            return 'UPDATE_STOCK_SUCCESS'
+        else:
+            return 'UPDATE_STOCK_FAILED_UNKNOWN_ERROR'
+    else:
+        return 'UPDATE_STOCK_FAILED_NO_CONNECTION'
 
 
 def start_get_topup_amount():

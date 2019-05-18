@@ -79,7 +79,6 @@ Base{
             kalog_notif('Selamat|Login KA Mandiri Berhasil');
             kalogin_notif_view._button_text = 'tutup';
             kalogButton = false;
-            mandiriLogin = true;
         } else {
             kalog_notif('Mohon Maaf|Login KA Mandiri Gagal, Kode Error ['+result+'], Silakan Coba Lagi');
             kalogButton = true;

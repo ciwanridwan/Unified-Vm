@@ -151,7 +151,7 @@ MANDIRI_ACTIVE_WALLET = 0
 MANDIRI_ACTIVE = int(_ConfigParser.get_set_value('QPROX', 'mandiri^active^slot', '1'))
 MANDIRI_NO_1 = _ConfigParser.get_set_value('QPROX', 'mandiri^sam^uid^1', '---')
 MANDIRI_NO_2 = _ConfigParser.get_set_value('QPROX', 'mandiri^sam^uid^2', '---')
-MANDIRI_REVERSE_SLOT_MODE = True
+MANDIRI_REVERSE_SLOT_MODE = False
 
 BNI_SAM_1_WALLET = 0
 BNI_SAM_2_WALLET = 0
@@ -448,9 +448,9 @@ def save_sam_config(bank='BNI'):
         _ConfigParser.set_value('QPROX', 'mandiri^active^slot', str(MANDIRI_ACTIVE))
 
 
-def get_active_sam(bank='MANDIRI'):
+def get_active_sam(bank='MANDIRI', reverse=False):
     if bank == 'MANDIRI':
-        if MANDIRI_REVERSE_SLOT_MODE is True:
+        if MANDIRI_REVERSE_SLOT_MODE is True or reverse is True:
             if MANDIRI_ACTIVE == 1:
                 return '2'
             elif MANDIRI_ACTIVE == 2:

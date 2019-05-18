@@ -275,7 +275,7 @@ COM1, 01, 0123456789abcdef, 00010002, 20010203, 20010203
 '''
 
 
-def auth_ka(_slot=None):
+def auth_ka(_slot=None, initial=True):
     global INIT_TOPUP_MANDIRI
     if len(INIT_LIST) == 0:
         LOGGER.warning(('auth_ka', 'INIT_LIST', str(INIT_LIST)))
@@ -283,7 +283,7 @@ def auth_ka(_slot=None):
         _Global.NFC_ERROR = 'EMPTY_INIT_LIST'
         return
     if _slot is None:
-        _slot = str(_Global.MANDIRI_ACTIVE)
+        _slot = str(_Global.get_active_sam(bank='MANDIRI', reverse=True))
     _ka_pin = _Global.KA_PIN1
     if _slot == '2':
         _ka_pin = _Global.KA_PIN2
@@ -293,16 +293,25 @@ def auth_ka(_slot=None):
     LOGGER.debug(("auth_ka : ", _slot, result))
     if response == 0:
         INIT_TOPUP_MANDIRI = True
-        _slot = _Global.get_active_sam(bank='MANDIRI')
         ka_info_mandiri(slot=_slot)
-        QP_SIGNDLER.SIGNAL_AUTH_QPROX.emit('AUTH_KA|SUCCESS')
-        # print('pyt: auth_ka NIK : ', result)
-        # if KA_NIK in result:
-        #     INIT_TOPUP_MANDIRI = True
-        #     ka_info_mandiri()
-        #     QP_SIGNDLER.SIGNAL_AUTH_QPROX.emit('AUTH_KA|SUCCESS')
-        # else:
-        #     QP_SIGNDLER.SIGNAL_AUTH_QPROX.emit('AUTH_KA|'+str(result))
+        if initial is False:
+            QP_SIGNDLER.SIGNAL_AUTH_QPROX.emit('AUTH_KA|SUCCESS')
+        else:
+            __slot = str(_Global.get_active_sam(bank='MANDIRI', reverse=True))
+            __ka_pin = _Global.KA_PIN1
+            if __slot == '2':
+                __ka_pin = _Global.KA_PIN2
+            __ka_pin = _Global.KA_PIN2
+            __param = QPROX['AUTH'] + '|' + QPROX_PORT + '|' + __slot + '|' + BANKS[0]['SAM'] + '|' + BANKS[0]['MID'] \
+                      + '|' + BANKS[0]['TID'] + '|' + __ka_pin + '|' + _Global.KL_PIN
+            __response, __result = _Command.send_request(param=__param, output=None)
+            LOGGER.debug(("auth_ka : ", __slot, __result))
+            if __response == 0:
+                ka_info_mandiri(slot=__slot)
+                QP_SIGNDLER.SIGNAL_AUTH_QPROX.emit('AUTH_KA|SUCCESS')
+            else:
+                _Global.NFC_ERROR = 'AUTH_KA_MANDIRI_ERROR'
+                QP_SIGNDLER.SIGNAL_AUTH_QPROX.emit('AUTH_KA|'+str(__result))
     else:
         _Global.NFC_ERROR = 'AUTH_KA_MANDIRI_ERROR'
         QP_SIGNDLER.SIGNAL_AUTH_QPROX.emit('AUTH_KA|'+str(result))
