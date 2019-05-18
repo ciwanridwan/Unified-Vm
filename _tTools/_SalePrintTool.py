@@ -738,29 +738,7 @@ def admin_print_global(struct_id, ext='.pdf'):
 
 def mark_sync_collected_data(s):
     if s is not False:
-        if int(s['trx_top10k']) > 0:
-            _DAO.custom_update(' UPDATE Transactions SET bankMid = "999", bankTid = "999" WHERE sale = 10000 '
-                               ' AND pid like "topup%" ')
-            sleep(.25)
-        if int(s['trx_top20k']) > 0:
-            _DAO.custom_update(' UPDATE Transactions SET bankMid = "999", bankTid = "999" WHERE sale = 20000 '
-                               ' AND pid like "topup%" ')
-            sleep(.25)
-        if int(s['trx_top50k']) > 0:
-            _DAO.custom_update(' UPDATE Transactions SET bankMid = "999", bankTid = "999" WHERE sale = 50000 '
-                               ' AND pid like "topup%" ')
-            sleep(.25)
-        if int(s['trx_top100k']) > 0:
-            _DAO.custom_update(' UPDATE Transactions SET bankMid = "999", bankTid = "999" WHERE sale = 100000 '
-                               ' AND pid like "topup%" ')
-            sleep(.25)
-        if int(s['trx_top200k']) > 0:
-            _DAO.custom_update(' UPDATE Transactions SET bankMid = "999", bankTid = "999" WHERE sale = 200000 '
-                               ' AND pid like "topup%" ')
-            sleep(.25)
-        if int(s['trx_card']) > 0:
-            _DAO.custom_update(' UPDATE Transactions SET bankMid = "999", bankTid = "999" WHERE sale = ' +
-                               str(CARD_SALE) + ' AND pid like "shop%" ')
+        _DAO.custom_update(' UPDATE Transactions SET bankMid = "999", bankTid = "999" WHERE paymentType = "MEI" ')
         operator = 'OPERATOR'
         if _UserService.USER is not None:
             operator = _UserService.USER['first_name']
