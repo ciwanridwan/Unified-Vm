@@ -844,7 +844,7 @@ if __name__ == '__main__':
         _GRG.init_grg()
     if _Global.QPROX['status'] is True:
         sleep(1)
-        print("[INFO] Connecting Into Prepaid Reader...")
+        print("Connecting Into Prepaid Reader...")
         if _QPROX.open_qprox() is True:
             sleep(1)
             print("INIT Prepaid Reader...")
