@@ -35,9 +35,9 @@ Base{
     property string proceedText: 'LANJUT'
     property bool frameWithButton: false
 
-    property var smallDenomMandiri: '50000'
-    property var midDenomMandiri: '100000'
-    property var highDenomMandiri: '200000'
+    property var smallDenomMandiri: '1' //'50000'
+    property var midDenomMandiri: '1' //'100000'
+    property var highDenomMandiri: '1' //'200000'
 
     // By Default Only Can Show 3 Denoms, Adjusted with below properties
     property int miniDenomValue: 10000
@@ -246,24 +246,25 @@ Base{
             var ableTopupCode = info.able_topup;
             cardBalance = parseInt(info.balance);
             if (bankName=='MANDIRI'){
-                if (ableTopupCode=='0000'){
-                    cardData = {
-                        balance: info.balance,
-                        card_no: info.card_no,
-                        bank_type: info.bank_type,
-                        bank_name: info.bank_name,
-                    }
-                    parse_cardData(cardData);
-//                } else if (ableTopupCode=='1008'){
-//                    back_button.z = 999
-//                    open_preload_notif('Mohon Maaf|Kartu BNI TapCash Anda Sudah Tidak Aktif\nSilakan Hubungi Bank BNI Terdekat', 'coba lagi');
-//                } else if (ableTopupCode=='5106'){
-//                    back_button.z = 999
-//                    open_preload_notif('Mohon Maaf|Kartu BNI TapCash Anda Tidak Resmi\nSilakan Gunakan Kartu TapCash Yang Lain', 'coba lagi');
-                } else {
-//                    back_button.z = 999
-                    switch_frame('aAsset/insert_card_new.png', 'Maaf terjadi kesalahan pada kartu Anda', 'gunakan kartu lainnya', 'closeWindow', false );
-                    return;                }
+                cardData = {
+                    balance: info.balance,
+                    card_no: info.card_no,
+                    bank_type: info.bank_type,
+                    bank_name: info.bank_name,
+                }
+                parse_cardData(cardData);
+//                if (ableTopupCode=='0000'){
+////                } else if (ableTopupCode=='1008'){
+////                    back_button.z = 999
+////                    open_preload_notif('Mohon Maaf|Kartu BNI TapCash Anda Sudah Tidak Aktif\nSilakan Hubungi Bank BNI Terdekat', 'coba lagi');
+////                } else if (ableTopupCode=='5106'){
+////                    back_button.z = 999
+////                    open_preload_notif('Mohon Maaf|Kartu BNI TapCash Anda Tidak Resmi\nSilakan Gunakan Kartu TapCash Yang Lain', 'coba lagi');
+//                } else {
+////                    back_button.z = 999
+//                    switch_frame('aAsset/insert_card_new.png', 'Maaf terjadi kesalahan pada kartu Anda', 'gunakan kartu lainnya', 'closeWindow', false );
+//                    return;
+//                }
             } else {
 //                back_button.z = 999
                 switch_frame('aAsset/insert_card_new.png', 'Anda tidak meletakkan kartu', 'ataupun kartu Anda tidak dapat digunakan', 'closeWindow', false );

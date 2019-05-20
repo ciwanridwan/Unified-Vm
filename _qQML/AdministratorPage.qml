@@ -81,6 +81,9 @@ Base{
         } else {
             false_notif('Mohon Maaf|Login KA Mandiri Gagal, Kode Error ['+result+'], Silakan Coba Lagi');
         }
+        press = '0';
+        _SLOT.kiosk_get_machine_summary();
+        _SLOT.kiosk_get_product_stock();
     }
 
     function get_admin_action(a){

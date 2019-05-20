@@ -380,7 +380,7 @@ def do_settlement_for(bank='BNI', dummy=False):
         if _Tools.is_online(source='mandiri_settlement') is False:
             ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_NO_INTENET_CONNECTION')
             return
-        _QPROX.auth_ka(_slot=_Global.get_active_sam(bank='MANDIRI', reverse=False), initial=False)
+        # _QPROX.auth_ka(_slot=_Global.get_active_sam(bank='MANDIRI', reverse=False), initial=False)
         # if _SFTPAccess.SFTP is not None:
         #     _SFTPAccess.close_sftp()
         # _SFTPAccess.init_sftp()
@@ -432,14 +432,16 @@ def do_settlement_for(bank='BNI', dummy=False):
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|UPLOAD_FILE_RQ1_SETTLEMENT')
         sleep(1)
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|WAITING_RSP_UPDATE')
-        _QPROX.do_update_limit_mandiri(_push_rq1['rsp'])
+        _QPROX.do_update_limit_mandiri(_file_rq1['rsp'])
+        # _QPROX.auth_ka(_slot=_Global.get_active_sam(bank='MANDIRI', reverse=False), initial=False)
+        # Move To QPROX Module
     else:
         return
 
 
 def mandiri_create_rq1(content):
     try:
-        _filename = MANDIRI_LAST_FILENAME.replace('.TXT', '.RQ1')
+        _filename = MANDIRI_LAST_FILENAME.replace('.txt', '.RQ1')
         _file_rq1 = os.path.join(FILE_PATH, _filename)
         with open(_file_rq1, 'w+') as f:
             f.write(content)
@@ -448,7 +450,7 @@ def mandiri_create_rq1(content):
             'rq1': content,
             'filename': _filename,
             'path_file': _file_rq1,
-            'rsp': MANDIRI_LAST_FILENAME.replace('.TXT', '.RSP')
+            'rsp': MANDIRI_LAST_FILENAME.replace('.txt', '.RSP')
         }
         LOGGER.debug(str(output))
         return output

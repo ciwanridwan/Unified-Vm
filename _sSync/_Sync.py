@@ -264,8 +264,8 @@ def sync_settlement_data(bank):
     while True:
         try:
             if _Tools.is_online(source='sync_settlement_data') is True and IDLE_MODE is True:
-                settlements = _DAO.custom_query(' SELECT * FROM ' + _table_ + ' WHERE status = "TOPUP_PREPAID|OPEN" AND '
-                                                                              ' createdAt > 1554783163354 ')
+                settlements = _DAO.custom_query(' SELECT * FROM ' + _table_ +
+                                                ' WHERE status = "TOPUP_PREPAID|OPEN" AND createdAt > 1554783163354 ')
                 if len(settlements) > 0:
                     print('pyt : Re-Sync Settlement Data...')
                     for s in settlements:

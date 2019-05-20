@@ -52,18 +52,19 @@ def send_file(filename, local_path, remote_path=None):
     if SFTP is None:
         init_sftp()
     try:
-        _filename = ''
-        _remote_path = ''
         if type(filename) == list:
             _filename = filename[0]
             _remote_path = remote_path+'/'+_filename
-        LOGGER.debug(('send_file TXT', _filename, local_path, _remote_path))
+        else:
+            _filename = filename
+            _remote_path = remote_path+'/'+_filename
+        LOGGER.debug(('send_file #1', _filename, local_path, _remote_path))
         SFTP.put(local_path, _remote_path)
         if type(filename) == list and len(filename) > 1:
             __filename = filename[1]
             __local_path = local_path.replace('.txt', '.ok')
             __remote_path = _remote_path.replace('.txt', '.ok')
-            LOGGER.debug(('send_file OK', __filename, __local_path, __remote_path))
+            LOGGER.debug(('send_file #2', __filename, __local_path, __remote_path))
             sleep(1)
             SFTP.put(__local_path, __remote_path)
         result = True

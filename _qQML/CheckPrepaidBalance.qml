@@ -174,31 +174,31 @@ Base{
                 if (press!='0') return;
                 press = '1'
                 if (bankName=='MANDIRI'){
-                    if (ableTopupCode=='0000'){
-                        var _cardData = {
-                            'balance': balance,
-                            'card_no': cardNo,
-                            'bank_type': bankType,
-                            'imageSource': imageSource,
-                            'notifSaldo': ''
-                        }
-                        my_layer.push(topup_prepaid_denom, {cardData: _cardData});
-//                    } else if (ableTopupCode=='1008'){
-//                        press = 0;
-//                        false_notif('Mohon Maaf|Kartu BNI TapCash Anda Sudah Tidak Aktif\nSilakan Hubungi Bank BNI Terdekat')
-//                        switch_frame('aAsset/smiley_down.png', 'Maaf Kartu Anda Sudah Tidak Aktif', '', 'closeWindow', false );
-//                        return;
-//                    }  else if (ableTopupCode=='5106'){
-//                        press = 0;
-//                        false_notif('Mohon Maaf|Kartu BNI TapCash Anda Tidak Resmi\nSilakan Gunakan Kartu TapCash Yang Lain')
-//                        switch_frame('aAsset/smiley_down.png', 'Maaf Kartu Anda Sudah Tidak Resmi', 'Gunakan Kartu lainnya', 'closeWindow', false );
-//                        return;
-                    } else {
-                        press = 0;
-//                        false_notif('Mohon Maaf|Terjadi Kesalahan Pada Kartu BNI TapCash Anda\nSilakan Gunakan Kartu TapCash Yang Lain');
-                        switch_frame('aAsset/insert_card_new.png', 'Maaf terjadi kesalahan pada kartu Anda', 'gunakan kartu lainnya', 'closeWindow', false );
-                        return;
+                    var _cardData = {
+                        'balance': balance,
+                        'card_no': cardNo,
+                        'bank_type': bankType,
+                        'imageSource': imageSource,
+                        'notifSaldo': ''
                     }
+                    my_layer.push(topup_prepaid_denom, {cardData: _cardData});
+//                    if (ableTopupCode=='0000'){
+////                    } else if (ableTopupCode=='1008'){
+////                        press = 0;
+////                        false_notif('Mohon Maaf|Kartu BNI TapCash Anda Sudah Tidak Aktif\nSilakan Hubungi Bank BNI Terdekat')
+////                        switch_frame('aAsset/smiley_down.png', 'Maaf Kartu Anda Sudah Tidak Aktif', '', 'closeWindow', false );
+////                        return;
+////                    }  else if (ableTopupCode=='5106'){
+////                        press = 0;
+////                        false_notif('Mohon Maaf|Kartu BNI TapCash Anda Tidak Resmi\nSilakan Gunakan Kartu TapCash Yang Lain')
+////                        switch_frame('aAsset/smiley_down.png', 'Maaf Kartu Anda Sudah Tidak Resmi', 'Gunakan Kartu lainnya', 'closeWindow', false );
+////                        return;
+//                    } else {
+//                        press = 0;
+////                        false_notif('Mohon Maaf|Terjadi Kesalahan Pada Kartu BNI TapCash Anda\nSilakan Gunakan Kartu TapCash Yang Lain');
+//                        switch_frame('aAsset/insert_card_new.png', 'Maaf terjadi kesalahan pada kartu Anda', 'gunakan kartu lainnya', 'closeWindow', false );
+//                        return;
+//                    }
                 } else {
                     press = 0;
 //                    false_notif('Mohon Maaf|Kartu Prabayar Anda Diterbitkan Oleh Bank Lain ('+bankName+')\nUntuk Sementara Kartu Anda Belum Dapat Digunakan Pada Mesin Ini')

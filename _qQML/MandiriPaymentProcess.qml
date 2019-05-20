@@ -276,7 +276,7 @@ Base{
 //                standard_notif_view._button_text = 'coba lagi';
                 modeButtonPopup = 'retrigger_grg';
                 proceedText = 'COBA LAGI';
-                switch_frame_with_button('aAsset/insert_money.png', 'Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)', 'closeWindow', true );
+                switch_frame_with_button('aAsset/insert_money.png', 'Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)', 'closeWindow|30', true );
                 return;
             } else if (grgResult == 'BAD_NOTES'){
 //                false_notif('Mohon Maaf|Pastikan Uang Anda Dalam Kondisi Baik Dan Tidak Lusuh.\n(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)');

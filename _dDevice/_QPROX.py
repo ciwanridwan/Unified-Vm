@@ -291,7 +291,7 @@ def auth_ka(_slot=None, initial=True):
             BANKS[0]['TID'] + '|' + _ka_pin + '|' + _Global.KL_PIN
     response, result = _Command.send_request(param=param, output=None)
     LOGGER.debug(("auth_ka : ", _slot, result))
-    if response == 0:
+    if response == 0 and _Global.KA_NIK == result:
         INIT_TOPUP_MANDIRI = True
         ka_info_mandiri(slot=_slot)
         if initial is False:
@@ -789,7 +789,7 @@ def create_online_info(slot=None):
     LOGGER.debug(("create_online_info : ", slot, result))
     if response == 0 and result is not None:
         PREV_RQ1_DATA = str(result)
-        PREV_RQ1_SLOT = _Global.MANDIRI_ACTIVE
+        PREV_RQ1_SLOT = str(_Global.MANDIRI_ACTIVE)
         # QP_SIGNDLER.SIGNAL_ONLINE_INFO_QPROX.emit('CREATE_ONLINE_INFO|' + str(result))
         return PREV_RQ1_DATA
     else:
@@ -809,12 +809,13 @@ def init_online(rsp=None, slot=None):
     #     _Global.NFC_ERROR = 'EMPTY_INIT_LIST'
     #     return
     if rsp is None:
-        LOGGER.warning(("[FAILED] init_online : ", rsp))
+        LOGGER.warning(("[FAILED] init_online : ", rsp, slot))
         return
     param = QPROX['INIT_ONLINE'] + '|' + slot + '|' + rsp + '|'
     response, result = _Command.send_request(param=param, output=None)
     LOGGER.debug(("init_online : ", rsp, slot, result, response))
     if response == 0 and result is not None:
+        ka_info_mandiri(slot=slot)
         QP_SIGNDLER.SIGNAL_INIT_ONLINE_QPROX.emit('INIT_ONLINE|SUCCESS')
         return True
     else:
@@ -828,7 +829,7 @@ def do_update_limit_mandiri(rsp):
     _url = 'http://103.28.14.188/bridge-service/filecheck.php?content=1&no_correction=1'
     _param = {
         'ext': '.RSP',
-        'file_path': '/home/ftpuser/TopUpOffline/UpdateRequestDownload/'+rsp
+        'file_path': '/home/ftpuser/TopUpOffline/UpdateRequestDownload_DEV/'+rsp
     }
     while True:
         attempt += 1
@@ -839,8 +840,11 @@ def do_update_limit_mandiri(rsp):
             if PREV_RQ1_DATA == __content_rq1:
                 __content_rsp = _res['content'].split('#')[1]
                 init_online(__content_rsp, PREV_RQ1_SLOT)
+                LOGGER.warning(('RQ1 MATCH', PREV_RQ1_SLOT, PREV_RQ1_DATA, __content_rq1, __content_rsp))
             else:
                 LOGGER.warning(('[DETECTED] RQ1 NOT MATCH', PREV_RQ1_DATA, __content_rq1))
+            # Switch To The Other Slot
+            auth_ka(_slot=_Global.get_active_sam(bank='MANDIRI', reverse=True), initial=False)
             break
         sleep(15)
 
