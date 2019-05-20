@@ -444,8 +444,8 @@ def top_up_mandiri(amount, trxid='', slot=None):
         if slot == '2':
             _Global.MANDIRI_WALLET_2 = _Global.MANDIRI_WALLET_2 - int(amount)
             _Global.MANDIRI_ACTIVE_WALLET = _Global.MANDIRI_WALLET_2
-        LOGGER.info(('top_up_mandiri', slot, str(output), _result))
-        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|' + json.dumps(output))
+        LOGGER.info(('top_up_mandiri', slot, __status, str(output), _result))
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit(__status+'|'+json.dumps(output))
         param = {
             'trxid': trxid,
             'samCardNo': __data[1],

@@ -71,6 +71,8 @@ def kiosk_status():
     if _Tools.is_online(source='kiosk_status') is False:
         KIOSK_SETTING = _DAO.init_kiosk()[0]
         KIOSK_ADMIN = KIOSK_SETTING['defaultAdmin']
+        # if _Global.TID == '110322':
+        #     KIOSK_ADMIN = 0
         KIOSK_MARGIN = KIOSK_SETTING['defaultMargin']
         KIOSK_NAME = KIOSK_SETTING['name']
         KIOSK_REAL_STATUS = 'OFFLINE'
@@ -79,7 +81,7 @@ def kiosk_status():
         'version': VERSION,
         'status': KIOSK_STATUS,
         'real_status': KIOSK_REAL_STATUS,
-        'tid': TID
+        'tid': _Global.TID
     }))
 
 
@@ -93,6 +95,8 @@ def update_kiosk_status(r):
             KIOSK_SETTING = _DAO.init_kiosk()[0]
             KIOSK_ADMIN = KIOSK_SETTING['defaultAdmin']
             KIOSK_MARGIN = KIOSK_SETTING['defaultMargin']
+            # if _Global.TID == '110322':
+            #     KIOSK_ADMIN = 0
             KIOSK_NAME = KIOSK_SETTING['name']
             if PRINTER_STATUS == "NORMAL":
                 KIOSK_STATUS = 'ONLINE'
@@ -101,10 +105,12 @@ def update_kiosk_status(r):
             KIOSK_NAME = KIOSK_SETTING['name']
             KIOSK_MARGIN = int(KIOSK_SETTING['defaultMargin'])
             KIOSK_ADMIN = int(KIOSK_SETTING['defaultAdmin'])
+            # if _Global.TID == '110322':
+            #     KIOSK_ADMIN = 0
             if r['result'] == 'OK' and PRINTER_STATUS == "NORMAL":
                 KIOSK_STATUS = 'ONLINE'
             _DAO.flush_table('Terminal')
-            _DAO.flush_table('Transactions', ' tid <> "' + KIOSK_SETTING['tid'] + '"')
+            # _DAO.flush_table('Transactions', ' tid <> "' + KIOSK_SETTING['tid'] + '"')
             _DAO.update_kiosk_data(KIOSK_SETTING)
     except Exception as e:
         LOGGER.warning(("update_kiosk_status : ", str(e)))
@@ -784,6 +790,7 @@ def store_transaction_global(param, retry=False):
             'details': param,
             'status': 1
         }
+        __pid = _param['pid']
         if GLOBAL_TRANSACTION_DATA['shop_type'] == 'shop':
             PID_STOCK_SALE = GLOBAL_TRANSACTION_DATA['raw']['pid']
             _param_stock = {
@@ -793,6 +800,7 @@ def store_transaction_global(param, retry=False):
             _DAO.update_product_stock(_param_stock)
             K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|UPDATE_PRODUCT_STOCK-' + _param_stock['pid'])
             _key = 'SALE_' + _key
+            __pid = str(__pid) + '|' + str(_param_stock['pid']) + '|' + str(_param_stock['stock'])
         else:
             _key = 'TOPUP_' + _key
         __notes = json.dumps(GLOBAL_TRANSACTION_DATA['payment_details']) if len(MEI_HISTORY) == 0 else MEI_HISTORY
@@ -801,7 +809,7 @@ def store_transaction_global(param, retry=False):
             'trxid': _trxid,
             'tid': TID,
             'mid': '',
-            'pid': _param['pid'],
+            'pid': __pid,
             # 'tpid': get_tpid(string=_key),
             'tpid': '713251f9e9694c629147f57b64e79d35' if _key == 'SALE_EMONEY' else 'deeb4e043fcd11e8b4670ed5f89f718b',
             'sale': __total_price,
@@ -821,15 +829,15 @@ def store_transaction_global(param, retry=False):
             if len(check_trx) == 0:
                 _DAO.insert_transaction(__param)
                 K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|STORE_TRX-' + _trxid)
-                if GLOBAL_TRANSACTION_DATA['shop_type'] == 'shop':
-                    __param['left_stock'] = _param_stock['stock']
-                    __param['pid_stock'] = _param_stock['pid']
                 __param['createdAt'] = _Tools.now()
                 status, response = _NetworkAccess.post_to_url(url=BACKEND_URL + 'sync/transaction-topup', param=__param)
                 if status == 200 and response['id'] == __param['trxid']:
                     __param['key'] = __param['trxid']
                     _DAO.mark_sync(param=__param, _table='Transactions', _key='trxid')
                     K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|UPLOAD_TRX-' + _trxid)
+                    break
+                else:
+                    K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('PENDING|UPLOAD_TRX-' + _trxid)
                     break
             if attempt == 3:
                 LOGGER.warning(('store_transaction_global', 'max_attempt', str(attempt)))

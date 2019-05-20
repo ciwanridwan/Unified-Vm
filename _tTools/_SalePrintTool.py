@@ -57,7 +57,7 @@ class PDF(FPDF):
         # Logo
         if os.path.isfile(LOGO_PATH):
             self.image(LOGO_PATH, 25, 5, 30)
-        self.ln(SPACING*2)
+        self.ln(SPACING)
         self.set_font(USED_FONT, '', HEADER_FONT_SIZE)
         self.ln(SPACING)
         self.cell(MARGIN_LEFT, HEADER_FONT_SIZE, 'VM ID : '+_KioskService.TID, 0, 0, 'C')
