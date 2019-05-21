@@ -168,8 +168,8 @@ def sale_print_global(ext='.pdf'):
     pdf = None
     # Init Variables
     tiny_space = 3
-    extra_size = 7
-    line_size = 6
+    extra_size = 8.5
+    line_size = 7.5
     padding_left = 0
     trxid = ''
     failure = 'USER_CANCELLATION'
@@ -310,19 +310,28 @@ def sale_print_global(ext='.pdf'):
             else:
                 pdf.ln(tiny_space)
                 pdf.set_font(USED_FONT, '', line_size)
-                pdf.cell(padding_left, 0, 'JUMLAH KARTU: ' + p['qty'], 0, 0, 'L')
+                pdf.cell(padding_left, 0, 'JUMLAH KARTU: ' + str(p['qty']), 0, 0, 'L')
+                pdf.ln(tiny_space)
+                pdf.set_font(USED_FONT, '', line_size)
+                pdf.cell(padding_left, 0, str(p['qty']) + ' x ' + clean_number(p['value']), 0, 0, 'R')
                 pdf.ln(tiny_space)
                 pdf.set_font(USED_FONT, '', line_size)
                 pdf.cell(padding_left, 0, 'UANG MASUK : Rp. ' + clean_number(str(cash)), 0, 0, 'L')
                 pdf.ln(tiny_space)
                 pdf.set_font(USED_FONT, '', line_size)
                 pdf.cell(padding_left, 0, 'UANG KEMBALI: Rp. ' + clean_number('0'), 0, 0, 'L')
+                # price_unit = str(int(int(p['value'])/p['qty']))
+                # sub_total = p['value']
+                # if p['payment'] == 'cash' and p['shop_type'] == 'topup':
+                #     sub_total = str(int(p['value']) - int(p['admin_fee']))
+                #     price_unit = str(int(int(sub_total) / p['qty']))
+                pdf.ln(extra_size)
+                pdf.set_font(USED_FONT, '', extra_size+2)
+                total_pay = str(int(int(p['value']) * int(p['qty'])))
+                pdf.cell(0, 0, 'TOTAL BAYAR: Rp. ' + clean_number(total_pay), 0, 0, 'L')
                 pdf.ln(extra_size)
                 pdf.set_font(USED_FONT, '', line_size-1)
-                pdf.cell(0, 0, 'DENGAN ISI ULANG INI, PEMEGANG', 0, 0, 'L')
-                pdf.ln(tiny_space-1)
-                pdf.set_font(USED_FONT, '', line_size-1)
-                pdf.cell(0, 0, 'KARTU MENYATAKAN TUNDUK DAN', 0, 0, 'L')
+                pdf.cell(0, 0, 'PEMEGANG KARTU MENYATAKAN TUNDUK DAN', 0, 0, 'L')
                 pdf.ln(tiny_space-1)
                 pdf.set_font(USED_FONT, '', line_size-1)
                 pdf.cell(0, 0, 'MENGIKAT DIRI PADA SYARAT DAN', 0, 0, 'L')
@@ -332,16 +341,6 @@ def sale_print_global(ext='.pdf'):
                 pdf.ln(tiny_space-1)
                 pdf.set_font(USED_FONT, '', line_size-1)
                 pdf.cell(0, 0, 'PADA WWW.BANKMANDIRI.CO.ID', 0, 0, 'L')
-                # price_unit = str(int(int(p['value'])/p['qty']))
-                # sub_total = p['value']
-                # if p['payment'] == 'cash' and p['shop_type'] == 'topup':
-                #     sub_total = str(int(p['value']) - int(p['admin_fee']))
-                #     price_unit = str(int(int(sub_total) / p['qty']))
-                pdf.cell(padding_left, 0, str(p['qty']) + ' x ' + clean_number(p['value']), 0, 0, 'R')
-                pdf.ln(extra_size)
-                pdf.set_font(USED_FONT, '', extra_size+2)
-                total_pay = str(int(int(p['value']) * int(p['qty'])))
-                pdf.cell(0, 0, 'TOTAL BAYAR: Rp. ' + clean_number(total_pay), 0, 0, 'L')
         else:
             pdf.ln(tiny_space)
             pdf.set_font(USED_FONT, '', line_size)
