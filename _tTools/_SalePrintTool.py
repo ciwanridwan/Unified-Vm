@@ -47,9 +47,9 @@ def get_paper_size(ls=None):
 
 
 MARGIN_LEFT = 0
-HEADER_FONT_SIZE = 7.5
-FOOTER_FONT_SIZE = 6.5
-SPACING = 3
+HEADER_FONT_SIZE = 8
+FOOTER_FONT_SIZE = 7
+SPACING = 3.5
 RECEIPT_TITLE = 'SALE GLOBAL PRINT'
 HEADER_TEXT1 = 'ISI ULANG'
 HEADER_TEXT2 = 'MANDIRI E-MONEY'
@@ -122,11 +122,11 @@ MAX_LENGTH = 36
 USED_FONT = 'Courier'
 
 
-def chunk_text(text, lenght=24, delimiter="\r\n"):
-    if len(text) <= lenght:
+def chunk_text(text, length=24, delimiter="\r\n"):
+    if len(text) <= length:
         return text
     else:
-        return text[:lenght] + delimiter + text[lenght:]
+        return text[:length] + delimiter + text[length:]
 
 
 def font_path(font):
@@ -167,8 +167,8 @@ def sale_print_global(ext='.pdf'):
     p = LAST_TRX
     pdf = None
     # Init Variables
-    tiny_space = 3
-    extra_size = 8.5
+    tiny_space = 3.5
+    extra_size = 8
     line_size = 7.5
     padding_left = 0
     trxid = ''
@@ -180,7 +180,7 @@ def sale_print_global(ext='.pdf'):
         if p['shop_type'] != 'topup':
             HEADER_TEXT1 = 'PEMBELIAN KARTU'
         # paper_ = get_paper_size('\r\n'.join(p.keys()))
-        pdf = PDF('P', 'mm', (80, 120))
+        pdf = PDF('P', 'mm', (80, 145))
         # LOGGER.info(('Registering New Font', font_path('UnispaceBold.ttf')))
         # pdf.add_font('UniSpace', '', font_path('UnispaceBold.ttf'), uni=True)
         pdf.add_page()
@@ -407,7 +407,7 @@ def sale_reprint_global(ext='.pdf'):
         if p['shop_type'] != 'topup':
             HEADER_TEXT1 = 'PEMBELIAN KARTU'
         # paper_ = get_paper_size('\r\n'.join(p.keys()))
-        pdf = PDF('P', 'mm', (80, 120))
+        pdf = PDF('P', 'mm', (80, 140))
         # LOGGER.info(('Registering New Font', font_path('UnispaceBold.ttf')))
         # pdf.add_font('UniSpace', '', font_path('UnispaceBold.ttf'), uni=True)
         pdf.add_page()
