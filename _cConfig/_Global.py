@@ -77,6 +77,9 @@ TID_BCA = _ConfigParser.get_value('QPROX', 'tid^bca')
 
 SERVICE_URL = 'http://localhost:9000/Service/GET?type=json&cmd='
 
+MINIMUM_AMOUNT = int(_ConfigParser.get_set_value('QPROX', 'amount^minimum', '50000'))
+TOPUP_AMOUNT = int(_ConfigParser.get_set_value('QPROX', 'amount^topup', '500000'))
+
 BANKS = [{
     "BANK": "MANDIRI",
     "STATUS": True if ('---' not in MID_MAN and len(MID_MAN) > 3) else False,
@@ -162,8 +165,6 @@ DKI_WALLET = 0
 BNI_SAM_1_NO = ''
 BNI_SAM_2_NO = ''
 
-MINIMUM_AMOUNT = int(_ConfigParser.get_set_value('QPROX', 'amount^minimum', '100000')) + ADJUST_AMOUNT_MINIMUM
-TOPUP_AMOUNT = int(_ConfigParser.get_set_value('QPROX', 'amount^topup', '500000'))
 # DEVICE ERROR STATUS
 # Assigned From Multiple Module
 EDC_ERROR = ''
