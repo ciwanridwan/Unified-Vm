@@ -36,7 +36,8 @@ Rectangle {
     Text{
         id: text_button
         color: 'white'
-        text: text_.toUpperCase()
+//        text: text_.toUpperCase()
+        text: text_
         font.pixelSize: 30
         anchors.bottomMargin: 30
         anchors.horizontalCenterOffset: 0

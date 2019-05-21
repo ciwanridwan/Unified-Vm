@@ -118,7 +118,8 @@ Base{
                 cardNo = result.card_no;
                 lastBalance = result.last_balance;
                 _SLOT.start_store_topup_transaction(JSON.stringify(details));
-                switch_frame('aAsset/take_receipt.png', 'Terima Kasih', 'Silakan Ambil Struk Transaksi Anda', 'backToMain', true )
+                switch_frame('aAsset/take_receipt.png', 'Terima Kasih', 'Silakan Ambil Struk Transaksi Anda', 'backToMain', true );
+                _SLOT.start_do_mandiri_topup_settlement();
 //                card_no_prepaid.text = FUNC.insert_space_four(cardNo);
 //                image_prepaid_card.source = "aAsset/tapcash-card.png";
 //                notif_saldo.text = "Isi Ulang Berhasil.\nSaldo Kartu TapCash Anda\nRp. "+FUNC.insert_dot(lastBalance)+",-\nAmbil Struk Anda di Bawah."
@@ -266,7 +267,7 @@ Base{
                 _SLOT.stop_grg_receive_note();
                 back_button.visible = false;
                 popup_loading.textMain = 'Harap Tunggu Sebentar';
-                popup_loading.textSlave = 'Memproses Pemyimpanan Uang Anda';
+                popup_loading.textSlave = 'Memproses Penyimpanan Uang Anda';
                 popup_loading.smallerSlaveSize = true;
                 popup_loading.open();
 //                notif_text = qsTr('Mohon Tunggu, Memproses Penyimpanan Uang Anda.');
@@ -322,7 +323,7 @@ Base{
                 _SLOT.start_store_es_mei();
                 back_button.visible = false;
                 popup_loading.textMain = 'Harap Tunggu Sebentar'
-                popup_loading.textSlave = 'Memproses Pemyimpanan Uang Anda'
+                popup_loading.textSlave = 'Memproses Penyimpanan Uang Anda'
                 popup_loading.open();
 //                notif_text = qsTr('Mohon Tunggu, Memproses Penyimpanan Uang Anda.');
             } else {

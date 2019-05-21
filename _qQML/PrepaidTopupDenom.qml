@@ -43,6 +43,7 @@ Base{
     property int miniDenomValue: 10000
     property bool miniDenomActive: true
     // ----------------------------------
+    property int maxBalance: 1000000
 
     signal topup_denom_signal(string str)
     signal select_payment_signal(string str)
@@ -388,6 +389,16 @@ Base{
         global_frame.open();
     }
 
+    function exceed_balance(denom){
+        if ((parseInt(cardData.balance) + parseInt(denom)) > maxBalance){
+            press = '0';
+            switch_frame('aAsset/smiley_down.png', 'Mohon Maaf Saldo Akan Melebihi Limit', 'Silakan Pilih Denom Yang Lebih Kecil', 'closeWindow', false )
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     /*
 
     Rectangle{
@@ -647,6 +658,7 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
+                    if (exceed_balance(smallDenomMandiri)) return
                     _SLOT.user_action_log('Press smallDenom "'+smallDenomMandiri+'"');
                     if (press!='0') return;
                     press = '1';
@@ -661,6 +673,7 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
+                    if (exceed_balance(midDenomMandiri)) return
                     _SLOT.user_action_log('Press midDenom "'+midDenomMandiri+'"');
                     if (press!='0') return;
                     press = '1';
@@ -675,6 +688,7 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
+                    if (exceed_balance(highDenomMandiri)) return
                     _SLOT.user_action_log('Press highDenom "'+highDenomMandiri+'"');
                     if (press!='0') return;
                     press = '1';

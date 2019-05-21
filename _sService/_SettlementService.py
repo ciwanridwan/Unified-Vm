@@ -347,9 +347,13 @@ def start_do_bni_topup_settlement():
 
 
 def start_do_mandiri_topup_settlement():
-    bank = 'MANDIRI'
-    _Tools.get_pool().apply_async(do_settlement_for, (bank, ))
-    ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TRIGGERED')
+    if int(_Global.MANDIRI_ACTIVE_WALLET) <= int(_Global.MINIMUM_AMOUNT):
+        bank = 'MANDIRI'
+        _Tools.get_pool().apply_async(do_settlement_for, (bank, ))
+        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TRIGGERED')
+    else:
+        _Global.MANDIRI_ACTIVE_WALLET = 0
+        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|NO_REQUIRED')
 
 
 def start_dummy_mandiri_topup_settlement():

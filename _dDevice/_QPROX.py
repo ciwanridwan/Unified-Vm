@@ -194,8 +194,8 @@ def disconnect_qprox():
 
 
 INIT_STATUS = False
-INIT_TOPUP_MANDIRI = False
-INIT_TOPUP_BNI = False
+INIT_MANDIRI = False
+INIT_BNI = False
 INIT_LIST = []
 
 
@@ -204,7 +204,7 @@ def start_init_qprox():
 
 
 def init_qprox():
-    global INIT_STATUS, INIT_LIST, INIT_TOPUP_BNI, INIT_TOPUP_MANDIRI
+    global INIT_STATUS, INIT_LIST, INIT_BNI, INIT_MANDIRI
     if OPEN_STATUS is not True:
         LOGGER.warning(('OPEN STATUS', str(OPEN_STATUS)))
         _Global.NFC_ERROR = 'PORT_NOT_OPENED'
@@ -220,7 +220,7 @@ def init_qprox():
                         LOGGER.info((BANK['BANK'], result))
                         INIT_LIST.append(BANK)
                         INIT_STATUS = True
-                        INIT_TOPUP_MANDIRI = False
+                        INIT_MANDIRI = False
                     else:
                         LOGGER.warning((BANK['BANK'], result))
 
@@ -231,7 +231,7 @@ def init_qprox():
                         LOGGER.info((BANK['BANK'], result))
                         INIT_LIST.append(BANK)
                         INIT_STATUS = True
-                        INIT_TOPUP_BNI = True
+                        INIT_BNI = True
                         #Add Call KA Auth
                         # get_bni_wallet_status()
                     else:
@@ -276,14 +276,21 @@ COM1, 01, 0123456789abcdef, 00010002, 20010203, 20010203
 
 
 def auth_ka(_slot=None, initial=True):
-    global INIT_TOPUP_MANDIRI
+    global INIT_MANDIRI
     if len(INIT_LIST) == 0:
         LOGGER.warning(('auth_ka', 'INIT_LIST', str(INIT_LIST)))
         QP_SIGNDLER.SIGNAL_AUTH_QPROX.emit('AUTH_KA|ERROR')
         _Global.NFC_ERROR = 'EMPTY_INIT_LIST'
         return
+    __single_sam = _Global.mandiri_single_sam()
+    if __single_sam is True:
+        _Global.MANDIRI_ACTIVE = 1
+        _Global.save_sam_config(bank='MANDIRI')
     if _slot is None:
-        _slot = str(_Global.get_active_sam(bank='MANDIRI', reverse=True))
+        if __single_sam:
+            _slot = str(_Global.MANDIRI_ACTIVE)
+        else:
+            _slot = str(_Global.get_active_sam(bank='MANDIRI', reverse=True))
     _ka_pin = _Global.KA_PIN1
     if _slot == '2':
         _ka_pin = _Global.KA_PIN2
@@ -292,9 +299,9 @@ def auth_ka(_slot=None, initial=True):
     response, result = _Command.send_request(param=param, output=None)
     LOGGER.debug(("auth_ka : ", _slot, result))
     if response == 0 and _Global.KA_NIK == result:
-        INIT_TOPUP_MANDIRI = True
+        INIT_MANDIRI = True
         ka_info_mandiri(slot=_slot)
-        if initial is False:
+        if initial is False or __single_sam is True:
             QP_SIGNDLER.SIGNAL_AUTH_QPROX.emit('AUTH_KA|SUCCESS')
         else:
             __slot = str(_Global.get_active_sam(bank='MANDIRI', reverse=True))
@@ -843,8 +850,9 @@ def do_update_limit_mandiri(rsp):
                 LOGGER.warning(('RQ1 MATCH', PREV_RQ1_SLOT, PREV_RQ1_DATA, __content_rq1, __content_rsp))
             else:
                 LOGGER.warning(('[DETECTED] RQ1 NOT MATCH', PREV_RQ1_DATA, __content_rq1))
-            # Switch To The Other Slot
-            auth_ka(_slot=_Global.get_active_sam(bank='MANDIRI', reverse=True), initial=False)
+            if not _Global.mandiri_single_sam():
+                # Switch To The Other Slot
+                auth_ka(_slot=_Global.get_active_sam(bank='MANDIRI', reverse=True), initial=False)
             break
         sleep(15)
 
@@ -874,8 +882,9 @@ def get_topup_readiness(mode='full'):
         topup_readiness['balance_bni'] = str(8000000)
     else:
         if mode == 'full' or mode == 'get_instant':
-            topup_readiness['mandiri'] = 'AVAILABLE' if INIT_TOPUP_MANDIRI is True else 'N/A'
-            topup_readiness['bni'] = 'AVAILABLE' if INIT_TOPUP_BNI is True else 'N/A'
+            topup_readiness['mandiri'] = 'AVAILABLE' if (INIT_MANDIRI is True and _Global.MANDIRI_ACTIVE_WALLET > 0) \
+                else 'N/A'
+            topup_readiness['bni'] = 'AVAILABLE' if INIT_BNI is True else 'N/A'
             topup_readiness['balance_mandiri'] = str(_Global.MANDIRI_ACTIVE_WALLET)
             topup_readiness['balance_bni'] = str(_Global.BNI_ACTIVE_WALLET)
             topup_readiness['bni_wallet_1'] = str(_Global.BNI_SAM_1_WALLET)

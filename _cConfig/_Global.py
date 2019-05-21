@@ -69,8 +69,6 @@ TID_BNI = _ConfigParser.get_value('QPROX', 'tid^bni')
 MC_BNI = _ConfigParser.get_value('QPROX', 'mc^bni')
 SAM1_BNI = _ConfigParser.get_value('QPROX', 'sam1^bni')
 SAM2_BNI = _ConfigParser.get_value('QPROX', 'sam2^bni')
-MINIMUM_AMOUNT = int(_ConfigParser.get_set_value('QPROX', 'amount^minimum', '100000')) + ADJUST_AMOUNT_MINIMUM
-TOPUP_AMOUNT = int(_ConfigParser.get_set_value('QPROX', 'amount^topup', '500000'))
 MID_BRI = _ConfigParser.get_value('QPROX', 'mid^bri')
 TID_BRI = _ConfigParser.get_value('QPROX', 'tid^bri')
 PROCODE_BRI = _ConfigParser.get_value('QPROX', 'procode^bri')
@@ -152,6 +150,7 @@ MANDIRI_ACTIVE = int(_ConfigParser.get_set_value('QPROX', 'mandiri^active^slot',
 MANDIRI_NO_1 = _ConfigParser.get_set_value('QPROX', 'mandiri^sam^uid^1', '---')
 MANDIRI_NO_2 = _ConfigParser.get_set_value('QPROX', 'mandiri^sam^uid^2', '---')
 MANDIRI_REVERSE_SLOT_MODE = False
+MANDIRI_SINGLE_SAM = int(_ConfigParser.get_set_value('QPROX', 'mandiri^single^sam', '1'))
 
 BNI_SAM_1_WALLET = 0
 BNI_SAM_2_WALLET = 0
@@ -163,6 +162,8 @@ DKI_WALLET = 0
 BNI_SAM_1_NO = ''
 BNI_SAM_2_NO = ''
 
+MINIMUM_AMOUNT = int(_ConfigParser.get_set_value('QPROX', 'amount^minimum', '100000')) + ADJUST_AMOUNT_MINIMUM
+TOPUP_AMOUNT = int(_ConfigParser.get_set_value('QPROX', 'amount^topup', '500000'))
 # DEVICE ERROR STATUS
 # Assigned From Multiple Module
 EDC_ERROR = ''
@@ -174,6 +175,10 @@ WEBCAM_ERROR = ''
 CD1_ERROR = ''
 CD2_ERROR = ''
 CD3_ERROR = ''
+
+
+def mandiri_single_sam():
+    return True if MANDIRI_SINGLE_SAM == 1 else False
 
 
 def set_mandiri_uid(slot, uid):
