@@ -91,6 +91,8 @@ def is_online(source=''):
 def get_ds(string, length=4, log=False):
     salt = 'MDDCOID'
     __ = abs(hash(string+salt)) % (10 ** length)
+    if len(__) != length:
+        __ = (__[0] * (length-len(__))) + __
     if log is True:
         LOGGER.debug(('length', length, 'hash', __, 'string', str(string+salt)))
     return __

@@ -35,9 +35,9 @@ Base{
     property string proceedText: 'LANJUT'
     property bool frameWithButton: false
 
-    property var smallDenomMandiri: '1' //'50000'
-    property var midDenomMandiri: '1' //'100000'
-    property var highDenomMandiri: '1' //'200000'
+    property var smallDenomMandiri: '25000'
+    property var midDenomMandiri: '50000'
+    property var highDenomMandiri: '100000'
 
     // By Default Only Can Show 3 Denoms, Adjusted with below properties
     property int miniDenomValue: 10000

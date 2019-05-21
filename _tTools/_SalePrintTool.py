@@ -47,10 +47,9 @@ def get_paper_size(ls=None):
 
 
 MARGIN_LEFT = 0
-HEADER_FONT_SIZE = 8
-HEADER_FONT_SIZE = 8
-FOOTER_FONT_SIZE = 7
-SPACING = 3.5
+HEADER_FONT_SIZE = 7.5
+FOOTER_FONT_SIZE = 6.5
+SPACING = 3
 RECEIPT_TITLE = 'SALE GLOBAL PRINT'
 HEADER_TEXT1 = 'ISI ULANG'
 HEADER_TEXT2 = 'MANDIRI E-MONEY'
@@ -169,8 +168,8 @@ def sale_print_global(ext='.pdf'):
     pdf = None
     # Init Variables
     tiny_space = 3
-    extra_size = 8
-    line_size = 7.5
+    extra_size = 7
+    line_size = 6
     padding_left = 0
     trxid = ''
     failure = 'USER_CANCELLATION'
@@ -311,6 +310,28 @@ def sale_print_global(ext='.pdf'):
             else:
                 pdf.ln(tiny_space)
                 pdf.set_font(USED_FONT, '', line_size)
+                pdf.cell(padding_left, 0, 'JUMLAH KARTU: ' + p['qty'], 0, 0, 'L')
+                pdf.ln(tiny_space)
+                pdf.set_font(USED_FONT, '', line_size)
+                pdf.cell(padding_left, 0, 'UANG MASUK : Rp. ' + clean_number(str(cash)), 0, 0, 'L')
+                pdf.ln(tiny_space)
+                pdf.set_font(USED_FONT, '', line_size)
+                pdf.cell(padding_left, 0, 'UANG KEMBALI: Rp. ' + clean_number('0'), 0, 0, 'L')
+                pdf.ln(extra_size)
+                pdf.set_font(USED_FONT, '', line_size-1)
+                pdf.cell(0, 0, 'DENGAN ISI ULANG INI, PEMEGANG', 0, 0, 'L')
+                pdf.ln(tiny_space-1)
+                pdf.set_font(USED_FONT, '', line_size-1)
+                pdf.cell(0, 0, 'KARTU MENYATAKAN TUNDUK DAN', 0, 0, 'L')
+                pdf.ln(tiny_space-1)
+                pdf.set_font(USED_FONT, '', line_size-1)
+                pdf.cell(0, 0, 'MENGIKAT DIRI PADA SYARAT DAN', 0, 0, 'L')
+                pdf.ln(tiny_space-1)
+                pdf.set_font(USED_FONT, '', line_size-1)
+                pdf.cell(0, 0, 'KETENTUAN MANDIRI E-MONEY YANG TERDEKAT', 0, 0, 'L')
+                pdf.ln(tiny_space-1)
+                pdf.set_font(USED_FONT, '', line_size-1)
+                pdf.cell(0, 0, 'PADA WWW.BANKMANDIRI.CO.ID', 0, 0, 'L')
                 # price_unit = str(int(int(p['value'])/p['qty']))
                 # sub_total = p['value']
                 # if p['payment'] == 'cash' and p['shop_type'] == 'topup':
