@@ -217,6 +217,7 @@ Base{
             details.notes = mode + ' - ' + new Date().getTime().toString();
         }
         console.log('payment_complete', JSON.stringify(details))
+        if (details.provider==undefined) details.provider = 'e-Money Mandiri';
         _SLOT.start_store_transaction_global(JSON.stringify(details))
         isPaid = true;
 //        abc.counter = 15;
@@ -454,6 +455,7 @@ Base{
 
     function perform_do_topup(){
         var provider = details.provider;
+        if (provider==undefined) provider = 'e-Money Mandiri';
         var amount = getDenom.toString();
         var structId = details.shop_type + details.epoch.toString();
         if (provider.indexOf('Mandiri') > -1 || cardNo.substring(0, 4) == '6032'){

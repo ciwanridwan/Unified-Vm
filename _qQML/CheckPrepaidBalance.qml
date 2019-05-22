@@ -181,7 +181,7 @@ Base{
                         'imageSource': imageSource,
                         'notifSaldo': ''
                     }
-                    my_layer.push(topup_prepaid_denom, {cardData: _cardData});
+                    my_layer.push(topup_prepaid_denom, {cardData: _cardData, shopType: 'topup'});
 //                    if (ableTopupCode=='0000'){
 ////                    } else if (ableTopupCode=='1008'){
 ////                        press = 0;

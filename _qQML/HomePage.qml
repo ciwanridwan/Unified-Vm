@@ -275,7 +275,7 @@ Base{
                     }
                     if (press!="0") return;
                     press = "1";
-                    my_layer.push(topup_prepaid_denom);
+                    my_layer.push(topup_prepaid_denom, {shopType: 'topup'});
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
                 }

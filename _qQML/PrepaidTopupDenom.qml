@@ -9,7 +9,7 @@ Base{
     property var press: '0'
     idx_bg: 1
     property var denomTopup: undefined
-    property var provider: undefined
+    property var provider: 'e-Money Mandiri'
     property bool emoneyAvailable: false
     property bool tapcashAvailable: false
     property var topupData: undefined
@@ -24,7 +24,7 @@ Base{
     property var globalCart
     property var selectedPayment: undefined
     property var globalDetails
-    property var shopType
+    property var shopType: 'topup'
     property bool cashEnable: false
     property bool debitEnable: false
 
@@ -53,12 +53,16 @@ Base{
 
     Stack.onStatusChanged:{
         if(Stack.status==Stack.Activating){
-            if (topupData==undefined) _SLOT.start_kiosk_get_topup_amount();
-//            _SLOT.start_get_topup_readiness();
+//            if (topupData==undefined) _SLOT.start_kiosk_get_topup_amount();
+//            _SLOT.start_get_topup_status_instant();
             _SLOT.start_get_device_status();
-            _SLOT.start_get_topup_status_instant();
             _SLOT.get_kiosk_price_setting();
-            if (cardData==undefined) open_preload_notif();
+            _SLOT.start_get_topup_readiness();
+            if (cardData==undefined){
+                open_preload_notif();
+            } else {
+                parse_cardData(cardData);
+            }
             abc.counter = timer_value;
             my_timer.start();
             press = '0';
@@ -111,7 +115,7 @@ Base{
         selectedPayment = method;
         var details = {
             payment: selectedPayment,
-            shop_type: shopType,
+            shop_type: (shopType==undefined) ? 'topup' : shopType,
             time: new Date().toLocaleTimeString(Qt.locale("id_ID"), "hh:mm:ss"),
             date: new Date().toLocaleDateString(Qt.locale("id_ID"), Locale.ShortFormat),
             epoch: new Date().getTime()
@@ -128,6 +132,7 @@ Base{
         details.qty = 1;
         details.value = denom;
         details.provider = provider;
+        if (details.provider==undefined) details.provider = 'e-Money Mandiri';
         details.admin_fee = adminFee;
         details.raw = globalCart;
         details.status = '1';
@@ -136,20 +141,14 @@ Base{
                 var get_denom = parseInt(details.value) - parseInt(adminFee);
                 details.denom = get_denom.toString();
                 details.final_balance = parseInt(details.denom) + parseInt(cardData.balance);
-//                _payment_method.labelContent = 'Tunai';
-//                _nominal.labelContent = 'Rp. ' +  FUNC.insert_dot(get_denom.toString()) + ',-';
-//                _total_biaya.labelContent = 'Rp. ' +  FUNC.insert_dot(details.value.toString()) + ',-';
                 break;
             case 'debit':
                 var total_pay = parseInt(details.value) + parseInt(adminFee);
                 details.denom = details.value;
                 details.final_balance = parseInt(details.denom) + parseInt(cardData.balance);
-//                _payment_method.labelContent = 'Kartu Debit';
-//                _total_biaya.labelContent = 'Rp. ' +  FUNC.insert_dot(total_pay.toString()) + ',-';
                 break;
         }
         globalDetails = details;
-        // Move Layer To Payment Process
         my_layer.push(mandiri_payment_process, {details: globalDetails});
 
     }
@@ -167,14 +166,33 @@ Base{
         mandiriTopupWallet = parseInt(ready.balance_mandiri);
         bniTopupWallet = parseInt(ready.balance_bni);
         if (ready.mandiri=='AVAILABLE') {
-            if (mandiriTopupWallet > 0) emoneyAvailable = true;
+            if (mandiriTopupWallet > 0) {
+                emoneyAvailable = true;
+                if (mandiriTopupWallet > parseInt(smallDenomMandiri)) {
+                    small_denom.buttonActive = true;
+                } else {
+                    small_denom.buttonActive = false;
+                }
+                if (mandiriTopupWallet > parseInt(midDenomMandiri)) {
+                    mid_denom.buttonActive = true;
+                } else {
+                    mid_denom.buttonActive = false;
+                }
+                if (mandiriTopupWallet > parseInt(highDenomMandiri)) {
+                    high_denom.buttonActive = true;
+                } else {
+                    high_denom.buttonActive = false;
+                }
+            }
         }
         if (ready.bni=='AVAILABLE') {
             if (bniTopupWallet > 0) tapcashAvailable = true;
         }
-        //TODO Show This Wallet Into Proper View
-        bniWallet1 = ready.bni_wallet_1;
-        bniWallet2 = ready.bni_wallet_2;
+//        bniWallet1 = ready.bni_wallet_1;
+//        bniWallet2 = ready.bni_wallet_2;
+        console.log('small_denom', small_denom.buttonActive);
+        console.log('mid_denom', mid_denom.buttonActive);
+        console.log('high_denom', high_denom.buttonActive);
         popup_loading.close();
     }
 
@@ -277,17 +295,18 @@ Base{
 
     function parse_cardData(o){
         console.log('parse_cardData', JSON.stringify(o));
-        var card_no = o.card_no
-        var last_balance = o.balance
-        var bank_name = o.bank_name
-        provider = 'TapCash BNI';
-        if (card_no.substring(0, 4) == '6032' || bank_name == 'MANDIRI'){
-            provider = 'e-Money Mandiri';
-        }
-        if (card_no.substring(0, 4) == '7546' || bank_name == 'BNI'){
-            provider = 'TapCash BNI';
-        }
-        shopType = 'topup';
+        var card_no = o.card_no;
+        var last_balance = o.balance;
+        var bank_name = o.bank_name;
+        press = '0';
+//        provider = 'TapCash BNI';
+//        if (card_no.substring(0, 4) == '6032' || bank_name == 'MANDIRI'){
+//            provider = 'e-Money Mandiri';
+//        }
+//        if (card_no.substring(0, 4) == '7546' || bank_name == 'BNI'){
+//            provider = 'TapCash BNI';
+//        }
+//        shopType = 'topup';
 //        init_topup_denom(bank_name);
 //        stepMode = 1;
         // Assigning Wording Into Text Column
@@ -656,10 +675,10 @@ Base{
             id: small_denom
             width: parent.width
             button_text: 'Rp ' + FUNC.insert_dot(smallDenomMandiri)
-            buttonActive: mandiriTopupWallet > parseInt(smallDenomMandiri)
+            buttonActive: false
             MouseArea{
                 anchors.fill: parent
-                enabled: mandiriTopupWallet > parseInt(smallDenomMandiri)
+                enabled: parent.buttonActive
                 onClicked: {
                     if (exceed_balance(smallDenomMandiri)) return
                     _SLOT.user_action_log('Press smallDenom "'+smallDenomMandiri+'"');
@@ -673,10 +692,10 @@ Base{
             id: mid_denom
             width: parent.width
             button_text: 'Rp ' + FUNC.insert_dot(midDenomMandiri)
-            buttonActive: mandiriTopupWallet > parseInt(midDenomMandiri)
+            buttonActive: false
             MouseArea{
                 anchors.fill: parent
-                enabled: mandiriTopupWallet > parseInt(midDenomMandiri)
+                enabled: parent.buttonActive
                 onClicked: {
                     if (exceed_balance(midDenomMandiri)) return
                     _SLOT.user_action_log('Press midDenom "'+midDenomMandiri+'"');
@@ -690,10 +709,10 @@ Base{
             id: high_denom
             width: parent.width
             button_text: 'Rp ' + FUNC.insert_dot(highDenomMandiri)
-            buttonActive: mandiriTopupWallet > parseInt(highDenomMandiri)
+            buttonActive: false
             MouseArea{
                 anchors.fill: parent
-                enabled: mandiriTopupWallet > parseInt(highDenomMandiri)
+                enabled: parent.buttonActive
                 onClicked: {
                     if (exceed_balance(highDenomMandiri)) return
                     _SLOT.user_action_log('Press highDenom "'+highDenomMandiri+'"');
