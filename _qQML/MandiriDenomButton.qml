@@ -8,9 +8,10 @@ Rectangle{
     color:"transparent"
     property string button_text: 'lanjut'
     property int fontSize: 50
+    property bool buttonActive: true
 
     Rectangle{
-        color: 'white'
+        color: (buttonActive) ? 'white' : 'gray'
         anchors.fill: parent
         opacity: .2
     }
@@ -33,7 +34,7 @@ Rectangle{
         id: text_choose
         width: 150
         color: 'white'
-        text: 'pilih > '
+        text: (buttonActive) ? 'pilih > ' : 'non-aktif'
         anchors.right: parent.right
         anchors.rightMargin: 50
         anchors.verticalCenter: parent.verticalCenter

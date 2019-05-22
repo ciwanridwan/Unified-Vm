@@ -178,6 +178,7 @@ Base{
         popup_loading.close();
     }
 
+
     function init_topup_denom(p){
         console.log('init_topup_denom', p);
         //[{'name': 'MANDIRI', 'smallDenom': 50, 'bigDenom': 100, 'tinyDenom': 25}, {'name': 'BNI', 'smallDenom': 50, 'bigDenom': 100}]
@@ -655,8 +656,10 @@ Base{
             id: small_denom
             width: parent.width
             button_text: 'Rp ' + FUNC.insert_dot(smallDenomMandiri)
+            buttonActive: mandiriTopupWallet > parseInt(smallDenomMandiri)
             MouseArea{
                 anchors.fill: parent
+                enabled: mandiriTopupWallet > parseInt(smallDenomMandiri)
                 onClicked: {
                     if (exceed_balance(smallDenomMandiri)) return
                     _SLOT.user_action_log('Press smallDenom "'+smallDenomMandiri+'"');
@@ -670,8 +673,10 @@ Base{
             id: mid_denom
             width: parent.width
             button_text: 'Rp ' + FUNC.insert_dot(midDenomMandiri)
+            buttonActive: mandiriTopupWallet > parseInt(midDenomMandiri)
             MouseArea{
                 anchors.fill: parent
+                enabled: mandiriTopupWallet > parseInt(midDenomMandiri)
                 onClicked: {
                     if (exceed_balance(midDenomMandiri)) return
                     _SLOT.user_action_log('Press midDenom "'+midDenomMandiri+'"');
@@ -685,8 +690,10 @@ Base{
             id: high_denom
             width: parent.width
             button_text: 'Rp ' + FUNC.insert_dot(highDenomMandiri)
+            buttonActive: mandiriTopupWallet > parseInt(highDenomMandiri)
             MouseArea{
                 anchors.fill: parent
+                enabled: mandiriTopupWallet > parseInt(highDenomMandiri)
                 onClicked: {
                     if (exceed_balance(highDenomMandiri)) return
                     _SLOT.user_action_log('Press highDenom "'+highDenomMandiri+'"');
