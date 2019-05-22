@@ -356,6 +356,10 @@ def start_do_mandiri_topup_settlement():
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|NO_REQUIRED')
 
 
+def start_remote_settlement_mandiri():
+    start_dummy_mandiri_topup_settlement()
+
+
 def start_dummy_mandiri_topup_settlement():
     bank = 'MANDIRI'
     dummy = True

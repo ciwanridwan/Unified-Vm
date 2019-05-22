@@ -392,6 +392,7 @@ OUTPUT = Balance, Report SAM, Report KA, Card Number
 
 
 def top_up_mandiri(amount, trxid='', slot=None):
+    global INIT_MANDIRI
     if len(INIT_LIST) == 0:
         LOGGER.warning(('top_up_mandiri', 'INIT_LIST', str(INIT_LIST)))
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP|ERROR')
@@ -410,6 +411,12 @@ def top_up_mandiri(amount, trxid='', slot=None):
         if __status == '6969':
             LOGGER.warning(('TOPUP_FAILED_CARD_NOT_MATCH', LAST_BALANCE_CHECK))
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_FAILED_CARD_NOT_MATCH')
+            return
+        if __status == '6984':
+            LOGGER.warning(('TOPUP_FAILED_BALANCE_EXPIRED', _Global.MANDIRI_ACTIVE_WALLET))
+            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_FAILED_BALANCE_EXPIRED')
+            INIT_MANDIRI = False
+            _Global.MANDIRI_ACTIVE_WALLET = 0
             return
         if __status in ERROR_TOPUP.keys():
             __remarks += '|'+ERROR_TOPUP[__status]
@@ -453,9 +460,10 @@ def top_up_mandiri(amount, trxid='', slot=None):
             _Global.MANDIRI_ACTIVE_WALLET = _Global.MANDIRI_WALLET_2
         LOGGER.info(('top_up_mandiri', slot, __status, str(output), _result))
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit(__status+'|'+json.dumps(output))
+        __card_uid = __report_sam.split('#')[0][:14]
         param = {
             'trxid': trxid,
-            'samCardNo': __data[1],
+            'samCardNo': __card_uid,
             'samCardSlot': slot,
             'samPrevBalance': __data[2].lstrip('0'),
             'samLastBalance': __samLastBalance,
@@ -465,7 +473,7 @@ def top_up_mandiri(amount, trxid='', slot=None):
             'status': __status,
             'remarks': __remarks,
         }
-        _Global.set_mandiri_uid(slot, __report_sam.split('#')[0][:14])
+        _Global.set_mandiri_uid(slot, __card_uid)
         _Global.store_upload_sam_audit(param)
         # Update to server
         _Global.upload_mandiri_wallet()

@@ -178,7 +178,7 @@ def sale_print_global(ext='.pdf'):
         if p['shop_type'] != 'topup':
             HEADER_TEXT1 = 'PEMBELIAN KARTU'
         # paper_ = get_paper_size('\r\n'.join(p.keys()))
-        pdf = PDF('P', 'mm', (80, 145))
+        pdf = PDF('P', 'mm', (80, 140))
         # LOGGER.info(('Registering New Font', font_path('UnispaceBold.ttf')))
         # pdf.add_font('UniSpace', '', font_path('UnispaceBold.ttf'), uni=True)
         pdf.add_page()

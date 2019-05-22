@@ -100,7 +100,7 @@ Base{
             var slot_topup = t.split('|')[1]
             _SLOT.start_do_topup_bni(slot_topup);
             console.log('do topup action for slot : ', slot_topup)
-        } else if (t==undefined||t.indexOf('ERROR') > -1||t=='TOPUP_ERROR'){
+        } else if (t==undefined||t.indexOf('ERROR') > -1||t=='TOPUP_ERROR'||t=='TOPUP_FAILED_BALANCE_EXPIRED'){
 //            slave_title.text = 'Silakan Ambil Struk Anda Di Bawah.\nJika Saldo Kartu Prabayar Anda Gagal Terisi, Silakan Hubungi Layanan Pelanggan.';
 //            slave_title.visible = true;
             switch_frame('aAsset/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Ambil Struk Transaksi Anda Hubungi Layanan Pelanggan', 'backToMain', true )

@@ -364,7 +364,7 @@ def handle_tasks(tasks):
         if task['taskName'] == 'DO_SETTLEMENT_MANDIRI':
             result = 'FAILED_EXECUTED_VM_ON_USED'
             if IDLE_MODE is True:
-                _SettlementService.start_do_mandiri_topup_settlement()
+                _SettlementService.start_remote_settlement_mandiri()
                 result = 'TRIGGERED_INTO_SYSTEM'
             update_task(task, result)
         if task['taskName'] == 'SAM_TO_SLOT_1' or task['taskName'] == 'SAM_TO_SLOT_2':
