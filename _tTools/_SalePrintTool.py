@@ -167,7 +167,7 @@ def sale_print_global(ext='.pdf'):
     pdf = None
     # Init Variables
     small_space = 3.5
-    regular_space = 8
+    regular_space = 8.5
     padding_left = 0
     trxid = ''
     # failure = 'USER_CANCELLATION'

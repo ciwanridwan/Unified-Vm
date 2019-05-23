@@ -221,6 +221,14 @@ def init_qprox():
                         INIT_LIST.append(BANK)
                         INIT_STATUS = True
                         INIT_MANDIRI = False
+                        if _Global.active_auth_session():
+                            INIT_MANDIRI = True
+                            if _Global.mandiri_single_sam():
+                                _Global.MANDIRI_ACTIVE = 1
+                                _Global.save_sam_config(bank='MANDIRI')
+                                ka_info_mandiri(str(_Global.MANDIRI_ACTIVE))
+                            else:
+                                ka_info_mandiri(str(_Global.get_active_sam(bank='MANDIRI', reverse=True)))
                     else:
                         LOGGER.warning((BANK['BANK'], result))
 
@@ -299,6 +307,8 @@ def auth_ka(_slot=None, initial=True):
     response, result = _Command.send_request(param=param, output=None)
     LOGGER.debug(("auth_ka : ", _slot, result))
     if response == 0 and _Global.KA_NIK == result:
+        # Log Auth Time
+        _Global.log_auth()
         INIT_MANDIRI = True
         ka_info_mandiri(slot=_slot)
         if initial is False or __single_sam is True:
@@ -413,7 +423,7 @@ def top_up_mandiri(amount, trxid='', slot=None):
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_FAILED_CARD_NOT_MATCH')
             return
         if __status == '6984':
-            LOGGER.warning(('TOPUP_FAILED_BALANCE_EXPIRED', _Global.MANDIRI_ACTIVE_WALLET))
+            LOGGER.warning(('TOPUP_FAILED_BALANCE_EXPIRED', _result))
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_FAILED_BALANCE_EXPIRED')
             INIT_MANDIRI = False
             _Global.MANDIRI_ACTIVE_WALLET = 0

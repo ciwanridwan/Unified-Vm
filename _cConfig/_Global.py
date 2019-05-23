@@ -80,6 +80,8 @@ SERVICE_URL = 'http://localhost:9000/Service/GET?type=json&cmd='
 MINIMUM_AMOUNT = int(_ConfigParser.get_set_value('QPROX', 'amount^minimum', '50000'))
 TOPUP_AMOUNT = int(_ConfigParser.get_set_value('QPROX', 'amount^topup', '500000'))
 
+LAST_AUTH = int(_ConfigParser.get_set_value('QPROX', 'last^auth', '0'))
+
 BANKS = [{
     "BANK": "MANDIRI",
     "STATUS": True if ('---' not in MID_MAN and len(MID_MAN) > 3) else False,
@@ -176,6 +178,21 @@ WEBCAM_ERROR = ''
 CD1_ERROR = ''
 CD2_ERROR = ''
 CD3_ERROR = ''
+
+
+def log_auth():
+    global LAST_AUTH
+    LAST_AUTH = _Tools.now()
+    _ConfigParser.set_value('QPROX', 'last^auth', str(LAST_AUTH))
+
+
+def active_auth_session():
+    if LAST_AUTH > 0:
+        today = _Tools.today_time()
+        current = (LAST_AUTH/1000)
+        return True if (today+86400) > current else False
+    else:
+        return False
 
 
 def mandiri_single_sam():

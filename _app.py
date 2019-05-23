@@ -459,6 +459,10 @@ class SlotHandler(QObject):
         _SettlementService.start_dummy_mandiri_topup_settlement()
     start_dummy_mandiri_topup_settlement = pyqtSlot()(start_dummy_mandiri_topup_settlement)
 
+    def start_reset_mandiri_settlement(self):
+        _SettlementService.start_reset_mandiri_settlement()
+    start_reset_mandiri_settlement = pyqtSlot()(start_reset_mandiri_settlement)
+
 
 def s_handler():
     _KioskService.K_SIGNDLER.SIGNAL_GET_FILE_LIST.connect(view.rootObject().result_get_file_list)

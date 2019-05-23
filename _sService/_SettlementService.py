@@ -356,8 +356,12 @@ def start_do_mandiri_topup_settlement():
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|NO_REQUIRED')
 
 
-def start_remote_settlement_mandiri():
-    start_dummy_mandiri_topup_settlement()
+def start_reset_mandiri_settlement():
+    bank = 'MANDIRI'
+    _Global.MANDIRI_ACTIVE_WALLET = 0
+    dummy = True
+    _Tools.get_pool().apply_async(do_settlement_for, (bank, dummy, ))
+    ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TRIGGERED')
 
 
 def start_dummy_mandiri_topup_settlement():
