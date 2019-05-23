@@ -455,9 +455,9 @@ def top_up_mandiri(amount, trxid='', slot=None):
         #     __report_sam = 'CARD_NOT_EXIST'
         output = {
             'last_balance': __data[8].lstrip('0'),
-            'report_sam': __report_sam.split('#')[1],
+            'report_sam': __report_sam.split('#')[0],
             'card_no': __data[6],
-            'report_ka': __report_sam.split('#')[0],
+            'report_ka': __report_sam.split('#')[1],
             'bank_id': '1',
             'bank_name': 'MANDIRI',
         }
@@ -812,7 +812,7 @@ def create_online_info(slot=None):
     param = QPROX['CREATE_ONLINE_INFO'] + '|' + slot + '|'
     response, result = _Command.send_request(param=param, output=None)
     LOGGER.debug(("create_online_info : ", slot, result))
-    if response == 0 and result is not None:
+    if response == 0 and len(result) > 3:
         PREV_RQ1_DATA = str(result)
         PREV_RQ1_SLOT = str(_Global.MANDIRI_ACTIVE)
         # QP_SIGNDLER.SIGNAL_ONLINE_INFO_QPROX.emit('CREATE_ONLINE_INFO|' + str(result))

@@ -207,7 +207,7 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, dummy=Fal
             __timestamp = datetime.now().strftime('%d%m%Y%H%M')
             MANDIRI_LAST_TIMESTAMP = __timestamp
             __raw = _Global.MID_MAN + __shift + _Global.TID_MAN + __seq + (__timestamp * 2) + 'XXXX' + '.txt'
-            __ds = str(_Tools.get_ds(__raw, 4, True))
+            __ds = _Tools.get_ds(__raw, 4, True)
             _filename = _Global.MID_MAN + __shift + _Global.TID_MAN + __seq + (__timestamp * 2) + __ds + '.txt'
             MANDIRI_LAST_FILENAME = _filename
             LOGGER.info(('Create Settlement Filename', bank, mode, _filename))
@@ -390,7 +390,7 @@ def do_settlement_for(bank='BNI', dummy=False):
         return push_settlement_data(_param)
     elif bank == 'MANDIRI':
         if _Tools.is_online(source='mandiri_settlement') is False:
-            ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_NO_INTENET_CONNECTION')
+            ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_NO_INTERNET_CONNECTION')
             return
         # _QPROX.auth_ka(_slot=_Global.get_active_sam(bank='MANDIRI', reverse=False), initial=False)
         # if _SFTPAccess.SFTP is not None:

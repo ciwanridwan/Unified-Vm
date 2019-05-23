@@ -226,7 +226,7 @@ Base{
         anchors.top: parent.top
         anchors.topMargin: 15
         z: 10
-        button_text: 'cancel'
+        button_text: 'exit'
         visible: !popup_loading.visible
         modeReverse: true
         MouseArea{
@@ -365,7 +365,7 @@ Base{
         anchors.top: parent.top
         anchors.topMargin: 15
         z: 10
-        button_text: 'settle'
+        button_text: 'settle\nmanual'
         visible: !popup_loading.visible
         modeReverse: true
         MouseArea{
@@ -376,7 +376,7 @@ Base{
                 press = '1';
                 console.log('mandiri_settlement_button is pressed..!');
                 popup_loading.open();
-                _SLOT.start_do_mandiri_topup_settlement();
+                _SLOT.start_reset_mandiri_settlement();
             }
         }
     }
@@ -388,7 +388,7 @@ Base{
         anchors.top: parent.top
         anchors.topMargin: 15
         z: 10
-        button_text: 'dummy'
+        button_text: 'reset\nsam'
         visible: !popup_loading.visible
         modeReverse: true
         MouseArea{
