@@ -198,8 +198,8 @@ Rectangle{
             id: moving_text
             x: parent.width
             anchors.fill: rec_bottom
-            color: "black"
-            text: 'Mesin Ini Hanya Menerima Pembelian Dan Isi Ulang Kartu e-Money Mandiri. <<Sentuh Layar Untuk Memulai Transaksi>>'
+            color: "darkblue"
+            text: 'Mesin Ini Hanya Menerima Pembelian Dan Isi Ulang Kartu e-Money Mandiri.                          <<<Sentuh Layar Untuk Memulai Transaksi>>>'
             anchors.verticalCenter: parent.verticalCenter
             font.pixelSize: 55
             verticalAlignment: Text.AlignVCenter

@@ -97,3 +97,13 @@ def get_ds(string, length=4, log=False):
         LOGGER.debug(('length', length, 'hash', __, 'string', str(string+salt)))
     return __
 
+
+def reverse_hexdec(string):
+    __hex1 = string[46:54]
+    __hex2 = string[54:62]
+    __front = string[:46]
+    __back = string[62:]
+    __dec1 = int("".join(map(str.__add__, __hex1[-2::-2], __hex1[-1::-2])), 16)
+    __dec2 = int("".join(map(str.__add__, __hex2[-2::-2], __hex2[-1::-2])), 16)
+    return str(__front) + str(__dec1).zfill(8) + str(__dec2).zfill(8) + str(__back)
+
