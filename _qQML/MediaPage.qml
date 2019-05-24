@@ -179,25 +179,40 @@ Rectangle{
     }
 
     Rectangle{
-        id: rec_bottom
-        color: 'white'
+        id: running_text_box
+        width: parent.width
+        height: 100
+        color: "transparent"
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 0
-        height: 100
-        width: parent.width
-        opacity: .1
-    }
-    Text{
-        id: text_notif
-        anchors.fill: rec_bottom
-        color: "#ffffff"
-        text: 'Sentuh Layar Untuk Memulai Transaksi'
-        font.pixelSize: 35
-        verticalAlignment: Text.AlignVCenter
-        horizontalAlignment: Text.AlignHCenter
-        font.family:"Ubuntu"
-    }
+        anchors.horizontalCenter: parent.horizontalCenter
 
+        Rectangle{
+            id: opacity_background
+            anchors.fill: parent
+            color: 'white'
+            opacity: .4
+        }
+
+        Text{
+            id: moving_text
+            x: parent.width
+            anchors.fill: rec_bottom
+            color: "#ffffff"
+            text: 'Mesin Ini Hanya Menerima Pembelian Dan Isi Ulang Kartu e-Money Mandiri. <<Sentuh Layar Untuk Memulai Transaksi>>'
+            font.pixelSize: 35
+            verticalAlignment: Text.AlignVCenter
+            horizontalAlignment: Text.AlignHCenter
+            font.family:"Ubuntu"
+
+            NumberAnimation on x{
+                from: running_text_box.width
+                to: -1 * moving_text.width
+                loops: Animation.Infinite
+                duration: (parent.width/60) * 500
+            }
+        }
+    }
 
 }
 
