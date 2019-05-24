@@ -81,6 +81,7 @@ MINIMUM_AMOUNT = int(_ConfigParser.get_set_value('QPROX', 'amount^minimum', '500
 TOPUP_AMOUNT = int(_ConfigParser.get_set_value('QPROX', 'amount^topup', '500000'))
 
 LAST_AUTH = int(_ConfigParser.get_set_value('QPROX', 'last^auth', '0'))
+LAST_UPDATE = int(_ConfigParser.get_set_value('QPROX', 'last^update', '0'))
 
 BANKS = [{
     "BANK": "MANDIRI",
@@ -178,12 +179,20 @@ WEBCAM_ERROR = ''
 CD1_ERROR = ''
 CD2_ERROR = ''
 CD3_ERROR = ''
+ALLOWED_CONFIG_LOG = ['last^auth', 'last^update']
 
 
-def log_auth():
-    global LAST_AUTH
-    LAST_AUTH = _Tools.now()
-    _ConfigParser.set_value('QPROX', 'last^auth', str(LAST_AUTH))
+def log_to_config(section='last^auth'):
+    global LAST_AUTH, LAST_UPDATE
+    if section not in ALLOWED_CONFIG_LOG:
+        LOGGER.warning(('NOT_ALLOWED', section, ALLOWED_CONFIG_LOG))
+        return
+    __timestamp = _Tools.now()
+    if section == 'last^auth':
+        LAST_AUTH = __timestamp
+    if section == 'last^update':
+        LAST_UPDATE = __timestamp
+    _ConfigParser.set_value('QPROX', section, str(__timestamp))
 
 
 def active_auth_session():

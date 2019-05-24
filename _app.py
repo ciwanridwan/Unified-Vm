@@ -463,6 +463,10 @@ class SlotHandler(QObject):
         _SettlementService.start_reset_mandiri_settlement()
     start_reset_mandiri_settlement = pyqtSlot()(start_reset_mandiri_settlement)
 
+    def start_validate_update_balance(self):
+        _SettlementService.start_validate_update_balance()
+    start_validate_update_balance = pyqtSlot()(start_validate_update_balance)
+
 
 def s_handler():
     _KioskService.K_SIGNDLER.SIGNAL_GET_FILE_LIST.connect(view.rootObject().result_get_file_list)
@@ -859,9 +863,9 @@ if __name__ == '__main__':
     if _Global.CD['status'] is True:
         print("[INFO] Re-Init CD V2 Configuration...")
         _CD.reinit_v2_config()
-    # sleep(.5)
-    # print("Triggering Semi Auto Topup BNI...")
-    # _Sync.start_manual_trigger_topup_bni()
+    sleep(.5)
+    print("Triggering Mandiri Balance Validation...")
+    _SettlementService.start_validate_update_balance()
     #     sleep(.25)
     #     print("[INFO] Test Connecting Into Card Dispenser...102")
     #     _CD.start_multiple_eject('102')

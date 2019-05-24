@@ -469,3 +469,20 @@ def mandiri_create_rq1(content):
     except Exception as e:
         LOGGER.warning(str(e))
         return False
+
+
+def start_validate_update_balance():
+    _Tools.get_pool().apply_async(validate_update_balance)
+
+
+def validate_update_balance():
+    while True:
+        if _Global.LAST_UPDATE > 0:
+            __last_update_with_tolerance = (_Global.LAST_UPDATE/1000) + 84600
+            __current_time = _Tools.now()/1000
+            if __last_update_with_tolerance <= __current_time:
+                LOGGER.info(('DETECTED_EXPIRED_LIMIT_UPDATE', __last_update_with_tolerance, __current_time))
+                _Global.MANDIRI_ACTIVE_WALLET = 0
+                do_settlement_for(bank='MANDIRI', dummy=True)
+                ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TRIGGERED')
+        sleep(3600)
