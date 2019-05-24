@@ -58,11 +58,11 @@ HEADER_TEXT2 = 'MANDIRI E-MONEY'
 class PDF(FPDF):
     def header(self):
         # Logo
-        # if os.path.isfile(LOGO_PATH):
-        #     self.image(LOGO_PATH, 25, 5, 30)
-        # self.ln(SPACING-2)
+        if os.path.isfile(LOGO_PATH):
+            self.image(LOGO_PATH, 25, 5, 30)
+        self.ln(SPACING)
         self.set_font(USED_FONT, '', GLOBAL_FONT_SIZE)
-        # self.ln(SPACING)
+        self.ln(SPACING)
         self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE, HEADER_TEXT1, 0, 0, 'C')
         self.ln(SPACING)
         self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE, HEADER_TEXT2, 0, 0, 'C')
@@ -308,13 +308,20 @@ def sale_print_global(ext='.pdf'):
                 pdf.set_font(USED_FONT, '', regular_space-1)
                 pdf.cell(0, 0, 'PADA WWW.BANKMANDIRI.CO.ID', 0, 0, 'L')
         else:
-            pdf.ln(small_space)
+            if p['shop_type'] == 'topup':
+                pdf.ln(small_space*2)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'NO. KARTU    : ' + p['raw']['card_no'], 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'SISA SALDO   : Rp. ' + clean_number(p['raw']['prev_balance']), 0, 0, 'L')
+            pdf.ln(small_space*2)
             pdf.set_font(USED_FONT, '', regular_space)
             pdf.cell(padding_left, 0, 'TERJADI BATAL/GAGAL BAYAR TRANSAKSI', 0, 0, 'L')
             pdf.ln(small_space)
             pdf.set_font(USED_FONT, '', regular_space)
             pdf.cell(padding_left, 0, 'UANG DITERIMA : Rp. ' + clean_number(str(p['payment_received'])), 0, 0, 'L')
-            pdf.ln(small_space)
+            pdf.ln(small_space*4)
             pdf.set_font(USED_FONT, '', regular_space)
             pdf.cell(padding_left, 0, 'SILAKAN HUBUNGI LAYANAN PELANGGAN', 0, 0, 'L')
             pdf.ln(small_space)

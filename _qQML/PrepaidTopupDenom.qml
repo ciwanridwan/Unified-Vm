@@ -27,6 +27,7 @@ Base{
     property var shopType: 'topup'
     property bool cashEnable: false
     property bool debitEnable: false
+    property bool mainVisible: false
 
     property var bniWallet1: 0
     property var bniWallet2: 0
@@ -58,11 +59,7 @@ Base{
             _SLOT.start_get_device_status();
             _SLOT.get_kiosk_price_setting();
             _SLOT.start_get_topup_readiness();
-            if (cardData==undefined){
-                open_preload_notif();
-            } else {
-                parse_cardData(cardData);
-            }
+            mainVisible = false;
             abc.counter = timer_value;
             my_timer.start();
             press = '0';
@@ -71,6 +68,11 @@ Base{
             provider = undefined;
             globalDetails = undefined;
             frameWithButton = false;
+            if (cardData==undefined){
+                open_preload_notif();
+            } else {
+                parse_cardData(cardData);
+            }
         }
         if(Stack.status==Stack.Deactivating){
             my_timer.stop();
@@ -298,15 +300,11 @@ Base{
         var card_no = o.card_no;
         var last_balance = o.balance;
         var bank_name = o.bank_name;
+        cardBalance = parseInt(last_balance);
         press = '0';
-//        provider = 'TapCash BNI';
-//        if (card_no.substring(0, 4) == '6032' || bank_name == 'MANDIRI'){
-//            provider = 'e-Money Mandiri';
-//        }
-//        if (card_no.substring(0, 4) == '7546' || bank_name == 'BNI'){
-//            provider = 'TapCash BNI';
-//        }
-//        shopType = 'topup';
+        shopType = 'topup';
+        provider = 'e-Money Mandiri';
+        mainVisible = true;
 //        init_topup_denom(bank_name);
 //        stepMode = 1;
         // Assigning Wording Into Text Column
@@ -630,7 +628,7 @@ Base{
         show_text: 'Pilih nominal topup'
         size_: 50
         color_: "white"
-
+        visible: mainVisible
     }
 
     Text {
@@ -646,6 +644,7 @@ Base{
         horizontalAlignment: Text.AlignHCenter
         font.family:"Ubuntu"
         font.pixelSize: 50
+        visible: mainVisible
     }
 
     Text {
@@ -661,6 +660,7 @@ Base{
         horizontalAlignment: Text.AlignRight
         font.family:"Ubuntu"
         font.pixelSize: 50
+        visible: mainVisible
     }
 
     Column{
@@ -671,6 +671,7 @@ Base{
         anchors.topMargin: 450
         anchors.horizontalCenter: parent.horizontalCenter
         spacing: 60
+        visible: mainVisible
         MandiriDenomButton{
             id: small_denom
             width: parent.width
