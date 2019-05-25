@@ -217,7 +217,7 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, dummy=Fal
             for settle in settlements:
                 x += 1
                 remarks = json.loads(settle['remarks'])
-                _all_amount += int(remarks['value'])
+                _all_amount += (int(remarks['value'])-int(remarks['admin_fee']))
                 _filecontent += _Tools.reverse_hexdec(settle['reportSAM']) + __shift + str(x).zfill(6) + chr(3) + '|'
             _header = 'PREPAID' + str(len(settlements) + 2).zfill(8) + str(_all_amount).zfill(12) + __shift + \
                       _Global.MID_MAN + datetime.now().strftime('%d%m%Y') + chr(3) + '|'
