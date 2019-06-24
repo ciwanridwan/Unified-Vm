@@ -20,6 +20,7 @@ CD_PORT3 = _ConfigParser.get_value('CD', 'port3')
 PRINTER_PORT = _ConfigParser.get_value('PRINTER', 'port')
 PRINTER_BAUDRATE = _ConfigParser.get_value('PRINTER', 'baudrate')
 TEST_MODE = True if _ConfigParser.get_set_value('TERMINAL', 'test^usage', '0') == '1' else False
+LIVE_MODE = True if _ConfigParser.get_set_value('TERMINAL', 'mode', 'live') == 'live' else False
 RELOAD_SERVICE = True if _ConfigParser.get_set_value('TERMINAL', 'reload^service', '0') == '1' else False
 TID = _ConfigParser.get_value('TERMINAL', 'tid')
 

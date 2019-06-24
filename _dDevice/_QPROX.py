@@ -878,11 +878,7 @@ def do_update_limit_mandiri(rsp):
 
 def start_get_topup_readiness():
     global SIGNAL_TOPUP_READINESS
-    SIGNAL_TOPUP_READINESS = True
     _Tools.get_pool().apply_async(get_topup_readiness)
-
-
-SIGNAL_TOPUP_READINESS = True
 
 
 def start_get_topup_status_instant():
@@ -891,24 +887,15 @@ def start_get_topup_status_instant():
 
 
 def get_topup_readiness(mode='full'):
-    global SIGNAL_TOPUP_READINESS
-    topup_readiness = dict()
-    if TEST_MODE is True:
-        mode = 'TEST_MODE'
-        topup_readiness['mandiri'] = 'AVAILABLE'
-        topup_readiness['bni'] = 'AVAILABLE'
-        topup_readiness['balance_mandiri'] = str(10000000)
-        topup_readiness['balance_bni'] = str(8000000)
-    else:
-        if mode == 'full' or mode == 'get_instant':
-            topup_readiness['mandiri'] = 'AVAILABLE' if (INIT_MANDIRI is True and _Global.MANDIRI_ACTIVE_WALLET > 0) \
-                else 'N/A'
-            topup_readiness['bni'] = 'AVAILABLE' if INIT_BNI is True else 'N/A'
-            topup_readiness['balance_mandiri'] = str(_Global.MANDIRI_ACTIVE_WALLET)
-            topup_readiness['balance_bni'] = str(_Global.BNI_ACTIVE_WALLET)
-            topup_readiness['bni_wallet_1'] = str(_Global.BNI_SAM_1_WALLET)
-            topup_readiness['bni_wallet_2'] = str(_Global.BNI_SAM_2_WALLET)
-    if SIGNAL_TOPUP_READINESS is True:
-        LOGGER.info((str(topup_readiness), str(mode)))
-        QP_SIGNDLER.SIGNAL_GET_TOPUP_READINESS.emit(json.dumps(topup_readiness))
-        SIGNAL_TOPUP_READINESS = False
+    ___ = dict()
+    ___['balance_mandiri'] = str(_Global.MANDIRI_ACTIVE_WALLET)
+    ___['balance_bni'] = str(_Global.BNI_ACTIVE_WALLET)
+    ___['bni_wallet_1'] = str(_Global.BNI_SAM_1_WALLET)
+    ___['bni_wallet_2'] = str(_Global.BNI_SAM_2_WALLET)
+    ___['mandiri'] = 'AVAILABLE' if (INIT_MANDIRI is True and _Global.MANDIRI_ACTIVE_WALLET > 0) else 'N/A'
+    ___['bni'] = 'AVAILABLE' if INIT_BNI is True else 'N/A'
+    if _Global.TEST_MODE is True:
+        ___['mandiri'] = 'TEST_MODE'
+        ___['bni'] = 'TEST_MODE'
+    LOGGER.info((str(___), str(mode)))
+    QP_SIGNDLER.SIGNAL_GET_TOPUP_READINESS.emit(json.dumps(___))

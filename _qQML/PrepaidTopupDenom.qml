@@ -187,6 +187,30 @@ Base{
                 }
             }
         }
+        if (ready.mandiri=='TEST_MODE') {
+            smallDenomMandiri = '2';
+            midDenomMandiri = '4';
+            highDenomMandiri = '9';
+            adminFee = 1;
+            if (mandiriTopupWallet > 0) {
+                emoneyAvailable = true;
+                if (mandiriTopupWallet > parseInt(smallDenomMandiri)) {
+                    small_denom.buttonActive = true;
+                } else {
+                    small_denom.buttonActive = false;
+                }
+                if (mandiriTopupWallet > parseInt(midDenomMandiri)) {
+                    mid_denom.buttonActive = true;
+                } else {
+                    mid_denom.buttonActive = false;
+                }
+                if (mandiriTopupWallet > parseInt(highDenomMandiri)) {
+                    high_denom.buttonActive = true;
+                } else {
+                    high_denom.buttonActive = false;
+                }
+            }
+        }
         if (ready.bni=='AVAILABLE') {
             if (bniTopupWallet > 0) tapcashAvailable = true;
         }

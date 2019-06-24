@@ -51,6 +51,9 @@ def send_file(filename, local_path, remote_path=None):
         remote_path = REMOTE_PATH
     if SFTP is None:
         init_sftp()
+    if '_DEV' in remote_path:
+        if _Global.LIVE_MODE is True or _Global.TEST_MODE is True:
+            remote_path = remote_path.replace('_DEV', '')
     try:
         if type(filename) == list:
             _filename = filename[0]

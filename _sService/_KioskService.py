@@ -71,8 +71,8 @@ def kiosk_status():
     if _Tools.is_online(source='kiosk_status') is False:
         KIOSK_SETTING = _DAO.init_kiosk()[0]
         KIOSK_ADMIN = KIOSK_SETTING['defaultAdmin']
-        # if _Global.TID == '110322':
-        #     KIOSK_ADMIN = 0
+        if _Global.TEST_MODE is True:
+            KIOSK_ADMIN = 1
         KIOSK_MARGIN = KIOSK_SETTING['defaultMargin']
         KIOSK_NAME = KIOSK_SETTING['name']
         KIOSK_REAL_STATUS = 'OFFLINE'
@@ -124,6 +124,9 @@ def get_kiosk_price_setting():
 
 
 def kiosk_price_setting():
+    global KIOSK_ADMIN
+    if _Global.TEST_MODE is True:
+        KIOSK_ADMIN = 1
     price_setting = {
         'margin': KIOSK_MARGIN,
         'adminFee': KIOSK_ADMIN,
