@@ -857,6 +857,9 @@ def do_update_limit_mandiri(rsp):
         'ext': '.RSP',
         'file_path': '/home/ftpuser/TopUpOffline/UpdateRequestDownload_DEV/'+rsp
     }
+    if '_DEV' in _param['file_path']:
+        if _Global.LIVE_MODE is True or _Global.TEST_MODE is True:
+            _param['file_path'] = _param['file_path'].replace('_DEV', '')
     while True:
         attempt += 1
         _stat, _res = _NetworkAccess.post_to_url(_url, _param)
