@@ -722,7 +722,7 @@ def init_setting():
     setting['prepaid'] = _QPROX.BANKS
     setting['server'] = _Global.BACKEND_URL
     setting['reloadService'] = _Global.RELOAD_SERVICE
-    setting['sftp'] = _Global.SFTP
+    setting['sftpMandiri'] = _Global.SFTP_MANDIRI
     setting['ftp'] = _Global.FTP
     setting['testUsage'] = _Global.TEST_MODE
     setting['bankConfig'] = _Global.BANKS

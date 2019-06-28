@@ -407,7 +407,7 @@ def do_settlement_for(bank='BNI', dummy=False):
         _file_ok = _param_sett['filename'].replace('.TXT', '.OK')
         _push_file_sett = upload_settlement_file(filename=[_param_sett['filename'], _file_ok],
                                                  local_path=_param_sett['path_file'],
-                                                 remote_path='/home/ftpuser/TopUpOffline/Sett_Macin_DEV')
+                                                 remote_path=_Global.SFTP_MANDIRI['path']+'/Sett_Macin_DEV')
         if _push_file_sett is False:
             ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_UPLOAD_FILE_SETTLEMENT')
             return
@@ -420,7 +420,7 @@ def do_settlement_for(bank='BNI', dummy=False):
         _param_ka_ok = _param_ka['filename'].replace('.TXT', '.OK')
         _push_file_kalog = upload_settlement_file(filename=[_param_ka['filename'], _param_ka_ok],
                                                   local_path=_param_ka['path_file'],
-                                                  remote_path='/home/ftpuser/TopUpOffline/Kalog_Macin_DEV')
+                                                  remote_path=_Global.SFTP_MANDIRI['path']+'/Kalog_Macin_DEV')
         if _push_file_kalog is False:
             ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_UPLOAD_FILE_KA_SETTLEMENT')
             return
@@ -437,7 +437,7 @@ def do_settlement_for(bank='BNI', dummy=False):
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|CREATE_FILE_RQ1_SETTLEMENT')
         _push_rq1 = upload_settlement_file(filename=_file_rq1['filename'],
                                            local_path=_file_rq1['path_file'],
-                                           remote_path='/home/ftpuser/TopUpOffline/UpdateRequestIn_DEV')
+                                           remote_path=_Global.SFTP_MANDIRI['path']+'/UpdateRequestIn_DEV')
         if _push_rq1 is False:
             ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_UPLOAD_FILE_RQ1_SETTLEMENT')
             return

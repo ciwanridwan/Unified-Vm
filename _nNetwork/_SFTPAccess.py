@@ -8,11 +8,11 @@ from _cConfig import _Global
 from time import sleep
 
 LOGGER = logging.getLogger()
-SFTP_SERVER = _Global.SFTP['host']
-SFTP_USER = _Global.SFTP['user']
-SFTP_PASS = _Global.SFTP['pass']
-SFTP_PORT = _Global.SFTP['port']
-REMOTE_PATH = '/home/tj-kiosk/topup/bni/'
+SFTP_SERVER = _Global.SFTP_MANDIRI['host']
+SFTP_USER = _Global.SFTP_MANDIRI['user']
+SFTP_PASS = _Global.SFTP_MANDIRI['pass']
+SFTP_PORT = _Global.SFTP_MANDIRI['port']
+REMOTE_PATH = _Global.SFTP_MANDIRI['path']
 LOCAL_PATH = os.path.join(sys.path[0], '_rRemoteFiles')
 if not os.path.exists(sys.path[0] + '/_rRemoteFiles/'):
     os.makedirs(sys.path[0] + '/_rRemoteFiles/')

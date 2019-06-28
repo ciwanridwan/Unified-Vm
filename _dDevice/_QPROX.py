@@ -855,7 +855,7 @@ def do_update_limit_mandiri(rsp):
     _url = 'http://103.28.14.188/bridge-service/filecheck.php?content=1&no_correction=1'
     _param = {
         'ext': '.RSP',
-        'file_path': '/home/ftpuser/TopUpOffline/UpdateRequestDownload_DEV/'+rsp
+        'file_path': _Global.SFTP_MANDIRI['path']+'/UpdateRequestDownload_DEV/'+rsp
     }
     if '_DEV' in _param['file_path']:
         if _Global.LIVE_MODE is True or _Global.TEST_MODE is True:
@@ -880,7 +880,6 @@ def do_update_limit_mandiri(rsp):
 
 
 def start_get_topup_readiness():
-    global SIGNAL_TOPUP_READINESS
     _Tools.get_pool().apply_async(get_topup_readiness)
 
 

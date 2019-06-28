@@ -126,12 +126,13 @@ BANKS = [{
 # port = 21
 
 
-SFTP = {
+SFTP_MANDIRI = {
     'status': True,
     'host': '103.28.14.188',
-    'user': 'tj-kiosk',
-    'pass': 'tj-kiosk123',
-    'port': '22222'
+    'user': _ConfigParser.get_set_value('QPROX', 'sftp^mdr^user', 'tj-kiosk'),
+    'pass': _ConfigParser.get_set_value('QPROX', 'sftp^mdr^pass', 'tj-kiosk123'),
+    'port': '22222',
+    'path': _ConfigParser.get_set_value('QPROX', 'sftp^mdr^path', '/home/mdd/TopUpOffline'),
 }
 
 FTP = {
