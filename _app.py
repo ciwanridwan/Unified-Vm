@@ -605,6 +605,12 @@ def get_screen_resolution():
         # user32.SetProcessDPIAware()
         _RES = [user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)]
         LOGGER.info(('get_screen_resolution : ', str(_RES)))
+        screen_js = sys.path[0] + '/_qQml/screen.js'
+        content_js = 'var size = { "width": ' + str(_RES[0]) + ', "height": ' + str(_RES[1]) + '};'
+        with open(screen_js, 'w+') as s:
+            s.write(content_js)
+            s.close()
+        LOGGER.info(('write_screen_resolution : ', screen_js, content_js))
     except Exception as e:
         _RES = [0, 0]
         LOGGER.warning(('get_screen_resolution : ', e))

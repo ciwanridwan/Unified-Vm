@@ -1,10 +1,12 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.2
+import "screen.js" as SCREEN
+
 
 Rectangle {
     id:base
-    width: 1920
-    height: 1080
+    width: parseInt(SCREEN.size.width)
+    height: parseInt(SCREEN.size.height)
     color: 'transparent'
     property var top_color: "#f03838"
     property var language: "INA"

@@ -365,7 +365,7 @@ def get_fw_bank(key):
 
 def check_balance():
     global LAST_BALANCE_CHECK
-    if TEST_MODE is True:
+    if TEST_MODE is True and not _Global.LIVE_MODE:
         output = {
             'balance': '99000',
             'card_no': '6032123443211234',

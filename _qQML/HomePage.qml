@@ -94,7 +94,7 @@ Base{
         var tr = JSON.parse(t);
         mandiriTopupWallet = parseInt(tr.balance_mandiri);
         bniTopupWallet = parseInt(tr.balance_bni);
-        if (tr.mandiri == 'AVAILABLE') {
+        if (tr.mandiri == 'AVAILABLE' || tr.mandiri == 'TEST_MODE') {
             mandiriTopupActive = true;
             if (mandiriTopupWallet > 0) mandiriAvailable = true;
         }
