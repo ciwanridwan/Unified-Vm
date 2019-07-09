@@ -154,14 +154,19 @@ KA_NIK = _ConfigParser.get_set_value('QPROX', 'ka^nik', '2345')
 MANDIRI_WALLET_1 = 0
 MANDIRI_WALLET_2 = 0
 MANDIRI_ACTIVE_WALLET = 0
-MANDIRI_ACTIVE = int(_ConfigParser.get_set_value('QPROX', 'mandiri^active^slot', '1'))
 MANDIRI_NO_1 = _ConfigParser.get_set_value('QPROX', 'mandiri^sam^uid^1', '---')
 MANDIRI_NO_2 = _ConfigParser.get_set_value('QPROX', 'mandiri^sam^uid^2', '---')
 MANDIRI_REVERSE_SLOT_MODE = False
-MANDIRI_SINGLE_SAM = int(_ConfigParser.get_set_value('QPROX', 'mandiri^single^sam', '1'))
+MANDIRI_SINGLE_SAM = True if _ConfigParser.get_set_value('QPROX', 'mandiri^single^sam', '1') == '1' else False
+if MANDIRI_SINGLE_SAM is True:
+    _ConfigParser.set_value('QPROX', 'mandiri^single^sam', '1')
+MANDIRI_ACTIVE = int(_ConfigParser.get_set_value('QPROX', 'mandiri^active^slot', '1'))
 
 BNI_SAM_1_WALLET = 0
 BNI_SAM_2_WALLET = 0
+BNI_SINGLE_SAM = True if _ConfigParser.get_set_value('QPROX', 'bni^single^sam', '1') == '1' else False
+if BNI_SINGLE_SAM is True:
+    _ConfigParser.set_value('QPROX', 'bni^active^slot', '1')
 BNI_ACTIVE = int(_ConfigParser.get_set_value('QPROX', 'bni^active^slot', '1'))
 BRI_WALLET = 0
 BCA_WALLET = 0
@@ -207,7 +212,11 @@ def active_auth_session():
 
 
 def mandiri_single_sam():
-    return True if MANDIRI_SINGLE_SAM == 1 else False
+    return MANDIRI_SINGLE_SAM
+
+
+def bni_single_sam():
+    return BNI_SINGLE_SAM
 
 
 def set_mandiri_uid(slot, uid):
@@ -470,7 +479,7 @@ def sam_to_slot(no, bank='BNI'):
         BNI_ACTIVE = int(no)
         save_sam_config()
         LOGGER.info(('[REMOTE]', 'sam_to_slot', str(no)))
-        return 'SUCCESS_SWITCH_TO_SAM_'+no
+        return 'SUCCESS_SWITCH_TO_SAM_'+str(no)
     else:
         return 'UNKNOWN_BANK'
 

@@ -368,7 +368,7 @@ def handle_tasks(tasks):
                 result = 'TRIGGERED_INTO_SYSTEM'
             update_task(task, result)
         if task['taskName'] == 'SAM_TO_SLOT_1' or task['taskName'] == 'SAM_TO_SLOT_2':
-            _slot = int(task['taskName'][-1])
+            _slot = task['taskName'][-1]
             result = _Global.sam_to_slot(_slot)
             update_task(task, result)
         if task['taskName'] == 'UPDATE_APP':
@@ -486,48 +486,73 @@ def get_amount(idx, listx):
         return output
 
 
-def start_automate_topup_bni():
-    _Tools.get_pool().apply_async(automate_topup_bni)
+# def start_automate_topup_bni():
+#     _Tools.get_pool().apply_async(automate_topup_bni)
+#
+#
+# def automate_topup_bni():
+#     while True:
+#         if IDLE_MODE is True and _Tools.is_online(source='automate_topup_bni') is True:
+#             _QPROX.get_bni_wallet_status()
+#             if _Global.BNI_SAM_1_WALLET <= _Global.MINIMUM_AMOUNT:
+#                 _TopupService.TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_1')
+#                 _TopupService.do_topup_bni(slot=1)
+#                 LOGGER.debug(('manual_topup_bni 1', str(_Global.BNI_SAM_1_WALLET), 'swap_to_slot 2'))
+#                 _Global.BNI_ACTIVE = 2
+#             if _Global.BNI_SAM_2_WALLET <= _Global.MINIMUM_AMOUNT:
+#                 _TopupService.TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_2')
+#                 _TopupService.do_topup_bni(slot=2)
+#                 LOGGER.debug(('manual_topup_bni 2', str(_Global.BNI_SAM_2_WALLET), 'swap_to_slot 1'))
+#                 _Global.BNI_ACTIVE = 1
+#             _Global.save_sam_config()
+#         sleep(900)
 
 
-def automate_topup_bni():
-    while True:
-        if IDLE_MODE is True and _Tools.is_online(source='automate_topup_bni') is True:
-            _QPROX.get_bni_wallet_status()
-            if _Global.BNI_SAM_1_WALLET <= _Global.MINIMUM_AMOUNT:
-                _TopupService.TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_1')
-                _TopupService.do_topup_bni(slot=1)
-                LOGGER.debug(('manual_topup_bni 1', str(_Global.BNI_SAM_1_WALLET), 'swap_to_slot 2'))
-                _Global.BNI_ACTIVE = 2
-            if _Global.BNI_SAM_2_WALLET <= _Global.MINIMUM_AMOUNT:
-                _TopupService.TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_2')
-                _TopupService.do_topup_bni(slot=2)
-                LOGGER.debug(('manual_topup_bni 2', str(_Global.BNI_SAM_2_WALLET), 'swap_to_slot 1'))
-                _Global.BNI_ACTIVE = 1
-            _Global.save_sam_config()
-        sleep(900)
+# def start_manual_trigger_topup_bni():
+#     _Tools.get_pool().apply_async(manual_trigger_topup_bni)
+#
+#
+# def manual_trigger_topup_bni():
+#     while True:
+#         if _Global.TRIGGER_MANUAL_TOPUP is True:
+#             _Global.TRIGGER_MANUAL_TOPUP = False
+#             if IDLE_MODE is True:
+#                 _QPROX.get_bni_wallet_status()
+#             if _Global.BNI_SAM_1_WALLET <= _Global.MINIMUM_AMOUNT:
+#                 _TopupService.TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_1')
+#                 _TopupService.do_topup_bni(slot=1)
+#                 LOGGER.debug(('manual_topup_bni 1', str(_Global.BNI_SAM_1_WALLET), 'swap_to_slot 2'))
+#                 _Global.BNI_ACTIVE = 2
+#             if _Global.BNI_SAM_2_WALLET <= _Global.MINIMUM_AMOUNT:
+#                 _TopupService.TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_2')
+#                 _TopupService.do_topup_bni(slot=2)
+#                 LOGGER.debug(('manual_topup_bni 2', str(_Global.BNI_SAM_2_WALLET), 'swap_to_slot 1'))
+#                 _Global.BNI_ACTIVE = 1
+#             _Global.save_sam_config()
+#         sleep(3.3)
 
 
-def start_manual_trigger_topup_bni():
-    _Tools.get_pool().apply_async(manual_trigger_topup_bni)
+def start_do_bni_topup_by_trx():
+    _Tools.get_pool().apply_async(do_bni_topup_by_trx)
 
 
-def manual_trigger_topup_bni():
-    while True:
-        if _Global.TRIGGER_MANUAL_TOPUP is True:
-            _Global.TRIGGER_MANUAL_TOPUP = False
-            if IDLE_MODE is True:
-                _QPROX.get_bni_wallet_status()
-            if _Global.BNI_SAM_1_WALLET <= _Global.MINIMUM_AMOUNT:
-                _TopupService.TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_1')
-                _TopupService.do_topup_bni(slot=1)
-                LOGGER.debug(('manual_topup_bni 1', str(_Global.BNI_SAM_1_WALLET), 'swap_to_slot 2'))
-                _Global.BNI_ACTIVE = 2
-            if _Global.BNI_SAM_2_WALLET <= _Global.MINIMUM_AMOUNT:
-                _TopupService.TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_2')
-                _TopupService.do_topup_bni(slot=2)
-                LOGGER.debug(('manual_topup_bni 2', str(_Global.BNI_SAM_2_WALLET), 'swap_to_slot 1'))
-                _Global.BNI_ACTIVE = 1
-            _Global.save_sam_config()
-        sleep(3.3)
+# TODO Add This Trigger In Every Topup BNI Trx
+def do_bni_topup_by_trx():
+    if _Global.BNI_SAM_1_WALLET <= _Global.MINIMUM_AMOUNT:
+        _TopupService.TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_1')
+        _TopupService.do_topup_bni(slot=1)
+        if not _Global.BNI_SINGLE_SAM:
+            LOGGER.debug(('topup_sam_bni 1', str(_Global.BNI_SAM_1_WALLET), str(_Global.MINIMUM_AMOUNT), '1 >>> 2'))
+            _Global.BNI_ACTIVE = 2
+        else:
+            LOGGER.debug(('topup_sam_bni 1', str(_Global.BNI_SAM_1_WALLET), str(_Global.MINIMUM_AMOUNT)))
+    elif _Global.BNI_SAM_2_WALLET <= _Global.MINIMUM_AMOUNT:
+        _TopupService.TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_2')
+        _TopupService.do_topup_bni(slot=2)
+        if not _Global.BNI_SINGLE_SAM:
+            LOGGER.debug(('topup_sam_bni 2', str(_Global.BNI_SAM_2_WALLET), str(_Global.MINIMUM_AMOUNT), '2 >>> 1'))
+            _Global.BNI_ACTIVE = 1
+        else:
+            LOGGER.debug(('topup_sam_bni 2', str(_Global.BNI_SAM_2_WALLET), str(_Global.MINIMUM_AMOUNT)))
+    _Global.save_sam_config()
 

@@ -564,23 +564,34 @@ ERROR_TOPUP = {
     'FFFE': 'CARD_NOT_EXIST',
     '1004': 'PROCESS_TIMEOUT',
     'FFFD': 'PROCESS_NOT_FINISHED',
+    '6969': 'CARD_NOT_MATCH'
 }
 
 
-def top_up_bni(amount, trxid, slot=None):
+def start_topup_up_bni_with_attempt(amount, trxid, attempt):
+    slot = None
+    _Tools.get_pool().apply_async(top_up_bni, (amount, trxid, slot, attempt,))
+
+
+def top_up_bni(amount, trxid, slot=None, attempt=None):
     _slot = 0
     if slot is None:
         slot = _Global.BNI_ACTIVE
         _slot = _Global.BNI_ACTIVE - 1
+    if attempt == '5':
+        LOGGER.debug(('TOPUP_ATTEMPT_REACHED', str(int(attempt) - 1)))
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ATTEMPT_REACHED')
+        return
     param = QPROX['INIT_BNI'] + '|' + str(_slot) + '|' + TID_BNI
     response, result = _Command.send_request(param=param, output=_Command.MO_REPORT, wait_for=1.5)
-    LOGGER.debug(("init_bni", result))
-    print('pyt: top_up_bni > init_bni : ', result)
+    LOGGER.debug(("init_bni", attempt, amount, trxid, slot, result))
+    # print('pyt: top_up_bni > init_bni : ', result)
     if response == 0 and '12292' not in result:
         # Update : Add slot after value
         _param = QPROX['TOPUP_BNI'] + '|' + str(amount) + '|' + str(_slot)
         _response, _result = _Command.send_request(param=_param, output=_Command.MO_REPORT, wait_for=2)
-        print('pyt: top_up_bni > init_bni > update_bni : ', _result)
+        LOGGER.debug(("topup_bni", attempt, amount, trxid, slot, _result))
+        # print('pyt: top_up_bni > init_bni > update_bni : ', _result)
         __remarks = ''
         if _response == 0 and '|' in _result:
             _result = _result.replace('#', '')
@@ -588,26 +599,12 @@ def top_up_bni(amount, trxid, slot=None):
             __status = __data[0]
             if __status == '0000':
                 __remarks = __data[5]
+            if __status == '6969':
+                LOGGER.warning(('TOPUP_FAILED_CARD_NOT_MATCH', LAST_BALANCE_CHECK))
+                QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_FAILED_CARD_NOT_MATCH')
+                return
             if __status in ERROR_TOPUP.keys():
                 __remarks = ERROR_TOPUP[__status]
-            # status='0000' -> success
-            # samCardNo='7546130000013640'
-            # samPrevBalance='100000'
-            # samLastBalance='90000'
-            # reportSAM='75461300000136407546130000013640010002EE0003520000647A0F127A0EAE2D944C9D04B5E8816DCE7F381E8480010701000009000009000007010002EE00000088889999E7C0A8568C598500AB3DFE1320FCBDE369D72A9D48B835AB00035204B5E8816D04B5E8816DCE7F380000090000090000754646000000159675464600000015965017CE0054DB8D88'
-            # topupCardNo='7546460000001596'
-            # topupPrevBalance='1000'
-            # topupLastBalance='11000'
-            # 0000| -> 0
-            # 7546000001023442| -> 1
-            # 556900| -> 2
-            # 556899| -> 3
-            # 1| -> 4
-            # 75460000010567757546000001056775010C79B40C81840007D00F42400F3A702BA49F3600B6FFC692431D360F424001070100005A00002F000007010C79B40007D0888899996551465F2B1393685E20873C706ED28A2DB9825BF242CC3F0C818400B6FFC69200B6FFC692431D3600005A00002F000075460000000000480000000000000048E7AADAEBF223F5C4|
-            # 7546000001056775| -> 6
-            # 8912| -> 7
-            # 8913 -> 8
-            # topup_last_balance = str(int(__data[2].lstrip('0')) + int(amount))
             __samLastBalance = __data[3].lstrip('0')
             __report_sam = __data[5]
             if __status == 'FFFE' and __data[2].lstrip('0') == __data[3].lstrip('0'):
@@ -622,8 +619,13 @@ def top_up_bni(amount, trxid, slot=None):
                 'bank_name': 'BNI',
             }
             update_bni_wallet(slot, amount, __samLastBalance)
-            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit(__status+'|'+json.dumps(output))
-            LOGGER.info(('top_up_bni', trxid, slot, str(output)))
+            # Add Timeout Response
+            if __status == '1004' or __status == '5103' or __status == 'FFFE':
+                LOGGER.debug(('TOPUP_TIMEOUT', attempt, __status, _result))
+                QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_TIMEOUT')
+            else:
+                LOGGER.info(('top_up_bni', str(output)))
+                QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit(__status+'|'+json.dumps(output))
             param = {
                 'trxid': trxid,
                 'samCardNo': __data[1],
@@ -637,61 +639,8 @@ def top_up_bni(amount, trxid, slot=None):
                 'remarks': __remarks,
             }
             _Global.store_upload_sam_audit(param)
-            _Global.TRIGGER_MANUAL_TOPUP = True
         else:
-            # i = 0
-            # while True:
-            #     i += 1
-            #     _response, _result = _Command.get_response_with_handle(out=_Command.MO_REPORT)
-            #     LOGGER.debug(("check_balance : ", 'force', str(_result)))
-            #     __remarks = ''
-            #     if _response == 0 and '|' in _result:
-            #         _result = _result.replace('#', '')
-            #         __data = _result.split('|')
-            #         __status = __data[0]
-            #         if __status == '0000':
-            #             __remarks = __data[5]
-            #         if __status in ERROR_TOPUP.keys():
-            #             __remarks = ERROR_TOPUP[__status]
-            #         __samLastBalance = __data[3].lstrip('0')
-            #         __report_sam = __data[5]
-            #         if __status == 'FFFE' and __data[2].lstrip('0') == __data[3].lstrip('0'):
-            #             # __samLastBalance = str(int(__data[2].lstrip('0')) - int(amount))
-            #             __report_sam = 'CARD_NOT_EXIST'
-            #         output = {
-            #             'last_balance': __data[8].lstrip('0'),
-            #             'report_sam': __report_sam,
-            #             'card_no': __data[6],
-            #             'report_ka': 'N/A',
-            #             'bank_id': '2',
-            #             'bank_name': 'BNI',
-            #         }
-            #         update_bni_wallet(slot, amount, __samLastBalance)
-            #         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit(__status + '|' + json.dumps(output))
-            #         LOGGER.info(('top_up_bni', str(output)))
-            #         param = {
-            #             'trxid': trxid,
-            #             'samCardNo': __data[1],
-            #             'samCardSlot': slot,
-            #             'samPrevBalance': __data[2].lstrip('0'),
-            #             'samLastBalance': __samLastBalance,
-            #             'topupCardNo': __data[6],
-            #             'topupPrevBalance': __data[7].lstrip('0'),
-            #             'topupLastBalance': __data[8].lstrip('0'),
-            #             'status': __status,
-            #             'remarks': __remarks,
-            #         }
-            #         _Global.store_upload_sam_audit(param)
-            #         _Global.TRIGGER_MANUAL_TOPUP = True
-            #         break
-            #     if i == 10:
-            #         # _Global.NFC_ERROR = 'CHECK_BALANCE_ERROR'
-            #         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
-            #         break
-            #     sleep(1)
-            # LOGGER.warning(('top_up_bni', 'UPDATE_BNI', _result))
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
-            # _Global.NFC_ERROR = 'INIT_TOPUP_BNI_ERROR'
     else:
         LOGGER.warning(('top_up_bni', 'INIT_BNI', result))
         QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_ERROR')
