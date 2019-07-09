@@ -19,6 +19,22 @@ if not os.path.exists(sys.path[0] + '/_rRemoteFiles/'):
 
 SFTP = None
 SSH = None
+HOST_BID = 1
+
+
+def init_user_by_bid():
+    global SFTP_SERVER, SFTP_USER, SFTP_PASS, SFTP_PORT
+    if HOST_BID == 1:
+        SFTP_SERVER = _Global.SFTP_MANDIRI['host']
+        SFTP_USER = _Global.SFTP_MANDIRI['user']
+        SFTP_PASS = _Global.SFTP_MANDIRI['pass']
+        SFTP_PORT = _Global.SFTP_MANDIRI['port']
+    elif HOST_BID == 2:
+        SFTP_SERVER = _Global.SFTP_BNI['host']
+        SFTP_USER = _Global.SFTP_BNI['user']
+        SFTP_PASS = _Global.SFTP_BNI['pass']
+        SFTP_PORT = _Global.SFTP_BNI['port']
+    #   TODO ADD Another Host BID
 
 
 def init_sftp():
@@ -27,6 +43,8 @@ def init_sftp():
         # __transport = paramiko.Transport((SFTP_SERVER, int(SFTP_PORT)))
         # __transport.connect(username=SFTP_USER, password=SFTP_PASS)
         # SFTP = paramiko.SFTPClient.from_transport(__transport)
+        # Init User SFTP
+        init_user_by_bid()
         SSH = paramiko.SSHClient()
         SSH.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         SSH.connect(SFTP_SERVER, SFTP_PORT, SFTP_USER, SFTP_PASS)

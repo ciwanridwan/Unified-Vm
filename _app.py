@@ -419,9 +419,9 @@ class SlotHandler(QObject):
         _SalePrintTool.start_reprint_global()
     start_reprint_global = pyqtSlot()(start_reprint_global)
 
-    def start_manual_trigger_topup_bni(self):
-        _Sync.start_manual_trigger_topup_bni()
-    start_manual_trigger_topup_bni = pyqtSlot()(start_manual_trigger_topup_bni)
+    # def start_manual_trigger_topup_bni(self):
+    #     _Sync.start_manual_trigger_topup_bni()
+    # start_manual_trigger_topup_bni = pyqtSlot()(start_manual_trigger_topup_bni)
 
     def start_master_activation_bni(self):
         _TopupService.start_master_activation_bni()
@@ -466,6 +466,10 @@ class SlotHandler(QObject):
     def start_validate_update_balance(self):
         _SettlementService.start_validate_update_balance()
     start_validate_update_balance = pyqtSlot()(start_validate_update_balance)
+
+    def start_do_bni_topup_by_trx(self):
+        _Sync.start_do_bni_topup_by_trx()
+    start_do_bni_topup_by_trx = pyqtSlot()(start_do_bni_topup_by_trx)
 
 
 def s_handler():

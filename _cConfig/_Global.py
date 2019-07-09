@@ -128,11 +128,20 @@ BANKS = [{
 
 SFTP_MANDIRI = {
     'status': True,
-    'host': '103.28.14.188',
+    'host': _ConfigParser.get_set_value('SFTP', 'mdr^host', '103.28.14.188'),
     'user': _ConfigParser.get_set_value('SFTP', 'mdr^user', 'tj-kiosk'),
     'pass': _ConfigParser.get_set_value('SFTP', 'mdr^pass', 'tj-kiosk123'),
-    'port': '22222',
+    'port': _ConfigParser.get_set_value('SFTP', 'mdr^port', '22222'),
     'path': _ConfigParser.get_set_value('SFTP', 'mdr^path', '/home/mdd/TopUpOffline'),
+}
+
+SFTP_BNI = {
+    'status': True,
+    'host': _ConfigParser.get_set_value('SFTP', 'bni^host', '103.28.14.188'),
+    'user': _ConfigParser.get_set_value('SFTP', 'bni^user', 'tj-kiosk'),
+    'pass': _ConfigParser.get_set_value('SFTP', 'bni^pass', 'tj-kiosk123'),
+    'port': _ConfigParser.get_set_value('SFTP', 'bni^port', '22222'),
+    'path': _ConfigParser.get_set_value('SFTP', 'bni^path', '/home/tj-kiosk/topup/bni/'),
 }
 
 FTP = {

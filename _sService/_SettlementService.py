@@ -373,6 +373,7 @@ def start_dummy_mandiri_topup_settlement():
 
 def do_settlement_for(bank='BNI', dummy=False):
     if bank == 'BNI':
+        _SFTPAccess.HOST_BID = 2
         if _Tools.is_online(source='bni_settlement') is False:
             return
         # if _SFTPAccess.SFTP is not None:
@@ -389,6 +390,7 @@ def do_settlement_for(bank='BNI', dummy=False):
             return
         return push_settlement_data(_param)
     elif bank == 'MANDIRI':
+        _SFTPAccess.HOST_BID = 1
         if _Tools.is_online(source='mandiri_settlement') is False:
             ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_NO_INTERNET_CONNECTION')
             return
