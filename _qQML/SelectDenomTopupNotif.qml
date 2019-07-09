@@ -2,6 +2,7 @@ import QtQuick 2.4
 import QtQuick.Controls 1.2
 import QtGraphicalEffects 1.0
 import "base_function.js" as FUNC
+import "screen.js" as SCREEN
 
 
 Rectangle{
@@ -19,8 +20,8 @@ Rectangle{
 
     visible: false
     color: 'transparent'
-    width: 1920
-    height: 1080
+    width: parseInt(SCREEN.size.width)
+    height: parseInt(SCREEN.size.height)
     scale: visible ? 1.0 : 0.1
     Behavior on scale {
         NumberAnimation  { duration: 500 ; easing.type: Easing.InOutBounce  }

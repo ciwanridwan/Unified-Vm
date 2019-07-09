@@ -249,6 +249,7 @@ Base{
                     resetMediaTimer();
                     if (press!="0") return;
                     press = "1";
+                    _SLOT.set_tvc_player("STOP");
                     my_layer.push(check_balance, {mandiriAvailable: mandiriAvailable});
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
@@ -275,6 +276,7 @@ Base{
                     }
                     if (press!="0") return;
                     press = "1";
+                    _SLOT.set_tvc_player("STOP");
                     my_layer.push(topup_prepaid_denom, {shopType: 'topup'});
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
@@ -300,8 +302,8 @@ Base{
                     resetMediaTimer();
                     if (press!="0") return;
                     press = "1";
+                    _SLOT.set_tvc_player("STOP");
                     my_layer.push(mandiri_shop_card, {productData: productData, shop_type: 'shop', productCount: productCountAll});
-//                    _SLOT.set_tvc_player("STOP");
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
                 }
@@ -357,7 +359,8 @@ Base{
                 tvc_loading.counter -= 1
                 if(tvc_loading.counter == 0){
                     console.log("starting tvc player...");
-                    if (!mediaOnPlaying) my_layer.push(media_page, {mode: 'mediaPlayer'});
+//                    if (!mediaOnPlaying) my_layer.push(media_page, {mode: 'mediaPlayer'});
+                    _SLOT.set_tvc_player('START')
                     tvc_loading.counter = tvc_timeout;
                     show_tvc_loading.restart();
                 }
@@ -393,6 +396,7 @@ Base{
             onDoubleClicked: {
                 _SLOT.user_action_log('Press "Admin" Button');
                 console.log('Admin Button is Pressed..!');
+                _SLOT.set_tvc_player("STOP");
                 _SLOT.stop_idle_mode();
                 my_layer.push(admin_login);
             }

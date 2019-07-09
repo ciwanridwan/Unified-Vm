@@ -2,13 +2,14 @@ import QtQuick 2.4
 import QtQuick.Controls 1.2
 import Qt.labs.folderlistmodel 1.0
 import QtMultimedia 5.0
+import "screen.js" as SCREEN
 
 
 Rectangle{
     id:parent_root
     color: "black"
-    width: 1920
-    height: 1080
+    width: parseInt(SCREEN.size.width)
+    height: parseInt(SCREEN.size.height)
     property var img_path: "/_vVideo/"
     property url img_path_: ".." + img_path
     property var qml_pic
@@ -197,11 +198,11 @@ Rectangle{
         Text{
             id: moving_text
             x: parent.width
-            anchors.fill: rec_bottom
+            anchors.fill: running_text_box
             color: "darkblue"
             text: 'Mesin Ini Hanya Menerima Pembelian Dan Isi Ulang Kartu e-Money Mandiri.                          <<<Sentuh Layar Untuk Memulai Transaksi>>>'
             anchors.verticalCenter: parent.verticalCenter
-            font.pixelSize: 55
+            font.pixelSize: 50
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
             font.family:"Ubuntu"

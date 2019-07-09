@@ -1,10 +1,12 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.2
+import "screen.js" as SCREEN
+
 
 Rectangle{
     id:slider
-    width: 1920
-    height: 1080
+    width: parseInt(SCREEN.size.width)
+    height: parseInt(SCREEN.size.height)
     color: 'transparent'
 //    property var show_gif: "aAsset/loader.gif" //"aAsset/loading_plane.gif"
     property var show_text: "Being Processed..."
@@ -78,8 +80,8 @@ Rectangle{
             AnimatedImage {
                 id: ad_pic
                 x: 0; y:0;
-                width: 1920
-                height: 1080
+                width: parseInt(SCREEN.size.width)
+                height: parseInt(SCREEN.size.height)
                 source: pic_source
                 fillMode: Image.PreserveAspectFit
             }
