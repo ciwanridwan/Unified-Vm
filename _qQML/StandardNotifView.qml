@@ -6,7 +6,7 @@ import "screen.js" as SCREEN
 Rectangle{
     id:notification_standard
     visible: false
-    property var show_img: "aAsset/promo_black.png"
+    property var show_img: "source/promo_black.png"
     property var show_text: qsTr("Congratulation")
     property var show_detail: qsTr("Your Order is Successfully processed")
     property bool withBackground: true

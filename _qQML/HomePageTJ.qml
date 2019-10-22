@@ -222,7 +222,7 @@ Base{
             id: check_saldo_button
             x: 150
             anchors.verticalCenter: parent.verticalCenter
-            img_: "aAsset/cek_saldo.png"
+            img_: "source/cek_saldo.png"
             text_: qsTr("Cek Saldo")
             text2_: qsTr("Balance Check")
             modeReverse: false
@@ -248,7 +248,7 @@ Base{
             id: topup_saldo_button
             x: 150
             anchors.verticalCenter: parent.verticalCenter
-            img_: "aAsset/topup_kartu.png"
+            img_: "source/topup_kartu.png"
             text_: qsTr("Topup Saldo")
             text2_: qsTr("Topup Balance")
             modeReverse: false
@@ -274,7 +274,7 @@ Base{
             id: buy_saldo_button
             x: 150
             anchors.verticalCenter: parent.verticalCenter
-            img_: "aAsset/beli_kartu.png"
+            img_: "source/beli_kartu.png"
             text_: qsTr("Beli Kartu")
             text2_: qsTr("Buy Card")
             modeReverse: false
@@ -374,7 +374,7 @@ Base{
             anchors.right: parent.right
             anchors.horizontalCenter: parent.horizontalCenter
             scale: 0.75
-            source: 'aAsset/adult-male.png'
+            source: 'source/adult-male.png'
             fillMode: Image.PreserveAspectFit
         }
 
@@ -421,7 +421,7 @@ Base{
             Image{
                 id: img_kiosk
                 height: parent.height
-                source: 'aAsset/icon/kiosk.png'
+                source: 'source/icon/kiosk.png'
                 fillMode: Image.PreserveAspectFit
                 scale: .8
                 verticalAlignment: Text.AlignVCenter
@@ -456,7 +456,7 @@ Base{
             Image{
                 id: img_product
                 height: parent.height
-                source: 'aAsset/icons-cards-2.png'
+                source: 'source/icons-cards-2.png'
                 fillMode: Image.PreserveAspectFit
                 scale: .8
                 verticalAlignment: Text.AlignVCenter
@@ -491,7 +491,7 @@ Base{
             Image{
                 id: img_product2
                 height: parent.height
-                source: 'aAsset/icons-cards-2.png'
+                source: 'source/icons-cards-2.png'
                 fillMode: Image.PreserveAspectFit
                 scale: .8
                 verticalAlignment: Text.AlignVCenter
@@ -526,7 +526,7 @@ Base{
             Image{
                 id: img_product3
                 height: parent.height
-                source: 'aAsset/icons-cards-2.png'
+                source: 'source/icons-cards-2.png'
                 fillMode: Image.PreserveAspectFit
                 scale: .8
                 verticalAlignment: Text.AlignVCenter

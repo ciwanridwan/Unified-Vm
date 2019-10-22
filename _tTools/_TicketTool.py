@@ -31,7 +31,7 @@ class PDFSignalHandler(QObject):
 
 PDF_SIGNDLER = PDFSignalHandler()
 PATH = os.path.join(sys.path[0], '_pPDF')
-LOGO_PATH = os.path.join(sys.path[0], '_aAsset', 'receipt_logo.gif')
+LOGO_PATH = os.path.join(sys.path[0], '_rReceipts', 'receipt_logo.gif')
 
 
 def get_paper_size(ls=None):

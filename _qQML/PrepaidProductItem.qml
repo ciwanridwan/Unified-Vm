@@ -10,7 +10,7 @@ Rectangle{
     height:400
     color:"transparent"
     property var itemName: 'Product Name'
-    property var itemImage: 'aAsset/tapcash-card.png'
+    property var itemImage: 'source/tapcash-card.png'
     property var itemPrice: '19000'
     property var itemStock: 10
     property var itemDesc: 'Product Description Product Description Product Description Product Description Product Description Product Description'

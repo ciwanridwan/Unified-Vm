@@ -15,7 +15,7 @@ Base{
     property var ableTopupCode: undefined
     property var imageSource: undefined
     property bool mandiriAvailable: false
-    imgPanel: 'aAsset/cek_saldo.png'
+    imgPanel: 'source/cek_saldo.png'
     textPanel: 'Cek Saldo Kartu Prabayar'
 
     Stack.onStatusChanged:{
@@ -69,11 +69,11 @@ Base{
             cardNo = '';
             balance = 0;
             bankType = undefined;
-            switch_frame('aAsset/insert_card_new.png', 'Anda tidak meletakkan kartu', 'ataupun kartu Anda tidak dapat digunakan', 'closeWindow', false );
+            switch_frame('source/insert_card_new.png', 'Anda tidak meletakkan kartu', 'ataupun kartu Anda tidak dapat digunakan', 'closeWindow', false );
             return;
 //            false_notif('Mohon Maaf|Gagal Mendapatkan Saldo, Pastikan Kartu Prabayar Anda Sudah Ditempelkan Pada Reader');
-//            image_prepaid_card.source = "aAsset/card_tj_original.png";
-//            imageSource = "aAsset/card_tj_original.png";
+//            image_prepaid_card.source = "source/card_tj_original.png";
+//            imageSource = "source/card_tj_original.png";
 //            notif_saldo.text = "Saldo Kartu Prabayar Anda\nRp. 0, -";
         } else {
             var info = JSON.parse(result);
@@ -85,20 +85,20 @@ Base{
             var cardNo__ = FUNC.insert_space_four(cardNo)
             content_card_no.text = cardNo__.substring(0, cardNo__.length-3);
 //            if (bankName == 'MANDIRI'){
-//                image_prepaid_card.source = "aAsset/mandiri_emoney_card.png";
-//                imageSource = "aAsset/mandiri_emoney_card.png";
+//                image_prepaid_card.source = "source/mandiri_emoney_card.png";
+//                imageSource = "source/mandiri_emoney_card.png";
 //                notif_saldo.text = "Saldo Kartu Prabayar e-Money Anda\nRp. " + FUNC.insert_dot(balance) + ",-";
 //            } else if (bankName == 'BNI'){
-//                image_prepaid_card.source = "aAsset/bni_tapcash_card.png";
-//                imageSource = "aAsset/bni_tapcash_card.png";
+//                image_prepaid_card.source = "source/bni_tapcash_card.png";
+//                imageSource = "source/bni_tapcash_card.png";
 //                notif_saldo.text = "Saldo Kartu Prabayar TapCash Anda\nRp. " + FUNC.insert_dot(balance) + ",-";
 //            } else if (bankName == 'BCA'){
-//                image_prepaid_card.source = "aAsset/bca_flazz_card.png";
-//                imageSource = "aAsset/bca_flazz_card.png";
+//                image_prepaid_card.source = "source/bca_flazz_card.png";
+//                imageSource = "source/bca_flazz_card.png";
 //                notif_saldo.text = "Saldo Kartu Prabayar Flazz Anda\nRp. " + FUNC.insert_dot(balance) + ",-";
 //            }else {
-//                image_prepaid_card.source = "aAsset/card_tj_original.png";
-//                imageSource = "aAsset/card_tj_original.png";
+//                image_prepaid_card.source = "source/card_tj_original.png";
+//                imageSource = "source/card_tj_original.png";
 //                notif_saldo.text = "Saldo Kartu Prabayar Anda\nRp. " + FUNC.insert_dot(balance) + ",-";
 //            }
         }
@@ -168,7 +168,7 @@ Base{
                 preload_check_card.close();
                 if (!mandiriAvailable) {
                     press = '0';
-                    switch_frame('aAsset/smiley_down.png', 'Maaf Sementara Mesin Tidak Dapat Untuk', 'Melakukan Pengisian Kartu', 'closeWindow', false )
+                    switch_frame('source/smiley_down.png', 'Maaf Sementara Mesin Tidak Dapat Untuk', 'Melakukan Pengisian Kartu', 'closeWindow', false )
                     return;
                 }
                 if (press!='0') return;
@@ -186,23 +186,23 @@ Base{
 ////                    } else if (ableTopupCode=='1008'){
 ////                        press = 0;
 ////                        false_notif('Mohon Maaf|Kartu BNI TapCash Anda Sudah Tidak Aktif\nSilakan Hubungi Bank BNI Terdekat')
-////                        switch_frame('aAsset/smiley_down.png', 'Maaf Kartu Anda Sudah Tidak Aktif', '', 'closeWindow', false );
+////                        switch_frame('source/smiley_down.png', 'Maaf Kartu Anda Sudah Tidak Aktif', '', 'closeWindow', false );
 ////                        return;
 ////                    }  else if (ableTopupCode=='5106'){
 ////                        press = 0;
 ////                        false_notif('Mohon Maaf|Kartu BNI TapCash Anda Tidak Resmi\nSilakan Gunakan Kartu TapCash Yang Lain')
-////                        switch_frame('aAsset/smiley_down.png', 'Maaf Kartu Anda Sudah Tidak Resmi', 'Gunakan Kartu lainnya', 'closeWindow', false );
+////                        switch_frame('source/smiley_down.png', 'Maaf Kartu Anda Sudah Tidak Resmi', 'Gunakan Kartu lainnya', 'closeWindow', false );
 ////                        return;
 //                    } else {
 //                        press = 0;
 ////                        false_notif('Mohon Maaf|Terjadi Kesalahan Pada Kartu BNI TapCash Anda\nSilakan Gunakan Kartu TapCash Yang Lain');
-//                        switch_frame('aAsset/insert_card_new.png', 'Maaf terjadi kesalahan pada kartu Anda', 'gunakan kartu lainnya', 'closeWindow', false );
+//                        switch_frame('source/insert_card_new.png', 'Maaf terjadi kesalahan pada kartu Anda', 'gunakan kartu lainnya', 'closeWindow', false );
 //                        return;
 //                    }
                 } else {
                     press = 0;
 //                    false_notif('Mohon Maaf|Kartu Prabayar Anda Diterbitkan Oleh Bank Lain ('+bankName+')\nUntuk Sementara Kartu Anda Belum Dapat Digunakan Pada Mesin Ini')
-                    switch_frame('aAsset/insert_card_new.png', 'Anda tidak meletakkan kartu', 'ataupun kartu Anda tidak dapat digunakan', 'closeWindow', false );
+                    switch_frame('source/insert_card_new.png', 'Anda tidak meletakkan kartu', 'ataupun kartu Anda tidak dapat digunakan', 'closeWindow', false );
                     return;
                 }
             }
@@ -215,7 +215,7 @@ Base{
 
     function false_notif(param){
         press = '0';
-        switch_frame('aAsset/smiley_down.png', 'Maaf Sementara Mesin Tidak Dapat Digunakan', '', 'backToMain', false )
+        switch_frame('source/smiley_down.png', 'Maaf Sementara Mesin Tidak Dapat Digunakan', '', 'backToMain', false )
         return;
     }
 
@@ -299,7 +299,7 @@ Base{
     Image{
         id: image_prepaid_card
         visible: !standard_notif_view.visible && !popup_loading.visible
-        source: "aAsset/card_tj_original.png"
+        source: "source/card_tj_original.png"
         width: 400
         height: 250
         anchors.horizontalCenterOffset: -150

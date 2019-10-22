@@ -164,7 +164,7 @@ Rectangle{
         anchors.verticalCenter: header_opacity.verticalCenter
         anchors.left: parent.left
         anchors.leftMargin: 50
-        source: "aAsset/emoney_logo.png"
+        source: "source/emoney_logo.png"
         fillMode: Image.PreserveAspectFit
     }
 
@@ -175,7 +175,7 @@ Rectangle{
         anchors.verticalCenter: header_opacity.verticalCenter
         anchors.right: parent.right
         anchors.rightMargin: 50
-        source: "aAsset/mandiri_logo.png"
+        source: "source/mandiri_logo.png"
         fillMode: Image.PreserveAspectFit
     }
 

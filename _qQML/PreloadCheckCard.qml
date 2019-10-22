@@ -7,7 +7,7 @@ Base{
     isBoxNameActive: false
     property var textMain: 'Letakkan kartu e-Money Anda di alat pembaca kartu yang bertanda '
     property var textSlave: 'Pastikan kartu Anda tetap berada di alat pembaca kartu sampai transaksi selesai'
-    property var imageSource: "aAsset/reader_sign.png"
+    property var imageSource: "source/reader_sign.png"
     property bool smallerSlaveSize: true
     property int textSize: 45
     visible: false
@@ -66,7 +66,7 @@ Base{
 //        anchors.leftMargin: 565
 //        anchors.top: parent.top
 //        anchors.topMargin: 280
-//        source: "aAsset/emoney_logo.png"
+//        source: "source/emoney_logo.png"
 //        fillMode: Image.PreserveAspectFit
 //    }
 

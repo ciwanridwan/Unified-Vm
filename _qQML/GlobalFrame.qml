@@ -7,7 +7,7 @@ Base{
     isBoxNameActive: false
     property var textMain: 'Silakan Ambil Kartu dan Struk Transaksi Anda'
     property var textSlave: 'Terima Kasih'
-    property var imageSource: "aAsset/thumb_ok.png"
+    property var imageSource: "source/thumb_ok.png"
     property bool smallerSlaveSize: true
     property bool withTimer: true
     property int textSize: 40

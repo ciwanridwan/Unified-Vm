@@ -153,7 +153,7 @@ Base{
         console.log("handle_general : ", result);
         if (result=='') return;
         if (result=='REBOOT'){
-            switch_frame('aAsset/loading_static.png', 'Mohon Tunggu Mesin Akan Dimuat Ulang', 'Dalam 30 Detik', 'closeWindow', false )
+            switch_frame('source/loading_static.png', 'Mohon Tunggu Mesin Akan Dimuat Ulang', 'Dalam 30 Detik', 'closeWindow', false )
             return;
         }
     }
@@ -168,7 +168,7 @@ Base{
 
     function false_notif(param){
         press = '0';
-        switch_frame('aAsset/smiley_down.png', 'Maaf Sementara Mesin Tidak Dapat Digunakan', '', 'backToMain', false )
+        switch_frame('source/smiley_down.png', 'Maaf Sementara Mesin Tidak Dapat Digunakan', '', 'backToMain', false )
         return;
 //        standard_notif_view.z = 100;
 //        standard_notif_view._button_text = 'tutup';
@@ -184,7 +184,7 @@ Base{
 
     function kalog_notif(param){
         press = '0';
-        switch_frame('aAsset/smiley_down.png', 'Maaf Sementara Mesin Tidak Dapat Untuk', 'Melakukan Pengisian Kartu', 'closeWindow', false )
+        switch_frame('source/smiley_down.png', 'Maaf Sementara Mesin Tidak Dapat Untuk', 'Melakukan Pengisian Kartu', 'closeWindow', false )
         return;
 //        kalogin_notif_view.z = 100;
 //        kalogin_notif_view._button_text = 'login';
@@ -238,7 +238,7 @@ Base{
             id: check_saldo_button
             x: 150
             anchors.verticalCenter: parent.verticalCenter
-            img_: "aAsset/cek_saldo.png"
+            img_: "source/cek_saldo.png"
             text_: qsTr("Cek Saldo")
             text2_: qsTr("Balance Check")
             modeReverse: false
@@ -261,7 +261,7 @@ Base{
             id: topup_saldo_button
             x: 150
             anchors.verticalCenter: parent.verticalCenter
-            img_: "aAsset/topup_kartu.png"
+            img_: "source/topup_kartu.png"
             text_: qsTr("Topup Saldo")
             text2_: qsTr("Topup Balance")
             modeReverse: false
@@ -288,7 +288,7 @@ Base{
             id: buy_saldo_button
             x: 150
             anchors.verticalCenter: parent.verticalCenter
-            img_: "aAsset/beli_kartu.png"
+            img_: "source/beli_kartu.png"
             text_: qsTr("Beli Kartu")
             text2_: qsTr("Buy Card")
             modeReverse: false
@@ -387,7 +387,7 @@ Base{
             anchors.right: parent.right
             anchors.horizontalCenter: parent.horizontalCenter
             scale: 0.75
-            source: 'aAsset/adult-male.png'
+            source: 'source/adult-male.png'
             fillMode: Image.PreserveAspectFit
         }
 
@@ -436,7 +436,7 @@ Base{
             Image{
                 id: img_kiosk
                 height: parent.height
-                source: 'aAsset/icon/kiosk.png'
+                source: 'source/icon/kiosk.png'
                 fillMode: Image.PreserveAspectFit
                 scale: .8
                 verticalAlignment: Text.AlignVCenter
@@ -472,7 +472,7 @@ Base{
             Image{
                 id: img_product
                 height: parent.height
-                source: 'aAsset/icons-cards-2.png'
+                source: 'source/icons-cards-2.png'
                 fillMode: Image.PreserveAspectFit
                 scale: .8
                 verticalAlignment: Text.AlignVCenter
@@ -507,7 +507,7 @@ Base{
             Image{
                 id: img_product2
                 height: parent.height
-                source: 'aAsset/icons-cards-2.png'
+                source: 'source/icons-cards-2.png'
                 fillMode: Image.PreserveAspectFit
                 scale: .8
                 verticalAlignment: Text.AlignVCenter
@@ -542,7 +542,7 @@ Base{
             Image{
                 id: img_product3
                 height: parent.height
-                source: 'aAsset/icons-cards-2.png'
+                source: 'source/icons-cards-2.png'
                 fillMode: Image.PreserveAspectFit
                 scale: .8
                 verticalAlignment: Text.AlignVCenter

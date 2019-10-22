@@ -6,7 +6,7 @@ Base{
     visible: false
     use_ : 'notification'
     property bool isSuccess: true
-    property var show_img: (isSuccess==true) ? "aAsset/success.png" : "aAsset/failed.png"
+    property var show_img: (isSuccess==true) ? "source/success.png" : "source/failed.png"
     property var show_text: qsTr("Congratulation")
     property var show_detail: qsTr("Your Order is Successfully processed")
     property var escapeFunction: 'closeWindow' //['closeWindow', 'backToMain', 'backToPrevious']
@@ -29,7 +29,7 @@ Base{
         anchors.verticalCenter: parent.verticalCenter
         Image{
             id: image_close
-            source: "aAsset/close.png"
+            source: "source/close.png"
             width: 80
             height: 80
             anchors.top: parent.top

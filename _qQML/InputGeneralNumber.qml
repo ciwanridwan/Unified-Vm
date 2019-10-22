@@ -8,7 +8,7 @@ Base{
     mode_: "reverse"
     isPanelActive: true
     textPanel: "Scan/Input The Numbers"
-    imgPanel: "aAsset/input.png"
+    imgPanel: "source/input.png"
     colorPanel: "#4286f4"
     imgPanelScale: 0.8
     property int timer_value: 150

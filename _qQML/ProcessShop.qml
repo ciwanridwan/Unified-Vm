@@ -21,7 +21,7 @@ Base{
     property int reprintAttempt: 0
     property var uniqueCode: ''
     idx_bg: 3
-    imgPanel: 'aAsset/cash black.png'
+    imgPanel: 'source/cash black.png'
     textPanel: 'Proses Pembayaran'
     imgPanelScale: .8
 
@@ -104,14 +104,14 @@ Base{
                 cardNo = result.card_no;
                 lastBalance = result.last_balance;
                 card_no_prepaid.text = FUNC.insert_space_four(cardNo);
-                image_prepaid_card.source = "aAsset/tapcash-card.png";
+                image_prepaid_card.source = "source/tapcash-card.png";
                 notif_saldo.text = "Isi Ulang Berhasil.\nSaldo Kartu TapCash Anda\nRp. "+FUNC.insert_dot(lastBalance)+",-\nAmbil Struk Anda di Bawah."
                 _SLOT.start_store_topup_transaction(JSON.stringify(details));
                 //if (cardNo.substring(0, 4) == '6032'){
-                //  image_prepaid_card.source = "aAsset/emoney-card.png";
+                //  image_prepaid_card.source = "source/emoney-card.png";
                 //  notif_saldo.text = "Isi Ulang Berhasil.\nSaldo Kartu e-Money Anda\nRp. "+FUNC.insert_dot(lastBalance)+",-\nAmbil Struk Anda di Bawah."
                 //} else if (cardNo.substring(0, 4) == '7546'){
-                //  image_prepaid_card.source = "aAsset/tapcash-card.png";
+                //  image_prepaid_card.source = "source/tapcash-card.png";
                 //  notif_saldo.text = "Isi Ulang Berhasil.\nSaldo Kartu TapCash Anda\nRp. "+FUNC.insert_dot(lastBalance)+",-\nAmbil Struk Anda di Bawah."
                 //}
             } else if (topupResponse=='5106'||topupResponse=='5103'){
@@ -642,7 +642,7 @@ Base{
         anchors.bottomMargin: 100
         anchors.horizontalCenterOffset: 150
         anchors.horizontalCenter: parent.horizontalCenter
-        source: "aAsset/arrow_down.gif"
+        source: "source/arrow_down.gif"
     }
 
     GroupBox{
@@ -674,7 +674,7 @@ Base{
         }
         Image{
             id: image_prepaid_card
-            source: "aAsset/card_tj_original.png"
+            source: "source/card_tj_original.png"
             width: 400
             height: 250
             anchors.horizontalCenterOffset: -300
@@ -772,12 +772,12 @@ Base{
         spacing: 25
         AnimatedImage{
             width: 300; height: 200;
-            source: "aAsset/insert_card_realistic.jpg"
+            source: "source/insert_card_realistic.jpg"
             fillMode: Image.PreserveAspectFit
         }
         AnimatedImage{
             width: 300; height: 200;
-            source: "aAsset/input_card_pin_realistic.jpeg"
+            source: "source/input_card_pin_realistic.jpeg"
             fillMode: Image.PreserveAspectFit
         }
     }
@@ -797,39 +797,39 @@ Base{
         Image{
             id: img_count_100
             width: 100; height: 100
-            source: "aAsset/denom_100k.png"
+            source: "source/denom_100k.png"
             fillMode: Image.PreserveAspectFit
         }
         Image{
             id: img_count_50
             width: 100; height: 100;
-            source: "aAsset/denom_50k.png"
+            source: "source/denom_50k.png"
             fillMode: Image.PreserveAspectFit
         }
         Image{
             id: img_count_20
            width: 100; height: 100;
-            source: "aAsset/denom_20k.png"
+            source: "source/denom_20k.png"
             fillMode: Image.PreserveAspectFit
         }
         Image{
             id: img_count_10
             width: 100; height: 100;
-            source: "aAsset/denom_10k.png"
+            source: "source/denom_10k.png"
             fillMode: Image.PreserveAspectFit
         }
 //        Image{
 //            id: img_count_5
 //            width: 100; height: 50;
 //            rotation: 30
-//            source: "aAsset/5rb.png"
+//            source: "source/5rb.png"
 //            fillMode: Image.PreserveAspectFit
 //        }
 //        Image{
 //            id: img_count_2
 //            width: 100; height: 50;
 //            rotation: 30
-//            source: "aAsset/2rb.png"
+//            source: "source/2rb.png"
 //            fillMode: Image.PreserveAspectFit
 //        }
 
@@ -841,7 +841,7 @@ Base{
         anchors.bottomMargin: 25
         anchors.right: parent.right
         anchors.rightMargin: 50
-        source: "aAsset/arrow_down.gif"
+        source: "source/arrow_down.gif"
     }
 
     Rectangle{

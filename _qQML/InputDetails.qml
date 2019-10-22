@@ -9,7 +9,7 @@ Base{
     mode_: "reverse"
     isPanelActive: true
     textPanel: qsTr("Please Fill In Data")
-    imgPanel: "aAsset/form_filling.png"
+    imgPanel: "source/form_filling.png"
     property int timer_value: 300
     property int max_count: 100
     property var orderList//: ["adt", "cnn", "inf"]
@@ -217,7 +217,7 @@ Base{
         id:cancel_button1
         x: 100 ;y: 40;
         exitText: (language=='INA') ? qsTr("Ganti Jadwal") : qsTr("Change Plan");
-        imgSource: "aAsset/change-schedule-white.png"
+        imgSource: "source/change-schedule-white.png"
         MouseArea{
             anchors.fill: parent
             onClicked: {
@@ -326,8 +326,8 @@ Base{
             y: 3
             width: 66
             height: 50
-            source: (returnDate==undefined) ? "aAsset/one_way.png" : "aAsset/two_way.png"
-//            source: "aAsset/two_way.png"
+            source: (returnDate==undefined) ? "source/one_way.png" : "source/two_way.png"
+//            source: "source/two_way.png"
             fillMode: Image.PreserveAspectFit
             verticalAlignment: Text.AlignTop
             horizontalAlignment: Text.AlignRight
@@ -336,7 +336,7 @@ Base{
             id: img_info
             y: -12
             fillMode: Image.PreserveAspectFit
-//            source: 'aAsset/lion_air_logo.jpg'
+//            source: 'source/lion_air_logo.jpg'
             height: 79
             sourceSize.width: 0
             anchors.left: parent.left
@@ -363,7 +363,7 @@ Base{
             visible: false
             y: -12
             fillMode: Image.PreserveAspectFit
-//            source: 'aAsset/batik_air_logo.jpg'
+//            source: 'source/batik_air_logo.jpg'
             height: 79
             anchors.left: parent.left
             anchors.leftMargin: 820
@@ -400,7 +400,7 @@ Base{
             anchors.left: parent.left
             anchors.leftMargin: 10
             fillMode: Image.PreserveAspectFit
-            //            source: "aAsset/adult.png"
+            //            source: "source/adult.png"
             source: FUNC.get_source_image(currentType)
 
         }
@@ -594,7 +594,7 @@ Base{
                     id: imgCalendar
                     anchors.fill: parent
                     fillMode: Image.PreserveAspectFit
-                        source: "aAsset/calender.png"
+                        source: "source/calender.png"
                 }
                 onClicked:{
                     calBirthday.visible=true;
@@ -930,7 +930,7 @@ Base{
 //        x: 1086
 //        y: 944
 //        height: 60; width: 88
-//        source: "aAsset/keyboard-icon-black.jpg"
+//        source: "source/keyboard-icon-black.jpg"
 //        fillMode: Image.PreserveAspectFit
 //        visible: !keyboardVisual
 //        MouseArea{

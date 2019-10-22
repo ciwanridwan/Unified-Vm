@@ -7,7 +7,7 @@ Base{
     mode_: "reverse"
     isPanelActive: true
     textPanel: qsTr("Flight Summary")
-    imgPanel: "aAsset/form_filling.png"
+    imgPanel: "source/form_filling.png"
     property int timer_value: 60
     property var detail_info: undefined
     property bool debuggingMode: false
@@ -296,7 +296,7 @@ Base{
                 height: 70
                 scale: 0.5
                 fillMode: Image.PreserveAspectFit
-                source: "aAsset/icon_pembelian_black.png"
+                source: "source/icon_pembelian_black.png"
             }
             Text{
                 text: qsTr("Re-Confirm Payment")
@@ -337,7 +337,7 @@ Base{
                 height: 70
                 scale: 0.5
                 fillMode: Image.PreserveAspectFit
-                source: "aAsset/print.png"
+                source: "source/print.png"
             }
             Text{
                 text: qsTr("Reprint Receipt")

@@ -97,13 +97,12 @@ def sync_machine_status():
     while True:
         try:
             if _Tools.is_online(source='sync_machine_status') is True and IDLE_MODE is True:
-                if IDLE_MODE is True:
-                    __param = _KioskService.machine_summary()
-                    __param['on_usage'] = 'IDLE' if IDLE_MODE is True else 'ON_USED'
-                    # LOGGER.info((__url, str(__param)))
-                    _NetworkAccess.post_to_url(url=__url, param=__param)
-                else:
-                    LOGGER.debug(('Sending Kiosk Status : ', str(IDLE_MODE)))
+                __param = _KioskService.machine_summary()
+                __param['on_usage'] = 'IDLE' if IDLE_MODE is True else 'ON_USED'
+                # LOGGER.info((__url, str(__param)))
+                _NetworkAccess.post_to_url(url=__url, param=__param)
+            else:
+                LOGGER.debug(('Sending Kiosk Status : ', str(IDLE_MODE)))
         except Exception as e:
             LOGGER.warning(e)
         sleep(25.5)

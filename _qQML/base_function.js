@@ -36,11 +36,11 @@ function validate_email(e){
 function get_source_image(s){
     if(s===undefined) return s
     if(s==='inf'){
-        return "aAsset/infant2.png";
+        return "source/infant2.png";
     } else if(s==='cnn'){
-        return "aAsset/child2.png";
+        return "source/child2.png";
     } else{
-        return "aAsset/adult2.png";
+        return "source/adult2.png";
     }
 }
 
@@ -121,31 +121,31 @@ function translate_index_text(i, l){
 
 function get_flight_logo(f){
     if(f.indexOf('JT') > -1){
-        return "aAsset/lion_air_logo.jpg";
+        return "source/lion_air_logo.jpg";
     }else if(f.indexOf('ID') > -1){
-        return "aAsset/batik_air_logo.jpg";
+        return "source/batik_air_logo.jpg";
     }else if(f.indexOf('IW') > -1){
-        return "aAsset/wings_air_logo.png";
+        return "source/wings_air_logo.png";
     }else if(f.indexOf('SL') > -1){
-        return "aAsset/thai_lion_logo.png";
+        return "source/thai_lion_logo.png";
     }else if(f.indexOf('OD') > -1){
-        return "aAsset/malindo_air_logo.png";
+        return "source/malindo_air_logo.png";
     }
 }
 
 function get_plane_image(s){
     if(s=='DEPARTURE'){
-        return "aAsset/departure.png";
+        return "source/departure.png";
     } else {
-        return "aAsset/returning.png";
+        return "source/returning.png";
     }
 }
 
 function get_plane_image_tiny(s){
     if(s=='DEPARTURE'){
-        return "aAsset/departure_h50.png";
+        return "source/departure_h50.png";
     } else {
-        return "aAsset/returning_h50.png";
+        return "source/returning_h50.png";
     }
 }
 

@@ -5,7 +5,7 @@ import "screen.js" as SCREEN
 
 Rectangle{
     id:notification_standard
-    property var show_img: "aAsset/promo_black.png"
+    property var show_img: "source/promo_black.png"
     property var show_text: qsTr("Silakan Pilih Metode Bayar")
     property bool withBackground: true
     property bool modeReverse: true
@@ -89,7 +89,7 @@ Rectangle{
             width: 180
             height: 250
             anchors.verticalCenter: parent.verticalCenter
-            img_: "aAsset/cash black.png"
+            img_: "source/cash black.png"
             text_: qsTr("Tunai")
             text2_: qsTr("Cash")
             MouseArea{
@@ -114,7 +114,7 @@ Rectangle{
             width: 180
             height: 250
             anchors.verticalCenter: parent.verticalCenter
-            img_: "aAsset/credit card black.png"
+            img_: "source/credit card black.png"
             text_: qsTr("Kartu Debit")
             text2_: qsTr("Debit Card")
             MouseArea{

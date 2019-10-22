@@ -7,7 +7,7 @@ import "screen.js" as SCREEN
 
 Rectangle{
     id:notification_standard
-    property var show_img: "aAsset/promo_black.png"
+    property var show_img: "source/promo_black.png"
     property var show_text: qsTr("Silakan Pilih Nominal")
     property bool withBackground: true
     property bool modeReverse: true
@@ -99,7 +99,7 @@ Rectangle{
             width: 180
             height: 250
             anchors.verticalCenter: parent.verticalCenter
-            img_: "aAsset/cash_money.png"
+            img_: "source/cash_money.png"
             text_: 'Rp. ' + FUNC.insert_dot(bigDenomAmount.toString()) + ',-'
             text2_: qsTr("")
             MouseArea{
@@ -123,7 +123,7 @@ Rectangle{
             width: 180
             height: 250
             anchors.verticalCenter: parent.verticalCenter
-            img_: "aAsset/cash_money.png"
+            img_: "source/cash_money.png"
             text_: 'Rp. ' + FUNC.insert_dot(smallDenomAmount.toString()) + ',-'
             text2_: qsTr("")
             MouseArea{
@@ -148,7 +148,7 @@ Rectangle{
             height: 250
             visible: (tinyDenomAmount==0) ? false : true
             anchors.verticalCenter: parent.verticalCenter
-            img_: "aAsset/cash_money.png"
+            img_: "source/cash_money.png"
             text_: 'Rp. ' + FUNC.insert_dot(tinyDenomAmount.toString()) + ',-'
             text2_: qsTr("")
             MouseArea{
@@ -174,7 +174,7 @@ Rectangle{
             height: 250
             visible: (miniDenomAmount==0) ? false : true
             anchors.verticalCenter: parent.verticalCenter
-            img_: "aAsset/cash_money.png"
+            img_: "source/cash_money.png"
             text_: 'Rp. ' + FUNC.insert_dot(miniDenomAmount.toString()) + ',-'
             text2_: qsTr("")
             MouseArea{

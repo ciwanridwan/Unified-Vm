@@ -23,7 +23,7 @@ Base{
     property bool debitEnable: false
     property var cdReadiness: undefined
     idx_bg: 2
-    imgPanel: 'aAsset/beli_kartu.png'
+    imgPanel: 'source/beli_kartu.png'
     textPanel: 'Pembelian Kartu Prabayar'
     signal get_payment_method_signal(string str)
 
@@ -155,7 +155,7 @@ Base{
                     if (item_status==102 && cdReadiness.port2 == 'N/A') item_stock = '0';
                     if (item_status==103 && cdReadiness.port3 == 'N/A') item_stock = '0';
                 }
-                if (item_image=='') item_image = 'aAsset/bni_tapcash_card.png';
+                if (item_image=='') item_image = 'source/bni_tapcash_card.png';
                 groceryItem_listModel.append({
                                                  _item_index: x,
                                                  _item_name: item_name,

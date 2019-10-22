@@ -16,14 +16,14 @@ Rectangle{
     property bool withSlider: false
     property int header_heigth: 100
     property int idx_bg: 0
-    property variant backgrounds: ['aAsset/jalin-hero1.png', 'aAsset/jalin-hero2.png', 'aAsset/jalin-hero3.png', 'aAsset/jalin-hero4.png']
+    property variant backgrounds: ['source/jalin-hero1.png', 'source/jalin-hero2.png', 'source/jalin-hero3.png', 'source/jalin-hero4.png']
     // Old Property Not Used But Cannot Be Removed
     property bool isPanelActive: false
-    property string imgPanel: "aAsset/rocket.png"
+    property string imgPanel: "source/rocket.png"
     property string textPanel: "Greeting From Lion Air"
     property string colorPanel: "#f03838"
     property var imgPanelScale: 1
-    property var show_img: (mode_!='normal') ? "aAsset/logo_white_.png" : "aAsset/logo_red_.png"
+    property var show_img: (mode_!='normal') ? "source/logo_white_.png" : "source/logo_red_.png"
     property var top_color: (mode_!='normal') ? "#f03838" : "white"
 
 
@@ -45,7 +45,7 @@ Rectangle{
         opacity: .7
         Image {
             id: ornament
-            source: "aAsset/ornament_header.png"
+            source: "source/ornament_header.png"
             anchors.fill: parent
             fillMode: Image.Tile
             visible: false
@@ -69,7 +69,7 @@ Rectangle{
         anchors.top: parent.top
         anchors.topMargin: -28
         scale: 0.7
-        source: "aAsset/gather-together-small.png"
+        source: "source/gather-together-small.png"
         fillMode: Image.PreserveAspectFit
         anchors.horizontalCenter: rec_header.horizontalCenter
     }
@@ -81,7 +81,7 @@ Rectangle{
         width: 200
         height: header_heigth
         scale: 0.65
-        source: "aAsset/jalin-logo.png"
+        source: "source/jalin-logo.png"
         anchors.verticalCenter: rec_header.verticalCenter
         fillMode: Image.PreserveAspectFit
         visible: false
@@ -93,7 +93,7 @@ Rectangle{
         y:0
         width: 200
         height: header_heigth
-        source: "aAsset/mdd-logo.png"
+        source: "source/mdd-logo.png"
         anchors.verticalCenter: rec_header.verticalCenter
         fillMode: Image.PreserveAspectFit
         visible: false

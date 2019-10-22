@@ -32,7 +32,7 @@ Rectangle{
             id: image
             scale: 1.6
             anchors.fill: parent
-            source: "aAsset/loading.gif"
+            source: "source/loading.gif"
             fillMode: Image.PreserveAspectFit
         }
     }

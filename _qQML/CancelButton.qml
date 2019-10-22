@@ -7,7 +7,7 @@ Rectangle{
     height:90
     color:"transparent"
     property var exitText: qsTr("Cancel")
-    property var imgSource: "aAsset/close.png"
+    property var imgSource: "source/close.png"
     Image{
         id: back_arrow
         source: imgSource

@@ -10,10 +10,10 @@ Rectangle{
     property string mode_: "normal"
     property var use_
     property bool logo_vis: true
-    property var show_img: (mode_!='normal') ? "aAsset/logo_white_.png" : "aAsset/logo_red_.png"
+    property var show_img: (mode_!='normal') ? "source/logo_white_.png" : "source/logo_red_.png"
     property var top_color: (mode_!='normal') ? "#f03838" : "white"
     property bool isPanelActive: false
-    property string imgPanel: "aAsset/rocket.png"
+    property string imgPanel: "source/rocket.png"
     property string textPanel: "Greeting From Lion Air"
     property string colorPanel: "#f03838"
     property var imgPanelScale: 1

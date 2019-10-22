@@ -9,7 +9,7 @@ Base{
     property var textSlave: '1. Saldo awal kartu = Rp. 30.000 per kartu'
     property var textRebel: '2. Biaya pembelian kartu perdana = Rp. 20.000 per kartu'
     property var textQuard: 'sehingga, dana yang perlu dibayarkan oleh pembeli = Rp. 50.000 per kartu'
-    property var imageSource: "aAsset/reader_sign.png"
+    property var imageSource: "source/reader_sign.png"
     property bool smallerSlaveSize: true
     property int textSize: 40
     visible: false
@@ -99,7 +99,7 @@ Base{
 //        anchors.leftMargin: 565
 //        anchors.top: parent.top
 //        anchors.topMargin: 280
-//        source: "aAsset/emoney_logo.png"
+//        source: "source/emoney_logo.png"
 //        fillMode: Image.PreserveAspectFit
 //    }
 

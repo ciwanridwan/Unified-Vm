@@ -7,7 +7,7 @@ Base{
     mode_: "reverse"
     isPanelActive: true
     textPanel: qsTr("Select Available Payment")
-    imgPanel: "aAsset/pembayaran_putih.png"
+    imgPanel: "source/pembayaran_putih.png"
     imgPanelScale: 0.8
     property int timer_value: 360
     property var amount
@@ -1174,7 +1174,7 @@ Base{
                     id: img_info_depart
                     width: 50
                     height: parent.height
-                    source: "aAsset/takeoff.png"
+                    source: "source/takeoff.png"
                     fillMode: Image.PreserveAspectFit
 
                 }
@@ -1221,7 +1221,7 @@ Base{
                 scale: 0.7
                 opacity: 1
                 fillMode: Image.PreserveAspectFit
-//                source: "aAsset/lion_air_logo.jpg"
+//                source: "source/lion_air_logo.jpg"
             }
             Text{
                 id: flightNo_text
@@ -1266,7 +1266,7 @@ Base{
                 height: 40
                 anchors.right: parent.right
                 anchors.rightMargin: 10
-                source: "aAsset/terminal.png"
+                source: "source/terminal.png"
                 fillMode: Image.PreserveAspectFit
                 anchors.top: parent.top
                 anchors.topMargin: 60
@@ -1354,7 +1354,7 @@ Base{
                     id: img_info_return
                     width: 50
                     height: parent.height
-                    source: "aAsset/returning.png"
+                    source: "source/returning.png"
                     fillMode: Image.PreserveAspectFit
 
                 }
@@ -1401,7 +1401,7 @@ Base{
                 scale: 0.7
                 opacity: 1
                 fillMode: Image.PreserveAspectFit
-//                source: "aAsset/lion_air_logo.jpg"
+//                source: "source/lion_air_logo.jpg"
 
             }
             Text{
@@ -1448,7 +1448,7 @@ Base{
                 height: 40
                 anchors.right: parent.right
                 anchors.rightMargin: 10
-                source: "aAsset/terminal.png"
+                source: "source/terminal.png"
                 fillMode: Image.PreserveAspectFit
                 anchors.top: parent.top
                 anchors.topMargin: 60
@@ -1739,7 +1739,7 @@ Base{
                 id: img_edc
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
-                source: "aAsset/credit card black.png"
+                source: "source/credit card black.png"
                 fillMode: Image.Stretch
 
             }
@@ -1825,7 +1825,7 @@ Base{
                 id: img_prepaid
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
-                source: "aAsset/prepaid black.png"
+                source: "source/prepaid black.png"
                 fillMode: Image.Stretch
             }
             Text{
@@ -1913,7 +1913,7 @@ Base{
                 id: img_cash
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
-                source: "aAsset/cash black.png"
+                source: "source/cash black.png"
                 fillMode: Image.Stretch
             }
             Text{
@@ -2055,7 +2055,7 @@ Base{
             Image{
                 width: 40
                 height: 40
-                source: 'aAsset/icon/wallet_black.png'
+                source: 'source/icon/wallet_black.png'
                 opacity: .75
             }
             Text {

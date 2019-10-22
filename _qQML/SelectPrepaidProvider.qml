@@ -226,7 +226,7 @@ Base{
         visible: (provider==undefined && !popup_loading.visible) ? true : false
         Image {
             id: emoney_mandiri
-            source: "aAsset/emoney-card.png"
+            source: "source/emoney-card.png"
             width: 400
             height: 300
             fillMode: Image.PreserveAspectFit
@@ -270,7 +270,7 @@ Base{
         }
         Image {
             id: tapcash_bni
-            source: "aAsset/tapcash-card.png"
+            source: "source/tapcash-card.png"
             width: 400
             height: 300
             fillMode: Image.PreserveAspectFit

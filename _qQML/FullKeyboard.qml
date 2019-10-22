@@ -14,7 +14,7 @@ Rectangle{
     signal funcButtonClicked(string str)
 //    Image{
 //        id: sample_img
-//        source: "aAsset/Keyboard.png"
+//        source: "source/Keyboard.png"
     //        anchors.fill: parent
     //    }
 

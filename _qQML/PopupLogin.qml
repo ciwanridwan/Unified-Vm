@@ -18,7 +18,7 @@ Rectangle{
     property string mainTitleIna: "Masukkan Kode Unik Transaksi Anda"
     property string mainTitleEng: "Enter Admin Code"
     property var exitKey: "!@#$%^&*()"
-    property var titleImage: "aAsset/icon/password.png"
+    property var titleImage: "source/icon/password.png"
     property bool clickAble: false
 
 

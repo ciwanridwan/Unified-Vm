@@ -48,7 +48,7 @@ Base{
 
     signal topup_denom_signal(string str)
     signal select_payment_signal(string str)
-    imgPanel: 'aAsset/topup_kartu.png'
+    imgPanel: 'source/topup_kartu.png'
     textPanel: 'Isi Ulang Saldo Kartu Prabayar'
 
 
@@ -284,7 +284,7 @@ Base{
         var result = text.split('|')[1];
         if (result == 'ERROR'){
             back_button.z = 999
-            switch_frame('aAsset/insert_card_new.png', 'Anda tidak meletakkan kartu', 'ataupun kartu Anda tidak dapat digunakan', 'closeWindow', false );
+            switch_frame('source/insert_card_new.png', 'Anda tidak meletakkan kartu', 'ataupun kartu Anda tidak dapat digunakan', 'closeWindow', false );
             return;
         } else {
             var info = JSON.parse(result);
@@ -308,12 +308,12 @@ Base{
 ////                    open_preload_notif('Mohon Maaf|Kartu BNI TapCash Anda Tidak Resmi\nSilakan Gunakan Kartu TapCash Yang Lain', 'coba lagi');
 //                } else {
 ////                    back_button.z = 999
-//                    switch_frame('aAsset/insert_card_new.png', 'Maaf terjadi kesalahan pada kartu Anda', 'gunakan kartu lainnya', 'closeWindow', false );
+//                    switch_frame('source/insert_card_new.png', 'Maaf terjadi kesalahan pada kartu Anda', 'gunakan kartu lainnya', 'closeWindow', false );
 //                    return;
 //                }
             } else {
 //                back_button.z = 999
-                switch_frame('aAsset/insert_card_new.png', 'Anda tidak meletakkan kartu', 'ataupun kartu Anda tidak dapat digunakan', 'closeWindow', false );
+                switch_frame('source/insert_card_new.png', 'Anda tidak meletakkan kartu', 'ataupun kartu Anda tidak dapat digunakan', 'closeWindow', false );
                 return;
             }
         }
@@ -400,7 +400,7 @@ Base{
         if (closeMode==undefined) closeMode = 'backToMain';
         if (textSlave==undefined) textSlave = '';
         press = '0';
-        switch_frame('aAsset/smiley_down.png', 'Maaf Sementara Mesin Tidak Dapat Digunakan', textSlave, closeMode, false )
+        switch_frame('source/smiley_down.png', 'Maaf Sementara Mesin Tidak Dapat Digunakan', textSlave, closeMode, false )
         return;
     }
 
@@ -434,7 +434,7 @@ Base{
     function exceed_balance(denom){
         if ((parseInt(cardData.balance) + parseInt(denom)) > maxBalance){
             press = '0';
-            switch_frame('aAsset/smiley_down.png', 'Mohon Maaf Saldo Akan Melebihi Limit', 'Silakan Pilih Denom Yang Lebih Kecil', 'closeWindow', false )
+            switch_frame('source/smiley_down.png', 'Mohon Maaf Saldo Akan Melebihi Limit', 'Silakan Pilih Denom Yang Lebih Kecil', 'closeWindow', false )
             return true;
         } else {
             return false;

@@ -143,7 +143,7 @@ Rectangle{
             x: 269
             y: 40
             source: FUNC.get_plane_image_tiny(f_status)
-//            source: "aAsset/departure.png"
+//            source: "source/departure.png"
             fillMode: Image.PreserveAspectFit
             width: 50
             height: 50
@@ -240,7 +240,7 @@ Rectangle{
             x: 271
             y: 40
             source: FUNC.get_plane_image_tiny(f_status)
-            //            source: "aAsset/departure.png"
+            //            source: "source/departure.png"
             fillMode: Image.PreserveAspectFit
             width: 50
             height: 50

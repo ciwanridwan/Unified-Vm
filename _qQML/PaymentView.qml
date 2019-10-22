@@ -48,7 +48,7 @@ Base{
         anchors.horizontalCenter: parent.horizontalCenter
         width: 750; height: 525
         Image{
-            source: "aAsset/close.png"
+            source: "source/close.png"
             visible: cancelButton
             width: 80
             height: 80
@@ -82,12 +82,12 @@ Base{
             spacing: 25
             AnimatedImage{
                 width: 300; height: 200;
-                source: "aAsset/insert_card_realistic.jpg"
+                source: "source/insert_card_realistic.jpg"
                 fillMode: Image.PreserveAspectFit
             }
             AnimatedImage{
                 width: 300; height: 200;
-                source: "aAsset/input_card_pin_realistic.jpeg"
+                source: "source/input_card_pin_realistic.jpeg"
                 fillMode: Image.PreserveAspectFit
             }
         }
@@ -100,12 +100,12 @@ Base{
             spacing: 25
             AnimatedImage{
                 width: 300; height: 200;
-                source: "aAsset/cards_.png"
+                source: "source/cards_.png"
                 fillMode: Image.PreserveAspectFit
             }
             AnimatedImage{
                 width: 300; height: 200;
-                source: "aAsset/tap_card_.png"
+                source: "source/tap_card_.png"
                 fillMode: Image.PreserveAspectFit
             }
         }
@@ -135,7 +135,7 @@ Base{
         anchors.horizontalCenter: parent.horizontalCenter
         width: 900; height: 650
         Image{
-            source: "aAsset/close.png"
+            source: "source/close.png"
             visible: cancelAble
             width: 80
             height: 80
@@ -183,12 +183,12 @@ Base{
             visible: parent.visible
             AnimatedImage{
                 width: 300; height: 200;
-                source: "aAsset/prepare_cash_.png"
+                source: "source/prepare_cash_.png"
                 fillMode: Image.PreserveAspectFit
             }
             AnimatedImage{
                 width: 300; height: 200;
-                source: "aAsset/insert_cash_.png"
+                source: "source/insert_cash_.png"
                 fillMode: Image.PreserveAspectFit
             }
         }*/
@@ -196,7 +196,7 @@ Base{
             id: insert_cash_image
             x: 625
             y: 116
-            source: "aAsset/insert_cash_rupiah.jpeg"
+            source: "source/insert_cash_rupiah.jpeg"
             width: 200
             height: 300
             fillMode: Image.PreserveAspectFit
@@ -338,42 +338,42 @@ Base{
                 id: img_count_100
                 width: 100; height: 50;
                 rotation: 30
-                source: "aAsset/100rb.png"
+                source: "source/100rb.png"
                 fillMode: Image.PreserveAspectFit
             }
             Image{
                 id: img_count_50
                 width: 100; height: 50;
                 rotation: 30
-                source: "aAsset/50rb.png"
+                source: "source/50rb.png"
                 fillMode: Image.PreserveAspectFit
             }
             Image{
                 id: img_count_20
                width: 100; height: 50;
                 rotation: 30
-                source: "aAsset/20rb.png"
+                source: "source/20rb.png"
                 fillMode: Image.PreserveAspectFit
             }
             Image{
                 id: img_count_10
                 width: 100; height: 50;
                 rotation: 30
-                source: "aAsset/10rb.png"
+                source: "source/10rb.png"
                 fillMode: Image.PreserveAspectFit
             }
             Image{
                 id: img_count_5
                 width: 100; height: 50;
                 rotation: 30
-                source: "aAsset/5rb.png"
+                source: "source/5rb.png"
                 fillMode: Image.PreserveAspectFit
             }
             Image{
                 id: img_count_2
                 width: 100; height: 50;
                 rotation: 30
-                source: "aAsset/2rb.png"
+                source: "source/2rb.png"
                 fillMode: Image.PreserveAspectFit
             }
 
@@ -508,7 +508,7 @@ Base{
             anchors.horizontalCenterOffset: -5
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
-            source: "aAsset/simply_loading.gif"
+            source: "source/simply_loading.gif"
 
         }
         Text{
@@ -540,7 +540,7 @@ Base{
             anchors.horizontalCenterOffset: -5
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
-            source: "aAsset/simply_loading.gif"
+            source: "source/simply_loading.gif"
 
         }
         Text{

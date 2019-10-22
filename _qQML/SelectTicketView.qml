@@ -9,7 +9,7 @@ Base{
     mode_ : "reverse"
     isPanelActive: true
     textPanel: qsTr("Choose Your Departure")
-    imgPanel: "aAsset/take_off_panel.png"
+    imgPanel: "source/take_off_panel.png"
     imgPanelScale: 0.8
     property int timer_value: 150
     property var list_flight: undefined
@@ -250,7 +250,7 @@ Base{
                     notif_view.open()
                 }
                 textPanel = qsTr("Choose Your Return");
-                imgPanel = "aAsset/landing_panel.png";
+                imgPanel = "source/landing_panel.png";
                 listViewTicket.model = return_model;
                 getReturnActivated = true;
                 press = "0";
@@ -269,7 +269,7 @@ Base{
 //        if (selectedPrice.indexOf(param) == -1){
 //        }
         selectedPrice.push(param)
-        img_f_status.source = (returnDate==undefined) ? "aAsset/one_way.png" : "aAsset/two_way.png"
+        img_f_status.source = (returnDate==undefined) ? "source/one_way.png" : "source/two_way.png"
         var p = JSON.parse(param)
         text_info_f_no.text = p.f_no
         text_info_f_time.text = (getReturnActivated==true) ? returnDate + " " +  p.f_time : departDate + " " +  p.f_time
@@ -556,7 +556,7 @@ Base{
             y: 3
             width: 66
             height: 50
-//            source: "aAsset/two_way.png"
+//            source: "source/two_way.png"
             fillMode: Image.PreserveAspectFit
             verticalAlignment: Text.AlignTop
             horizontalAlignment: Text.AlignRight
@@ -565,7 +565,7 @@ Base{
             id: img_info
             y: -6
             fillMode: Image.PreserveAspectFit
-//            source: 'aAsset/batik_air_logo.jpg'
+//            source: 'source/batik_air_logo.jpg'
             height: 79
             anchors.left: parent.left
             anchors.leftMargin: 700

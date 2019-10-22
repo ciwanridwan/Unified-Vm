@@ -10,7 +10,7 @@ Rectangle{
     height:450
     color:"transparent"
     property var itemName: 'Product Name'
-    property var itemImage: 'aAsset/card_tj_original.png'
+    property var itemImage: 'source/card_tj_original.png'
     property var itemPrice: '19000'
     property var itemStock: 10
     property var itemDesc: 'Product Description Product Description Product Description Product Description Product Description Product Description'

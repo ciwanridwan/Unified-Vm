@@ -19,24 +19,24 @@ Rectangle{
     property int header_height: 125
     property int idx_bg: 0
     //Change Background Asset
-    property variant backgrounds: ['aAsset/mandiri_background.png', 'aAsset/mandiri_background.png', 'aAsset/mandiri_background.png', 'aAsset/mandiri_background.png' ]
+    property variant backgrounds: ['source/mandiri_background.png', 'source/mandiri_background.png', 'source/mandiri_background.png', 'source/mandiri_background.png' ]
     // Old Property Not Used But Cannot Be Removed
     property bool isPanelActive: false
     property bool isBoxNameActive: true
     property bool isHeaderActive: true
-    property string imgPanel: "aAsset/rocket.png"
+    property string imgPanel: "source/rocket.png"
     property string textPanel: ""
     property string colorPanel: "white"
     property int panelWidth: 400
     property var imgPanelScale: .9
-    property var show_img: (mode_!='normal') ? "aAsset/logo_white_.png" : "aAsset/logo_red_.png"
+    property var show_img: (mode_!='normal') ? "source/logo/logo_white_.png" : "source/logo/logo_red_.png"
     property var top_color: (mode_!='normal') ? "#f03838" : "white"
 
 
     Image{
         id: img_background
         visible: true
-        source: 'aAsset/mandiri_background.png'
+        source: 'source/mandiri_background.png'
         fillMode: Image.PreserveAspectCrop
         anchors.fill: parent
     }
@@ -57,7 +57,7 @@ Rectangle{
         anchors.verticalCenter: header_opacity.verticalCenter
         anchors.left: parent.left
         anchors.leftMargin: 50
-        source: "aAsset/emoney_logo.png"
+        source: "source/emoney_logo.png"
         fillMode: Image.PreserveAspectFit
         visible: logo_vis
     }
@@ -69,7 +69,7 @@ Rectangle{
         anchors.verticalCenter: header_opacity.verticalCenter
         anchors.right: parent.right
         anchors.rightMargin: 50
-        source: "aAsset/mandiri_logo.png"
+        source: "source/mandiri_logo.png"
         fillMode: Image.PreserveAspectFit
         visible: logo_vis
     }
@@ -151,7 +151,7 @@ Rectangle{
 //        fillMode: Image.PreserveAspectFit
 //        anchors.bottom: parent.bottom
 //        anchors.bottomMargin: 20
-//        source: "aAsset/kasirku_inacraft.png"
+//        source: "source/kasirku_inacraft.png"
 //        visible: !isPanelActive
 //        z: 10
 //    }
@@ -165,7 +165,7 @@ Rectangle{
 //        anchors.leftMargin: 0
 //        anchors.bottom: parent.bottom
 //        anchors.bottomMargin: 20
-//        source: "aAsset/logo_jaklinggo.png"
+//        source: "source/logo/logo_jaklinggo.png"
 //        visible: !isPanelActive
 //        z: 10
 //    }
@@ -188,7 +188,7 @@ Rectangle{
 //        }
 //        Image {
 //            id: img_pattern
-//            source: "aAsset/ornament_header.png"
+//            source: "source/ornament_header.png"
 //            anchors.fill: parent
 //            opacity: .20
 //            fillMode: Image.Tile

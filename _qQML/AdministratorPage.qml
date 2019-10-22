@@ -381,51 +381,51 @@ Base{
         }
     }
 
-    AdminPanelButton{
-        id: mandiri_dummy_settlement_button
-        anchors.leftMargin: 15
-        anchors.left: mandiri_settlement_button.right
-        anchors.top: parent.top
-        anchors.topMargin: 15
-        z: 10
-        button_text: 'reset\nsam'
-        visible: !popup_loading.visible
-        modeReverse: true
-        MouseArea{
-            anchors.fill: parent
-            onClicked: {
-                _SLOT.user_action_log('Admin Page "Dummy Settlement"');
-                if (press != '0') return;
-                press = '1';
-                console.log('mandiri_dummy_settlement_button is pressed..!');
-                popup_loading.open();
-                _SLOT.start_dummy_mandiri_topup_settlement();
-            }
-        }
-    }
-
 //    AdminPanelButton{
-//        id: activation_slave_button
+//        id: mandiri_dummy_settlement_button
 //        anchors.leftMargin: 15
-//        anchors.left: activation_master_button.right
+//        anchors.left: mandiri_settlement_button.right
 //        anchors.top: parent.top
 //        anchors.topMargin: 15
 //        z: 10
-//        button_text: 'activate 2'
+//        button_text: 'reset\nsam'
 //        visible: !popup_loading.visible
 //        modeReverse: true
 //        MouseArea{
 //            anchors.fill: parent
 //            onClicked: {
-//                _SLOT.user_action_log('Admin Page "Activate 2"');
+//                _SLOT.user_action_log('Admin Page "Dummy Settlement"');
 //                if (press != '0') return;
 //                press = '1';
-//                console.log('activation_slave_button is pressed..!');
+//                console.log('mandiri_dummy_settlement_button is pressed..!');
 //                popup_loading.open();
-//                _SLOT.start_slave_activation_bni();
+//                _SLOT.start_dummy_mandiri_topup_settlement();
 //            }
 //        }
 //    }
+
+    AdminPanelButton{
+        id: activation_bni_button
+        anchors.leftMargin: 15
+        anchors.left: mandiri_settlement_button.right
+        anchors.top: parent.top
+        anchors.topMargin: 15
+        z: 10
+        button_text: 'activate\nbni'
+        visible: !popup_loading.visible
+        modeReverse: true
+        MouseArea{
+            anchors.fill: parent
+            onClicked: {
+                _SLOT.user_action_log('Admin Page "Activate BNI"');
+                if (press != '0') return;
+                press = '1';
+                console.log('activation_bni_button is pressed..!');
+                popup_loading.open();
+                _SLOT.start_master_activation_bni();
+            }
+        }
+    }
 
     //==============================================================
     //PUT MAIN COMPONENT HERE

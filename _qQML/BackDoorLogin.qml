@@ -7,7 +7,7 @@ Base{
     mode_: "reverse"
     isPanelActive: true
     textPanel: qsTr("Input Secret Code")
-    imgPanel: "aAsset/input_secret_code.png"
+    imgPanel: "source/input_secret_code.png"
     imgPanelScale: 0.8
     property int timer_value: 750
     property int max_count: 50
@@ -587,7 +587,7 @@ Base{
         Image{
             x: -201
             y: -31
-            source: "aAsset/close.png"
+            source: "source/close.png"
             width: 80
             height: 80
             MouseArea{
@@ -640,7 +640,7 @@ Base{
         }
         Image{
             x: 972
-            source: "aAsset/close.png"
+            source: "source/close.png"
             width: 80
             height: 80
             anchors.top: parent.top

@@ -27,7 +27,7 @@ Base{
     property int attemptCD: 0
 
     idx_bg: 3
-    imgPanel: 'aAsset/cash black.png'
+    imgPanel: 'source/cash black.png'
     textPanel: 'Proses Pembayaran'
     imgPanelScale: .8
 
@@ -104,9 +104,9 @@ Base{
 //            slave_title.text = 'Silakan Ambil Struk Anda Di Bawah.\nJika Saldo Kartu Prabayar Anda Gagal Terisi, Silakan Hubungi Layanan Pelanggan.';
 //            slave_title.visible = true;
             if (t=='TOPUP_FAILED_BALANCE_EXPIRED') _SLOT.start_reset_mandiri_settlement();
-            switch_frame('aAsset/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Ambil Struk Transaksi Anda Hubungi Layanan Pelanggan', 'backToMain', true )
+            switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Ambil Struk Transaksi Anda Hubungi Layanan Pelanggan', 'backToMain', true )
         } else if (t=='TOPUP_FAILED_CARD_NOT_MATCH'){
-            switch_frame('aAsset/smiley_down.png', 'Terjadi Kesalahan', 'Terdeteksi Perbedaan Kartu Saat Isi Ulang', 'backToMain', true )
+            switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Terdeteksi Perbedaan Kartu Saat Isi Ulang', 'backToMain', true )
             // Sementara Digagalkan dan Tidak Bisa Diulang
             // return;
         } else {
@@ -119,16 +119,16 @@ Base{
                 cardNo = result.card_no;
                 lastBalance = result.last_balance;
                 _SLOT.start_store_topup_transaction(JSON.stringify(details));
-                switch_frame('aAsset/take_receipt.png', 'Terima Kasih', 'Silakan Ambil Struk Transaksi Anda', 'backToMain', true );
+                switch_frame('source/take_receipt.png', 'Terima Kasih', 'Silakan Ambil Struk Transaksi Anda', 'backToMain', true );
                 _SLOT.start_do_mandiri_topup_settlement();
 //                card_no_prepaid.text = FUNC.insert_space_four(cardNo);
-//                image_prepaid_card.source = "aAsset/tapcash-card.png";
+//                image_prepaid_card.source = "source/tapcash-card.png";
 //                notif_saldo.text = "Isi Ulang Berhasil.\nSaldo Kartu TapCash Anda\nRp. "+FUNC.insert_dot(lastBalance)+",-\nAmbil Struk Anda di Bawah."
 //                if (cardNo.substring(0, 4) == '6032'){
-//                  image_prepaid_card.source = "aAsset/emoney-card.png";
+//                  image_prepaid_card.source = "source/emoney-card.png";
 //                  notif_saldo.text = "Isi Ulang Berhasil.\nSaldo Kartu e-Money Anda\nRp. "+FUNC.insert_dot(lastBalance)+",-\nAmbil Struk Anda di Bawah."
 //                } else if (cardNo.substring(0, 4) == '7546'){
-//                  image_prepaid_card.source = "aAsset/tapcash-card.png";
+//                  image_prepaid_card.source = "source/tapcash-card.png";
 //                  notif_saldo.text = "Isi Ulang Berhasil.\nSaldo Kartu TapCash Anda\nRp. "+FUNC.insert_dot(lastBalance)+",-\nAmbil Struk Anda di Bawah."
 //                }
 //            } else if (topupResponse=='5106'||topupResponse=='5103'){
@@ -141,7 +141,7 @@ Base{
 //                slave_title.text = 'Terjadi Kegagalan Pada Proses Isi Ulang Karena Kartu Tidak Terdeteksi.\nSilakan Ambil Struk Anda Di Bawah dan Hubungi Layanan Pelanggan.';
 //                slave_title.visible = true;
             } else {
-                switch_frame('aAsset/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Ambil Struk Transaksi Anda Hubungi Layanan Pelanggan', 'backToMain', true )
+                switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Ambil Struk Transaksi Anda Hubungi Layanan Pelanggan', 'backToMain', true )
 //                slave_title.text = 'Silakan Ambil Struk Anda Di Bawah.\nJika Saldo Kartu Prabayar Anda Gagal Terisi, Silakan Hubungi Layanan Pelanggan.';
 //                slave_title.visible = true;
             }
@@ -192,21 +192,21 @@ Base{
         if (r=='EJECT|PARTIAL'){
             press = '0';
             attemptCD -= 1;
-            switch_frame('aAsset/take_card.png', 'Silakan Ambil Kartu Anda', 'Kemudian Tekan Tombol Lanjut', 'closeWindow|25', true );
+            switch_frame('source/take_card.png', 'Silakan Ambil Kartu Anda', 'Kemudian Tekan Tombol Lanjut', 'closeWindow|25', true );
             centerOnlyButton = true;
             modeButtonPopup = 'retrigger_card';
             return;
         }
         if (r == 'EJECT|ERROR') {
 //            slave_title.text = 'Silakan Ambil Struk Anda Di Bawah.\nJika Kartu Tidak Keluar, Silakan Hubungi Layanan Pelanggan.';
-            switch_frame('aAsset/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Ambil Struk Transaksi Anda Hubungi Layanan Pelanggan', 'backToMain', true )
+            switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Ambil Struk Transaksi Anda Hubungi Layanan Pelanggan', 'backToMain', true )
         }
         if (r == 'EJECT|SUCCESS') {
 //            var qty = details.qty.toString()
 //            slave_title.text = 'Silakan Ambil Struk dan ' + unit + ' pcs Kartu Prabayar Baru Anda Di Bawah.';
             abc.counter = 7;
             my_timer.restart();
-            switch_frame('aAsset/thumb_ok.png', 'Silakan Ambil Kartu dan Struk Transaksi Anda', 'Terima Kasih', 'backToMain', false )
+            switch_frame('source/thumb_ok.png', 'Silakan Ambil Kartu dan Struk Transaksi Anda', 'Terima Kasih', 'backToMain', false )
         }
         _SLOT.start_sale_print_global();
     }
@@ -235,7 +235,7 @@ Base{
                 var multiply = details.qty.toString();
                 _SLOT.start_multiple_eject(attempt, multiply);
 //                var textMain1 = 'Ambil Kartu Prabayar Anda Segera Setelah Keluar Dari Mesin'
-//                switch_frame('aAsset/insert_card_new.png', textMain1, '', 'closeWindow|10', false )
+//                switch_frame('source/insert_card_new.png', textMain1, '', 'closeWindow|10', false )
 //                slave_title.text = 'Sedang Memproses Kartu Prabayar Baru Anda Dalam Beberapa Saat...'
                 break;
             case 'topup':
@@ -245,7 +245,7 @@ Base{
 //                standard_notif_view.buttonEnabled = false;
                 var textMain2 = 'Letakkan kartu e-Money Anda di alat pembaca kartu yang bertanda'
                 var textSlave2 = 'Pastikan kartu Anda tetap berada di alat pembaca kartu sampai transaksi selesai'
-                switch_frame('aAsset/reader_sign.png', textMain2, textSlave2, 'closeWindow|10', false )
+                switch_frame('source/reader_sign.png', textMain2, textSlave2, 'closeWindow|10', false )
                 perform_do_topup();
 //                slave_title.text = 'Sedang Memproses Isi Ulang Kartu Prabayar Anda...\nPastikan Kartu Prabayar Anda Masih Menempel Di Reader.'
                 break;
@@ -279,7 +279,7 @@ Base{
 //                standard_notif_view._button_text = 'coba lagi';
                 modeButtonPopup = 'retrigger_grg';
                 proceedText = 'COBA LAGI';
-                switch_frame_with_button('aAsset/insert_money.png', 'Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)', 'closeWindow|30', true );
+                switch_frame_with_button('source/insert_money.png', 'Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)', 'closeWindow|30', true );
                 return;
             } else if (grgResult == 'BAD_NOTES'){
 //                false_notif('Mohon Maaf|Pastikan Uang Anda Dalam Kondisi Baik Dan Tidak Lusuh.\n(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)');
@@ -287,7 +287,7 @@ Base{
 //                standard_notif_view._button_text = 'coba lagi';
                 modeButtonPopup = 'retrigger_grg';
                 proceedText = 'COBA LAGI';
-                switch_frame_with_button('aAsset/insert_money.png', 'Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)', 'closeWindow|30', true );
+                switch_frame_with_button('source/insert_money.png', 'Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)', 'closeWindow|30', true );
                 return;
             } else {
                 receivedCash = parseInt(grgResult);
@@ -571,7 +571,7 @@ Base{
 
     function open_preload_notif(){
         press = '0';
-        switch_frame('aAsset/insert_money.png', 'Masukkan Uang Anda', '', 'closeWindow', false )
+        switch_frame('source/insert_money.png', 'Masukkan Uang Anda', '', 'closeWindow', false )
         return;
     }
 
@@ -579,7 +579,7 @@ Base{
         if (closeMode==undefined) closeMode = 'backToMain';
         if (textSlave==undefined) textSlave = '';
         press = '0';
-        switch_frame('aAsset/smiley_down.png', 'Maaf Sementara Mesin Tidak Dapat Digunakan', textSlave, closeMode, false )
+        switch_frame('source/smiley_down.png', 'Maaf Sementara Mesin Tidak Dapat Digunakan', textSlave, closeMode, false )
         return;
     }
 
@@ -699,7 +699,7 @@ Base{
         anchors.bottomMargin: 100
         anchors.horizontalCenterOffset: 150
         anchors.horizontalCenter: parent.horizontalCenter
-        source: "aAsset/arrow_down.gif"
+        source: "source/arrow_down.gif"
     }
 
     GroupBox{
@@ -731,7 +731,7 @@ Base{
         }
         Image{
             id: image_prepaid_card
-            source: "aAsset/card_tj_original.png"
+            source: "source/card_tj_original.png"
             width: 400
             height: 250
             anchors.horizontalCenterOffset: -300
@@ -829,12 +829,12 @@ Base{
         spacing: 25
         AnimatedImage{
             width: 300; height: 200;
-            source: "aAsset/insert_card_realistic.jpg"
+            source: "source/insert_card_realistic.jpg"
             fillMode: Image.PreserveAspectFit
         }
         AnimatedImage{
             width: 300; height: 200;
-            source: "aAsset/input_card_pin_realistic.jpeg"
+            source: "source/input_card_pin_realistic.jpeg"
             fillMode: Image.PreserveAspectFit
         }
     }
@@ -854,39 +854,39 @@ Base{
         Image{
             id: img_count_100
             width: 100; height: 100
-            source: "aAsset/denom_100k.png"
+            source: "source/denom_100k.png"
             fillMode: Image.PreserveAspectFit
         }
         Image{
             id: img_count_50
             width: 100; height: 100;
-            source: "aAsset/denom_50k.png"
+            source: "source/denom_50k.png"
             fillMode: Image.PreserveAspectFit
         }
         Image{
             id: img_count_20
            width: 100; height: 100;
-            source: "aAsset/denom_20k.png"
+            source: "source/denom_20k.png"
             fillMode: Image.PreserveAspectFit
         }
         Image{
             id: img_count_10
             width: 100; height: 100;
-            source: "aAsset/denom_10k.png"
+            source: "source/denom_10k.png"
             fillMode: Image.PreserveAspectFit
         }
 //        Image{
 //            id: img_count_5
 //            width: 100; height: 50;
 //            rotation: 30
-//            source: "aAsset/5rb.png"
+//            source: "source/5rb.png"
 //            fillMode: Image.PreserveAspectFit
 //        }
 //        Image{
 //            id: img_count_2
 //            width: 100; height: 50;
 //            rotation: 30
-//            source: "aAsset/2rb.png"
+//            source: "source/2rb.png"
 //            fillMode: Image.PreserveAspectFit
 //        }
 
@@ -898,7 +898,7 @@ Base{
         anchors.bottomMargin: 25
         anchors.right: parent.right
         anchors.rightMargin: 50
-        source: "aAsset/arrow_down.gif"
+        source: "source/arrow_down.gif"
     }
 
     Rectangle{

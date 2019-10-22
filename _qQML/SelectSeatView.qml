@@ -9,7 +9,7 @@ Base{
     mode_ : "reverse"
     isPanelActive: true
     textPanel: (language=='INA') ?  qsTr('Pilih Kursi Anda') : qsTr("Choose Your Seat")
-    imgPanel: "aAsset/icon/seat-white.png"
+    imgPanel: "source/icon/seat-white.png"
     imgPanelScale: 0.8
     property int timer_value: 300
 

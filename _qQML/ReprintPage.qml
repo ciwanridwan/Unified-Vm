@@ -7,7 +7,7 @@ Base{
     mode_: "reverse"
     isPanelActive: true
     textPanel: qsTr("Enter Your Booking Code")
-    imgPanel: "aAsset/form_filling.png"
+    imgPanel: "source/form_filling.png"
     property int timer_value: 60
     property var textInput: ""
     property int max_count: 6
@@ -115,7 +115,7 @@ Base{
         y: 252
         width: 100
         height: 100
-        source: "aAsset/cekkodebooking_black.png"
+        source: "source/cekkodebooking_black.png"
         fillMode: Image.PreserveAspectFit
 
     }

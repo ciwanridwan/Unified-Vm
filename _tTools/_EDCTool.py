@@ -12,10 +12,10 @@ import re
 
 LOGGER = logging.getLogger()
 PDF_PATH = os.path.join(sys.path[0], '_pPDF')
-LOGO_PATH = os.path.join(sys.path[0], '_aAsset', 'bni_logo.gif')
+LOGO_PATH = os.path.join(sys.path[0], '_rReceipts', 'bni_logo.gif')
 VERSION = open(os.path.join(os.getcwd(), 'kiosk.ver'), 'r').read().strip()
 KIOSK_ID = _ConfigParser.get_value('TERMINAL', 'tid')
-FONT_PATH = os.path.join(os.getcwd(), '_aAsset')
+FONT_PATH = os.path.join(os.getcwd(), '_fFonts')
 
 CARD_TYPE = {
     '5484': 'CREDIT CARD',

@@ -85,7 +85,7 @@ FocusScope {
 //            height: 20
 ////            visible: !focusScope.focus
 //            anchors.centerIn: parent
-//            source: "aAsset/keyboard-icon-black.jpg"
+//            source: "source/keyboard-icon-black.jpg"
 //            fillMode: Image.PreserveAspectFit
 //        }
     }
@@ -111,7 +111,7 @@ FocusScope {
             width: 20
             height: 20
             anchors.centerIn: parent
-            source: "aAsset/clear-text-rtl.png"
+            source: "source/clear-text-rtl.png"
             fillMode: Image.PreserveAspectFit
         }
     }

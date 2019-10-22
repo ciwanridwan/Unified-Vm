@@ -380,7 +380,7 @@ Base{
             anchors.left: parent.left
             anchors.leftMargin: 0
             fillMode: Image.PreserveAspectFit
-            source: "aAsset/departure.png"
+            source: "source/departure.png"
         }
 
         ComboBox {
@@ -554,7 +554,7 @@ Base{
             anchors.left: parent.left
             anchors.leftMargin: 0
             fillMode: Image.PreserveAspectFit
-            source: "aAsset/landing.png"
+            source: "source/landing.png"
         }
 
         ComboBox {
@@ -729,7 +729,7 @@ Base{
                 id: imgDepart
                 anchors.fill: parent
                 fillMode: Image.PreserveAspectFit
-                    source: "aAsset/calender.png"
+                    source: "source/calender.png"
             }
             onClicked:{
                 calDepart.visible=true;
@@ -796,7 +796,7 @@ Base{
                 id: imgReturn
                 anchors.fill: parent
                 fillMode: Image.PreserveAspectFit
-                    source: "aAsset/calender.png"
+                    source: "source/calender.png"
             }
             onClicked:{
                 calReturn.visible=true;
@@ -990,7 +990,7 @@ Base{
             height: 70
             scale: 0.5
             fillMode: Image.PreserveAspectFit
-            source: "aAsset/find.png"
+            source: "source/find.png"
         }
         Text{
             text: qsTr("Find My Flight")
@@ -1201,7 +1201,7 @@ Base{
     Image{
         id: keyboard_close_button
         z: virtual_keyboard.z + 1
-        source: "aAsset/close.png"
+        source: "source/close.png"
         width: 50; height: 50
         visible: keyboardVisual
         anchors.bottom: parent.bottom

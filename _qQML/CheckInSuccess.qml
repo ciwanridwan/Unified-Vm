@@ -7,7 +7,7 @@ Base{
     mode_: "reverse"
     isPanelActive: true
     textPanel: (language=="INA") ?  "Dapatkan Boarding Pass" : "Get Your Boarding Pass"
-    imgPanel: "aAsset/icon/boarding-pass-white.png"
+    imgPanel: "source/icon/boarding-pass-white.png"
     imgPanelScale: 0.85
     property int timer_value: 60
 
@@ -299,7 +299,7 @@ Base{
 
             Image{
                 id: good_security
-                source: 'aAsset/goods_policy.png'
+                source: 'source/goods_policy.png'
                 fillMode: Image.PreserveAspectFit
                 width: parent.width
                 height: 300

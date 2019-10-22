@@ -26,7 +26,7 @@ Base{
             id: image
             anchors.fill: parent
             opacity: 0.2
-            source: 'aAsset/Which_Way.jpg'
+            source: 'source/Which_Way.jpg'
             fillMode: Image.Stretch
         }
         Text {

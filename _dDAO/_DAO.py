@@ -440,4 +440,18 @@ def insert_sam_audit(param):
     return _Database.insert_update(sql=sql, parameter=param)
 
 
+def clean_old_data(tables, key='', age_month=0):
+    if type(tables) != list or len(tables) == 0 or len(key) == 0 or age_month == 0:
+        return False
+    expired = _Tools.now()
+    if age_month > 0:
+        expired = _Tools.now() - (age_month * 30 * 24 * 60 * 60)
+    for _table in tables:
+        _where = key + ' < ' + expired
+        flush_table(_table=_table, _where=_where)
+    return True
+
+
+
+
 

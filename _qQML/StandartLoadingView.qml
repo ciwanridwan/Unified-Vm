@@ -6,7 +6,7 @@ Base{
     visible: false
     mode_: 'loading'
     property var show_text: "Please Wait, Executing Command..."
-    property var show_gif: "aAsset/simply_loading.gif"
+    property var show_gif: "source/simply_loading.gif"
 
     Stack.onStatusChanged:{
         if(Stack.status==Stack.Activating){

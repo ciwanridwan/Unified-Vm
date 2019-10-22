@@ -11,7 +11,7 @@ Base{
     property int stepInput: 0
     property var loginPurpose: 'adminPage'
     textPanel: "Masuk Mode Administrator"
-    imgPanel: 'aAsset/icon/lock_key.png'
+    imgPanel: 'source/icon/lock_key.png'
 
     Stack.onStatusChanged:{
         if(Stack.status==Stack.Activating){

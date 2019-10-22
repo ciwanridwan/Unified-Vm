@@ -11,9 +11,6 @@ class UnknownHandleError(Exception): pass
 
 
 from ctypes import *
-import sys
-import win32file
-import win32con  # constants.
 
 kernel = windll.kernel32
 hid = windll.hid

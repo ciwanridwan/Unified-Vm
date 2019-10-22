@@ -4,8 +4,8 @@ import QtQuick.Controls 1.2
 Base {
     id: base1
     mode_: "reverse"
-    show_img: "aAsset/logo_white_.png"
-    property var img_: "aAsset/img_clock.png"
+    show_img: "source/logo/logo_white_.png"
+    property var img_: "source/img_clock.png"
     property var show_text: "COMING SOON"
     property var secondColor: "#f03838"
     property int timer_value: 60

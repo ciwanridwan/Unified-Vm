@@ -10,7 +10,7 @@ Rectangle{
     property var slot_text:""
     Image{
         scale: 0.7
-        source: "aAsset/back_space.png";
+        source: "source/back_space.png";
         anchors.fill: rec;
         fillMode: Image.PreserveAspectFit;
     }

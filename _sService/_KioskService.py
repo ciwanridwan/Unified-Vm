@@ -127,21 +127,16 @@ def kiosk_price_setting():
     global KIOSK_ADMIN
     if _Global.TEST_MODE is True:
         KIOSK_ADMIN = 1
-    price_setting = {
+    K_SIGNDLER.SIGNAL_PRICE_SETTING.emit(json.dumps({
         'margin': KIOSK_MARGIN,
         'adminFee': KIOSK_ADMIN,
         'cancelAble': PAYMENTCANCEL,
         'confirmAble': PAYMENTCONFIRM
-    }
-    K_SIGNDLER.SIGNAL_PRICE_SETTING.emit(json.dumps(price_setting))
+    }))
 
 
 def development_status():
-    if _ConfigParser.get_value('TERMINAL', 'server') == "dev":
-        return True
-    else:
-        LOGGER.info('Public live GUI is Running')
-        return False
+    return True if _ConfigParser.get_value('TERMINAL', 'server') == "dev" else False
 
 
 IS_DEV = development_status()
@@ -183,10 +178,7 @@ def update_machine_stat(_url):
     _param = machine_summary()
     LOGGER.info(('update_machine_stat:', _url, str(_param)))
     s, r = _NetworkAccess.post_to_url(url=_url, param=_param)
-    if s == 200 and r['result'] == 'OK':
-        return True
-    else:
-        return False
+    return True if s == 200 and r['result'] == 'OK' else False
 
 
 ERROR_PRINTER = {
@@ -685,7 +677,7 @@ def get_product_stock():
                 s['image'] = __image
                 if '|' in s['remarks']:
                     __image = s['remarks'].split('|')[1]
-                    s['image'] = 'aAsset/' + __image
+                    s['image'] = 'source/' + __image
                     s['remarks'] = s['remarks'].split('|')[0]
         LOGGER.debug(("get_product_stock : ", str(stock)))
         K_SIGNDLER.SIGNAL_GET_PRODUCT_STOCK.emit(json.dumps(stock))
@@ -928,7 +920,7 @@ def save_cash_local(amount, mode='normal'):
         LOGGER.info(('save_cash_local', mode, PID_SALE, str(amount)))
         return True
     except Exception as e:
-        LOGGER.warning(('save_cash_local', mode, PID_SALE, str(amount)))
+        LOGGER.warning(('save_cash_local', mode, PID_SALE, str(amount), str(e)))
         return False
 
 
@@ -950,6 +942,8 @@ def reset_db_record():
         _DAO.flush_table('Transactions', ' tid <> "'+_Global.TID+'" ')
         time.sleep(1)
         _DAO.flush_table('TransactionFailure', ' tid <> "'+_Global.TID+'" ')
+        # # Add Data HouseKeeping Which Older Than n Months
+        # house_keeping(age_month=3)
         LOGGER.info(('reset_db_record', 'FINISH'))
         return 'FIRST_INIT_CLEANUP_SUCCESS'
     except Exception as e:
@@ -959,3 +953,21 @@ def reset_db_record():
 
 def user_action_log(log):
     LOGGER.info(('[USER_ACTION]', str(log)))
+
+
+def house_keeping(age_month=1):
+    _DAO.clean_old_data(tables=['Cash', 'Receipts', 'Settlement', 'Product', 'SAMAudit', 'SAMRecords',
+                                'TopupRecords', 'TransactionFailure', 'Transactions'],
+                        key='createdAt',
+                        age_month=age_month)
+    expired = time.time() - (age_month * 30 * 24 * 60 * 60)
+    paths = ['_pPDF', '_lLog']
+    for path in paths:
+        work_dir = os.path.join(sys.path[0], path)
+        for f in os.listdir(work_dir):
+            file = os.path.join(work_dir, f)
+            if os.path.isfile(file):
+                stat = os.stat(file)
+                if stat.st_ctime < expired:
+                    os.remove(file)
+    LOGGER.info(('house_keeping', str(age_month), 'FINISH'))

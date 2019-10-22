@@ -5,7 +5,7 @@ Base{
     id:loading
     visible: false
     use_: "media"
-//    property var show_gif: "aAsset/loader.gif" //"aAsset/loading_plane.gif"
+//    property var show_gif: "source/loader.gif" //"source/loading_plane.gif"
     property var show_text: "Being Processed..."
     property var img_path: "../_iImage/"
     property variant qml_pic: []

@@ -7,7 +7,7 @@ Base{
     mode_: "reverse"
     isPanelActive: true
     textPanel: (language=="INA") ?  qsTr("Input Data Flight Anda") : qsTr("Enter Your Flight Details")
-    imgPanel: "aAsset/form_filling.png"
+    imgPanel: "source/form_filling.png"
     property int timer_value: 120
     property var textCodeInput: ""
     property var textNameInput: ""
@@ -358,7 +358,7 @@ Base{
                 Image{
                     scale: 0.8
                     anchors.fill: parent
-                    source: 'aAsset/adult-male.png'
+                    source: 'source/adult-male.png'
                     fillMode: Image.PreserveAspectFit
                 }
                 Text{
@@ -390,7 +390,7 @@ Base{
                 Image{
                     scale: 0.8
                     anchors.fill: parent
-                    source: 'aAsset/adult-female.png'
+                    source: 'source/adult-female.png'
                     fillMode: Image.PreserveAspectFit
                 }
                 Text{
@@ -423,7 +423,7 @@ Base{
                 Image{
                     scale: 0.8
                     anchors.fill: parent
-                    source: 'aAsset/child-icon.png'
+                    source: 'source/child-icon.png'
                     fillMode: Image.PreserveAspectFit
                 }
                 Text{

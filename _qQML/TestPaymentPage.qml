@@ -7,7 +7,7 @@ Base{
     mode_: "reverse"
     isPanelActive: true
     textPanel: qsTr("Input Test Amount")
-    imgPanel: "aAsset/choose_payment.png"
+    imgPanel: "source/choose_payment.png"
     property int timer_value: 300
     property int max_count: 25
     property var press: "0"
@@ -550,7 +550,7 @@ Base{
                 id: img_edc
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
-                source: "aAsset/credit card black.png"
+                source: "source/credit card black.png"
                 fillMode: Image.Stretch
 
             }
@@ -604,7 +604,7 @@ Base{
                 id: img_prepaid
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
-                source: "aAsset/prepaid black.png"
+                source: "source/prepaid black.png"
                 fillMode: Image.Stretch
             }
             Text{
@@ -661,7 +661,7 @@ Base{
                 id: img_cash
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.verticalCenter: parent.verticalCenter
-                source: "aAsset/cash black.png"
+                source: "source/cash black.png"
                 fillMode: Image.Stretch
             }
             Text{

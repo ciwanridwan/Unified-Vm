@@ -17,7 +17,7 @@ Rectangle{
         height: 75
         width: 75
         source: FUNC.get_source_image(mode_)
-        //        source: "aAsset/adult.png"
+        //        source: "source/adult.png"
         fillMode: Image.PreserveAspectFit
     }
 
@@ -43,7 +43,7 @@ Rectangle{
         y: 19
         width: 50
         height: 50
-        source: "aAsset/minus_circle.png"
+        source: "source/minus_circle.png"
         fillMode: Image.Stretch
         opacity: 0.7
 
@@ -53,7 +53,7 @@ Rectangle{
         y: 19
         width: 50
         height: 50
-        source: "aAsset/plus_circle.png"
+        source: "source/plus_circle.png"
         fillMode: Image.Stretch
         opacity: 0.7
 

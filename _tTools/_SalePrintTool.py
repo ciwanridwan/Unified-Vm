@@ -32,10 +32,10 @@ SPRINTTOOL_SIGNDLER = SPrintToolSignalHandler()
 PATH = os.path.join(sys.path[0], '_pPDF')
 if not os.path.exists(PATH):
     os.makedirs(PATH)
-FONT_PATH = os.path.join(sys.path[0], '_aAsset')
+FONT_PATH = os.path.join(sys.path[0], '_fFonts')
 if not os.path.exists(FONT_PATH):
     os.makedirs(FONT_PATH)
-LOGO_PATH = os.path.join(sys.path[0], '_aAsset', 'mandiri_logo.gif')
+LOGO_PATH = os.path.join(sys.path[0], '_rReceipts', 'mandiri_logo.gif')
 
 
 def get_paper_size(ls=None):
@@ -129,7 +129,7 @@ def chunk_text(text, length=24, delimiter="\r\n"):
 
 
 def font_path(font):
-    return os.path.join(sys.path[0], '_aAsset', font)
+    return os.path.join(sys.path[0], '_fFonts', font)
 
 
 def justifying(left, right):

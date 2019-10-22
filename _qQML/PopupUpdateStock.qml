@@ -12,7 +12,7 @@ Rectangle{
     property int max_count: 50
     property var press: "0"
     property var textInput: ""
-    property var titleImage: "aAsset/plus_circle.png"
+    property var titleImage: "source/plus_circle.png"
     property var selectedSlot: '1'
 
     scale: visible ? 1.0 : 0.1

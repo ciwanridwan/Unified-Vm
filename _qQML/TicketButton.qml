@@ -84,7 +84,7 @@ Rectangle{
             x: 269
             y: 44
             source: FUNC.get_plane_image_tiny(f_status)
-//            source: "aAsset/departure.png"
+//            source: "source/departure.png"
             fillMode: Image.PreserveAspectFit
             width: 50
             height: 50
@@ -195,7 +195,7 @@ Rectangle{
                     var param = { "price": price1, "raw": raw1, "master_raw": 'raw0',
                         "f_no": f_no, "f_type": f_type, "f_time": f_time,
                         "fromTo": fromTo, "f_status": f_status,
-                        "f_logo": (color__=="purple") ? "aAsset/batik_air_logo.jpg" : "aAsset/lion_air_logo.jpg"
+                        "f_logo": (color__=="purple") ? "source/batik_air_logo.jpg" : "source/lion_air_logo.jpg"
                     }
                     base_select_ticket.get_selected_price(JSON.stringify(param))
 //                    base_select_ticket.selectedPrice.push(JSON.stringify(param))
@@ -219,7 +219,7 @@ Rectangle{
                     var param = { "price": price2, "raw": raw2, "master_raw": 'raw0',
                         "f_no": f_no, "f_type": f_type, "f_time": f_time,
                         "fromTo": fromTo, "f_status": f_status,
-                        "f_logo": (color__=="purple") ? "aAsset/batik_air_logo.jpg" : "aAsset/lion_air_logo.jpg"
+                        "f_logo": (color__=="purple") ? "source/batik_air_logo.jpg" : "source/lion_air_logo.jpg"
                     }
                     base_select_ticket.get_selected_price(JSON.stringify(param))
                     parent.selected_ = true;
@@ -242,7 +242,7 @@ Rectangle{
                     var param = { "price": price3, "raw": raw3, "master_raw": 'raw0',
                         "f_no": f_no, "f_type": f_type, "f_time": f_time,
                         "fromTo": fromTo, "f_status": f_status,
-                        "f_logo": (color__=="purple") ? "aAsset/batik_air_logo.jpg" : "aAsset/lion_air_logo.jpg"
+                        "f_logo": (color__=="purple") ? "source/batik_air_logo.jpg" : "source/lion_air_logo.jpg"
                     }
                     base_select_ticket.get_selected_price(JSON.stringify(param))
                     parent.selected_ = true;

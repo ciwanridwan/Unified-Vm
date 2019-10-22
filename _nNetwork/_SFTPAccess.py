@@ -23,18 +23,21 @@ HOST_BID = 1
 
 
 def init_user_by_bid():
-    global SFTP_SERVER, SFTP_USER, SFTP_PASS, SFTP_PORT
+    global SFTP_SERVER, SFTP_USER, SFTP_PASS, SFTP_PORT, REMOTE_PATH
     if HOST_BID == 1:
         SFTP_SERVER = _Global.SFTP_MANDIRI['host']
         SFTP_USER = _Global.SFTP_MANDIRI['user']
         SFTP_PASS = _Global.SFTP_MANDIRI['pass']
         SFTP_PORT = _Global.SFTP_MANDIRI['port']
+        REMOTE_PATH = _Global.SFTP_MANDIRI['path']
     elif HOST_BID == 2:
         SFTP_SERVER = _Global.SFTP_BNI['host']
         SFTP_USER = _Global.SFTP_BNI['user']
         SFTP_PASS = _Global.SFTP_BNI['pass']
         SFTP_PORT = _Global.SFTP_BNI['port']
-    #   TODO ADD Another Host BID
+        REMOTE_PATH = _Global.SFTP_BNI['path']
+
+#   TODO ADD Another Host BID
 
 
 def init_sftp():
