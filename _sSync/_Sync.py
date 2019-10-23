@@ -133,7 +133,7 @@ def sync_topup_records():
             if _Tools.is_online(source='sync_topup_records') is True and IDLE_MODE is True:
                 topup_records = _DAO.not_synced_data(param={'syncFlag': 0}, _table=_table_)
                 if len(topup_records) > 0:
-                    print('pyt : Re-Sync Topup Records Data...')
+                    print('pyt : ' + _Tools.time_string() + ' - Re-Sync Topup Records Data...')
                     for t in topup_records:
                         status, response = _NetworkAccess.post_to_url(url=url, param=t)
                         # LOGGER.info(('sync_topup_records', json.dumps(t), str(status), str(response)))
@@ -160,7 +160,7 @@ def sync_data_transaction():
             if _Tools.is_online(source='sync_data_transaction') is True and IDLE_MODE is True:
                 transactions = _DAO.not_synced_data(param={'syncFlag': 0}, _table=_table_)
                 if len(transactions) > 0:
-                    print('pyt : Re-Sync Transaction Data...')
+                    print('pyt : ' + _Tools.time_string() + ' - Re-Sync Transaction Data...')
                     for t in transactions:
                         status, response = _NetworkAccess.post_to_url(url=url, param=t)
                         if status == 200 and response['id'] == t['trxid']:
@@ -187,7 +187,7 @@ def sync_data_transaction_failure():
             if _Tools.is_online(source='sync_data_transaction_failure') is True and IDLE_MODE is True:
                 transaction_failures = _DAO.not_synced_data(param={'syncFlag': 0}, _table=_table_)
                 if len(transaction_failures) > 0:
-                    print('pyt : Re-Sync Transaction Failure Data...')
+                    print('pyt : ' + _Tools.time_string() + ' - Re-Sync Transaction Failure Data...')
                     for t in transaction_failures:
                         status, response = _NetworkAccess.post_to_url(url=url, param=t)
                         if status == 200 and response['id'] == t['trxid']:
@@ -213,7 +213,7 @@ def sync_product_data():
             if _Tools.is_online(source='sync_product_data') is True and IDLE_MODE is True:
                 products = _DAO.not_synced_data(param={'syncFlag': 0}, _table=_table_)
                 if len(products) > 0:
-                    print('pyt : Re-Sync Product Data...')
+                    print('pyt : ' + _Tools.time_string() + ' - Re-Sync Product Data...')
                     for p in products:
                         status, response = _NetworkAccess.post_to_url(url=url, param=p)
                         if status == 200 and response['id'] == p['pid']:
@@ -239,7 +239,7 @@ def sync_sam_audit():
             if _Tools.is_online(source='sync_sam_audit') is True and IDLE_MODE is True:
                 audits = _DAO.not_synced_data(param={'syncFlag': 0}, _table=_table_)
                 if len(audits) > 0:
-                    print('pyt : Re-Sync SAM Audit...')
+                    print('pyt : ' + _Tools.time_string() + ' - Re-Sync SAM Audit...')
                     for a in audits:
                         status, response = _NetworkAccess.post_to_url(url=url, param=a)
                         if status == 200 and response['id'] == a['lid']:
@@ -267,7 +267,7 @@ def sync_settlement_data(bank):
                 settlements = _DAO.custom_query(' SELECT * FROM ' + _table_ +
                                                 ' WHERE status = "TOPUP_PREPAID|OPEN" AND createdAt > 1554783163354 ')
                 if len(settlements) > 0:
-                    print('pyt : Re-Sync Settlement Data...')
+                    print('pyt : ' + _Tools.time_string() + ' - Re-Sync Settlement Data...')
                     for s in settlements:
                         _param = {
                             'mid': _Global.SMT_CONFIG['mid'],
@@ -306,9 +306,9 @@ def sync_task():
                     if len(response['data']) > 0:
                         handle_tasks(response['data'])
                     else:
-                        print('pyt : No Remote Task Given..!')
+                        print('pyt : ' + _Tools.time_string() + ' - No Remote Task Given..!')
                 else:
-                    print('pyt : Failed To Check Remote Task..!')
+                    print('pyt : ' + _Tools.time_string() + ' - Failed To Check Remote Task..!')
         except Exception as e:
             LOGGER.warning(e)
         sleep(33.3)

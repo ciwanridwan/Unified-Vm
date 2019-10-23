@@ -49,7 +49,7 @@ class SlotHandler(QObject):
     __qualname__ = 'SlotHandler'
 
     def set_language(self, s):
-        print("pyt : selected_language ", s)
+        print("pyt: selected_language ", s)
         translator.load(path + s)
     set_language = pyqtSlot(str)(set_language)
 
@@ -773,17 +773,17 @@ def install_font():
         installed_fonts = [f for f in os.listdir(system_font_dir) if f.endswith('.ttf')]
         # print('installed_fonts : ' + json.dumps(installed_fonts))
         new_fonts = list(set(available_fonts) - set(installed_fonts))
-        print('pyt : new_fonts found : ' + json.dumps(new_fonts))
+        print('pyt: new_fonts found : ' + json.dumps(new_fonts))
         if len(new_fonts) > 0:
             for font in new_fonts:
                 f_path = os.path.join(font_dir, font)
                 with open(vbs_path, 'w') as _f:
                     _f.write(_TEMPL % (font_dir, font))
                 subprocess.call(['cscript.exe', vbs_path])
-                print('pyt : Registering Font -> ' + f_path)
+                print('pyt: Registering Font -> ' + f_path)
                 sleep(1)
     except Exception as e:
-        print('pyt : Error Register Font -> ' + str(e))
+        print('pyt: Error Register Font -> ' + str(e))
     finally:
         if os.path.exists(vbs_path):
             os.remove(vbs_path)
@@ -820,7 +820,6 @@ if __name__ == '__main__':
     context.setContextProperty('_SLOT', SLOT_HANDLER)
     print("Checking Auth to Server...")
     _Sync.start_check_connection(url=setting['server'] + 'ping', param=setting)
-    sleep(1)
     translator = QTranslator()
     translator.load(path + 'INA.qm')
     app.installTranslator(translator)

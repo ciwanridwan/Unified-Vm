@@ -40,6 +40,8 @@ THEME_SETTING = None
 THEME_NAME = ''
 KIOSK_REAL_STATUS = 'ONLINE'
 RECEIPT_LOGO = 'mandiri_logo.gif'
+REPO_USERNAME = _ConfigParser.get_set_value('REPOSITORY', 'username', 'developer')
+REPO_PASSWORD = _ConfigParser.get_set_value('REPOSITORY', 'password', 'Mdd*123#')
 
 # SERVICE_VERSION = open(os.path.join('C:\\', '_SOCKET_', 'SERVICE.VER'), 'r').readlines()[-1].replace('\n', '')
 SERVICE_VERSION = 'N/A'
@@ -100,8 +102,8 @@ SERVICE_URL = 'http://localhost:9000/Service/GET?type=json&cmd='
 MINIMUM_AMOUNT = int(_ConfigParser.get_set_value('QPROX', 'amount^minimum', '50000'))
 TOPUP_AMOUNT = int(_ConfigParser.get_set_value('QPROX', 'amount^topup', '500000'))
 
-LAST_AUTH = int(_ConfigParser.get_set_value('QPROX', 'last^auth', '0'))
-LAST_UPDATE = int(_ConfigParser.get_set_value('QPROX', 'last^update', '0'))
+LAST_AUTH = int(_ConfigParser.get_set_value('TEMPORARY', 'last^auth', '0'))
+LAST_UPDATE = int(_ConfigParser.get_set_value('TEMPORARY', 'last^update', '0'))
 
 BANKS = [{
     "BANK": "MANDIRI",
@@ -227,7 +229,7 @@ def log_to_config(section='last^auth'):
         LAST_AUTH = __timestamp
     if section == 'last^update':
         LAST_UPDATE = __timestamp
-    _ConfigParser.set_value('QPROX', section, str(__timestamp))
+    _ConfigParser.set_value('TEMPORARY', section, str(__timestamp))
 
 
 def active_auth_session():

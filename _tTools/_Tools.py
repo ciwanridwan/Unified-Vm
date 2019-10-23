@@ -122,6 +122,8 @@ def dd(s):
 def os_command(command, key, reverse=False):
     process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
     response = process.communicate()[0].decode('utf-8').strip().split("\r\n")
+    dd(command)
+    dd(response)
     if len(response) > 0:
         if not reverse and key in response[-1]:
             return True

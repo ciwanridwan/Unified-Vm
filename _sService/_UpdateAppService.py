@@ -19,8 +19,9 @@ class UpdateAppSignalHandler(QObject):
 UPDATEAPP_SIGNDLER = UpdateAppSignalHandler()
 LOGGER = logging.getLogger()
 
-
-REPO = 'https://developer:Mdd*123#@git.mdd.co.id:44195/mdd_dev/mandiri-kiosk.git'
+PORT = '' if _Global.LIVE_MODE is False else ':44195'
+HOST = 'git.mdd.co.id%s'.format(PORT)
+REPO = 'https://%s:%s@%s/mdd_dev/mandiri-kiosk.git'.format(_Global.REPO_USERNAME, _Global.REPO_PASSWORD, HOST)
 
 
 def check_init():
@@ -28,7 +29,7 @@ def check_init():
 
 
 def check_origin():
-    return _Tools.os_command(command='git remote -v', key=REPO)
+    return _Tools.os_command(command='git remote -v', key=HOST)
 
 
 def add_origin():
