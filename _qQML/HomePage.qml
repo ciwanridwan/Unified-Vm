@@ -70,7 +70,8 @@ Base{
     }
 
     function ka_login_status(t){
-        console.log('ka_login_status', t);
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('ka_login_status', now, t);
         popup_loading.close()
         var result = t.split('|')[1]
         if (result == 'ERROR'){
@@ -87,7 +88,8 @@ Base{
     }
 
     function topup_readiness(t){
-        console.log('topup_readiness', t);
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('topup_readiness', now, t);
         if (t=='TOPUP_READY|ERROR'){
             kalog_notif();
             return;
@@ -103,7 +105,8 @@ Base{
     }
 
     function get_product_stock(p){
-        console.log('product_stock', p);
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('product_stock', now, p);
         productData = JSON.parse(p);
         if (productData.length > 0) {
             if (productData[0].status==101 && parseInt(productData[0].stock) > 0) productCount1 = parseInt(productData[0].stock);
@@ -126,7 +129,7 @@ Base{
     }
 
     function get_kiosk_status(r){
-        var now =  Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log("get_kiosk_status on ", now, " : ", JSON.stringify(r));
         var kiosk = JSON.parse(r);
         base.globalBoxName = kiosk.name;
@@ -152,7 +155,8 @@ Base{
     }
 
     function handle_general(result){
-        console.log("handle_general : ", result);
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log("handle_general : ", now, result);
         if (result=='') return;
         if (result=='REBOOT'){
             switch_frame('source/loading_static.png', 'Mohon Tunggu Mesin Akan Dimuat Ulang', 'Dalam 30 Detik', 'closeWindow', false )

@@ -20,12 +20,12 @@ UPDATEAPP_SIGNDLER = UpdateAppSignalHandler()
 LOGGER = logging.getLogger()
 
 PORT = '' if _Global.LIVE_MODE is False else ':44195'
-HOST = 'git.mdd.co.id%s'.format(PORT)
-REPO = 'https://%s:%s@%s/mdd_dev/mandiri-kiosk.git'.format(_Global.REPO_USERNAME, _Global.REPO_PASSWORD, HOST)
+HOST = 'git.mdd.co.id{}'.format(PORT)
+REPO = 'https://{}:{}@{}/mdd_dev/mandiri-kiosk.git'.format(_Global.REPO_USERNAME, _Global.REPO_PASSWORD, HOST)
 
 
 def check_init():
-    return _Tools.os_command(command='git init', key='Git Repository')
+    return _Tools.os_command(command='git init', key='/.git')
 
 
 def check_origin():
@@ -33,7 +33,8 @@ def check_origin():
 
 
 def add_origin():
-    return _Tools.os_command(command='git remote add origin %s'.format(REPO), key='fatal', reverse=True)
+    command = 'git remote add origin {}'.format(REPO)
+    return _Tools.os_command(command=command, key='fatal', reverse=True)
 
 
 def set_credential():
@@ -41,7 +42,8 @@ def set_credential():
 
 
 def pull(origin='master'):
-    return _Tools.os_command(command='git pull -f origin %s'.format(origin), key='error', reverse=True)
+    command = 'git pull -f origin {}'.format(origin)
+    return _Tools.os_command(command=command, key='error', reverse=True)
 
 
 def start_do_update():
@@ -56,7 +58,7 @@ def do_update():
         if not add_origin():
             UPDATEAPP_SIGNDLER.SIGNAL_UPDATE_APP.emit('APP_UPDATE|FAILED_ADD_ORIGIN')
             return 'APP_UPDATE|FAILED_ADD_ORIGIN'
-        set_credential()
+        # set_credential()
     if not pull():
         UPDATEAPP_SIGNDLER.SIGNAL_UPDATE_APP.emit('APP_UPDATE|FAILED_PULLING')
         return 'APP_UPDATE|FAILED_PULLING'
