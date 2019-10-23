@@ -371,10 +371,10 @@ def handle_tasks(tasks):
             _slot = task['taskName'][-1]
             result = _Global.sam_to_slot(_slot)
             update_task(task, result)
-        if task['taskName'] == 'UPDATE_APP':
+        if task['taskName'] == 'APP_UPDATE':
             result = _UpdateAppService.start_do_update()
             update_task(task, result)
-            if result == 'APPLICATION_UPDATE_SUCCESS':
+            if result == 'APP_UPDATE|SUCCESS':
                 _KioskService.execute_command('shutdown -r -f -t 0')
         if task['taskName'] == 'RESET_STOCK_PRODUCT':
             _DAO.clear_stock_product()

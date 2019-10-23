@@ -19,8 +19,8 @@ CD_PORT2 = _ConfigParser.get_value('CD', 'port2')
 CD_PORT3 = _ConfigParser.get_value('CD', 'port3')
 PRINTER_PORT = _ConfigParser.get_value('PRINTER', 'port')
 PRINTER_BAUDRATE = _ConfigParser.get_value('PRINTER', 'baudrate')
-TEST_MODE = True if _ConfigParser.get_set_value('TERMINAL', 'test^usage', '0') == '1' else False
 LIVE_MODE = True if _ConfigParser.get_set_value('TERMINAL', 'mode', 'live') == 'live' else False
+TEST_MODE = not LIVE_MODE
 RELOAD_SERVICE = True if _ConfigParser.get_set_value('TERMINAL', 'reload^service', '0') == '1' else False
 TID = _ConfigParser.get_value('TERMINAL', 'tid')
 
@@ -39,6 +39,7 @@ PAYMENT_SETTING = None
 THEME_SETTING = None
 THEME_NAME = ''
 KIOSK_REAL_STATUS = 'ONLINE'
+RECEIPT_LOGO = 'mandiri_logo.gif'
 
 # SERVICE_VERSION = open(os.path.join('C:\\', '_SOCKET_', 'SERVICE.VER'), 'r').readlines()[-1].replace('\n', '')
 SERVICE_VERSION = 'N/A'

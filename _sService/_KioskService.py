@@ -87,11 +87,11 @@ def update_kiosk_status(r):
             _Global.KIOSK_NAME = _Global.KIOSK_SETTING['name']
             _Global.KIOSK_MARGIN = int(_Global.KIOSK_SETTING['defaultMargin'])
             _Global.KIOSK_ADMIN = int(_Global.KIOSK_SETTING['defaultAdmin'])
+            _Global.PAYMENT_SETTING = r['data']['payment']
+            _Global.THEME_SETTING = r['data']['theme']
+            define_theme(_Global.THEME_SETTING)
             if r['result'] == 'OK' and _Global.PRINTER_STATUS == "NORMAL":
                 _Global.KIOSK_STATUS = 'ONLINE'
-                _Global.PAYMENT_SETTING = r['data']['payment']
-                _Global.THEME_SETTING = r['data']['theme']
-                define_theme(_Global.THEME_SETTING)
             _DAO.flush_table('Terminal')
             # _DAO.flush_table('Transactions', ' tid <> "' + KIOSK_SETTING['tid'] + '"')
             _DAO.update_kiosk_data(_Global.KIOSK_SETTING)
@@ -115,7 +115,7 @@ def define_theme(d):
             master_logo.append(image)
         else:
             continue
-    content_js += "var master_logo =" + json.dumps(master_logo) + ";" + os.linesep
+    content_js += "var master_logo = " + json.dumps(master_logo) + ";" + os.linesep
     partner_logos = []
     for p in d['partner_logos']:
         download, image = _NetworkAccess.download_image(p, os.getcwd() + '/_qQml/source/logo')
@@ -131,6 +131,10 @@ def define_theme(d):
             backgrounds.append(image)
         else:
             continue
+    # Receipt Logo
+    store, receipt_logo = _NetworkAccess.download_image(d['receipt_logo'], os.getcwd() + '/_rReceipts')
+    if store is True:
+        _Global.RECEIPT_LOGO = receipt_logo
     content_js += "var backgrounds = " + json.dumps(backgrounds) + ";" + os.linesep
     with open(config_js, 'w+') as config_qml:
         config_qml.write(content_js)

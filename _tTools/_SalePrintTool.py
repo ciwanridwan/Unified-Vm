@@ -35,7 +35,7 @@ if not os.path.exists(PATH):
 FONT_PATH = os.path.join(sys.path[0], '_fFonts')
 if not os.path.exists(FONT_PATH):
     os.makedirs(FONT_PATH)
-LOGO_PATH = os.path.join(sys.path[0], '_rReceipts', 'mandiri_logo.gif')
+LOGO_PATH = os.path.join(sys.path[0], '_rReceipts', _Global.RECEIPT_LOGO)
 
 
 def get_paper_size(ls=None):

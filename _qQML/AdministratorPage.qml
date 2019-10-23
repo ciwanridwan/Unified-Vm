@@ -42,6 +42,7 @@ Base{
         base.result_activation_bni.connect(get_admin_action);
         base.result_auth_qprox.connect(ka_login_status);
         base.result_mandiri_settlement.connect(get_admin_action);
+        base.result_update_app.connect(get_admin_action);
 
     }
 
@@ -57,6 +58,7 @@ Base{
         base.result_activation_bni.disconnect(get_admin_action);
         base.result_auth_qprox.disconnect(ka_login_status);
         base.result_mandiri_settlement.disconnect(get_admin_action);
+        base.result_update_app.disconnect(get_admin_action);
 
     }
 
@@ -110,6 +112,16 @@ Base{
                 false_notif('Dear '+userData.first_name+'|Status Proses Settlement Mandiri...\n['+r+']');
                 if (r!='WAITING_RSP_UPDATE') return;
             }
+        } else if (a.indexOf('APP_UPDATE') > -1){
+            var u = a.split('|')[1]
+            if (u.indexOf('FAILED') > -1){
+                false_notif('Dear '+userData.first_name+'|Terjadi Kegagalan Pada Saat Pembaharuan Aplikasi!\nKode Error ['+u+']');
+            } else {
+                false_notif('Dear '+userData.first_name+'|Pembaharuan Aplikasi Berhasil, Aplikasi Akan Mencoba Memuat Ulang...');
+                _SLOT.user_action_log('Admin Page Notif Button "Reboot By Update"');
+                _SLOT.start_safely_shutdown('RESTART');
+                return;
+            }
         } else {
             false_notif('Dear '+userData.first_name+'|Terjadi Kesalahan Dengan Kode:\n'+a);
         }
@@ -160,7 +172,7 @@ Base{
         _disk_c.labelContent = info.c_space + ' | '+ info.d_space;
         _service_status.labelContent = info.service_ver;
         _ram_status.labelContent = info.ram_space;
-        _paper_status.labelContent = info.paper_printer;
+        _theme_status.labelContent = info.theme;
         _version_status.labelContent = info.gui_version;
         _last_sync.labelContent = info.last_sync;
         _edc_error.labelContent = (info.edc_error=='') ? '---' : info.edc_error;
@@ -179,10 +191,10 @@ Base{
         _mandiri_active_slot.labelContent = info.mandiri_active;
         _bni_wallet.labelContent = info.bni_wallet;
         _bni_active_slot.labelContent = info.bni_active;
-        if (info.cash_available.length > 0){
+        if (info.cash_available[0].total !== undefined){
             _total_cash_available.labelContent = info.cash_available[0].total;
         }
-        if (info.edc_not_settle.length > 0){
+        if (info.edc_not_settle[0].total !== undefined){
             _total_edc_available.labelContent = info.edc_not_settle[0].total;
         }
         popup_loading.close();
@@ -404,25 +416,48 @@ Base{
 //        }
 //    }
 
+//    AdminPanelButton{
+//        id: activation_bni_button
+//        anchors.leftMargin: 15
+//        anchors.left: mandiri_settlement_button.right
+//        anchors.top: parent.top
+//        anchors.topMargin: 15
+//        z: 10
+//        button_text: 'activate\nbni'
+//        visible: !popup_loading.visible
+//        modeReverse: true
+//        MouseArea{
+//            anchors.fill: parent
+//            onClicked: {
+//                _SLOT.user_action_log('Admin Page "Activate BNI"');
+//                if (press != '0') return;
+//                press = '1';
+//                console.log('activation_bni_button is pressed..!');
+//                popup_loading.open();
+//                _SLOT.start_master_activation_bni();
+//            }
+//        }
+//    }
+
     AdminPanelButton{
-        id: activation_bni_button
+        id: test_update_app
         anchors.leftMargin: 15
         anchors.left: mandiri_settlement_button.right
         anchors.top: parent.top
         anchors.topMargin: 15
         z: 10
-        button_text: 'activate\nbni'
+        button_text: 'update\napp'
         visible: !popup_loading.visible
         modeReverse: true
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                _SLOT.user_action_log('Admin Page "Activate BNI"');
+                _SLOT.user_action_log('Admin Page "Force Update App"');
                 if (press != '0') return;
                 press = '1';
-                console.log('activation_bni_button is pressed..!');
+                console.log('test_update_app is pressed..!');
                 popup_loading.open();
-                _SLOT.start_master_activation_bni();
+                _SLOT.start_do_update();
             }
         }
     }
@@ -504,8 +539,8 @@ Base{
                     theme: 'white'
                 }
                 TextDetailRowNew{
-                    id: _paper_status
-                    labelName: qsTr('Status Paper')
+                    id: _theme_status
+                    labelName: qsTr('Theme Name')
                     contentSize: 30
                     labelContent: '---'
                     labelSize: 25

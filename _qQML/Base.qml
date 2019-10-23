@@ -57,10 +57,10 @@ Rectangle{
     Image{
         id: master_logo
         width: 275
-        height: 100
+        height: 80
         anchors.verticalCenter: header_opacity.verticalCenter
         anchors.left: parent.left
-        anchors.leftMargin: 50
+        anchors.leftMargin: 25
         source: "source/logo/" +logo[0]
         fillMode: Image.PreserveAspectFit
         visible: logo_vis
@@ -68,12 +68,12 @@ Rectangle{
 
     Row{
         id: partners_logo
-        spacing: 5
+        spacing: 3
         width: (275 * partner_logos.length)
-        height: 100
+        height: 80
         anchors.verticalCenter: header_opacity.verticalCenter
         anchors.right: parent.right
-        anchors.rightMargin: 50
+        anchors.rightMargin: 25
 
         Image{
             width: 275

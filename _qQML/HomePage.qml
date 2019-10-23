@@ -28,6 +28,7 @@ Base{
             _SLOT.get_kiosk_status();
             _SLOT.start_idle_mode();
             _SLOT.kiosk_get_product_stock();
+            _SLOT.start_get_topup_readiness();
             press = "0";
             resetMediaTimer();
             kalogButton = false;
@@ -140,7 +141,7 @@ Base{
             box_connection.color = 'red';
             kioskStatus = false;
         }
-        _SLOT.start_get_topup_readiness();
+//        _SLOT.start_get_topup_readiness();
     }
 
     function not_authorized(){
@@ -333,6 +334,30 @@ Base{
                 }
             }
         }
+
+        MasterButtonNew {
+            id: ppob_button
+            x: 150
+            anchors.verticalCenter: parent.verticalCenter
+            img_: "source/shop_cart.png"
+            text_: qsTr("Bayar/Beli")
+            text2_: qsTr("Pay/Buy")
+            modeReverse: false
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('Press "Bayar/Beli"');
+                    resetMediaTimer();
+                    if (press!="0") return;
+                    press = "1";
+                    _SLOT.set_tvc_player("STOP");
+//                    my_layer.push(topup_prepaid_denom, {shopType: 'topup'});
+                    _SLOT.stop_idle_mode();
+                    show_tvc_loading.stop();
+                }
+            }
+        }
+
     }
 
     Rectangle{
