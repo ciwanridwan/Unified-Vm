@@ -8,7 +8,6 @@ from _tTools import _Helper
 from _nNetwork import _NetworkAccess
 
 
-
 class PPOBSignalHandler(QObject):
     __qualname__ = 'PPOBSignalHandler'
     SIGNAL_GET_PRODUCTS = pyqtSignal(str)
@@ -23,12 +22,12 @@ def start_get_ppob_product():
 
 
 def get_ppob_product():
-    _Helper.dump(_Global.LAST_GET_PPOB)
-    _Helper.dump((_Helper.now() - 3600))
-    if 0 < _Global.LAST_GET_PPOB < (_Helper.now() - 3600):
+    # _Helper.dump(_Global.LAST_GET_PPOB)
+    # _Helper.dump(_Helper.now() - _Global.LAST_GET_PPOB)
+    if _Global.LAST_GET_PPOB != 0 and (_Global.LAST_GET_PPOB + (60 * 60 * 1000)) > _Helper.now():
         products = _Global.get_from_temp(temp='ppob-product', mode='json')
     else:
-        s, r = _NetworkAccess.get_from_url(url=_Global.BACKEND_URL+'/get/product')
+        s, r = _NetworkAccess.get_from_url(url=_Global.BACKEND_URL+'get/product')
         if s == 200 and r['result'] == 'OK':
             products = r['data']
             _Global.LAST_GET_PPOB = _Helper.now()

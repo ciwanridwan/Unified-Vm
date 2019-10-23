@@ -67,6 +67,8 @@ Base{
     function get_ppob_product(p){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('get_ppob_product', now, p);
+         press = '0';
+         popup_loading.close();
     }
 
     function resetMediaTimer(){
@@ -363,6 +365,7 @@ Base{
                     if (press!="0") return;
                     press = "1";
                     _SLOT.set_tvc_player("STOP");
+                    popup_loading.open();
                     _SLOT.start_get_ppob_product()
 //                    my_layer.push(topup_prepaid_denom, {shopType: 'topup'});
                     _SLOT.stop_idle_mode();
