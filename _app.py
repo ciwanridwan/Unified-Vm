@@ -31,6 +31,7 @@ from _dDevice import _GRG
 from _sService import _TopupService
 from _sService import _SettlementService
 from _sService import _UpdateAppService
+from _sService import _PPOBService
 import json
 
 
@@ -477,6 +478,10 @@ class SlotHandler(QObject):
         _UpdateAppService.start_do_update()
     start_do_update = pyqtSlot()(start_do_update)
 
+    def start_get_ppob_product(self):
+        _PPOBService.start_get_ppob_product()
+    start_get_ppob_product = pyqtSlot()(start_get_ppob_product)
+
 
 def s_handler():
     _KioskService.K_SIGNDLER.SIGNAL_GET_FILE_LIST.connect(view.rootObject().result_get_file_list)
@@ -558,6 +563,7 @@ def s_handler():
     _CD.CD_SIGNDLER.SIGNAL_CD_READINESS.connect(view.rootObject().result_cd_readiness)
     _SettlementService.ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.connect(view.rootObject().result_mandiri_settlement)
     _UpdateAppService.UPDATEAPP_SIGNDLER.SIGNAL_UPDATE_APP.connect(view.rootObject().result_update_app)
+    _PPOBService.PPOB_SIGNDLER.SIGNAL_GET_PRODUCTS.connect(view.rootObject().result_get_ppob_product)
 
 
 LOGGER = None
@@ -591,6 +597,7 @@ def config_log():
                             format='%(asctime)s %(levelname)s %(funcName)s:%(lineno)d: %(message)s',
                             datefmt='%d/%m %H:%M:%S')
         LOGGER = logging.getLogger()
+        _Global.init_temp_data()
     except Exception as e:
         print("Logging Configuration ERROR : ", e)
 

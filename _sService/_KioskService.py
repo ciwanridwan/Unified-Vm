@@ -10,7 +10,7 @@ import sys
 from PyQt5.QtCore import QObject, pyqtSignal
 from _cConfig import _ConfigParser, _Global
 from _dDAO import _DAO
-from _tTools import _Tools
+from _tTools import _Helper
 from _nNetwork import _NetworkAccess
 from pprint import pprint
 import win32print
@@ -49,11 +49,11 @@ LOGGER = logging.getLogger()
 
 
 def get_kiosk_status():
-    _Tools.get_pool().apply_async(kiosk_status)
+    _Helper.get_pool().apply_async(kiosk_status)
 
 
 def kiosk_status():
-    if _Tools.is_online(source='kiosk_status') is False:
+    if _Helper.is_online(source='kiosk_status') is False:
         _Global.KIOSK_SETTING = _DAO.init_kiosk()[0]
         _Global.KIOSK_ADMIN = _Global.KIOSK_SETTING['defaultAdmin']
         if _Global.TEST_MODE is True:
@@ -110,7 +110,7 @@ def define_theme(d):
         d['master_logo'] = [d['master_logo']]
     master_logo = []
     for m in d['master_logo']:
-        download, image = _NetworkAccess.download_image(m, os.getcwd() + '/_qQml/source/logo')
+        download, image = _NetworkAccess.item_download(m, os.getcwd() + '/_qQml/source/logo')
         if download is True:
             master_logo.append(image)
         else:
@@ -118,7 +118,7 @@ def define_theme(d):
     content_js += "var master_logo = " + json.dumps(master_logo) + ";" + os.linesep
     partner_logos = []
     for p in d['partner_logos']:
-        download, image = _NetworkAccess.download_image(p, os.getcwd() + '/_qQml/source/logo')
+        download, image = _NetworkAccess.item_download(p, os.getcwd() + '/_qQml/source/logo')
         if download is True:
             partner_logos.append(image)
         else:
@@ -126,13 +126,13 @@ def define_theme(d):
     content_js += "var partner_logos = " + json.dumps(partner_logos) + ";" + os.linesep
     backgrounds = []
     for b in d['backgrounds']:
-        download, image = _NetworkAccess.download_image(b, os.getcwd() + '/_qQml/source/background')
+        download, image = _NetworkAccess.item_download(b, os.getcwd() + '/_qQml/source/background')
         if download is True:
             backgrounds.append(image)
         else:
             continue
     # Receipt Logo
-    store, receipt_logo = _NetworkAccess.download_image(d['receipt_logo'], os.getcwd() + '/_rReceipts')
+    store, receipt_logo = _NetworkAccess.item_download(d['receipt_logo'], os.getcwd() + '/_rReceipts')
     if store is True:
         _Global.RECEIPT_LOGO = receipt_logo
     content_js += "var backgrounds = " + json.dumps(backgrounds) + ";" + os.linesep
@@ -143,7 +143,7 @@ def define_theme(d):
 
 
 def get_kiosk_price_setting():
-    _Tools.get_pool().apply_async(kiosk_price_setting)
+    _Helper.get_pool().apply_async(kiosk_price_setting)
 
 
 def kiosk_price_setting():
@@ -181,7 +181,7 @@ def force_rename(file1, file2):
 
 
 def get_gui_version():
-    _Tools.get_pool().apply_async(gui_version)
+    _Helper.get_pool().apply_async(gui_version)
 
 
 def gui_version():
@@ -189,7 +189,7 @@ def gui_version():
 
 
 def get_kiosk_name():
-    _Tools.get_pool().apply_async(kiosk_name)
+    _Helper.get_pool().apply_async(kiosk_name)
 
 
 def kiosk_name():
@@ -212,7 +212,7 @@ LAST_SYNC = 'OFFLINE'
 
 
 def kiosk_get_machine_summary():
-    _Tools.get_pool().apply_async(get_machine_summary)
+    _Helper.get_pool().apply_async(get_machine_summary)
 
 
 def get_machine_summary():
@@ -368,7 +368,7 @@ def execute_command(command):
 
 
 def post_gui_version():
-    _Tools.get_pool().apply_async(gui_info)
+    _Helper.get_pool().apply_async(gui_info)
 
 
 def gui_info():
@@ -381,7 +381,7 @@ def gui_info():
 
 
 def get_file_list(dir_):
-    _Tools.get_pool().apply_async(file_list, (dir_,))
+    _Helper.get_pool().apply_async(file_list, (dir_,))
 
 
 def file_list(dir_):
@@ -422,7 +422,7 @@ def post_tvc_list(list_):
 
 
 def post_tvc_log(media):
-    _Tools.get_pool().apply_async(tvc_log, (media,))
+    _Helper.get_pool().apply_async(tvc_log, (media,))
 
 
 def tvc_log(media):
@@ -442,7 +442,7 @@ def tvc_log(media):
 
 
 def start_get_device_status():
-    _Tools.get_pool().apply_async(get_device_status)
+    _Helper.get_pool().apply_async(get_device_status)
 
 
 def get_device_status():
@@ -456,7 +456,7 @@ FIRST_RUN_FLAG = True
 def start_restart_mdd_service():
     global FIRST_RUN_FLAG
     if FIRST_RUN_FLAG is True:
-        _Tools.get_pool().apply_async(restart_mdd_service)
+        _Helper.get_pool().apply_async(restart_mdd_service)
         FIRST_RUN_FLAG = False
 
 
@@ -469,7 +469,7 @@ def restart_mdd_service():
 
 
 def start_get_cash_data():
-    _Tools.get_pool().apply_async(list_uncollected_cash)
+    _Helper.get_pool().apply_async(list_uncollected_cash)
 
 
 def list_uncollected_cash():
@@ -486,7 +486,7 @@ def list_uncollected_cash():
 
 
 def start_begin_collect_cash():
-    _Tools.get_pool().apply_async(begin_collect_cash)
+    _Helper.get_pool().apply_async(begin_collect_cash)
 
 
 def begin_collect_cash():
@@ -510,7 +510,7 @@ def begin_collect_cash():
         }
         _DAO.collect_cash(param)
         list_collect.append(cash['csid'])
-    post_cash_collection(list_collect, _Tools.now())
+    post_cash_collection(list_collect, _Helper.now())
     K_SIGNDLER.SIGNAL_COLLECT_CASH.emit('COLLECT_CASH|DONE')
 
 
@@ -531,7 +531,7 @@ def post_cash_collection(l, t):
 
 
 def start_adjust_table(p):
-    _Tools.get_pool().apply_async(adjust_table, (p,))
+    _Helper.get_pool().apply_async(adjust_table, (p,))
 
 
 def adjust_table(p, t='Receipts'):
@@ -561,7 +561,7 @@ def clear_prev_data():
 
 
 def start_search_booking(bk):
-    _Tools.get_pool().apply_async(search_booking, (bk,))
+    _Helper.get_pool().apply_async(search_booking, (bk,))
 
 
 def search_booking(bk):
@@ -624,7 +624,7 @@ TXT_BOOKING_STATUS = 'FAILED'
 
 
 def start_recreate_payment(payment):
-    _Tools.get_pool().apply_async(recreate_payment, (payment, ))
+    _Helper.get_pool().apply_async(recreate_payment, (payment,))
 
 
 def recreate_payment(payment):
@@ -659,7 +659,7 @@ def recreate_payment(payment):
 
 
 def start_get_admin_key():
-    _Tools.get_pool().apply_async(get_admin_key)
+    _Helper.get_pool().apply_async(get_admin_key)
 
 
 def get_admin_key():
@@ -668,7 +668,7 @@ def get_admin_key():
 
 
 def start_check_wallet(amount):
-    _Tools.get_pool().apply_async(check_wallet, (amount,))
+    _Helper.get_pool().apply_async(check_wallet, (amount,))
 
 
 def check_wallet(amount):
@@ -686,7 +686,7 @@ def check_wallet(amount):
 
 
 def kiosk_get_product_stock():
-    _Tools.get_pool().apply_async(get_product_stock, )
+    _Helper.get_pool().apply_async(get_product_stock, )
 
 
 def get_product_stock():
@@ -710,7 +710,7 @@ def get_product_stock():
 
 
 def start_store_transaction_global(param):
-    _Tools.get_pool().apply_async(store_transaction_global, (param,))
+    _Helper.get_pool().apply_async(store_transaction_global, (param,))
 
 
 GLOBAL_TRANSACTION_DATA = None
@@ -749,7 +749,7 @@ PID_STOCK_SALE = ''
 def retry_store_transaction_global():
     _param = json.dumps(GLOBAL_TRANSACTION_DATA)
     _retry = True
-    _Tools.get_pool().apply_async(store_transaction_global, (_param, _retry, ))
+    _Helper.get_pool().apply_async(store_transaction_global, (_param, _retry,))
 
 
 def store_transaction_global(param, retry=False):
@@ -761,7 +761,7 @@ def store_transaction_global(param, retry=False):
         _key = 'EMONEY' if 'Mandiri' in GLOBAL_TRANSACTION_DATA['provider'] else 'TAPCASH'
 
         if retry is False:
-            _trxid = _Tools.get_uuid()
+            _trxid = _Helper.get_uuid()
             TRX_ID_SALE = _trxid
 
             if 'payment_error' in GLOBAL_TRANSACTION_DATA.keys():
@@ -847,7 +847,7 @@ def store_transaction_global(param, retry=False):
             if len(check_trx) == 0:
                 _DAO.insert_transaction(__param)
                 K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|STORE_TRX-' + _trxid)
-                __param['createdAt'] = _Tools.now()
+                __param['createdAt'] = _Helper.now()
                 status, response = _NetworkAccess.post_to_url(url=_Global.BACKEND_URL + 'sync/transaction-topup', param=__param)
                 if status == 200 and response['id'] == __param['trxid']:
                     __param['key'] = __param['trxid']
@@ -877,7 +877,7 @@ TOPUP_AMOUNT_DATA = [
 
 
 def start_kiosk_get_topup_amount():
-    _Tools.get_pool().apply_async(kiosk_get_topup_amount)
+    _Helper.get_pool().apply_async(kiosk_get_topup_amount)
 
 
 def kiosk_get_topup_amount():
@@ -892,7 +892,7 @@ def kiosk_get_topup_amount():
 
 
 def start_store_topup_transaction(param):
-    _Tools.get_pool().apply_async(store_topup_transaction, (param,))
+    _Helper.get_pool().apply_async(store_topup_transaction, (param,))
 
 # '{"date":"Thursday, March 07, 2019","epoch":1551970911009,"payment":"debit","shop_type":"topup","time":"10:01:51 PM",
 # "qty":1,"value":"50000","provider":"e-Money Mandiri","raw":{"provider":"e-Money Mandiri","value":"50000"},
@@ -906,7 +906,7 @@ def store_topup_transaction(param):
         p = json.loads(param)
         GLOBAL_TRANSACTION_DATA['topup_details'] = p['topup_details']
         _param = {
-            'rid': _Tools.get_uuid(),
+            'rid': _Helper.get_uuid(),
             'trxid': TRX_ID_SALE,
             'cardNo': p['topup_details']['card_no'],
             'balance': p['topup_details']['last_balance'],
@@ -916,7 +916,7 @@ def store_topup_transaction(param):
             'remarks': param
         }
         _DAO.insert_topup_record(_param)
-        _param['createdAt'] = _Tools.now()
+        _param['createdAt'] = _Helper.now()
         status, response = _NetworkAccess.post_to_url(url=_Global.BACKEND_URL + 'sync/topup-records', param=_param)
         LOGGER.info(('sync store_topup_transaction', str(_param), str(status), str(response)))
         if status == 200 and response['id'] == _param['rid']:

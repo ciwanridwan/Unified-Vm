@@ -8,7 +8,7 @@ import logging
 from PyQt5.QtCore import QObject, pyqtSignal
 from _cConfig import _ConfigParser, _Global
 from _dDAO import _DAO
-from _tTools import _Tools
+from _tTools import _Helper
 from _nNetwork import _NetworkAccess
 from _nNetwork import _SFTPAccess
 from _dDevice import _QPROX
@@ -46,7 +46,7 @@ BID = _Global.BID
 def store_local_settlement(__param):
     try:
         param = {
-            "sid": _Tools.get_uuid(),
+            "sid": _Helper.get_uuid(),
             "tid": TID,
             "bid": BID[__param['bank']],
             "filename": __param['filename'],
@@ -149,7 +149,7 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, dummy=Fal
                     else:
                         f.write(line)
                 f.close()
-            _crc = _Tools.file2crc32(_file_created)
+            _crc = _Helper.file2crc32(_file_created)
             if _crc is False:
                 LOGGER.warning(('Settlement Filename Failed in CRC', _filename))
                 return False
@@ -178,7 +178,7 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, dummy=Fal
             #       status          INT,
             #       remarks         TEXT,
             _DAO.insert_sam_record({
-                'smid': _Tools.get_uuid(),
+                'smid': _Helper.get_uuid(),
                 'fileName': _filename,
                 'fileContent': _filecontent2,
                 'status': 1,
@@ -207,7 +207,7 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, dummy=Fal
             __timestamp = datetime.now().strftime('%d%m%Y%H%M')
             MANDIRI_LAST_TIMESTAMP = __timestamp
             __raw = _Global.MID_MAN + __shift + _Global.TID_MAN + __seq + (__timestamp * 2) + 'XXXX' + '.txt'
-            __ds = _Tools.get_ds(__raw, 4, True)
+            __ds = _Helper.get_ds(__raw, 4, True)
             _filename = _Global.MID_MAN + __shift + _Global.TID_MAN + __seq + (__timestamp * 2) + __ds + '.txt'
             MANDIRI_LAST_FILENAME = _filename
             LOGGER.info(('Create Settlement Filename', bank, mode, _filename))
@@ -218,7 +218,7 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, dummy=Fal
                 x += 1
                 remarks = json.loads(settle['remarks'])
                 _all_amount += (int(remarks['value'])-int(remarks['admin_fee']))
-                _filecontent += _Tools.reverse_hexdec(settle['reportSAM']) + __shift + str(x).zfill(6) + chr(3) + '|'
+                _filecontent += _Helper.reverse_hexdec(settle['reportSAM']) + __shift + str(x).zfill(6) + chr(3) + '|'
             _header = 'PREPAID' + str(len(settlements) + 2).zfill(8) + str(_all_amount).zfill(12) + __shift + \
                       _Global.MID_MAN + datetime.now().strftime('%d%m%Y') + chr(3) + '|'
             _filecontent = _header + _filecontent
@@ -247,7 +247,7 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, dummy=Fal
                 'settlement_created_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             }
             _DAO.insert_sam_record({
-                'smid': _Tools.get_uuid(),
+                'smid': _Helper.get_uuid(),
                 'fileName': _filename,
                 'fileContent': _filecontent,
                 'status': 1,
@@ -313,7 +313,7 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, dummy=Fal
                 'settlement_created_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             }
             _DAO.insert_sam_record({
-                'smid': _Tools.get_uuid(),
+                'smid': _Helper.get_uuid(),
                 'fileName': _filename,
                 'fileContent': _filecontent,
                 'status': 1,
@@ -343,14 +343,14 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, dummy=Fal
 
 def start_do_bni_topup_settlement():
     bank = 'BNI'
-    _Tools.get_pool().apply_async(do_settlement_for, (bank, ))
+    _Helper.get_pool().apply_async(do_settlement_for, (bank,))
 
 
 def start_do_mandiri_topup_settlement():
     if int(_Global.MANDIRI_ACTIVE_WALLET) <= int(_Global.MINIMUM_AMOUNT):
         bank = 'MANDIRI'
         _Global.MANDIRI_ACTIVE_WALLET = 0
-        _Tools.get_pool().apply_async(do_settlement_for, (bank, ))
+        _Helper.get_pool().apply_async(do_settlement_for, (bank,))
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TRIGGERED')
     else:
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|NO_REQUIRED')
@@ -360,21 +360,21 @@ def start_reset_mandiri_settlement():
     bank = 'MANDIRI'
     _Global.MANDIRI_ACTIVE_WALLET = 0
     dummy = True
-    _Tools.get_pool().apply_async(do_settlement_for, (bank, dummy, ))
+    _Helper.get_pool().apply_async(do_settlement_for, (bank, dummy,))
     ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TRIGGERED')
 
 
 def start_dummy_mandiri_topup_settlement():
     bank = 'MANDIRI'
     dummy = True
-    _Tools.get_pool().apply_async(do_settlement_for, (bank, dummy, ))
+    _Helper.get_pool().apply_async(do_settlement_for, (bank, dummy,))
     ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TRIGGERED')
 
 
 def do_settlement_for(bank='BNI', dummy=False):
     if bank == 'BNI':
         _SFTPAccess.HOST_BID = 2
-        if _Tools.is_online(source='bni_settlement') is False:
+        if _Helper.is_online(source='bni_settlement') is False:
             return
         # if _SFTPAccess.SFTP is not None:
         #     _SFTPAccess.close_sftp()
@@ -391,7 +391,7 @@ def do_settlement_for(bank='BNI', dummy=False):
         return push_settlement_data(_param)
     elif bank == 'MANDIRI':
         _SFTPAccess.HOST_BID = 1
-        if _Tools.is_online(source='mandiri_settlement') is False:
+        if _Helper.is_online(source='mandiri_settlement') is False:
             ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_NO_INTERNET_CONNECTION')
             return
         # _QPROX.auth_ka(_slot=_Global.get_active_sam(bank='MANDIRI', reverse=False), initial=False)
@@ -474,14 +474,14 @@ def mandiri_create_rq1(content):
 
 
 def start_validate_update_balance():
-    _Tools.get_pool().apply_async(validate_update_balance)
+    _Helper.get_pool().apply_async(validate_update_balance)
 
 
 def validate_update_balance():
     while True:
         if _Global.LAST_UPDATE > 0:
             __last_update_with_tolerance = (_Global.LAST_UPDATE/1000) + 84600
-            __current_time = _Tools.now()/1000
+            __current_time = _Helper.now() / 1000
             if __last_update_with_tolerance <= __current_time:
                 LOGGER.info(('DETECTED_EXPIRED_LIMIT_UPDATE', __last_update_with_tolerance, __current_time))
                 _Global.MANDIRI_ACTIVE_WALLET = 0

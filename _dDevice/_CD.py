@@ -5,7 +5,7 @@ from _cConfig import _ConfigParser, _Global
 from _cCommand import _Command
 from PyQt5.QtCore import QObject, pyqtSignal
 import logging
-from _tTools import _Tools
+from _tTools import _Helper
 from time import sleep
 import os
 import sys
@@ -87,14 +87,14 @@ def init_card_disp():
 
 def start_move_card_disp():
     attempt = 1
-    _Tools.get_pool().apply_async(move_card_disp, (attempt, ))
+    _Helper.get_pool().apply_async(move_card_disp, (attempt,))
 
 
 MULTIPLE_EJECT = True if _ConfigParser.get_set_value('CD', 'multiple^eject', '0') == '1' else False
 
 
 def start_get_multiple_eject_status():
-    _Tools.get_pool().apply_async(get_multiple_eject_status,)
+    _Helper.get_pool().apply_async(get_multiple_eject_status, )
 
 
 def get_multiple_eject_status():
@@ -105,7 +105,7 @@ def get_multiple_eject_status():
 
 
 def start_multiple_eject(attempt, multiply):
-    _Tools.get_pool().apply_async(simply_eject, (attempt, multiply, ))
+    _Helper.get_pool().apply_async(simply_eject, (attempt, multiply,))
 
 
 def simply_eject(attempt, multiply):
@@ -228,7 +228,7 @@ def move_card_disp(attempt):
 
 
 def start_hold_card_disp():
-    _Tools.get_pool().apply_async(hold_card_disp, )
+    _Helper.get_pool().apply_async(hold_card_disp, )
 
 
 def hold_card_disp():
@@ -247,7 +247,7 @@ def hold_card_disp():
 
 
 def start_stop_card_disp():
-    _Tools.get_pool().apply_async(stop_card_disp, )
+    _Helper.get_pool().apply_async(stop_card_disp, )
 
 
 def stop_card_disp():
@@ -274,7 +274,7 @@ def init_cd(com):
 
 
 def kiosk_get_cd_readiness():
-    _Tools.get_pool().apply_async(get_cd_readiness,)
+    _Helper.get_pool().apply_async(get_cd_readiness, )
 
 
 def get_cd_readiness():

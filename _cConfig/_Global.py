@@ -2,11 +2,14 @@ __author__ = "fitrah.wahyudi.imam@gmail.com"
 
 import logging
 from _cConfig import _ConfigParser
-from _tTools import _Tools
+from _tTools import _Helper
 from _nNetwork import _NetworkAccess
 from _dDAO import _DAO
 from time import *
 import os
+import sys
+import json
+
 
 LOGGER = logging.getLogger()
 BACKEND_URL = _ConfigParser.get_value('TERMINAL', 'backend^server')
@@ -45,6 +48,39 @@ REPO_PASSWORD = _ConfigParser.get_set_value('REPOSITORY', 'password', 'Mdd*123#'
 
 # SERVICE_VERSION = open(os.path.join('C:\\', '_SOCKET_', 'SERVICE.VER'), 'r').readlines()[-1].replace('\n', '')
 SERVICE_VERSION = 'N/A'
+TEMP_FOLDER = ''
+
+
+def init_temp_data():
+    global TEMP_FOLDER
+    if not os.path.exists(sys.path[0] + '/_tTmp/'):
+        os.makedirs(sys.path[0] + '/_tTmp/')
+    TEMP_FOLDER = sys.path[0] + '/_tTmp/'
+
+
+def log_to_temp(temp, content):
+    if '.data' not in temp:
+        temp = temp + '.data'
+    temp_path = os.path.join(TEMP_FOLDER, temp)
+    with open(temp_path, 'w+') as t:
+        t.write(content)
+        t.close()
+
+
+def get_from_temp(temp, mode='text'):
+    if '.data' not in temp:
+        temp = temp + '.data'
+    temp_path = os.path.join(TEMP_FOLDER, temp)
+    if not os.path.exists(temp_path):
+        with open(temp_path, 'w+') as t:
+            t.write('')
+            t.close()
+    content = open(temp_path, 'r').read().strip()
+    if mode == 'json':
+        if len(content) == 0:
+            return {}
+        return json.loads(content)
+    return content
 
 
 def get_service_version():
@@ -104,6 +140,7 @@ TOPUP_AMOUNT = int(_ConfigParser.get_set_value('QPROX', 'amount^topup', '500000'
 
 LAST_AUTH = int(_ConfigParser.get_set_value('TEMPORARY', 'last^auth', '0'))
 LAST_UPDATE = int(_ConfigParser.get_set_value('TEMPORARY', 'last^update', '0'))
+LAST_GET_PPOB = int(_ConfigParser.get_set_value('TEMPORARY', 'last^get^ppob', '0'))
 
 BANKS = [{
     "BANK": "MANDIRI",
@@ -224,7 +261,7 @@ def log_to_config(section='last^auth'):
     if section not in ALLOWED_CONFIG_LOG:
         LOGGER.warning(('NOT_ALLOWED', section, ALLOWED_CONFIG_LOG))
         return
-    __timestamp = _Tools.now()
+    __timestamp = _Helper.now()
     if section == 'last^auth':
         LAST_AUTH = __timestamp
     if section == 'last^update':
@@ -234,7 +271,7 @@ def log_to_config(section='last^auth'):
 
 def active_auth_session():
     if LAST_AUTH > 0:
-        today = _Tools.today_time()
+        today = _Helper.today_time()
         current = (LAST_AUTH/1000)
         return True if (today+86400) > current else False
     else:
@@ -298,7 +335,7 @@ SMT_CONFIG = dict()
 
 
 def start_get_devices():
-    _Tools.get_pool().apply_async(get_devices)
+    _Helper.get_pool().apply_async(get_devices)
 
 
 def get_devices():
@@ -317,7 +354,7 @@ def get_devices_status():
 
 
 def start_upload_device_state(device, status):
-    _Tools.get_pool().apply_async(upload_device_state, (device, status, ))
+    _Helper.get_pool().apply_async(upload_device_state, (device, status,))
 
 
 def upload_device_state(device, status):
@@ -340,7 +377,7 @@ def upload_device_state(device, status):
 
 
 def start_upload_mandiri_wallet():
-    _Tools.get_pool().apply_async(upload_mandiri_wallet)
+    _Helper.get_pool().apply_async(upload_mandiri_wallet)
 
 
 def upload_mandiri_wallet():
@@ -367,7 +404,7 @@ def upload_mandiri_wallet():
 
 
 def start_upload_bni_wallet():
-    _Tools.get_pool().apply_async(upload_bni_wallet)
+    _Helper.get_pool().apply_async(upload_bni_wallet)
 
 
 def upload_bni_wallet():
@@ -453,7 +490,7 @@ def upload_admin_access(aid, username, cash_collection='', edc_settlement='', ca
 
 
 def start_upload_topup_error(__slot, __type):
-    _Tools.get_pool().apply_async(upload_topup_error, (__slot, __type,))
+    _Helper.get_pool().apply_async(upload_topup_error, (__slot, __type,))
 
 
 def upload_topup_error(__slot, __type):
@@ -477,7 +514,7 @@ def store_upload_sam_audit(param):
     _table_ = 'SAMAudit'
     try:
         param = {
-            'lid': _Tools.get_uuid(),
+            'lid': _Helper.get_uuid(),
             'trxid': param['trxid'],
             'samCardNo': param['samCardNo'],
             'samCardSlot': param['samCardSlot'],

@@ -5,7 +5,7 @@ import logging
 import sys
 # import win32print, win32api, win32con
 # from escpos.connections import getSerialPrinter
-from _tTools import _Tools
+from _tTools import _Helper
 from _cConfig import _Global
 import subprocess
 
@@ -54,7 +54,7 @@ def print_file(file):
 
 
 def start_default_print(path):
-    _Tools.get_pool().apply_async(default_print, (path,))
+    _Helper.get_pool().apply_async(default_print, (path,))
 
 
 def default_print(path):

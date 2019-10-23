@@ -6,7 +6,7 @@ import sys
 import os
 import json
 from datetime import datetime
-from _tTools import _Tools
+from _tTools import _Helper
 from PyQt5.QtCore import QObject, pyqtSignal
 from _tTools import _Tibox
 from _dDevice import _MEI
@@ -163,7 +163,7 @@ def get_param_value():
 
 
 def start_set_payment(payment):
-    _Tools.get_pool().apply_async(set_payment, (payment,))
+    _Helper.get_pool().apply_async(set_payment, (payment,))
 
 
 def set_payment(payment):
@@ -323,7 +323,7 @@ def delimit(s):
 
 
 def start_generate(use):
-    _Tools.get_pool().apply_async(generate, (use,))
+    _Helper.get_pool().apply_async(generate, (use,))
 
 
 GLOBAL_PDF_FILE = None
@@ -426,7 +426,7 @@ def attempt_store_data(file):
 
 
 def start_reprint(new_status):
-    _Tools.get_pool().apply_async(reprint, (new_status,))
+    _Helper.get_pool().apply_async(reprint, (new_status,))
 
 
 def reprint(new_status):
@@ -512,7 +512,7 @@ def log_transaction():
 
 
 def start_print_global(input_text, use_for):
-    _Tools.get_pool().apply_async(print_global, (input_text, use_for,))
+    _Helper.get_pool().apply_async(print_global, (input_text, use_for,))
 
 
 def print_global(input_text='\r\n', use_for='EDC_SETTLEMENT'):

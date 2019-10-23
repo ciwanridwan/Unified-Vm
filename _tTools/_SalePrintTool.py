@@ -6,7 +6,7 @@ import sys
 import os
 import json
 from datetime import datetime
-from _tTools import _Tools
+from _tTools import _Helper
 from PyQt5.QtCore import QObject, pyqtSignal
 from _dDevice import _Printer
 from _sService import _KioskService
@@ -137,7 +137,7 @@ def justifying(left, right):
 
 
 def start_sale_print_global():
-    _Tools.get_pool().apply_async(sale_print_global,)
+    _Helper.get_pool().apply_async(sale_print_global, )
 
     # '{"date":"Thursday, March 07, 2019","epoch":1551970698740,"payment":"cash","shop_type":"shop","time":"9:58:18 PM",
     # "qty":4,"value":"3000","provider":"Kartu Prabayar","raw":{"init_price":500,"syncFlag":1,"createdAt":1551856851000,
@@ -150,7 +150,7 @@ def start_sale_print_global():
 
 
 def start_reprint_global():
-    _Tools.get_pool().apply_async(sale_reprint_global,)
+    _Helper.get_pool().apply_async(sale_reprint_global, )
 
 
 LAST_TRX = None
@@ -685,12 +685,12 @@ CARD_ADJUSTMENT = ''
 def save_receipt_local(__id, __data, __type):
     try:
         param_receipt = {
-            'rid': _Tools.get_uuid(),
+            'rid': _Helper.get_uuid(),
             'bookingCode': __id,
             'tiboxId': _Global.TID,
             'receiptRaw': __type,
             'receiptData': __data,
-            'createdAt': _Tools.now()
+            'createdAt': _Helper.now()
         }
         _DAO.insert_receipt(param_receipt)
         return True
@@ -700,7 +700,7 @@ def save_receipt_local(__id, __data, __type):
 
 
 def start_admin_print_global(struct_id):
-    _Tools.get_pool().apply_async(admin_print_global, (struct_id, ))
+    _Helper.get_pool().apply_async(admin_print_global, (struct_id,))
 
 
 def admin_print_global(struct_id, ext='.pdf'):
@@ -850,7 +850,7 @@ def mark_sync_collected_data(s):
             operator = _UserService.USER['first_name']
         # Reset Cash Log
         _DAO.custom_update(
-            ' UPDATE Cash SET collectedAt = ' + str(_Tools.now()) + ', collectedUser = "' + str(operator) +
+            ' UPDATE Cash SET collectedAt = ' + str(_Helper.now()) + ', collectedUser = "' + str(operator) +
             ' WHERE collectedAt = 19900901 ')
         return True
     else:

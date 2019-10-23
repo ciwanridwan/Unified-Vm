@@ -1,7 +1,7 @@
 __author__ = 'fitrah.wahyudi.imam@gmail.com'
 
 from _dDB import _Database
-from _tTools import _Tools
+from _tTools import _Helper
 # sql = 'UPDATE express SET TakeTime=:takeTime,SyncFlag = :syncFlag,Version = :version,Status = :status,staffTakenUser_id=:staffTakenUser_id WHERE id=:id'
 # sql = 'INSERT INTO Express (id, ExpressNumber, expressType, overdueTime, status, StoreTime, SyncFlag, TakeUserPhoneNumber, ValidateCode, Version, box_id, logisticsCompany_id, mouth_id, operator_id, storeUser_id,groupName) VALUES (:id,:expressNumber,:expressType,:overdueTime,:status,:storeTime,:syncFlag,:takeUserPhoneNumber,:validateCode,:version,:box_id,:logisticsCompany_id,:mouth_id,:operator_id,:storeUser_id,:groupName)'
 
@@ -31,7 +31,7 @@ def get_bank_id(param):
 
 def insert_bank(param):
     # insert new bank details, must bring bid, name, status, bankMid, bankTid
-    param['createdAt'] = _Tools.now()
+    param['createdAt'] = _Helper.now()
     param['serviceList'] = "[]"
     sql = "INSERT INTO Bank (bid, name, status, serviceList, createdAt, bankMid, bankTid) " \
           "VALUES (:bid, :name, :status, :serviceList, :createdAt, :bankMid, :bankTid)"
@@ -53,7 +53,7 @@ def insert_transaction(param):
       bankTid         VARCHAR(100),
       bankMid         VARCHAR(100),
     """
-    param["createdAt"] = _Tools.now()
+    param["createdAt"] = _Helper.now()
     param["syncFlag"] = 0
     sql = "INSERT INTO Transactions (trxid, tid, mid, pid, tpid, paymentType, amount, sale, createdAt, syncFlag, " \
           "bankMid, bankTid, paymentNotes, cardNo) VALUES (:trxid, :tid, :mid, :pid, :tpid, :paymentType, :amount, " \
@@ -75,7 +75,7 @@ def insert_transaction_failure(param):
       syncFlag        INT,
       remarks         TEXT
     """
-    param["createdAt"] = _Tools.now()
+    param["createdAt"] = _Helper.now()
     param["syncFlag"] = 0
     sql = "INSERT INTO TransactionFailure (trxid, tid, mid, pid, amount, cardNo, createdAt, syncFlag, " \
           "failureType, paymentMethod, remarks) VALUES (:trxid, :tid, :mid, :pid, :amount, :cardNo, " \
@@ -112,7 +112,7 @@ def insert_cash(param):
     :param param: _Database.insert_update
     :return:
     """
-    param["createdAt"] = _Tools.now()
+    param["createdAt"] = _Helper.now()
     sql = "INSERT INTO Cash (csid, tid, amount, pid, createdAt) VALUES (:csid, :tid, :amount, :pid, :createdAt)"
     return _Database.insert_update(sql=sql, parameter=param)
 
@@ -125,7 +125,7 @@ def update_cash(param):
     :param param:
     :return:
     """
-    param["updatedAt"] = _Tools.now()
+    param["updatedAt"] = _Helper.now()
     sql = "UPDATE Cash SET amount=:amount, updatedAt=:updatedAt WHERE csid=:csid"
     return _Database.insert_update(sql=sql, parameter=param)
 
@@ -138,7 +138,7 @@ def collect_cash(param):
     'collectedUser'
     :return: _Database.insert_update
     """
-    param["updatedAt"] = _Tools.now()
+    param["updatedAt"] = _Helper.now()
     sql = "UPDATE Cash SET updatedAt=:updatedAt, collectedAt=:collectedAt, collectedUser=:collectedUser" \
           " WHERE csid=:csid"
     return _Database.insert_update(sql=sql, parameter=param)
@@ -159,7 +159,7 @@ def insert_product(param):
     status          INT,
     :return:
     '''
-    param["createdAt"] = _Tools.now()
+    param["createdAt"] = _Helper.now()
     param["syncFlag"] = 0
     sql = "INSERT INTO Product (pid, name, price, details, status, createdAt, syncFlag) VALUES " \
           "(:pid, :name, :price, :details, :status, :createdAt, :syncFlag)"
@@ -196,7 +196,7 @@ def insert_settlement(param):
 	`row`	BIGINT,
     :return:
     '''
-    param["createdAt"] = _Tools.now()
+    param["createdAt"] = _Helper.now()
     sql = "INSERT INTO Settlement (sid, tid, bid, filename, status, amount, row, createdAt) VALUES (:sid, :tid, :bid, " \
           ":filename, :status, :amount, :row, :createdAt)"
     return _Database.insert_update(sql=sql, parameter=param)
@@ -210,7 +210,7 @@ def update_settlement(param):
     `updatedAt`
     :return:
     '''
-    param["updatedAt"] = _Tools.now()
+    param["updatedAt"] = _Helper.now()
     sql = "UPDATE Settlement SET status=:status, updatedAt=:updatedAt WHERE sid=:sid"
     return _Database.insert_update(sql=sql, parameter=param)
 
@@ -230,7 +230,7 @@ def insert_product_stock(param):
   updatedAt       BIGINT, -> This Field is removed in Main Server, replaced to lastUserUpdate
   syncFlag        INT
     '''
-    param["createdAt"] = _Tools.now()
+    param["createdAt"] = _Helper.now()
     param["syncFlag"] = 1
     sql = "INSERT INTO ProductStock (stid, pid, tid, name, init_price, sell_price, remarks, stock, status, " \
           "createdAt, syncFlag) VALUES (:stid, :pid, :tid, :name, :init_price, :sell_price, :remarks, :stock, " \
@@ -245,7 +245,7 @@ def update_product_stock(param):
     :param param:
     :return:
     '''
-    param["updatedAt"] = _Tools.now()
+    param["updatedAt"] = _Helper.now()
     sql = " UPDATE ProductStock SET stock = :stock WHERE pid = :pid "
     return _Database.insert_update(sql=sql, parameter=param)
 
@@ -290,7 +290,7 @@ def insert_transaction_type(param):
     :return:
     '''
     param['syncFlag'] = 0
-    param['createdAt'] = _Tools.now()
+    param['createdAt'] = _Helper.now()
     sql = "INSERT INTO TransactionType(tpid, name, status, description, createdAt, syncFlag) " \
           "VALUES(:tpid, :name, :status, :description, :createdAt, :syncFlag)"
     return _Database.insert_update(sql=sql, parameter=param)
@@ -385,7 +385,7 @@ def insert_topup_record(param):
     :return:
     '''
     param['syncFlag'] = 0
-    param['createdAt'] = _Tools.now()
+    param['createdAt'] = _Helper.now()
     sql = " INSERT INTO TopUpRecords(rid, trxid, cardNo, balance, reportSAM, reportKA, status, remarks, " \
           "syncFlag, createdAt) VALUES (:rid, :trxid, :cardNo, :balance, :reportSAM, :reportKA, :status, :remarks, " \
           ":syncFlag, :createdAt) "
@@ -402,7 +402,7 @@ def insert_sam_record(param):
     :param param:
     :return:
     '''
-    param['createdAt'] = _Tools.now()
+    param['createdAt'] = _Helper.now()
     sql = " INSERT INTO SAMRecords(smid, fileName, fileContent, status, remarks, createdAt) VALUES (:smid, :fileName, " \
           " :fileContent, :status, :remarks, :createdAt) "
     return _Database.insert_update(sql=sql, parameter=param)
@@ -436,16 +436,16 @@ def insert_sam_audit(param):
           ':samCardSlot, :samPrevBalance, :samLastBalance, :topupCardNo, :topupPrevBalance, :topupLastBalance, :status,'\
           ':remarks, :syncFlag, :createdAt) '
     param['syncFlag'] = 0
-    param['createdAt'] = _Tools.now()
+    param['createdAt'] = _Helper.now()
     return _Database.insert_update(sql=sql, parameter=param)
 
 
 def clean_old_data(tables, key='', age_month=0):
     if type(tables) != list or len(tables) == 0 or len(key) == 0 or age_month == 0:
         return False
-    expired = _Tools.now()
+    expired = _Helper.now()
     if age_month > 0:
-        expired = _Tools.now() - (age_month * 30 * 24 * 60 * 60)
+        expired = _Helper.now() - (age_month * 30 * 24 * 60 * 60)
     for _table in tables:
         _where = str(key) + ' < ' + str(expired)
         flush_table(_table=_table, _where=_where)

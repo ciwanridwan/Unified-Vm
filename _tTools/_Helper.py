@@ -10,6 +10,7 @@ import random
 import binascii
 from _nNetwork import _NetworkAccess
 import subprocess
+import json
 
 LOGGER = logging.getLogger()
 POOL = ThreadPool(16)
@@ -109,21 +110,24 @@ def reverse_hexdec(string):
     return str(__front) + str(__dec1).zfill(8) + str(__dec2).zfill(8) + str(__back)
 
 
-def dd(s):
+def dump(s, iterate=False):
     if type(s) == str:
-        print('[DD] : ' + s)
+        print('[DUMP] : ' + str(type(s)) + ' ==> ' + str(s))
     elif type(s) == list:
-        for l in s:
-            print('[DD] : ' + l)
+        if iterate is True:
+            for l in s:
+                print('[DUMP] : ' + str(type(l)) + ' ==> ' + str(l))
+        else:
+            print('[DUMP] : ' + str(type(s)) + ' ==> ' + json.dumps(s))
     else:
-        print('[DD] : ' + str(s))
+        print('[DUMP] : ' + str(type(s)) + ' ==> ' + str(s))
 
 
 def os_command(command, key, reverse=False):
     process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
     response = process.communicate()[0].decode('utf-8').strip().split("\r\n")
-    # dd(command)
-    # dd(response)
+    # dump(command)
+    # dump(response)
     if len(response) > 0:
         if not reverse and key in response[-1]:
             return True
@@ -133,3 +137,5 @@ def os_command(command, key, reverse=False):
             return False
     else:
         return False
+
+

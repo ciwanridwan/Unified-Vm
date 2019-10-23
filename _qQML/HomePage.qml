@@ -49,6 +49,7 @@ Base{
         base.result_kiosk_status.connect(get_kiosk_status);
         base.result_topup_readiness.connect(topup_readiness);
         base.result_auth_qprox.connect(ka_login_status);
+        base.result_get_ppob_product.connect(get_ppob_product);
     }
 
     Component.onDestruction: {
@@ -60,6 +61,12 @@ Base{
         base.result_kiosk_status.disconnect(get_kiosk_status);
         base.result_topup_readiness.disconnect(topup_readiness);
         base.result_auth_qprox.disconnect(ka_login_status);
+        base.result_get_ppob_product.disconnect(get_ppob_product);
+    }
+
+    function get_ppob_product(p){
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('get_ppob_product', now, p);
     }
 
     function resetMediaTimer(){
@@ -356,6 +363,7 @@ Base{
                     if (press!="0") return;
                     press = "1";
                     _SLOT.set_tvc_player("STOP");
+                    _SLOT.start_get_ppob_product()
 //                    my_layer.push(topup_prepaid_denom, {shopType: 'topup'});
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();

@@ -7,7 +7,7 @@ from time import sleep
 from PyQt5.QtCore import QObject, pyqtSignal
 
 from _cCommand import _Command
-from _tTools import _Tools
+from _tTools import _Helper
 from _tTools import _PDFTool
 
 from _dDevice import _Printer
@@ -34,7 +34,7 @@ FLIGHT_NO = None
 
 
 def start_check_booking_code(param):
-    _Tools.get_pool().apply_async(check_booking_code, (param,))
+    _Helper.get_pool().apply_async(check_booking_code, (param,))
 
 
 def check_booking_code(param=None):
@@ -72,7 +72,7 @@ SAMPLE_BOARDING = 'MR RIAN AJJ|MALE Adult|22D|JT 26|FRI, 30 NOV 18|CGK17:55|DPS2
 def handling_booking_code():
     attempt = 0
     result_list = []
-    pid = '[' + _Tools.get_random_chars(5, '1234567890') + ']'
+    pid = '[' + _Helper.get_random_chars(5, '1234567890') + ']'
     _replacement = '#'
     while True:
         attempt += 1
@@ -218,7 +218,7 @@ def get_status_seat(s):
 
 
 def start_get_boarding_pass(param):
-    _Tools.get_pool().apply_async(get_boarding_pass, (param,))
+    _Helper.get_pool().apply_async(get_boarding_pass, (param,))
 
 
 BOARDING_FILE = None
@@ -251,7 +251,7 @@ def handling_boarding_pass():
     global BOARDING_FILE
     attempt = 0
     result_list = []
-    pid = '[' + _Tools.get_random_chars(5, '1234567890') + ']'
+    pid = '[' + _Helper.get_random_chars(5, '1234567890') + ']'
     _replacement = '<>'
     while True:
         attempt += 1

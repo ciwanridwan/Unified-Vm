@@ -4,7 +4,7 @@ import logging
 from PyQt5.QtCore import QObject, pyqtSignal
 from _cConfig import _ConfigParser
 from _dDAO import _DAO
-from _tTools import _Tools
+from _tTools import _Helper
 from _nNetwork import _NetworkAccess
 from _sService import _UserService
 from _sService import _KioskService
@@ -22,7 +22,7 @@ LAST_UPDATED_STOCK = []
 
 
 def start_change_product_stock(port, stock):
-    _Tools.get_pool().apply_async(change_product_stock, (port, stock,))
+    _Helper.get_pool().apply_async(change_product_stock, (port, stock,))
 
 
 def change_product_stock(port, stock):
@@ -60,7 +60,7 @@ def change_product_stock(port, stock):
 
 def kiosk_get_product_stock():
     _url = BACKEND_URL + 'get/product-stock'
-    if _Tools.is_online(source='start_get_product_stock') is True:
+    if _Helper.is_online(source='start_get_product_stock') is True:
         s, r = _NetworkAccess.get_from_url(url=_url)
         if s == 200 and r['result'] == 'OK':
             products = r['data']

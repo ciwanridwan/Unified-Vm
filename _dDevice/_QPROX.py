@@ -5,7 +5,7 @@ from _cConfig import _ConfigParser, _Global
 from _cCommand import _Command
 from PyQt5.QtCore import QObject, pyqtSignal
 import logging
-from _tTools import _Tools
+from _tTools import _Helper
 from time import sleep
 import json
 from _nNetwork import _NetworkAccess
@@ -184,7 +184,7 @@ def open_qprox():
 
 
 def start_disconnect_qprox():
-    _Tools.get_pool().apply_async(disconnect_qprox)
+    _Helper.get_pool().apply_async(disconnect_qprox)
 
 
 def disconnect_qprox():
@@ -200,7 +200,7 @@ INIT_LIST = []
 
 
 def start_init_qprox():
-    _Tools.get_pool().apply_async(init_qprox)
+    _Helper.get_pool().apply_async(init_qprox)
 
 
 def init_qprox():
@@ -252,7 +252,7 @@ def init_qprox():
 
 
 def start_debit_qprox(amount):
-    _Tools.get_pool().apply_async(debit_qprox, (amount,))
+    _Helper.get_pool().apply_async(debit_qprox, (amount,))
 
 
 def debit_qprox(amount):
@@ -274,7 +274,7 @@ def debit_qprox(amount):
 
 def start_auth_ka():
     print('pyt: Waiting Login Card To Be Put Into Reader...')
-    _Tools.get_pool().apply_async(auth_ka)
+    _Helper.get_pool().apply_async(auth_ka)
 
 
 '''
@@ -335,7 +335,7 @@ def auth_ka(_slot=None, initial=True):
 
 
 def start_check_balance():
-    _Tools.get_pool().apply_async(check_balance)
+    _Helper.get_pool().apply_async(check_balance)
 
 
 '''
@@ -394,7 +394,7 @@ def check_balance():
 
 
 def start_top_up_mandiri(amount, trxid):
-    _Tools.get_pool().apply_async(top_up_mandiri, (amount, trxid,))
+    _Helper.get_pool().apply_async(top_up_mandiri, (amount, trxid,))
 
 '''
 OUTPUT = Balance, Report SAM, Report KA, Card Number
@@ -495,7 +495,7 @@ def top_up_mandiri(amount, trxid='', slot=None):
 
 def start_top_up_bni(amount, trxid):
     # get_bni_wallet_status()
-    _Tools.get_pool().apply_async(top_up_bni, (amount, trxid,))
+    _Helper.get_pool().apply_async(top_up_bni, (amount, trxid,))
 
 '''
 OUTPUT = Report SAM, Card Number
@@ -570,7 +570,7 @@ ERROR_TOPUP = {
 
 def start_topup_up_bni_with_attempt(amount, trxid, attempt):
     slot = None
-    _Tools.get_pool().apply_async(top_up_bni, (amount, trxid, slot, attempt,))
+    _Helper.get_pool().apply_async(top_up_bni, (amount, trxid, slot, attempt,))
 
 
 def top_up_bni(amount, trxid, slot=None, attempt=None):
@@ -648,7 +648,7 @@ def top_up_bni(amount, trxid, slot=None, attempt=None):
 
 
 def start_ka_info():
-    _Tools.get_pool().apply_async(ka_info_mandiri)
+    _Helper.get_pool().apply_async(ka_info_mandiri)
 
 '''
 OUTPUT = Limit TopUp, Main Counter, History Counter
@@ -739,7 +739,7 @@ def ka_info_bni(slot=1):
 
 
 def start_create_online_info():
-    _Tools.get_pool().apply_async(create_online_info)
+    _Helper.get_pool().apply_async(create_online_info)
 
 '''
 OUTPUT = 0001000120010277010108201713140108201713142094.RQ1
@@ -773,7 +773,7 @@ def create_online_info(slot=None):
 
 
 def start_init_online():
-    _Tools.get_pool().apply_async(init_online)
+    _Helper.get_pool().apply_async(init_online)
 
 
 def init_online(rsp=None, slot=None):
@@ -829,12 +829,12 @@ def do_update_limit_mandiri(rsp):
 
 
 def start_get_topup_readiness():
-    _Tools.get_pool().apply_async(get_topup_readiness)
+    _Helper.get_pool().apply_async(get_topup_readiness)
 
 
 def start_get_topup_status_instant():
     mode = 'get_instant'
-    _Tools.get_pool().apply_async(get_topup_readiness, (mode,))
+    _Helper.get_pool().apply_async(get_topup_readiness, (mode,))
 
 
 def get_topup_readiness(mode='full'):

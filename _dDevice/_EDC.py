@@ -3,7 +3,7 @@ __author__ = "fitrah.wahyudi.imam@gmail.com"
 from PyQt5.QtCore import QObject, pyqtSignal
 import logging
 from _cCommand import _Command
-from _tTools import _Tools
+from _tTools import _Helper
 from _tTools import _PrintTool
 from _tTools import _EDCTool
 from _dDAO import _DAO
@@ -60,11 +60,11 @@ def init_edc_with_handle():
 
 
 def create_sale_edc(amount):
-    _Tools.get_pool().apply_async(sale_edc, (amount,))
+    _Helper.get_pool().apply_async(sale_edc, (amount,))
 
 
 def create_sale_edc_with_struct_id(amount, trxid):
-    _Tools.get_pool().apply_async(sale_edc, (amount, trxid,))
+    _Helper.get_pool().apply_async(sale_edc, (amount, trxid,))
 
 
 IS_PIR = True if _ConfigParser.get_set_value('TERMINAL', 'pir^usage', '0') == '1' else False
@@ -131,7 +131,7 @@ def handling_card(amount, trxid=None):
     global EDC_PAYMENT_RESULT, IS_CANCELLED
     attempt = 0
     result_list = []
-    pid = '['+_Tools.get_random_chars(5, '1234567890')+']'
+    pid = '[' + _Helper.get_random_chars(5, '1234567890') + ']'
     while True:
         attempt += 1
         if OPEN_STATUS is False:
@@ -174,7 +174,7 @@ def handling_card(amount, trxid=None):
                 EDC_PAYMENT_RESULT['raw'] = result
                 EDC_PAYMENT_RESULT['card_type'] = _EDCTool.get_type(param[6])
                 if trxid is None:
-                    EDC_PAYMENT_RESULT['struck_id'] = _Tools.get_uuid()[:12]
+                    EDC_PAYMENT_RESULT['struck_id'] = _Helper.get_uuid()[:12]
                 else:
                     EDC_PAYMENT_RESULT['struck_id'] = trxid.upper()
                 EDC_PAYMENT_RESULT['amount'] = param[3]
@@ -236,7 +236,7 @@ def handling_card(amount, trxid=None):
 
 
 def start_disconnect_edc():
-    _Tools.get_pool().apply_async(disconnect_edc)
+    _Helper.get_pool().apply_async(disconnect_edc)
 
 
 def disconnect_edc():
@@ -265,7 +265,7 @@ def disconnect_edc():
 def store_settlement():
     try:
         param_settlement = {
-            "sid": _Tools.get_uuid(),
+            "sid": _Helper.get_uuid(),
             "tid": EDC_PAYMENT_RESULT['tid'] + '|' + EDC_PAYMENT_RESULT['mid'],
             "bid": EDC_PAYMENT_RESULT['inv_no'] + '|' + EDC_PAYMENT_RESULT['card_no'],
             "filename": EDC_PAYMENT_RESULT['raw'],
@@ -280,7 +280,7 @@ def store_settlement():
 
 def start_edc_settlement():
     LOGGER.info("[START] define_edc_settlement")
-    _Tools.get_pool().apply_async(define_edc_settlement)
+    _Helper.get_pool().apply_async(define_edc_settlement)
 
 
 def backend_edc_settlement():
@@ -398,7 +398,7 @@ def handling_settlement(mode):
         NOT_FOUND = '06||NF|'
         NEED_RETRY = '06||SR|'
     attempt = 0
-    pid = '['+mode+'-'+_Tools.get_random_chars(5, '1234567890')+']'
+    pid = '[' + mode +'-' + _Helper.get_random_chars(5, '1234567890') + ']'
     # Clearing Previous Response
     _Command.clear_content_of(_Command.MO_REPORT, pid)
     # _Command.clear_content_of(_Command.MO_STATUS, pid)
@@ -504,7 +504,7 @@ def card_type_settle():
 
 
 def start_get_settlement():
-    _Tools.get_pool().apply_async(get_settlement_data)
+    _Helper.get_pool().apply_async(get_settlement_data)
 
 
 def get_settlement_data():
@@ -623,7 +623,7 @@ def post_mark_settlement_direct(param):
 
 
 def start_void_data():
-    _Tools.get_pool().apply_async(void_settlement_data)
+    _Helper.get_pool().apply_async(void_settlement_data)
 
 
 def void_settlement_data():
@@ -660,7 +660,7 @@ DUMMY_EDC_RESPONSE = {
 
 
 def start_dummy_edc_receipt():
-    _Tools.get_pool().apply_async(_EDCTool.generate_edc_receipt, (DUMMY_EDC_RESPONSE,))
+    _Helper.get_pool().apply_async(_EDCTool.generate_edc_receipt, (DUMMY_EDC_RESPONSE,))
 
 
 def standardize_param(param, trx):

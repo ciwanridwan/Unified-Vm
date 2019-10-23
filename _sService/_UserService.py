@@ -4,7 +4,7 @@ import json
 import logging
 from PyQt5.QtCore import QObject, pyqtSignal
 from _cConfig import _ConfigParser, _Global
-from _tTools import _Tools
+from _tTools import _Helper
 from _nNetwork import _NetworkAccess
 import hashlib
 import os
@@ -36,7 +36,7 @@ def check_user_offline_hash(user, password):
 
 
 def get_kiosk_login(username, password):
-    _Tools.get_pool().apply_async(kiosk_login, (username, password,))
+    _Helper.get_pool().apply_async(kiosk_login, (username, password,))
 
 
 def kiosk_login(username, password):
@@ -73,7 +73,7 @@ def kiosk_login(username, password):
                             "active": 1,
                             "isAbleTerminal": 1,
                             "isAbleCollect": 1,
-                            "last_activity": _Tools.now()
+                            "last_activity": _Helper.now()
                             }
                         US_SIGNDLER.SIGNAL_USER_LOGIN.emit('SUCCESS|' + json.dumps(USER))
                     else:

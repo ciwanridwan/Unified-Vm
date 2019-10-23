@@ -1,10 +1,11 @@
-/.idea
-/_lLog
-/_vVideo
+/.idea/
+/_lLog/
+/_vVideo/
+/_tTmp/
 *.log
 /venv
-/_pPDF
-/_rRemoteFiles
+/_pPDF/
+/_rRemoteFiles/
 /_dDB/kiosk.db
 setting.ini
 _cCommand/__pycache__/

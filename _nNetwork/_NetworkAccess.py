@@ -172,17 +172,17 @@ def get_local(url, param=None, log=True):
     return r.status_code, response
 
 
-def download_image(url, path):
-    image = url.split('/')[-1]
+def item_download(url, path):
+    item = url.split('/')[-1]
     if not os.path.exists(path):
         os.makedirs(path)
-    file = os.path.join(path, image)
+    file = os.path.join(path, item)
     if os.path.exists(file):
-        return True, image
+        return True, item
     r = requests.get(url, stream=True)
     if r.status_code != 200:
-        return False, image
+        return False, item
     with open(file, 'wb') as f:
         shutil.copyfileobj(r.raw, f)
     del r
-    return True, image
+    return True, item

@@ -1,7 +1,7 @@
 __author__ = 'fitrah.wahyudi.imam@gmail.com'
 import os
 import sys
-from _tTools import _Tools
+from _tTools import _Helper
 from _dDAO import _DAO
 from time import sleep
 from _cConfig import _ConfigParser, _Global
@@ -25,7 +25,7 @@ SETTING_PARAM = []
 
 
 def start_check_connection(url, param):
-    _Tools.get_pool().apply_async(check_connection, (url, param,))
+    _Helper.get_pool().apply_async(check_connection, (url, param,))
 
 
 def check_connection(url, param):
@@ -33,7 +33,7 @@ def check_connection(url, param):
     SETTING_PARAM = param
     modulus = 0
     while True:
-        if _Tools.is_online(source='check_connection') is True and IDLE_MODE is True:
+        if _Helper.is_online(source='check_connection') is True and IDLE_MODE is True:
             modulus += 1
             try:
                 status, response = _NetworkAccess.get_from_url(url=url)
@@ -46,7 +46,7 @@ def check_connection(url, param):
                     # _KioskService.KIOSK_STATUS = 'OFFLINE'
                     _KioskService.KIOSK_REAL_STATUS = 'OFFLINE'
                     print('STATUS: Disconnected From Backend Server')
-                _KioskService.LAST_SYNC = _Tools.time_string()
+                _KioskService.LAST_SYNC = _Helper.time_string()
                 _KioskService.kiosk_status()
                 # Run on the first sync only
                 if modulus == 1:
@@ -69,11 +69,11 @@ def check_connection(url, param):
 
 
 def start_idle_mode():
-    _Tools.get_pool().apply_async(change_idle_mode, ('START',))
+    _Helper.get_pool().apply_async(change_idle_mode, ('START',))
 
 
 def stop_idle_mode():
-    _Tools.get_pool().apply_async(change_idle_mode, ('STOP',))
+    _Helper.get_pool().apply_async(change_idle_mode, ('STOP',))
 
 
 def change_idle_mode(s):
@@ -89,7 +89,7 @@ IDLE_MODE = True
 
 
 def start_sync_machine_status():
-    _Tools.get_pool().apply_async(sync_machine_status)
+    _Helper.get_pool().apply_async(sync_machine_status)
 
 
 def sync_machine_status():
@@ -97,7 +97,7 @@ def sync_machine_status():
     __param = dict()
     while True:
         try:
-            if _Tools.is_online(source='sync_machine_status') is True and IDLE_MODE is True:
+            if _Helper.is_online(source='sync_machine_status') is True and IDLE_MODE is True:
                 __param = _KioskService.machine_summary()
                 __param['on_usage'] = 'IDLE' if IDLE_MODE is True else 'ON_USED'
                 # LOGGER.info((__url, str(__param)))
@@ -110,7 +110,7 @@ def sync_machine_status():
 
 
 def start_kiosk_sync():
-    _Tools.get_pool().apply_async(kiosk_sync)
+    _Helper.get_pool().apply_async(kiosk_sync)
 
 
 def kiosk_sync():
@@ -122,7 +122,7 @@ def kiosk_sync():
 
 
 def start_sync_topup_records():
-    _Tools.get_pool().apply_async(sync_topup_records)
+    _Helper.get_pool().apply_async(sync_topup_records)
 
 
 def sync_topup_records():
@@ -130,10 +130,10 @@ def sync_topup_records():
     _table_ = 'TopUpRecords'
     while True:
         try:
-            if _Tools.is_online(source='sync_topup_records') is True and IDLE_MODE is True:
+            if _Helper.is_online(source='sync_topup_records') is True and IDLE_MODE is True:
                 topup_records = _DAO.not_synced_data(param={'syncFlag': 0}, _table=_table_)
                 if len(topup_records) > 0:
-                    print('pyt : ' + _Tools.time_string() + ' - Re-Sync Topup Records Data...')
+                    print('pyt : ' + _Helper.time_string() + ' - Re-Sync Topup Records Data...')
                     for t in topup_records:
                         status, response = _NetworkAccess.post_to_url(url=url, param=t)
                         # LOGGER.info(('sync_topup_records', json.dumps(t), str(status), str(response)))
@@ -149,7 +149,7 @@ def sync_topup_records():
 
 
 def start_sync_data_transaction():
-    _Tools.get_pool().apply_async(sync_data_transaction)
+    _Helper.get_pool().apply_async(sync_data_transaction)
 
 
 def sync_data_transaction():
@@ -157,10 +157,10 @@ def sync_data_transaction():
     _table_ = 'Transactions'
     while True:
         try:
-            if _Tools.is_online(source='sync_data_transaction') is True and IDLE_MODE is True:
+            if _Helper.is_online(source='sync_data_transaction') is True and IDLE_MODE is True:
                 transactions = _DAO.not_synced_data(param={'syncFlag': 0}, _table=_table_)
                 if len(transactions) > 0:
-                    print('pyt : ' + _Tools.time_string() + ' - Re-Sync Transaction Data...')
+                    print('pyt : ' + _Helper.time_string() + ' - Re-Sync Transaction Data...')
                     for t in transactions:
                         status, response = _NetworkAccess.post_to_url(url=url, param=t)
                         if status == 200 and response['id'] == t['trxid']:
@@ -176,7 +176,7 @@ def sync_data_transaction():
 
 
 def start_sync_data_transaction_failure():
-    _Tools.get_pool().apply_async(sync_data_transaction_failure)
+    _Helper.get_pool().apply_async(sync_data_transaction_failure)
 
 
 def sync_data_transaction_failure():
@@ -184,10 +184,10 @@ def sync_data_transaction_failure():
     _table_ = 'TransactionFailure'
     while True:
         try:
-            if _Tools.is_online(source='sync_data_transaction_failure') is True and IDLE_MODE is True:
+            if _Helper.is_online(source='sync_data_transaction_failure') is True and IDLE_MODE is True:
                 transaction_failures = _DAO.not_synced_data(param={'syncFlag': 0}, _table=_table_)
                 if len(transaction_failures) > 0:
-                    print('pyt : ' + _Tools.time_string() + ' - Re-Sync Transaction Failure Data...')
+                    print('pyt : ' + _Helper.time_string() + ' - Re-Sync Transaction Failure Data...')
                     for t in transaction_failures:
                         status, response = _NetworkAccess.post_to_url(url=url, param=t)
                         if status == 200 and response['id'] == t['trxid']:
@@ -202,7 +202,7 @@ def sync_data_transaction_failure():
 
 
 def start_sync_product_data():
-    _Tools.get_pool().apply_async(sync_product_data)
+    _Helper.get_pool().apply_async(sync_product_data)
 
 
 def sync_product_data():
@@ -210,10 +210,10 @@ def sync_product_data():
     _table_ = 'Product'
     while True:
         try:
-            if _Tools.is_online(source='sync_product_data') is True and IDLE_MODE is True:
+            if _Helper.is_online(source='sync_product_data') is True and IDLE_MODE is True:
                 products = _DAO.not_synced_data(param={'syncFlag': 0}, _table=_table_)
                 if len(products) > 0:
-                    print('pyt : ' + _Tools.time_string() + ' - Re-Sync Product Data...')
+                    print('pyt : ' + _Helper.time_string() + ' - Re-Sync Product Data...')
                     for p in products:
                         status, response = _NetworkAccess.post_to_url(url=url, param=p)
                         if status == 200 and response['id'] == p['pid']:
@@ -228,7 +228,7 @@ def sync_product_data():
 
 
 def start_sync_sam_audit():
-    _Tools.get_pool().apply_async(sync_sam_audit)
+    _Helper.get_pool().apply_async(sync_sam_audit)
 
 
 def sync_sam_audit():
@@ -236,10 +236,10 @@ def sync_sam_audit():
     _table_ = 'SAMAudit'
     while True:
         try:
-            if _Tools.is_online(source='sync_sam_audit') is True and IDLE_MODE is True:
+            if _Helper.is_online(source='sync_sam_audit') is True and IDLE_MODE is True:
                 audits = _DAO.not_synced_data(param={'syncFlag': 0}, _table=_table_)
                 if len(audits) > 0:
-                    print('pyt : ' + _Tools.time_string() + ' - Re-Sync SAM Audit...')
+                    print('pyt : ' + _Helper.time_string() + ' - Re-Sync SAM Audit...')
                     for a in audits:
                         status, response = _NetworkAccess.post_to_url(url=url, param=a)
                         if status == 200 and response['id'] == a['lid']:
@@ -255,7 +255,7 @@ def sync_sam_audit():
 
 def start_sync_settlement_bni():
     bank = 'BNI'
-    _Tools.get_pool().apply_async(sync_settlement_data, (bank, ))
+    _Helper.get_pool().apply_async(sync_settlement_data, (bank,))
 
 
 def sync_settlement_data(bank):
@@ -263,11 +263,11 @@ def sync_settlement_data(bank):
     _table_ = 'Settlement'
     while True:
         try:
-            if _Tools.is_online(source='sync_settlement_data') is True and IDLE_MODE is True:
+            if _Helper.is_online(source='sync_settlement_data') is True and IDLE_MODE is True:
                 settlements = _DAO.custom_query(' SELECT * FROM ' + _table_ +
                                                 ' WHERE status = "TOPUP_PREPAID|OPEN" AND createdAt > 1554783163354 ')
                 if len(settlements) > 0:
-                    print('pyt : ' + _Tools.time_string() + ' - Re-Sync Settlement Data...')
+                    print('pyt : ' + _Helper.time_string() + ' - Re-Sync Settlement Data...')
                     for s in settlements:
                         _param = {
                             'mid': _Global.SMT_CONFIG['mid'],
@@ -293,22 +293,22 @@ def sync_settlement_data(bank):
 
 
 def start_sync_task():
-    _Tools.get_pool().apply_async(sync_task)
+    _Helper.get_pool().apply_async(sync_task)
 
 
 def sync_task():
     _url = URL + 'task/check'
     while True:
         try:
-            if _Tools.is_online(source='sync_task') is True and IDLE_MODE is True:
+            if _Helper.is_online(source='sync_task') is True and IDLE_MODE is True:
                 status, response = _NetworkAccess.get_from_url(url=_url, log=False)
                 if status == 200 and response['result'] == 'OK':
                     if len(response['data']) > 0:
                         handle_tasks(response['data'])
                     else:
-                        print('pyt : ' + _Tools.time_string() + ' - No Remote Task Given..!')
+                        print('pyt : ' + _Helper.time_string() + ' - No Remote Task Given..!')
                 else:
-                    print('pyt : ' + _Tools.time_string() + ' - Failed To Check Remote Task..!')
+                    print('pyt : ' + _Helper.time_string() + ' - Failed To Check Remote Task..!')
         except Exception as e:
             LOGGER.warning(e)
         sleep(33.3)
@@ -411,12 +411,12 @@ def update_task(task, result='TRIGGERED_TO_SYSTEM'):
 
 
 def start_sync_product_stock():
-    _Tools.get_pool().apply_async(start_get_product_stock)
+    _Helper.get_pool().apply_async(start_get_product_stock)
 
 
 def start_get_product_stock():
     _url = URL + 'get/product-stock'
-    if _Tools.is_online(source='start_get_product_stock') is True:
+    if _Helper.is_online(source='start_get_product_stock') is True:
         s, r = _NetworkAccess.get_from_url(url=_url)
         if s == 200 and r['result'] == 'OK':
             products = r['data']
@@ -432,13 +432,13 @@ def start_get_product_stock():
 
 
 def start_get_topup_amount():
-    _Tools.get_pool().apply_async(get_topup_amount)
+    _Helper.get_pool().apply_async(get_topup_amount)
 
 
 def get_topup_amount():
     _url = URL + 'get/topup-amount'
     while True:
-        if _Tools.is_online(source='get_topup_amount') is True and IDLE_MODE is True:
+        if _Helper.is_online(source='get_topup_amount') is True and IDLE_MODE is True:
             s, r = _NetworkAccess.get_from_url(url=_url)
             if s == 200 and r['result'] == 'OK':
                 _KioskService.TOPUP_AMOUNT_DATA = parse_topup_data(r['data'])
@@ -538,7 +538,7 @@ def get_amount(idx, listx):
 
 
 def start_do_bni_topup_by_trx():
-    _Tools.get_pool().apply_async(do_bni_topup_by_trx)
+    _Helper.get_pool().apply_async(do_bni_topup_by_trx)
 
 
 # TODO Add This Trigger In Every Topup BNI Trx

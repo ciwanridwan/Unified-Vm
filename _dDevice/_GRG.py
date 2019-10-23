@@ -6,7 +6,7 @@ import logging
 from _dDAO import _DAO
 import json
 from _cConfig import _Global
-from _tTools import _Tools
+from _tTools import _Helper
 from time import sleep
 from _dDevice import _MEI
 import sys
@@ -72,7 +72,7 @@ IniCfgFileName=BillDepositDevCfg.ini'''
 
 def start_init_grg():
     sleep(2)
-    _Tools.get_pool().apply_async(init_grg,)
+    _Helper.get_pool().apply_async(init_grg, )
 
 
 def init_grg():
@@ -100,7 +100,7 @@ UNKNOWN_ITEM = 'Received=CNY|Denomination=0|'
 
 
 def start_grg_receive_note():
-    _Tools.get_pool().apply_async(start_receive_note)
+    _Helper.get_pool().apply_async(start_receive_note)
 
 
 def simply_exec_grg(amount=None):
@@ -108,7 +108,7 @@ def simply_exec_grg(amount=None):
     if amount is None:
         amount = _MEI.DIRECT_PRICE_AMOUNT
     try:
-        r = _Tools.time_string('%Y%m%d%H%M%S%f')
+        r = _Helper.time_string('%Y%m%d%H%M%S%f')
         command = 'start /B ' + EXEC_GRG + ' input ' + str(amount) + ' ' + str(r) + ' ' + str(MAX_EXECUTION_TIME)
         process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
         reply = process.communicate()[0].decode('utf-8').strip().split("\r\n")
@@ -234,7 +234,7 @@ def is_exceed_payment(target, value_in, current_value):
 
 def stop_grg_receive_note():
     # log_book_cash('', get_collected_cash())
-    _Tools.get_pool().apply_async(stop_receive_note)
+    _Helper.get_pool().apply_async(stop_receive_note)
 
 
 def stop_receive_note():
@@ -260,7 +260,7 @@ def stop_receive_note():
 
 
 def start_get_status_grg():
-    _Tools.get_pool().apply_async(get_status_grg)
+    _Helper.get_pool().apply_async(get_status_grg)
 
 
 def get_status_grg():
@@ -280,7 +280,7 @@ def get_status_grg():
 
 def log_book_cash(pid, amount):
     param = {
-        'csid': _Tools.get_uuid(),
+        'csid': _Helper.get_uuid(),
         'pid': pid,
         'tid': _Global.TID,
         'amount': amount

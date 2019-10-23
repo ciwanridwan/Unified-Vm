@@ -6,7 +6,7 @@ from pprint import pprint
 import json
 from _cConfig import _ConfigParser
 from _nNetwork import _NetworkAccess
-from _tTools import _Tools
+from _tTools import _Helper
 from PyQt5.QtCore import QObject, pyqtSignal
 import os
 import sys
@@ -53,7 +53,7 @@ SAMPLE = 'OK|JT-34^04:30 - 07:20^737-900ER�^JT^34^2018-04-08T04:30:00^2018-04-
 
 
 def create_session():
-    print("pyt: #1-create_session triggered : " + _Tools.time_string())
+    print("pyt: #1-create_session triggered : " + _Helper.time_string())
     url_ = 'web_create_session.php?tid='+TID
     try:
         # CLEAN PREVIOUS VALUE =======================================
@@ -71,7 +71,7 @@ def create_session():
 
 
 def start_set_plan(param):
-    _Tools.get_pool().apply_async(set_plan, (param,))
+    _Helper.get_pool().apply_async(set_plan, (param,))
 
 
 DEPART_DATE = None
@@ -90,7 +90,7 @@ def set_plan(param):
         return
     # CREATE SESSION =============================================
     session = create_session()
-    print("pyt: #2-set_plan triggered : " + _Tools.time_string())
+    print("pyt: #2-set_plan triggered : " + _Helper.time_string())
     # SET VALUE ==================================================
     param = json.loads(param)
     adult = param["adult"]
@@ -148,7 +148,7 @@ def set_plan(param):
 
 
 def start_create_schedule():
-    _Tools.get_pool().apply_async(create_schedule)
+    _Helper.get_pool().apply_async(create_schedule)
 
 
 SCHEDULE_SEND_FLAG = True
@@ -156,7 +156,7 @@ SCHEDULE_SEND_FLAG = True
 
 def create_schedule():
     global ID, SCHEDULE_SEND_FLAG
-    print("pyt: #3-create_schedule triggered : " + _Tools.time_string())
+    print("pyt: #3-create_schedule triggered : " + _Helper.time_string())
     if TID is None or ID is None:
         LOGGER.warning('[ERROR] create_schedule : No ID-TID')
         T_SIGNDLER.SIGNAL_CREATE_SCHEDULE.emit('NO ID-TID')
@@ -174,7 +174,7 @@ def create_schedule():
                 # res_ = parse_flight_data(response)
                 res_ = new_parse_flight_data(response)
                 # DEPART_DATE = RETURN_DATE = None
-                print("pyt: #5-parse_flight_data finished : " + _Tools.time_string())
+                print("pyt: #5-parse_flight_data finished : " + _Helper.time_string())
                 if len(res_) == 0:
                     LOGGER.info('flight data count : NO DATA')
                     T_SIGNDLER.SIGNAL_CREATE_SCHEDULE.emit('NO DATA')
@@ -197,7 +197,7 @@ FLIGHT_LIST = None
 
 def parse_flight_data(text):
     global DEPART_DATE, RETURN_DATE, FLIGHT_LIST
-    print("pyt: #4-parse_flight_data started : " + _Tools.time_string())
+    print("pyt: #4-parse_flight_data started : " + _Helper.time_string())
     if text is None or text == "":
         return
     list_flight = []
@@ -247,7 +247,7 @@ IS_PIR = True if _ConfigParser.get_set_value('TERMINAL', 'pir^usage', '0') == '1
 
 def new_parse_flight_data(text):
     global DEPART_DATE, RETURN_DATE, FLIGHT_LIST
-    print("pyt: #4-parse_flight_data started : " + _Tools.time_string())
+    print("pyt: #4-parse_flight_data started : " + _Helper.time_string())
     if text is None or text == "":
         return
     list_flight = []
@@ -391,7 +391,7 @@ JT-503?17:15 - 18:20?737-900ER?-?10:30 - 11:40?
 
 
 def start_sort_flight_data(key, method):
-    _Tools.get_pool().apply_async(sort_flight_data, (key, method,))
+    _Helper.get_pool().apply_async(sort_flight_data, (key, method,))
 
 
 def sort_flight_data(key, method):
@@ -435,7 +435,7 @@ def start_create_chart(param):
     check_value = ID + '||' + param
     if check_value not in CREATE_CHART:
         print('pyt: start_create_chart', str(time.time()*1000), check_value)
-        _Tools.get_pool().apply_async(create_chart, (param,))
+        _Helper.get_pool().apply_async(create_chart, (param,))
         CREATE_CHART.append(check_value)
 
 
@@ -538,7 +538,7 @@ def start_post_person(param):
     global PERSON_DATA
     check_person = ID + '||' + param
     if check_person not in PERSON_DATA:
-        _Tools.get_pool().apply_async(post_person, (param,))
+        _Helper.get_pool().apply_async(post_person, (param,))
         PERSON_DATA.append(check_person)
 
 
@@ -623,7 +623,7 @@ def init_passenger():
 
 
 def start_create_booking():
-    _Tools.get_pool().apply_async(create_booking)
+    _Helper.get_pool().apply_async(create_booking)
 
 
 def create_booking():
@@ -770,7 +770,7 @@ TXT_BOOKING_STATUS = 'WAITING'
 
 
 def start_create_payment(payment):
-    _Tools.get_pool().apply_async(create_payment, (payment, ))
+    _Helper.get_pool().apply_async(create_payment, (payment,))
 
 
 def create_payment(payment):
@@ -836,7 +836,7 @@ def tibox_terminal():
 
 
 def start_create_print():
-    _Tools.get_pool().apply_async(create_print)
+    _Helper.get_pool().apply_async(create_print)
 
 
 PRINT_FILE = ""
@@ -880,7 +880,7 @@ def generate_file_print(r):
 
 
 def start_clear_person():
-    _Tools.get_pool().apply_async(clear_person)
+    _Helper.get_pool().apply_async(clear_person)
 
 
 def clear_person():
@@ -905,7 +905,7 @@ def start_confirm_schedule():
     global CONFIRM_SCHEDULE
     check_confirm = ID + '||' + TID
     if check_confirm not in CONFIRM_SCHEDULE:
-        _Tools.get_pool().apply_async(confirm_schedule)
+        _Helper.get_pool().apply_async(confirm_schedule)
         CONFIRM_SCHEDULE.append(check_confirm)
 
 
@@ -935,7 +935,7 @@ MARGIN = '0'
 
 
 def set_rounded_fare(amount):
-    _Tools.get_pool().apply_async(rounded_fare, (amount,))
+    _Helper.get_pool().apply_async(rounded_fare, (amount,))
 
 
 def rounded_fare(amount):
@@ -945,7 +945,7 @@ def rounded_fare(amount):
 
 
 def start_get_airport_name(prefix1, prefix2):
-    _Tools.get_pool().apply_async(get_airport_name, (prefix1, prefix2,))
+    _Helper.get_pool().apply_async(get_airport_name, (prefix1, prefix2,))
 
 
 AIRPORT_DEPART = ''
@@ -973,7 +973,7 @@ def get_airport_name(prefix1, prefix2):
 
 
 def start_send_details_passenger():
-    _Tools.get_pool().apply_async(send_details_passenger)
+    _Helper.get_pool().apply_async(send_details_passenger)
 
 
 def send_details_passenger():
@@ -1090,7 +1090,7 @@ def get_tpid(string):
 
 def log_product():
     global PID
-    PID = _Tools.get_uuid()
+    PID = _Helper.get_uuid()
     _url = BACKEND_URL + 'sync/product'
     '''
     :param param:
@@ -1110,7 +1110,7 @@ def log_product():
         'status': 0
     }
     _DAO.insert_product(_param)
-    _param["createdAt"] = _Tools.now()
+    _param["createdAt"] = _Helper.now()
     status, response = _NetworkAccess.post_to_url(url=_url, param=_param)
     if status == 200 and response['id'] == _param['pid']:
         _param['key'] = _param['pid']
@@ -1167,7 +1167,7 @@ TRX_ID = None
 def save_trx_local(card_no, payment_method, payment_note):
     global TRX_ID
     if TRX_ID is None:
-        TRX_ID = _Tools.get_uuid()
+        TRX_ID = _Helper.get_uuid()
     _key = get_flight_name(FLIGHT_NO_DEPART).split()[0]
     _param = {
         'trxid': TRX_ID,
@@ -1231,7 +1231,7 @@ def save_trx_server(_param):
     _url = BACKEND_URL + 'sync/transaction'
     if _param['paymentType'] == 'WALLET':
         _url = BACKEND_URL + 'sync/transaction-wallet'
-    _param['createdAt'] = _Tools.now()
+    _param['createdAt'] = _Helper.now()
     status, response = _NetworkAccess.post_to_url(url=_url, param=_param)
     if status == 200 and response['id'] == _param['trxid']:
         _param['key'] = _param['trxid']
@@ -1244,12 +1244,12 @@ def save_trx_server(_param):
 
 def save_receipt_local(r, d):
     param_receipt = {
-        'rid': _Tools.get_uuid(),
+        'rid': _Helper.get_uuid(),
         'bookingCode': BOOKING_CODE,
         'tiboxId': ID,
         'receiptRaw': r,
         'receiptData': d,
-        'createdAt': _Tools.now()
+        'createdAt': _Helper.now()
     }
     if param_receipt['bookingCode'] == '':
         try:

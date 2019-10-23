@@ -4,7 +4,7 @@ import json
 import logging
 from PyQt5.QtCore import QObject, pyqtSignal
 from _cConfig import _ConfigParser, _Global
-from _tTools import _Tools
+from _tTools import _Helper
 from _nNetwork import _NetworkAccess
 import hashlib
 import os
@@ -25,29 +25,29 @@ REPO = 'https://{}:{}@{}/mdd_dev/mandiri-kiosk.git'.format(_Global.REPO_USERNAME
 
 
 def check_init():
-    return _Tools.os_command(command='git init', key='/.git')
+    return _Helper.os_command(command='git init', key='/.git')
 
 
 def check_origin():
-    return _Tools.os_command(command='git remote -v', key=HOST)
+    return _Helper.os_command(command='git remote -v', key=HOST)
 
 
 def add_origin():
     command = 'git remote add origin {}'.format(REPO)
-    return _Tools.os_command(command=command, key='fatal', reverse=True)
+    return _Helper.os_command(command=command, key='fatal', reverse=True)
 
 
 def set_credential():
-    return _Tools.os_command(command='git config credential.helper store', key='error', reverse=True)
+    return _Helper.os_command(command='git config credential.helper store', key='error', reverse=True)
 
 
 def pull(origin='master'):
     command = 'git pull -f origin {}'.format(origin)
-    return _Tools.os_command(command=command, key='error', reverse=True)
+    return _Helper.os_command(command=command, key='error', reverse=True)
 
 
 def start_do_update():
-    _Tools.get_pool().apply_async(do_update)
+    _Helper.get_pool().apply_async(do_update)
 
 
 def do_update():

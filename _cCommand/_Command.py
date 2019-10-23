@@ -6,7 +6,7 @@ import threading
 from time import sleep, time
 from _cConfig import _ConfigParser
 import win32file
-from _tTools import _Tools
+from _tTools import _Helper
 from _cConfig import _Global
 # import win32api
 # import pywintypes
@@ -183,7 +183,7 @@ def send_command_with_handle(param=None, output=None, responding=True, flushing=
     global MI_GUI, MO_ERROR, MO_BALANCE, MO_KA_INFO, MO_REPORT, MO_STATUS
     # LOGGER.debug(('[DEBUG] send_request input: ', param, output))
     # param must be send using join of | char on each line
-    r = _Tools.get_random_chars(length=5, chars='1234567890')
+    r = _Helper.get_random_chars(length=5, chars='1234567890')
     if output is None:
         output = MO_ERROR
         clear_content_of(file=MO_ERROR, pid=r+'|'+param)

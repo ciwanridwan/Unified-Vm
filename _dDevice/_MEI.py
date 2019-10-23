@@ -7,7 +7,7 @@ from _dDAO import _DAO
 import json
 from _tTools import _Tibox
 from _cConfig import _Global
-from _tTools import _Tools
+from _tTools import _Helper
 from time import sleep
 from _sService import _KioskService
 from _nNetwork import _NetworkAccess
@@ -104,7 +104,7 @@ def init_mei():
 
 
 def start_mei_standby_mode():
-    _Tools.get_pool().apply_async(mei_standby_mode)
+    _Helper.get_pool().apply_async(mei_standby_mode)
 
 
 def mei_standby_mode():
@@ -114,7 +114,7 @@ def mei_standby_mode():
 
 
 def start_disconnect_mei():
-    _Tools.get_pool().apply_async(disconnect_mei)
+    _Helper.get_pool().apply_async(disconnect_mei)
 
 
 EXIT_KEY1 = 'COMPLETE'
@@ -136,7 +136,7 @@ def disconnect_mei():
         return
     else:
 
-        r = '['+_Tools.get_random_chars(5, '1234567890')+']'
+        r = '[' + _Helper.get_random_chars(5, '1234567890') + ']'
         try:
             if OPEN_STATUS is True:
                 while True:
@@ -164,7 +164,7 @@ def disconnect_mei():
 def log_book_cash():
     # global IS_SAVED
     param = {
-        'csid': _Tools.get_uuid(),
+        'csid': _Helper.get_uuid(),
         'pid': _Tibox.PID,
         'tid': _Tibox.TID,
         'amount': COLLECTED_CASH
@@ -178,12 +178,12 @@ def log_book_cash():
 
 
 def start_accept_mei():
-    _Tools.get_pool().apply_async(accept_mei)
+    _Helper.get_pool().apply_async(accept_mei)
 
 
 def accept_mei(mode=None):
     global COLLECTED_CASH, CASH_HISTORY, IS_RETURNED, IS_ACCEPTING, IS_PAID, IS_STANDBY_MODE, OPEN_STATUS
-    r = '['+_Tools.get_random_chars(5, '1234567890')+']'
+    r = '[' + _Helper.get_random_chars(5, '1234567890') + ']'
     try:
         _Command.get_response_with_handle(out=_Command.MO_BALANCE, module='MEI_Accept_Re-Init'+r, flush=True)
         if OPEN_STATUS is False:
@@ -273,7 +273,7 @@ GRAB_KEY = 'DocumentEvent|ESCROWED'
 def handling_cash():
     global COLLECTED_CASH, OPEN_STATUS
     latency = []
-    r = '['+_Tools.get_random_chars(5, '1234567890')+']'
+    r = '[' + _Helper.get_random_chars(5, '1234567890') + ']'
     while True:
         # Disabling Flushing GRAB_KEY in Stacking
         # response, result, timestamp = _Command.get_response_with_handle(out=_Command.MO_REPORT,
@@ -305,7 +305,7 @@ DIRECT_PRICE_AMOUNT = 0
 
 
 def start_set_direct_price(price):
-    _Tools.get_pool().apply_async(set_direct_price, (price,))
+    _Helper.get_pool().apply_async(set_direct_price, (price,))
 
 
 def set_direct_price(price):
@@ -322,7 +322,7 @@ def handling_cash2():
     else:
         _amount = int(_Tibox.ROUNDED_FARE)
     t = 0
-    r = '['+_Tools.get_random_chars(5, '1234567890')+']'
+    r = '[' + _Helper.get_random_chars(5, '1234567890') + ']'
     # previous_cash_in = CASH_HISTORY[-1] if len(CASH_HISTORY) > 1 else '0'
     LOGGER.info('START COUNTING {} =========================================================='.format(r))
     while True:
@@ -391,7 +391,7 @@ def handling_cash55():
     global COLLECTED_CASH, OPEN_STATUS, CASH_HISTORY, MODE_55_STORE
     latency3 = []
     t = 0
-    r = '['+_Tools.get_random_chars(5, '1234567890')+']'
+    r = '[' + _Helper.get_random_chars(5, '1234567890') + ']'
     if DIRECT_PRICE_MODE is True:
         _amount = DIRECT_PRICE_AMOUNT
     else:
@@ -452,7 +452,7 @@ def handling_cash55():
 
 
 def start_dis_accept_mei():
-    _Tools.get_pool().apply_async(dis_accept_mei)
+    _Helper.get_pool().apply_async(dis_accept_mei)
 
 
 def dis_accept_mei():
@@ -485,7 +485,7 @@ def dis_accept_mei():
 
 
 def start_stack_mei():
-    _Tools.get_pool().apply_async(stack_mei)
+    _Helper.get_pool().apply_async(stack_mei)
 
 
 def stack_mei(file_output=_Command.MO_REPORT):
@@ -519,7 +519,7 @@ def stack_mei(file_output=_Command.MO_REPORT):
 def handling_stack_cash(res):
     global CASH_HISTORY, CANCEL_STORE_ES
     t = 0
-    r = '['+_Tools.get_random_chars(5, '1234567890')+']'
+    r = '[' + _Helper.get_random_chars(5, '1234567890') + ']'
     while True:
         try:
             _response, _result = _Command.get_response_with_handle(out=_Command.MO_REPORT,
@@ -545,7 +545,7 @@ def handling_stack_cash(res):
 
 
 def start_return_mei():
-    _Tools.get_pool().apply_async(return_mei)
+    _Helper.get_pool().apply_async(return_mei)
 
 
 def return_mei(file_output=_Command.MO_REPORT):
@@ -569,7 +569,7 @@ def return_mei(file_output=_Command.MO_REPORT):
 
 
 def start_store_es_mei():
-    _Tools.get_pool().apply_async(store_es_mei)
+    _Helper.get_pool().apply_async(store_es_mei)
 
 
 GRAB_KEY_STORE = 'STACKED_CUSTOMER_TO_ESCROW_STORAGE'
@@ -613,7 +613,7 @@ ESCAPE_OUT_OF_SERVICE = 'OUT_OF_SERVICE'
 def handling_storing_cash():
     global CANCEL_STORE_ES, IS_PAID, MODE_55_STORE, MODE_55, IS_STORING, DIRECT_PRICE_AMOUNT, DIRECT_PRICE_MODE
     t = 0
-    r = '['+_Tools.get_random_chars(5, '1234567890')+']'
+    r = '[' + _Helper.get_random_chars(5, '1234567890') + ']'
 
     while True:
         if MODE_55 is False:
@@ -671,7 +671,7 @@ IS_RETURNED = False
 
 
 def start_return_es_mei():
-    _Tools.get_pool().apply_async(return_es_mei)
+    _Helper.get_pool().apply_async(return_es_mei)
 
 
 def return_es_mei():
@@ -710,7 +710,7 @@ def handling_return_es():
     global COLLECTED_CASH, CASH_HISTORY, IS_RETURNING, IS_STANDBY_MODE, MODE_55
     IS_RETURNING = True
     t = 0
-    r = '['+_Tools.get_random_chars(5, '1234567890')+']'
+    r = '[' + _Helper.get_random_chars(5, '1234567890') + ']'
     while True:
         try:
             response, result = _Command.get_response_with_handle(out=_Command.MO_REPORT,
@@ -736,7 +736,7 @@ def handling_return_es():
 
 
 def start_dispense_cou_mei():
-    _Tools.get_pool().apply_async(dispense_cou_mei)
+    _Helper.get_pool().apply_async(dispense_cou_mei)
 
 
 def dispense_cou_mei():
@@ -761,7 +761,7 @@ def dispense_cou_mei():
 
 
 def start_float_down_cou_mei():
-    _Tools.get_pool().apply_async(float_down_cou_mei)
+    _Helper.get_pool().apply_async(float_down_cou_mei)
 
 
 def float_down_cou_mei():
@@ -786,7 +786,7 @@ def float_down_cou_mei():
 
 
 def start_dispense_val_mei(amount):
-    _Tools.get_pool().apply_async(dispense_val_mei, (amount,))
+    _Helper.get_pool().apply_async(dispense_val_mei, (amount,))
 
 
 def dispense_val_mei(amount):
@@ -811,7 +811,7 @@ def dispense_val_mei(amount):
 
 
 def start_float_down_all_mei():
-    _Tools.get_pool().apply_async(float_down_all_mei)
+    _Helper.get_pool().apply_async(float_down_all_mei)
 
 
 def float_down_all_mei():
@@ -836,7 +836,7 @@ def float_down_all_mei():
 
 
 def start_get_return_note():
-    _Tools.get_pool().apply_async(get_return_note)
+    _Helper.get_pool().apply_async(get_return_note)
 
 
 def get_return_note():
@@ -873,7 +873,7 @@ def get_total_cash():
 
 
 def start_mei_create_payment(payment):
-    _Tools.get_pool().apply_async(mei_create_payment, (payment, ))
+    _Helper.get_pool().apply_async(mei_create_payment, (payment,))
 
 
 def mei_create_payment(payment):

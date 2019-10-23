@@ -5,7 +5,7 @@ from PyQt5.QtCore import QObject, pyqtSignal
 from _nNetwork import _NetworkAccess
 from _dDevice import _QPROX
 from _cConfig import _Global
-from _tTools import _Tools
+from _tTools import _Helper
 from time import sleep
 from _cCommand import _Command
 
@@ -28,7 +28,7 @@ TOPUP_TID = _Global.TID
 
 
 def start_define_topup_slot_bni():
-    _Tools.get_pool().apply_async(define_topup_slot_bni)
+    _Helper.get_pool().apply_async(define_topup_slot_bni)
 
 
 def define_topup_slot_bni():
@@ -47,7 +47,7 @@ def define_topup_slot_bni():
 
 
 def start_do_topup_bni(slot):
-    _Tools.get_pool().apply_async(do_topup_bni, (int(slot), ))
+    _Helper.get_pool().apply_async(do_topup_bni, (int(slot),))
 
 
 def do_topup_bni(slot=1, force=False):
@@ -94,12 +94,12 @@ def do_topup_bni(slot=1, force=False):
 
 def do_reset_pending_master():
     slot = 1
-    _Tools.get_pool().apply_async(reset_pending_balance, (slot, ))
+    _Helper.get_pool().apply_async(reset_pending_balance, (slot,))
 
 
 def do_reset_pending_slave():
     slot = 2
-    _Tools.get_pool().apply_async(reset_pending_balance, (slot, ))
+    _Helper.get_pool().apply_async(reset_pending_balance, (slot,))
 
 
 def reset_pending_balance(slot=1):
@@ -263,12 +263,12 @@ def reversal_balance(_param, bank='BNI', mode='TOPUP'):
 
 def start_master_activation_bni():
     slot = 1
-    _Tools.get_pool().apply_async(refill_zero_bni, (slot,))
+    _Helper.get_pool().apply_async(refill_zero_bni, (slot,))
 
 
 def start_slave_activation_bni():
     slot = 2
-    _Tools.get_pool().apply_async(refill_zero_bni, (slot,))
+    _Helper.get_pool().apply_async(refill_zero_bni, (slot,))
 
 
 def refill_zero_bni(slot=1):
