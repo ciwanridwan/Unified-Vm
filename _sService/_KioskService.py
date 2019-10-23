@@ -46,20 +46,6 @@ class KioskSignalHandler(QObject):
 
 K_SIGNDLER = KioskSignalHandler()
 LOGGER = logging.getLogger()
-VERSION = open(os.path.join(os.getcwd(), 'kiosk.ver'), 'r').read().strip()
-KIOSK_NAME = "---"
-KIOSK_STATUS = 'ONLINE'
-KIOSK_SETTING = []
-KIOSK_MARGIN = 3
-KIOSK_ADMIN = 1500
-PRINTER_STATUS = "NORMAL"
-BACKEND_URL = _ConfigParser.get_value('TERMINAL', 'backend^server')
-PAYMENTCANCEL = _ConfigParser.get_set_value('TERMINAL', 'payment^cancel', '1')
-PAYMENTCONFIRM = _ConfigParser.get_set_value('TERMINAL', 'payment^confirm', '0')
-IS_PIR = True if _ConfigParser.get_set_value('TERMINAL', 'pir^usage', '0') == '1' else False
-
-
-KIOSK_REAL_STATUS = 'ONLINE'
 
 
 def get_kiosk_status():
@@ -67,56 +53,89 @@ def get_kiosk_status():
 
 
 def kiosk_status():
-    global KIOSK_REAL_STATUS, KIOSK_NAME, KIOSK_ADMIN, KIOSK_SETTING, KIOSK_MARGIN
     if _Tools.is_online(source='kiosk_status') is False:
-        KIOSK_SETTING = _DAO.init_kiosk()[0]
-        KIOSK_ADMIN = KIOSK_SETTING['defaultAdmin']
+        _Global.KIOSK_SETTING = _DAO.init_kiosk()[0]
+        _Global.KIOSK_ADMIN = _Global.KIOSK_SETTING['defaultAdmin']
         if _Global.TEST_MODE is True:
-            KIOSK_ADMIN = 1
-        KIOSK_MARGIN = KIOSK_SETTING['defaultMargin']
-        KIOSK_NAME = KIOSK_SETTING['name']
-        KIOSK_REAL_STATUS = 'OFFLINE'
+            _Global.KIOSK_ADMIN = 1
+        _Global.KIOSK_MARGIN = _Global.KIOSK_SETTING['defaultMargin']
+        _Global.KIOSK_NAME = _Global.KIOSK_SETTING['name']
+        _Global.KIOSK_REAL_STATUS = 'OFFLINE'
     K_SIGNDLER.SIGNAL_GET_KIOSK_STATUS.emit(json.dumps({
-        'name': KIOSK_NAME,
-        'version': VERSION,
-        'status': KIOSK_STATUS,
-        'real_status': KIOSK_REAL_STATUS,
+        'name': _Global.KIOSK_NAME,
+        'version': _Global.VERSION,
+        'status': _Global.KIOSK_STATUS,
+        'real_status': _Global.KIOSK_REAL_STATUS,
         'tid': _Global.TID
     }))
 
 
 def update_kiosk_status(r):
-    global KIOSK_STATUS, KIOSK_SETTING, KIOSK_NAME, KIOSK_ADMIN, KIOSK_MARGIN, PRINTER_STATUS
-    KIOSK_STATUS = 'UNAUTHORIZED'
+    _Global.KIOSK_STATUS = 'UNAUTHORIZED'
     try:
-        PRINTER_STATUS = get_printer_status_v2()
-        LOGGER.info(("get_printer_status : ", PRINTER_STATUS))
-        if len(r['data']) == 0:
-            KIOSK_SETTING = _DAO.init_kiosk()[0]
-            KIOSK_ADMIN = KIOSK_SETTING['defaultAdmin']
-            KIOSK_MARGIN = KIOSK_SETTING['defaultMargin']
-            # if _Global.TID == '110322':
-            #     KIOSK_ADMIN = 0
-            KIOSK_NAME = KIOSK_SETTING['name']
-            if PRINTER_STATUS == "NORMAL":
-                KIOSK_STATUS = 'ONLINE'
+        _Global.PRINTER_STATUS = get_printer_status_v2()
+        LOGGER.info(("get_printer_status : ", _Global.PRINTER_STATUS))
+        if len(r['data']['kiosk']) == 0:
+            _Global.KIOSK_SETTING = _DAO.init_kiosk()[0]
+            _Global.KIOSK_ADMIN = _Global.KIOSK_SETTING['defaultAdmin']
+            _Global.KIOSK_MARGIN = _Global.KIOSK_SETTING['defaultMargin']
+            _Global.KIOSK_NAME = _Global.KIOSK_SETTING['name']
+            if _Global.PRINTER_STATUS == "NORMAL":
+                _Global.KIOSK_STATUS = 'ONLINE'
         else:
-            KIOSK_SETTING = r['data'][0]
-            KIOSK_NAME = KIOSK_SETTING['name']
-            KIOSK_MARGIN = int(KIOSK_SETTING['defaultMargin'])
-            KIOSK_ADMIN = int(KIOSK_SETTING['defaultAdmin'])
-            # if _Global.TID == '110322':
-            #     KIOSK_ADMIN = 0
-            if r['result'] == 'OK' and PRINTER_STATUS == "NORMAL":
-                KIOSK_STATUS = 'ONLINE'
+            _Global.KIOSK_SETTING = r['data']['kiosk']
+            _Global.KIOSK_NAME = _Global.KIOSK_SETTING['name']
+            _Global.KIOSK_MARGIN = int(_Global.KIOSK_SETTING['defaultMargin'])
+            _Global.KIOSK_ADMIN = int(_Global.KIOSK_SETTING['defaultAdmin'])
+            if r['result'] == 'OK' and _Global.PRINTER_STATUS == "NORMAL":
+                _Global.KIOSK_STATUS = 'ONLINE'
+                _Global.PAYMENT_SETTING = r['data']['payment']
+                _Global.THEME_SETTING = r['data']['theme']
+                define_theme(_Global.THEME_SETTING)
             _DAO.flush_table('Terminal')
             # _DAO.flush_table('Transactions', ' tid <> "' + KIOSK_SETTING['tid'] + '"')
-            _DAO.update_kiosk_data(KIOSK_SETTING)
+            _DAO.update_kiosk_data(_Global.KIOSK_SETTING)
     except Exception as e:
         LOGGER.warning(("update_kiosk_status : ", str(e)))
     finally:
         kiosk_status()
-        pprint(KIOSK_SETTING)
+        pprint(_Global.KIOSK_SETTING)
+
+
+def define_theme(d):
+    _Global.THEME_NAME = d['name']
+    config_js = sys.path[0] + '/_qQml/config.js'
+    content_js = ''
+    if type(d['master_logo']) != list:
+        d['master_logo'] = [d['master_logo']]
+    master_logo = []
+    for m in d['master_logo']:
+        download, image = _NetworkAccess.download_image(m, os.getcwd() + '/_qQml/source/logo')
+        if download is True:
+            master_logo.append(image)
+        else:
+            continue
+    content_js += "var master_logo =" + json.dumps(master_logo) + ";" + os.linesep
+    partner_logos = []
+    for p in d['partner_logos']:
+        download, image = _NetworkAccess.download_image(p, os.getcwd() + '/_qQml/source/logo')
+        if download is True:
+            partner_logos.append(image)
+        else:
+            continue
+    content_js += "var partner_logos = " + json.dumps(partner_logos) + ";" + os.linesep
+    backgrounds = []
+    for b in d['backgrounds']:
+        download, image = _NetworkAccess.download_image(b, os.getcwd() + '/_qQml/source/background')
+        if download is True:
+            backgrounds.append(image)
+        else:
+            continue
+    content_js += "var backgrounds = " + json.dumps(backgrounds) + ";" + os.linesep
+    with open(config_js, 'w+') as config_qml:
+        config_qml.write(content_js)
+        config_qml.close()
+    LOGGER.info(('define_theme : ', config_js, content_js))
 
 
 def get_kiosk_price_setting():
@@ -124,14 +143,13 @@ def get_kiosk_price_setting():
 
 
 def kiosk_price_setting():
-    global KIOSK_ADMIN
     if _Global.TEST_MODE is True:
-        KIOSK_ADMIN = 1
+        _Global.KIOSK_ADMIN = 1
     K_SIGNDLER.SIGNAL_PRICE_SETTING.emit(json.dumps({
-        'margin': KIOSK_MARGIN,
-        'adminFee': KIOSK_ADMIN,
-        'cancelAble': PAYMENTCANCEL,
-        'confirmAble': PAYMENTCONFIRM
+        'margin': _Global.KIOSK_MARGIN,
+        'adminFee': _Global.KIOSK_ADMIN,
+        'cancelAble': _Global.PAYMENT_CANCEL,
+        'confirmAble': _Global.PAYMENT_CONFIRM
     }))
 
 
@@ -163,7 +181,7 @@ def get_gui_version():
 
 
 def gui_version():
-    K_SIGNDLER.SIGNAL_GET_GUI_VERSION.emit(VERSION)
+    K_SIGNDLER.SIGNAL_GET_GUI_VERSION.emit(_Global.VERSION)
 
 
 def get_kiosk_name():
@@ -171,7 +189,7 @@ def get_kiosk_name():
 
 
 def kiosk_name():
-    K_SIGNDLER.SIGNAL_GET_KIOSK_NAME.emit(KIOSK_NAME)
+    K_SIGNDLER.SIGNAL_GET_KIOSK_NAME.emit(_Global.KIOSK_NAME)
 
 
 def update_machine_stat(_url):
@@ -202,8 +220,10 @@ def get_machine_summary():
                                                    'date("now") ')
         result['cash_trx'] = _DAO.get_total_count('Transactions', ' paymentType = "MEI" ')
         result['edc_trx'] = _DAO.get_total_count('Transactions', ' paymentType = "EDC" ')
-        result['edc_not_settle'] = _DAO.custom_query(' SELECT sum(amount) as total FROM Settlement WHERE status="EDC|OPEN" ')
-        result['cash_available'] = _DAO.custom_query(' SELECT sum(amount) as total FROM Cash WHERE collectedAt is null ')
+        result['edc_not_settle'] = _DAO.custom_query(' SELECT sum(amount) as total FROM Settlement '
+                                                     'WHERE status="EDC|OPEN" ')
+        result['cash_available'] = _DAO.custom_query(' SELECT sum(amount) as total FROM Cash '
+                                                     'WHERE collectedAt is null ')
         LOGGER.info(('get_machine_summary', str(result)))
         K_SIGNDLER.SIGNAL_GET_MACHINE_SUMMARY.emit(json.dumps(result))
     except Exception as e:
@@ -235,17 +255,18 @@ def machine_summary():
         'bca_wallet': str(_Global.BCA_WALLET),
         'dki_wallet': str(_Global.DKI_WALLET),
         'last_sync': str(LAST_SYNC),
-        'online_status': str(KIOSK_STATUS),
+        'online_status': str(_Global.KIOSK_STATUS),
         'mandiri_active': str(_Global.MANDIRI_ACTIVE),
         'bni_active': str(_Global.BNI_ACTIVE),
         'service_ver': str(_Global.SERVICE_VERSION),
+        'theme': str(_Global.THEME_NAME),
         # 'bni_sam1_no': str(_Global.BNI_SAM_1_NO),
         # 'bni_sam2_no': str(_Global.BNI_SAM_2_NO),
     }
     try:
         pythoncom.CoInitialize()
         COMP = wmi.WMI()
-        summary['gui_version'] = VERSION
+        summary['gui_version'] = _Global.VERSION
         summary["c_space"] = get_disk_space("C:")
         summary["d_space"] = get_disk_space("D:")
         summary["ram_space"] = get_ram_space()
@@ -347,10 +368,9 @@ def post_gui_version():
 
 
 def gui_info():
-    global VERSION
     try:
         # NO-NEED Budled with Kiosk Status
-        status, response = _NetworkAccess.post_to_url('box/guiInfo', {"gui_version": str(VERSION)})
+        status, response = _NetworkAccess.post_to_url('box/guiInfo', {"gui_version": str(_Global.VERSION)})
         LOGGER.info(('gui_info: ', str(status), str(response)))
     except Exception as e:
         LOGGER.warning(('gui_info: ', e))
@@ -500,7 +520,7 @@ def post_cash_collection(l, t):
             "user": operator,
             "updatedAt": t
         }
-        status, response = _NetworkAccess.post_to_url(BACKEND_URL + 'collect/cash', param)
+        status, response = _NetworkAccess.post_to_url(_Global.BACKEND_URL + 'collect/cash', param)
         LOGGER.info(("post_cash_collection : ", response))
     except Exception as e:
         LOGGER.warning(("post_cash_collection : ", e))
@@ -572,7 +592,7 @@ def complete_booking_data(p):
         'booking_code': p['bookingCode']
     }
     if DUMMY_PROCESS is False:
-        _url = BACKEND_URL + 'booking/status'
+        _url = _Global.BACKEND_URL + 'booking/status'
         status, response = _NetworkAccess.post_to_url(url=_url, param=param_send)
         if status == 200 and response['result'] == 'OK':
             PREV_TIBOX_ID = response['data']['bk_id']
@@ -639,9 +659,8 @@ def start_get_admin_key():
 
 
 def get_admin_key():
-    tid = _ConfigParser.get_value('TERMINAL', 'tid')
     salt = datetime.datetime.now().strftime("%Y%m%d")
-    K_SIGNDLER.SIGNAL_ADMIN_KEY.emit(tid+salt)
+    K_SIGNDLER.SIGNAL_ADMIN_KEY.emit(_Global.TID+salt)
 
 
 def start_check_wallet(amount):
@@ -651,7 +670,7 @@ def start_check_wallet(amount):
 def check_wallet(amount):
     try:
         param = {"amount": int(amount)}
-        status, response = _NetworkAccess.post_to_url(BACKEND_URL + 'task/check-wallet', param)
+        status, response = _NetworkAccess.post_to_url(_Global.BACKEND_URL + 'task/check-wallet', param)
         LOGGER.info(("check_wallet : ", response))
         if status == 200 and response is not None:
             K_SIGNDLER.SIGNAL_WALLET_CHECK.emit(json.dumps(response))
@@ -765,7 +784,7 @@ def store_transaction_global(param, retry=False):
             if len(check_prod) == 0:
                 _DAO.insert_product(_param)
 
-            status, response = _NetworkAccess.post_to_url(url=BACKEND_URL + 'sync/product', param=_param)
+            status, response = _NetworkAccess.post_to_url(url=_Global.BACKEND_URL + 'sync/product', param=_param)
             if status == 200 and response['id'] == _param['pid']:
                 _param['key'] = _param['pid']
                 _DAO.mark_sync(param=_param, _table='Product', _key='pid')
@@ -825,7 +844,7 @@ def store_transaction_global(param, retry=False):
                 _DAO.insert_transaction(__param)
                 K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|STORE_TRX-' + _trxid)
                 __param['createdAt'] = _Tools.now()
-                status, response = _NetworkAccess.post_to_url(url=BACKEND_URL + 'sync/transaction-topup', param=__param)
+                status, response = _NetworkAccess.post_to_url(url=_Global.BACKEND_URL + 'sync/transaction-topup', param=__param)
                 if status == 200 and response['id'] == __param['trxid']:
                     __param['key'] = __param['trxid']
                     _DAO.mark_sync(param=__param, _table='Transactions', _key='trxid')
@@ -894,7 +913,7 @@ def store_topup_transaction(param):
         }
         _DAO.insert_topup_record(_param)
         _param['createdAt'] = _Tools.now()
-        status, response = _NetworkAccess.post_to_url(url=BACKEND_URL + 'sync/topup-records', param=_param)
+        status, response = _NetworkAccess.post_to_url(url=_Global.BACKEND_URL + 'sync/topup-records', param=_param)
         LOGGER.info(('sync store_topup_transaction', str(_param), str(status), str(response)))
         if status == 200 and response['id'] == _param['rid']:
             _param['key'] = _param['rid']
@@ -933,7 +952,8 @@ def reset_db_record():
         time.sleep(1)
         _DAO.flush_table('Settlement', ' tid <> "'+_Global.TID+'" AND status NOT LIKE "%EDC%" ')
         time.sleep(1)
-        _DAO.custom_update(' UPDATE Settlement SET status = "EDC|VOID" WHERE status LIKE "%EDC%" AND tid <> "'+_Global.TID+'" ')
+        _DAO.custom_update(' UPDATE Settlement SET status = "EDC|VOID" '
+                           'WHERE status LIKE "%EDC%" AND tid <> "'+_Global.TID+'" ')
         time.sleep(1)
         _DAO.flush_table('Cash', ' tid <> "'+_Global.TID+'" ')
         # time.sleep(1)
@@ -971,3 +991,4 @@ def house_keeping(age_month=1):
                 if stat.st_ctime < expired:
                     os.remove(file)
     LOGGER.info(('house_keeping', str(age_month), 'FINISH'))
+    return 'HOUSE_KEEPING_' + str(age_month) + 'SUCCESS'

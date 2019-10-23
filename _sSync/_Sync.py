@@ -391,6 +391,10 @@ def handle_tasks(tasks):
             __hash = task['taskName'].split('|')[1]
             result = _UserService.reset_offline_user(__hash)
             update_task(task, result)
+        if 'HOUSE_KEEPING_' in task['taskName']:
+            age_month = int(task['taskName'][-1])
+            result = _KioskService.house_keeping(age_month)
+            update_task(task, result)
     # TODO Add Another TaskType
 
 

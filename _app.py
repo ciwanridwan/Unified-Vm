@@ -21,7 +21,7 @@ from _dDevice import _MEI
 from _dDevice import _QPROX
 from _dDevice import _CD
 from _tTools import _TicketTool
-from _dDevice import  _Printer
+from _dDevice import _Printer
 from _cCommand import _Command
 from time import sleep
 from _tTools import _CheckIn
@@ -30,7 +30,6 @@ from _sService import _ProductService
 from _dDevice import _GRG
 from _sService import _TopupService
 from _sService import _SettlementService
-
 
 print("""
     Kiosk Ver: """ + _KioskService.VERSION + """
@@ -50,466 +49,559 @@ class SlotHandler(QObject):
     def set_language(string):
         print("pyt : selected_language ", string)
         translator.load(path + string)
+
     set_language = pyqtSlot(str)(set_language)
 
     @staticmethod
     def get_file_list(dir_):
         _KioskService.get_file_list(dir_=dir_)
+
     get_file_list = pyqtSlot(str)(get_file_list)
 
     @staticmethod
     def post_tvc_log(media):
         _KioskService.post_tvc_log(media)
+
     post_tvc_log = pyqtSlot(str)(post_tvc_log)
 
     @staticmethod
     def get_gui_version():
         _KioskService.get_gui_version()
+
     get_gui_version = pyqtSlot()(get_gui_version)
 
     @staticmethod
     def get_kiosk_name():
         _KioskService.get_kiosk_name()
+
     get_kiosk_name = pyqtSlot()(get_kiosk_name)
 
     @staticmethod
     def post_gui_version():
         _KioskService.post_gui_version()
+
     post_gui_version = pyqtSlot()(post_gui_version)
 
     @staticmethod
     def set_tvc_player(command):
         set_tvc_player(command)
+
     set_tvc_player = pyqtSlot(str)(set_tvc_player)
 
     @staticmethod
     def start_set_plan(param):
         _Tibox.start_set_plan(param)
+
     start_set_plan = pyqtSlot(str)(start_set_plan)
 
     @staticmethod
     def start_create_schedule():
         _Tibox.start_create_schedule()
+
     start_create_schedule = pyqtSlot()(start_create_schedule)
 
     @staticmethod
     def start_create_chart(param):
         _Tibox.start_create_chart(param)
+
     start_create_chart = pyqtSlot(str)(start_create_chart)
 
     @staticmethod
     def start_post_person(param):
         _Tibox.start_post_person(param)
+
     start_post_person = pyqtSlot(str)(start_post_person)
 
     @staticmethod
     def start_create_booking():
         _Tibox.start_create_booking()
+
     start_create_booking = pyqtSlot()(start_create_booking)
 
     @staticmethod
     def start_create_payment(amount):
         _Tibox.start_create_payment(payment=amount)
+
     start_create_payment = pyqtSlot(str)(start_create_payment)
 
     @staticmethod
     def start_create_print():
         _Tibox.start_create_print()
+
     start_create_print = pyqtSlot()(start_create_print)
 
     @staticmethod
     def start_clear_person():
         _Tibox.start_clear_person()
+
     start_clear_person = pyqtSlot()(start_clear_person)
 
     @staticmethod
     def create_sale_edc(amount):
         _EDC.create_sale_edc(amount=amount)
+
     create_sale_edc = pyqtSlot(str)(create_sale_edc)
 
     @staticmethod
     def start_get_device_status():
         _KioskService.start_get_device_status()
+
     start_get_device_status = pyqtSlot()(start_get_device_status)
 
     @staticmethod
     def start_confirm_schedule():
         _Tibox.start_confirm_schedule()
+
     start_confirm_schedule = pyqtSlot()(start_confirm_schedule)
 
     @staticmethod
     def start_accept_mei():
         _MEI.start_accept_mei()
+
     start_accept_mei = pyqtSlot()(start_accept_mei)
 
     @staticmethod
     def start_dis_accept_mei():
         _MEI.start_dis_accept_mei()
+
     start_dis_accept_mei = pyqtSlot()(start_dis_accept_mei)
 
     @staticmethod
     def start_stack_mei():
         _MEI.start_stack_mei()
+
     start_stack_mei = pyqtSlot()(start_stack_mei)
 
     @staticmethod
     def start_return_mei():
         _MEI.start_return_mei()
+
     start_return_mei = pyqtSlot()(start_return_mei)
 
     @staticmethod
     def start_store_es_mei():
         _MEI.start_store_es_mei()
+
     start_store_es_mei = pyqtSlot()(start_store_es_mei)
 
     @staticmethod
     def start_return_es_mei():
         _MEI.start_return_es_mei()
+
     start_return_es_mei = pyqtSlot()(start_return_es_mei)
 
     @staticmethod
     def start_dispense_cou_mei():
         _MEI.start_dispense_cou_mei()
+
     start_dispense_cou_mei = pyqtSlot()(start_dispense_cou_mei)
 
     @staticmethod
     def start_float_down_cou_mei():
         _MEI.start_float_down_cou_mei()
+
     start_float_down_cou_mei = pyqtSlot()(start_float_down_cou_mei)
 
     @staticmethod
     def start_dispense_val_mei(amount):
         _MEI.start_dispense_val_mei(amount=amount)
+
     start_dispense_val_mei = pyqtSlot(str)(start_dispense_val_mei)
 
     @staticmethod
     def start_float_down_all_mei():
         _MEI.start_float_down_all_mei()
+
     start_float_down_all_mei = pyqtSlot()(start_float_down_all_mei)
 
     @staticmethod
     def start_get_return_note():
         _MEI.start_get_return_note()
+
     start_get_return_note = pyqtSlot()(start_get_return_note)
 
     @staticmethod
     def start_init_qprox():
         _QPROX.start_init_qprox()
+
     start_init_qprox = pyqtSlot()(start_init_qprox)
 
     @staticmethod
     def start_debit_qprox(amount):
         _QPROX.start_debit_qprox(amount)
+
     start_debit_qprox = pyqtSlot(str)(start_debit_qprox)
 
     @staticmethod
     def start_auth_ka():
         _QPROX.start_auth_ka()
+
     start_auth_ka = pyqtSlot()(start_auth_ka)
 
     @staticmethod
     def start_check_balance():
         _QPROX.start_check_balance()
+
     start_check_balance = pyqtSlot()(start_check_balance)
 
     @staticmethod
     def start_top_up_mandiri(amount, trxid):
         _QPROX.start_top_up_mandiri(amount, trxid)
+
     start_top_up_mandiri = pyqtSlot(str, str)(start_top_up_mandiri)
 
     @staticmethod
     def start_ka_info():
         _QPROX.start_ka_info()
+
     start_ka_info = pyqtSlot()(start_ka_info)
 
     @staticmethod
     def start_create_online_info():
         _QPROX.start_create_online_info()
+
     start_create_online_info = pyqtSlot()(start_create_online_info)
 
     @staticmethod
     def start_init_online():
         _QPROX.start_init_online()
+
     start_init_online = pyqtSlot()(start_init_online)
 
     @staticmethod
     def set_rounded_fare(amount):
         _Tibox.set_rounded_fare(amount=amount)
+
     set_rounded_fare = pyqtSlot(str)(set_rounded_fare)
 
     @staticmethod
     def start_disconnect_mei():
         _MEI.start_disconnect_mei()
+
     start_disconnect_mei = pyqtSlot()(start_disconnect_mei)
 
     @staticmethod
     def start_disconnect_edc():
         _EDC.start_disconnect_edc()
+
     start_disconnect_edc = pyqtSlot()(start_disconnect_edc)
 
     @staticmethod
     def start_disconnect_qprox():
         _QPROX.start_disconnect_qprox()
+
     start_disconnect_qprox = pyqtSlot()(start_disconnect_qprox)
 
     @staticmethod
     def start_get_airport_name(prefix1, prefix2):
         _Tibox.start_get_airport_name(prefix1=prefix1, prefix2=prefix2)
+
     start_get_airport_name = pyqtSlot(str, str)(start_get_airport_name)
 
     @staticmethod
     def start_generate(mode):
         _TicketTool.start_generate(use=mode)
+
     start_generate = pyqtSlot(str)(start_generate)
 
     @staticmethod
     def start_default_print(path):
         _Printer.start_default_print(path)
+
     start_default_print = pyqtSlot(str)(start_default_print)
 
     @staticmethod
     def start_set_payment(payment):
         _TicketTool.start_set_payment(payment=payment)
+
     start_set_payment = pyqtSlot(str)(start_set_payment)
 
     @staticmethod
     def start_send_details_passenger():
         _Tibox.start_send_details_passenger()
+
     start_send_details_passenger = pyqtSlot()(start_send_details_passenger)
 
     @staticmethod
     def start_sort_flight_data(key, method):
         _Tibox.start_sort_flight_data(key=key, method=method)
+
     start_sort_flight_data = pyqtSlot(str, str)(start_sort_flight_data)
 
     @staticmethod
     def get_kiosk_status():
         _KioskService.get_kiosk_status()
+
     get_kiosk_status = pyqtSlot()(get_kiosk_status)
 
     @staticmethod
     def get_kiosk_price_setting():
         _KioskService.get_kiosk_price_setting()
+
     get_kiosk_price_setting = pyqtSlot()(get_kiosk_price_setting)
 
     @staticmethod
     def start_restart_mdd_service():
         _KioskService.start_restart_mdd_service()
+
     start_restart_mdd_service = pyqtSlot()(start_restart_mdd_service)
 
     @staticmethod
     def start_safely_shutdown(mode):
         safely_shutdown(mode)
+
     start_safely_shutdown = pyqtSlot(str)(start_safely_shutdown)
 
     @staticmethod
     def start_get_cash_data():
         _KioskService.start_get_cash_data()
+
     start_get_cash_data = pyqtSlot()(start_get_cash_data)
 
     @staticmethod
     def start_begin_collect_cash():
         _KioskService.start_begin_collect_cash()
+
     start_begin_collect_cash = pyqtSlot()(start_begin_collect_cash)
 
     @staticmethod
     def start_search_booking(bk):
         _KioskService.start_search_booking(bk)
+
     start_search_booking = pyqtSlot(str)(start_search_booking)
 
     @staticmethod
     def start_reprint(new_status):
         _TicketTool.start_reprint(new_status)
+
     start_reprint = pyqtSlot(str)(start_reprint)
 
     @staticmethod
     def start_recreate_payment(payment):
         _KioskService.start_recreate_payment(payment)
+
     start_recreate_payment = pyqtSlot(str)(start_recreate_payment)
 
     @staticmethod
     def start_mei_create_payment(payment):
         _MEI.start_mei_create_payment(payment)
+
     start_mei_create_payment = pyqtSlot(str)(start_mei_create_payment)
 
     @staticmethod
     def start_idle_mode():
         _Sync.start_idle_mode()
+
     start_idle_mode = pyqtSlot()(start_idle_mode)
 
     @staticmethod
     def stop_idle_mode():
         _Sync.stop_idle_mode()
+
     stop_idle_mode = pyqtSlot()(stop_idle_mode)
 
     @staticmethod
     def start_get_settlement():
         _EDC.start_get_settlement()
+
     start_get_settlement = pyqtSlot()(start_get_settlement)
 
     @staticmethod
     def start_print_global(i, u):
         _TicketTool.start_print_global(input_text=i, use_for=u)
+
     start_print_global = pyqtSlot(str, str)(start_print_global)
 
     @staticmethod
     def start_edc_settlement():
         _EDC.start_edc_settlement()
+
     start_edc_settlement = pyqtSlot()(start_edc_settlement)
 
     @staticmethod
     def start_void_data():
         _EDC.start_void_data()
+
     start_void_data = pyqtSlot()(start_void_data)
 
     @staticmethod
     def start_dummy_edc_receipt():
         _EDC.start_dummy_edc_receipt()
+
     start_dummy_edc_receipt = pyqtSlot()(start_dummy_edc_receipt)
 
     @staticmethod
     def start_check_booking_code(param):
         _CheckIn.start_check_booking_code(param)
+
     start_check_booking_code = pyqtSlot(str)(start_check_booking_code)
 
     @staticmethod
     def start_get_boarding_pass(param):
         _CheckIn.start_get_boarding_pass(param)
+
     start_get_boarding_pass = pyqtSlot(str)(start_get_boarding_pass)
 
     @staticmethod
     def start_get_admin_key():
         _KioskService.start_get_admin_key()
+
     start_get_admin_key = pyqtSlot()(start_get_admin_key)
 
     @staticmethod
     def start_check_wallet(amount):
         _KioskService.start_check_wallet(amount)
+
     start_check_wallet = pyqtSlot(str)(start_check_wallet)
 
     @staticmethod
     def kiosk_get_product_stock():
         _KioskService.kiosk_get_product_stock()
+
     kiosk_get_product_stock = pyqtSlot()(kiosk_get_product_stock)
 
     @staticmethod
     def start_sync_product_stock():
         _Sync.start_sync_product_stock()
+
     start_sync_product_stock = pyqtSlot()(start_sync_product_stock)
 
     @staticmethod
     def start_set_direct_price(price):
         _MEI.start_set_direct_price(price)
+
     start_set_direct_price = pyqtSlot(str)(start_set_direct_price)
 
     @staticmethod
     def start_multiple_eject(attempt, multiply):
         _CD.start_multiple_eject(attempt, multiply)
+
     start_multiple_eject = pyqtSlot(str, str)(start_multiple_eject)
 
     @staticmethod
     def start_store_transaction_global(param):
         _KioskService.start_store_transaction_global(param)
+
     start_store_transaction_global = pyqtSlot(str)(start_store_transaction_global)
 
     @staticmethod
     def start_kiosk_get_topup_amount():
         _KioskService.start_kiosk_get_topup_amount()
+
     start_kiosk_get_topup_amount = pyqtSlot()(start_kiosk_get_topup_amount)
 
     @staticmethod
     def start_get_topup_readiness():
         _QPROX.start_get_topup_readiness()
+
     start_get_topup_readiness = pyqtSlot()(start_get_topup_readiness)
 
     @staticmethod
     def start_sale_print_global():
         _SalePrintTool.start_sale_print_global()
+
     start_sale_print_global = pyqtSlot()(start_sale_print_global)
 
     @staticmethod
     def start_top_up_bni(amount, trxid):
         _QPROX.start_top_up_bni(amount, trxid)
+
     start_top_up_bni = pyqtSlot(str, str)(start_top_up_bni)
 
     @staticmethod
     def start_get_multiple_eject_status():
         _CD.start_get_multiple_eject_status()
+
     start_get_multiple_eject_status = pyqtSlot()(start_get_multiple_eject_status)
 
     @staticmethod
     def create_sale_edc_with_struct_id(amount, trxid):
         _EDC.create_sale_edc_with_struct_id(amount, trxid)
+
     create_sale_edc_with_struct_id = pyqtSlot(str, str)(create_sale_edc_with_struct_id)
 
     @staticmethod
     def start_store_topup_transaction(param):
         _KioskService.start_store_topup_transaction(param)
+
     start_store_topup_transaction = pyqtSlot(str)(start_store_topup_transaction)
 
     @staticmethod
     def start_get_topup_status_instant():
         _QPROX.start_get_topup_status_instant()
+
     start_get_topup_status_instant = pyqtSlot()(start_get_topup_status_instant)
 
     @staticmethod
     def get_kiosk_login(username, password):
         _UserService.get_kiosk_login(username, password)
+
     get_kiosk_login = pyqtSlot(str, str)(get_kiosk_login)
 
     @staticmethod
     def kiosk_get_machine_summary():
         _KioskService.kiosk_get_machine_summary()
+
     kiosk_get_machine_summary = pyqtSlot()(kiosk_get_machine_summary)
 
     @staticmethod
     def start_change_product_stock(port, stock):
         _ProductService.start_change_product_stock(port, stock)
+
     start_change_product_stock = pyqtSlot(str, str)(start_change_product_stock)
 
     @staticmethod
     def start_grg_receive_note():
         _GRG.start_grg_receive_note()
+
     start_grg_receive_note = pyqtSlot()(start_grg_receive_note)
 
     @staticmethod
     def stop_grg_receive_note():
         _GRG.stop_grg_receive_note()
+
     stop_grg_receive_note = pyqtSlot()(stop_grg_receive_note)
 
     @staticmethod
     def start_get_status_grg():
         _GRG.start_get_status_grg()
+
     start_get_status_grg = pyqtSlot()(start_get_status_grg)
 
     @staticmethod
     def start_do_topup_bni(slot):
         _TopupService.start_do_topup_bni(slot)
-    start_do_topup_bni =pyqtSlot(str)(start_do_topup_bni)
+
+    start_do_topup_bni = pyqtSlot(str)(start_do_topup_bni)
 
     @staticmethod
     def start_define_topup_slot_bni():
         _TopupService.start_define_topup_slot_bni()
+
     start_define_topup_slot_bni = pyqtSlot()(start_define_topup_slot_bni)
 
     @staticmethod
     def start_init_grg():
         _GRG.start_init_grg()
+
     start_init_grg = pyqtSlot()(start_init_grg)
 
     @staticmethod
     def start_upload_device_state(device, state):
         _Global.start_upload_device_state(device, state)
+
     start_upload_device_state = pyqtSlot(str, str)(start_upload_device_state)
 
     @staticmethod
     def start_admin_print_global(struct_id):
         _SalePrintTool.start_admin_print_global(struct_id)
+
     start_admin_print_global = pyqtSlot(str)(start_admin_print_global)
 
     @staticmethod
     def start_reprint_global():
         _SalePrintTool.start_reprint_global()
+
     start_reprint_global = pyqtSlot()(start_reprint_global)
 
     # def start_manual_trigger_topup_bni(self):
@@ -519,61 +611,73 @@ class SlotHandler(QObject):
     @staticmethod
     def start_master_activation_bni():
         _TopupService.start_master_activation_bni()
+
     start_master_activation_bni = pyqtSlot()(start_master_activation_bni)
 
     @staticmethod
     def start_slave_activation_bni():
         _TopupService.start_slave_activation_bni()
+
     start_slave_activation_bni = pyqtSlot()(start_slave_activation_bni)
 
     @staticmethod
     def do_reset_pending_master():
         _TopupService.do_reset_pending_master()
+
     do_reset_pending_master = pyqtSlot()(do_reset_pending_master)
 
     @staticmethod
     def do_reset_pending_slave():
         _TopupService.do_reset_pending_slave()
+
     do_reset_pending_slave = pyqtSlot()(do_reset_pending_slave)
 
     @staticmethod
     def retry_store_transaction_global():
         _KioskService.retry_store_transaction_global()
+
     retry_store_transaction_global = pyqtSlot()(retry_store_transaction_global)
 
     @staticmethod
     def kiosk_get_cd_readiness():
         _CD.kiosk_get_cd_readiness()
+
     kiosk_get_cd_readiness = pyqtSlot()(kiosk_get_cd_readiness)
 
     @staticmethod
     def user_action_log(log):
         _KioskService.user_action_log(log)
+
     user_action_log = pyqtSlot(str)(user_action_log)
 
     @staticmethod
     def start_do_mandiri_topup_settlement():
         _SettlementService.start_do_mandiri_topup_settlement()
+
     start_do_mandiri_topup_settlement = pyqtSlot()(start_do_mandiri_topup_settlement)
 
     @staticmethod
     def start_dummy_mandiri_topup_settlement():
         _SettlementService.start_dummy_mandiri_topup_settlement()
+
     start_dummy_mandiri_topup_settlement = pyqtSlot()(start_dummy_mandiri_topup_settlement)
 
     @staticmethod
     def start_reset_mandiri_settlement():
         _SettlementService.start_reset_mandiri_settlement()
+
     start_reset_mandiri_settlement = pyqtSlot()(start_reset_mandiri_settlement)
 
     @staticmethod
     def start_validate_update_balance():
         _SettlementService.start_validate_update_balance()
+
     start_validate_update_balance = pyqtSlot()(start_validate_update_balance)
 
     @staticmethod
     def start_do_bni_topup_by_trx():
         _Sync.start_do_bni_topup_by_trx()
+
     start_do_bni_topup_by_trx = pyqtSlot()(start_do_bni_topup_by_trx)
 
 
@@ -805,8 +909,8 @@ def set_tvc_player(command):
             # print("pyt: External Command Disabled for 64 Bit")
         else:
             pass
-       
-    
+
+
 def set_ext_keyboard(command):
     if command == "":
         return
@@ -866,7 +970,7 @@ def install_font():
     Set objFolderItem = objFolder.ParseName("%s")
     objFolderItem.InvokeVerb("Install")
     """
-    vbs_path = os.path.join(os.getcwd(), 'fontinst.vbs')
+    vbs_path = os.path.join(os.getcwd(), 'font_install.vbs')
     try:
         font_dir = os.path.join(os.getcwd(), '_fFonts')
         for filename in os.listdir(font_dir):
@@ -911,7 +1015,7 @@ if __name__ == '__main__':
         app.setOverrideCursor(Qt.BlankCursor)
     view.setFlags(Qt.WindowFullscreenButtonHint)
     view.setFlags(Qt.FramelessWindowHint)
-    view.resize(GLOBAL_WIDTH, GLOBAL_HEIGHT-1)
+    view.resize(GLOBAL_WIDTH, GLOBAL_HEIGHT - 1)
     print("Checking Auth to Server...")
     _Sync.start_check_connection(url=setting['server'] + 'ping', param=setting)
     sleep(1)
@@ -996,4 +1100,3 @@ if __name__ == '__main__':
     view.show()
     app.exec_()
     del view
-

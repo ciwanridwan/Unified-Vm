@@ -1,0 +1,9 @@
+/.idea
+/_lLog
+/_vVideo
+*.log
+/venv
+/_pPDF
+/_rRemoteFiles
+/_dDB/kiosk.db
+setting.ini

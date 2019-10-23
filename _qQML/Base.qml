@@ -2,6 +2,7 @@ import QtQuick 2.4
 import QtQuick.Controls 1.2
 import QtGraphicalEffects 1.0
 import "screen.js" as SCREEN
+import "config.js" as CONFIG
 
 
 Rectangle{
@@ -19,7 +20,10 @@ Rectangle{
     property int header_height: 125
     property int idx_bg: 0
     //Change Background Asset
-    property variant backgrounds: ['source/mandiri_background.png', 'source/mandiri_background.png', 'source/mandiri_background.png', 'source/mandiri_background.png' ]
+    property variant backgrounds: CONFIG.backgrounds
+    property variant logo: CONFIG.master_logo
+    property variant partner_logos: CONFIG.partner_logos
+//    property variant backgrounds: ['source/mandiri_background.png', 'source/mandiri_background.png', 'source/mandiri_background.png', 'source/mandiri_background.png' ]
     // Old Property Not Used But Cannot Be Removed
     property bool isPanelActive: false
     property bool isBoxNameActive: true
@@ -36,7 +40,7 @@ Rectangle{
     Image{
         id: img_background
         visible: true
-        source: 'source/mandiri_background.png'
+        source: "source/background/" + backgrounds[0]
         fillMode: Image.PreserveAspectCrop
         anchors.fill: parent
     }
@@ -51,28 +55,60 @@ Rectangle{
     }
 
     Image{
-        id: img_logo_left
+        id: master_logo
         width: 275
         height: 100
         anchors.verticalCenter: header_opacity.verticalCenter
         anchors.left: parent.left
         anchors.leftMargin: 50
-        source: "source/emoney_logo.png"
+        source: "source/logo/" +logo[0]
         fillMode: Image.PreserveAspectFit
         visible: logo_vis
     }
 
-    Image{
-        id: img_logo_right
-        width: 275
+    Row{
+        id: partners_logo
+        spacing: 5
+        width: (275 * partner_logos.length)
         height: 100
         anchors.verticalCenter: header_opacity.verticalCenter
         anchors.right: parent.right
         anchors.rightMargin: 50
-        source: "source/mandiri_logo.png"
-        fillMode: Image.PreserveAspectFit
-        visible: logo_vis
+
+        Image{
+            width: 275
+            height: 100
+            source: (partner_logos[0] !== undefined) ? "source/logo/" + partner_logos[0] : ''
+            fillMode: Image.PreserveAspectFit
+            visible: (partner_logos[0] !== undefined)
+        }
+
+        Image{
+            width: 275
+            height: 100
+            source: (partner_logos[1] !== undefined) ? "source/logo/" + partner_logos[1] : ''
+            fillMode: Image.PreserveAspectFit
+            visible: (partner_logos[1] !== undefined)
+        }
+
+        Image{
+            width: 275
+            height: 100
+            source: (partner_logos[2] !== undefined) ? "source/logo/" + partner_logos[2] : ''
+            fillMode: Image.PreserveAspectFit
+            visible: (partner_logos[2] !== undefined)
+        }
+
+        Image{
+            width: 275
+            height: 100
+            source: (partner_logos[3] !== undefined) ? "source/logo/" + partner_logos[3] : ''
+            fillMode: Image.PreserveAspectFit
+            visible: (partner_logos[3] !== undefined)
+        }
+
     }
+
 
     Text {
         id: boxNameText

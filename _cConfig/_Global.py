@@ -24,6 +24,22 @@ LIVE_MODE = True if _ConfigParser.get_set_value('TERMINAL', 'mode', 'live') == '
 RELOAD_SERVICE = True if _ConfigParser.get_set_value('TERMINAL', 'reload^service', '0') == '1' else False
 TID = _ConfigParser.get_value('TERMINAL', 'tid')
 
+VERSION = open(os.path.join(os.getcwd(), 'kiosk.ver'), 'r').read().strip()
+KIOSK_NAME = "---"
+KIOSK_STATUS = 'ONLINE'
+KIOSK_SETTING = []
+KIOSK_MARGIN = 3
+KIOSK_ADMIN = 1500
+PRINTER_STATUS = "NORMAL"
+PAYMENT_CANCEL = _ConfigParser.get_set_value('TERMINAL', 'payment^cancel', '1')
+PAYMENT_CONFIRM = _ConfigParser.get_set_value('TERMINAL', 'payment^confirm', '0')
+IS_PIR = True if _ConfigParser.get_set_value('TERMINAL', 'pir^usage', '0') == '1' else False
+
+PAYMENT_SETTING = None
+THEME_SETTING = None
+THEME_NAME = ''
+KIOSK_REAL_STATUS = 'ONLINE'
+
 # SERVICE_VERSION = open(os.path.join('C:\\', '_SOCKET_', 'SERVICE.VER'), 'r').readlines()[-1].replace('\n', '')
 SERVICE_VERSION = 'N/A'
 
@@ -39,6 +55,8 @@ def get_service_version():
             SERVICE_VERSION = ___resp['Response']
     except Exception as e:
         LOGGER.warning((___stat, ___resp, e))
+    finally:
+        return SERVICE_VERSION
 
 
 BNI_TOPUP_AMOUNT = _ConfigParser.get_set_value('QPROX', 'amount^topup', '500000')

@@ -5,6 +5,8 @@ import requests
 from _cConfig import _ConfigParser
 import socket
 import time
+import os
+import shutil
 
 
 def is_online_old(host="8.8.8.8", port=53, timeout=3, source=''):
@@ -169,3 +171,18 @@ def get_local(url, param=None, log=True):
         LOGGER.debug(('<URL>: ' + str(url) + " <STAT>: " + str(r.status_code) + " <RESP>: " + str(response)))
     return r.status_code, response
 
+
+def download_image(url, path):
+    image = url.split('/')[-1]
+    if not os.path.exists(path):
+        os.makedirs(path)
+    file = os.path.join(path, image)
+    if os.path.exists(file):
+        return True, image
+    r = requests.get(url, stream=True)
+    if r.status_code != 200:
+        return False, image
+    with open(file, 'wb') as f:
+        shutil.copyfileobj(r.raw, f)
+    del r
+    return True, image
