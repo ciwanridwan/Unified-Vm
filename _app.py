@@ -793,7 +793,7 @@ def check_git_status(log=False):
     process = subprocess.Popen('git status', shell=True, stdout=subprocess.PIPE)
     response = process.communicate()[0].decode('utf-8').strip().split("\r\n")
     if len(response) > 0 and log is True:
-        print('check_git_status : ')
+        print('pyt: check_git_status : ')
         for r in response:
             print(str(r))
 

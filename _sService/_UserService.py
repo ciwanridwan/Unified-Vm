@@ -3,7 +3,7 @@ __author__ = "fitrah.wahyudi.imam@gmail.com"
 import json
 import logging
 from PyQt5.QtCore import QObject, pyqtSignal
-from _cConfig import _ConfigParser
+from _cConfig import _ConfigParser, _Global
 from _tTools import _Tools
 from _nNetwork import _NetworkAccess
 import hashlib
@@ -18,7 +18,6 @@ class UserSignalHandler(QObject):
 
 US_SIGNDLER = UserSignalHandler()
 LOGGER = logging.getLogger()
-BACKEND_URL = _ConfigParser.get_value('TERMINAL', 'backend^server')
 SALT = '|KIOSK'
 # Will turn back None when IDLE status is START from Sync
 USER = None
@@ -47,7 +46,7 @@ def kiosk_login(username, password):
             'username': username.lower(),
             'password': hashlib.md5((password.lower()+SALT).encode('utf-8')).hexdigest()
         }
-        status, response = _NetworkAccess.post_to_url(url=BACKEND_URL + 'user/kiosk-login', param=_param)
+        status, response = _NetworkAccess.post_to_url(url=_Global.BACKEND_URL + 'user/kiosk-login', param=_param)
         LOGGER.info(('kiosk_login', str(_param), str(status), str(response)))
         if status == 200 and response['result'] == 'OK':
             USER = response['data']

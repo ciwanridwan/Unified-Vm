@@ -357,7 +357,7 @@ def handle_tasks(tasks):
         if task['taskName'] == 'RESET_DB':
             result = _KioskService.reset_db_record()
             update_task(task, result)
-        if task['taskName'] == 'DO_TOPUP_BNI_1' or task['taskName'] == 'DO_TOPUP_BNI_2':
+        if 'DO_TOPUP_BNI_' in task['taskName']:
             _slot = int(task['taskName'][-1])
             result = _TopupService.do_topup_bni(slot=_slot, force=True)
             update_task(task, result)
@@ -367,7 +367,7 @@ def handle_tasks(tasks):
                 _SettlementService.start_reset_mandiri_settlement()
                 result = 'TRIGGERED_INTO_SYSTEM'
             update_task(task, result)
-        if task['taskName'] == 'SAM_TO_SLOT_1' or task['taskName'] == 'SAM_TO_SLOT_2':
+        if 'SAM_TO_SLOT_' in task['taskName']:
             _slot = task['taskName'][-1]
             result = _Global.sam_to_slot(_slot)
             update_task(task, result)
