@@ -203,7 +203,7 @@ def send_command_with_handle(param=None, output=None, responding=True, flushing=
             # Keep Default Waiting Time from Global Waiting Time
             sleep(WAITING_TIME)
             res, data = check_response_with_handle(path=MO_STATUS)
-            LOGGER.debug(('send_command', str(param), str(data)))
+            LOGGER.debug(('os_command', str(param), str(data)))
             if res == 0 and param.split('|')[0] in data:
                 clear_content_of(file=flushing, pid=r)
                 break
@@ -268,10 +268,10 @@ def send_request(param=None, output=None, responding=True, flushing=MO_STATUS, w
 
 def send_command(param=None, output=None):
     global MI_GUI, MO_ERROR, MO_BALANCE, MO_KA_INFO, MO_REPORT
-    LOGGER.debug(('[DEBUG] send_command input: ', param, output))
+    LOGGER.debug(('[DEBUG] os_command input: ', param, output))
     # param must be send using join of | char on each line
     if param is None:
-        LOGGER.warning(("[ERROR] send_command : ", "Missing Parameter"))
+        LOGGER.warning(("[ERROR] os_command : ", "Missing Parameter"))
         return
     if output is None:
         output = MO_ERROR
@@ -287,7 +287,7 @@ def send_command(param=None, output=None):
             os.fsync(f.fileno())
             f.close()
     except Exception as e:
-        LOGGER.warning(('[ERROR] send_command : ', e))
+        LOGGER.warning(('[ERROR] os_command : ', e))
     sleep(WAITING_TIME)
     trial = 0
     while True:

@@ -9,6 +9,7 @@ from _cConfig import _ConfigParser
 import random
 import binascii
 from _nNetwork import _NetworkAccess
+import subprocess
 
 LOGGER = logging.getLogger()
 POOL = ThreadPool(16)
@@ -118,3 +119,15 @@ def dd(s):
         print('[DD] : ' + str(s))
 
 
+def os_command(command, key, reverse=False):
+    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
+    response = process.communicate()[0].decode('utf-8').strip().split("\r\n")
+    if len(response) > 0:
+        if not reverse and key in response[-1]:
+            return True
+        elif reverse is True and key not in response:
+            return True
+        else:
+            return False
+    else:
+        return False

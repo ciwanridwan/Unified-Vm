@@ -12,7 +12,7 @@ import sys
 
 
 class PPOBSignalHandler(QObject):
-    __qualname__ = 'UserSignalHandler'
+    __qualname__ = 'PPOBSignalHandler'
 
 
 PPOB_SIGNDLER = PPOBSignalHandler()

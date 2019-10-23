@@ -16,6 +16,7 @@ import json
 from _sService import _UserService
 from _sService import _SettlementService
 from _sService import _TopupService
+from _sService import _UpdateAppService
 from datetime import datetime
 
 LOGGER = logging.getLogger()
@@ -371,9 +372,10 @@ def handle_tasks(tasks):
             result = _Global.sam_to_slot(_slot)
             update_task(task, result)
         if task['taskName'] == 'UPDATE_APP':
-            # TODO ADD APP UPDATE HANDLER
-            LOGGER.debug((task['taskName'], 'is Not Handled Yet..!'))
-            update_task(task, 'ACTION_NOT_DEFINED')
+            result = _UpdateAppService.start_do_update()
+            update_task(task, result)
+            if result == 'APPLICATION_UPDATE_SUCCESS':
+                _KioskService.execute_command('shutdown -r -f -t 0')
         if task['taskName'] == 'RESET_STOCK_PRODUCT':
             _DAO.clear_stock_product()
             update_task(task, 'RESET_STOCK_PRODUCT_SUCCESS')
