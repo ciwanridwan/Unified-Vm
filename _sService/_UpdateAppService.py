@@ -62,8 +62,8 @@ def do_update():
             LOGGER.warning(('step-2', 'APP_UPDATE|FAILED_ADD_ORIGIN'))
             return 'APP_UPDATE|FAILED_ADD_ORIGIN'
         # set_credential()
-    LOGGER.warning(('step-2', 'APP_UPDATE|SUCCESS_CHECK_ORIGIN'))
-    if not info():
+    LOGGER.info(('step-2', 'APP_UPDATE|SUCCESS_CHECK_ORIGIN'))
+    if not pull():
         UPDATEAPP_SIGNDLER.SIGNAL_UPDATE_APP.emit('APP_UPDATE|FAILED_PULLING')
         LOGGER.warning(('step-3', 'APP_UPDATE|FAILED_PULLING'))
         return 'APP_UPDATE|FAILED_PULLING'
