@@ -20,7 +20,6 @@ from _sService import _UpdateAppService
 from datetime import datetime
 
 LOGGER = logging.getLogger()
-URL = _ConfigParser.get_value('TERMINAL', 'backend^server')
 SETTING_PARAM = []
 
 
@@ -38,31 +37,22 @@ def check_connection(url, param):
             try:
                 status, response = _NetworkAccess.get_from_url(url=url)
                 if status == 200:
-                    print('STATUS: Connected To Backend Server')
+                    print('pyt: check_connection ' + _Helper.time_string() + ' Connected To Backend')
                     _KioskService.KIOSK_STATUS = 'ONLINE'
                     _KioskService.KIOSK_REAL_STATUS = 'ONLINE'
                 else:
-                    # Disable Connection Status Change
                     # _KioskService.KIOSK_STATUS = 'OFFLINE'
                     _KioskService.KIOSK_REAL_STATUS = 'OFFLINE'
-                    print('STATUS: Disconnected From Backend Server')
+                    print('pyt: check_connection ' + _Helper.time_string() + ' Disconnected From Backend')
                 _KioskService.LAST_SYNC = _Helper.time_string()
-                _KioskService.kiosk_status()
-                # Run on the first sync only
                 if modulus == 1:
-                    # _SettlementService.start_do_bni_topup_settlement()
-                    _url = URL + 'get/setting'
-                    # LOGGER.info((_url, str(SETTING_PARAM)))
-                    s, r = _NetworkAccess.post_to_url(url=_url, param=SETTING_PARAM)
+                    print('pyt: check_connection ' + _Helper.time_string() + ' Setting Initiation From Backend')
+                    s, r = _NetworkAccess.post_to_url(url=_Global.BACKEND_URL + 'get/setting', param=SETTING_PARAM)
                     if s == 200 and r['result'] == 'OK':
                         _KioskService.update_kiosk_status(r)
-                        # _KioskService.update_machine_stat(URL + 'kiosk/status')
-                # Add TVC Buffer Killer every 5 minutes
-                # if modulus % 5 == 0:
-                # os.system(sys.path[0] + '/_pPlayer/stop.bat')
-                # Handler BNI Topup Settlement
-                # if modulus % 15 == 0:
-                #     _SettlementService.start_do_bni_topup_settlement()
+                    start_sync_machine_status()
+                else:
+                    _KioskService.kiosk_status()
             except Exception as e:
                 LOGGER.debug(e)
         sleep(61.7)
@@ -93,7 +83,7 @@ def start_sync_machine_status():
 
 
 def sync_machine_status():
-    __url = URL + 'kiosk/status'
+    __url = _Global.BACKEND_URL + 'kiosk/status'
     __param = dict()
     while True:
         try:
@@ -101,6 +91,7 @@ def sync_machine_status():
                 __param = _KioskService.machine_summary()
                 __param['on_usage'] = 'IDLE' if IDLE_MODE is True else 'ON_USED'
                 # LOGGER.info((__url, str(__param)))
+                print('pyt: sync_machine_status ' + _Helper.time_string() + ' Backend Trigger...')
                 _NetworkAccess.post_to_url(url=__url, param=__param)
             else:
                 LOGGER.debug(('Sending Kiosk Status : ', str(IDLE_MODE)))
@@ -126,14 +117,14 @@ def start_sync_topup_records():
 
 
 def sync_topup_records():
-    url = URL + 'sync/topup-records'
+    url = _Global.BACKEND_URL + 'sync/topup-records'
     _table_ = 'TopUpRecords'
     while True:
         try:
             if _Helper.is_online(source='sync_topup_records') is True and IDLE_MODE is True:
                 topup_records = _DAO.not_synced_data(param={'syncFlag': 0}, _table=_table_)
                 if len(topup_records) > 0:
-                    print('pyt : ' + _Helper.time_string() + ' - Re-Sync Topup Records Data...')
+                    print('pyt: sync_topup_records ' + _Helper.time_string() + ' Re-Sync Topup Records Data...')
                     for t in topup_records:
                         status, response = _NetworkAccess.post_to_url(url=url, param=t)
                         # LOGGER.info(('sync_topup_records', json.dumps(t), str(status), str(response)))
@@ -153,14 +144,14 @@ def start_sync_data_transaction():
 
 
 def sync_data_transaction():
-    url = URL + 'sync/transaction-topup'
+    url = _Global.BACKEND_URL + 'sync/transaction-topup'
     _table_ = 'Transactions'
     while True:
         try:
             if _Helper.is_online(source='sync_data_transaction') is True and IDLE_MODE is True:
                 transactions = _DAO.not_synced_data(param={'syncFlag': 0}, _table=_table_)
                 if len(transactions) > 0:
-                    print('pyt : ' + _Helper.time_string() + ' - Re-Sync Transaction Data...')
+                    print('pyt: sync_data_transaction ' + _Helper.time_string() + ' Re-Sync Transaction Data...')
                     for t in transactions:
                         status, response = _NetworkAccess.post_to_url(url=url, param=t)
                         if status == 200 and response['id'] == t['trxid']:
@@ -180,14 +171,14 @@ def start_sync_data_transaction_failure():
 
 
 def sync_data_transaction_failure():
-    url = URL + 'sync/transaction-failure'
+    url = _Global.BACKEND_URL + 'sync/transaction-failure'
     _table_ = 'TransactionFailure'
     while True:
         try:
             if _Helper.is_online(source='sync_data_transaction_failure') is True and IDLE_MODE is True:
                 transaction_failures = _DAO.not_synced_data(param={'syncFlag': 0}, _table=_table_)
                 if len(transaction_failures) > 0:
-                    print('pyt : ' + _Helper.time_string() + ' - Re-Sync Transaction Failure Data...')
+                    print('pyt: sync_data_transaction_failure ' + _Helper.time_string() + ' Re-Sync Transaction Failure Data...')
                     for t in transaction_failures:
                         status, response = _NetworkAccess.post_to_url(url=url, param=t)
                         if status == 200 and response['id'] == t['trxid']:
@@ -206,14 +197,14 @@ def start_sync_product_data():
 
 
 def sync_product_data():
-    url = URL + 'sync/product'
+    url = _Global.BACKEND_URL + 'sync/product'
     _table_ = 'Product'
     while True:
         try:
             if _Helper.is_online(source='sync_product_data') is True and IDLE_MODE is True:
                 products = _DAO.not_synced_data(param={'syncFlag': 0}, _table=_table_)
                 if len(products) > 0:
-                    print('pyt : ' + _Helper.time_string() + ' - Re-Sync Product Data...')
+                    print('pyt: sync_product_data ' + _Helper.time_string() + ' Re-Sync Product Data...')
                     for p in products:
                         status, response = _NetworkAccess.post_to_url(url=url, param=p)
                         if status == 200 and response['id'] == p['pid']:
@@ -232,14 +223,14 @@ def start_sync_sam_audit():
 
 
 def sync_sam_audit():
-    url = URL + 'sync/sam-audit'
+    url = _Global.BACKEND_URL + 'sync/sam-audit'
     _table_ = 'SAMAudit'
     while True:
         try:
             if _Helper.is_online(source='sync_sam_audit') is True and IDLE_MODE is True:
                 audits = _DAO.not_synced_data(param={'syncFlag': 0}, _table=_table_)
                 if len(audits) > 0:
-                    print('pyt : ' + _Helper.time_string() + ' - Re-Sync SAM Audit...')
+                    print('pyt: sync_sam_audit ' + _Helper.time_string() + ' Re-Sync SAM Audit...')
                     for a in audits:
                         status, response = _NetworkAccess.post_to_url(url=url, param=a)
                         if status == 200 and response['id'] == a['lid']:
@@ -267,7 +258,7 @@ def sync_settlement_data(bank):
                 settlements = _DAO.custom_query(' SELECT * FROM ' + _table_ +
                                                 ' WHERE status = "TOPUP_PREPAID|OPEN" AND createdAt > 1554783163354 ')
                 if len(settlements) > 0:
-                    print('pyt : ' + _Helper.time_string() + ' - Re-Sync Settlement Data...')
+                    print('pyt: sync_settlement_data ' + _Helper.time_string() + ' Re-Sync Settlement Data...')
                     for s in settlements:
                         _param = {
                             'mid': _Global.SMT_CONFIG['mid'],
@@ -297,7 +288,7 @@ def start_sync_task():
 
 
 def sync_task():
-    _url = URL + 'task/check'
+    _url = _Global.BACKEND_URL + 'task/check'
     while True:
         try:
             if _Helper.is_online(source='sync_task') is True and IDLE_MODE is True:
@@ -306,9 +297,9 @@ def sync_task():
                     if len(response['data']) > 0:
                         handle_tasks(response['data'])
                     else:
-                        print('pyt : ' + _Helper.time_string() + ' - No Remote Task Given..!')
+                        print('pyt: sync_task ' + _Helper.time_string() + ' No Remote Task Given..!')
                 else:
-                    print('pyt : ' + _Helper.time_string() + ' - Failed To Check Remote Task..!')
+                    print('pyt: sync_task ' + _Helper.time_string() + ' Failed To Check Remote Task..!')
         except Exception as e:
             LOGGER.warning(e)
         sleep(33.3)
@@ -384,7 +375,7 @@ def handle_tasks(tasks):
             update_task(task, result)
         if task['taskName'] == 'UPDATE_KIOSK':
             update_task(task)
-            _url = URL + 'get/setting'
+            _url = _Global.BACKEND_URL + 'get/setting'
             LOGGER.info((_url, str(SETTING_PARAM)))
             s, r = _NetworkAccess.post_to_url(url=_url, param=SETTING_PARAM)
             if s == 200 and r['result'] == 'OK':
@@ -401,7 +392,7 @@ def handle_tasks(tasks):
 
 
 def update_task(task, result='TRIGGERED_TO_SYSTEM'):
-    _url = URL + 'task/finish'
+    _url = _Global.BACKEND_URL + 'task/finish'
     task['result'] = result
     while True:
         status, response = _NetworkAccess.post_to_url(url=_url, param=task)
@@ -415,7 +406,7 @@ def start_sync_product_stock():
 
 
 def start_get_product_stock():
-    _url = URL + 'get/product-stock'
+    _url = _Global.BACKEND_URL + 'get/product-stock'
     if _Helper.is_online(source='start_get_product_stock') is True:
         s, r = _NetworkAccess.get_from_url(url=_url)
         if s == 200 and r['result'] == 'OK':
@@ -436,49 +427,49 @@ def start_get_topup_amount():
 
 
 def get_topup_amount():
-    _url = URL + 'get/topup-amount'
+    _url = _Global.BACKEND_URL + 'get/topup-amount'
     while True:
         if _Helper.is_online(source='get_topup_amount') is True and IDLE_MODE is True:
             s, r = _NetworkAccess.get_from_url(url=_url)
             if s == 200 and r['result'] == 'OK':
-                _KioskService.TOPUP_AMOUNT_DATA = parse_topup_data(r['data'])
-                _KioskService.kiosk_get_topup_amount()
+                _Global.TOPUP_AMOUNT_SETTING = r['data']
+                _Global.store_to_temp_data('topup-amount-setting', json.dumps(r['data']))
         sleep(333.3)
 
 
-def parse_topup_data(topups):
-    topups = sorted(topups, key=itemgetter('name', 'sell_price'), reverse=True)
-    topup_provider = []
-    for topup in topups:
-        if topup['name'] not in topup_provider:
-            topup_provider.append(topup['name'])
-    list_amount = []
-    for topup in topups:
-        if topup['sell_price'] not in list_amount:
-            list_amount.append(topup['sell_price'])
-    topup_data = []
-    for provider in topup_provider:
-        _new_item = dict()
-        for x in range(len(topups)):
-            if provider == topups[x]['name']:
-                _new_item['name'] = provider
-                if topups[x]['sell_price'] == list_amount[0]:
-                    if _Global.TID == '110322':
-                        _new_item['bigDenom'] = 270
-                    else:
-                        _new_item['bigDenom'] = topups[x]['sell_price']
-                if topups[x]['sell_price'] == list_amount[1]:
-                    if _Global.TID == '110322':
-                        _new_item['smallDenom'] = 170
-                    else:
-                        _new_item['smallDenom'] = topups[x]['sell_price']
-                if topups[x]['sell_price'] == list_amount[2]:
-                    if _Global.TID == '110322':
-                        _new_item['tinyDenom'] = 17
-                    else:
-                        _new_item['tinyDenom'] = topups[x]['sell_price']
-        topup_data.append(_new_item)
-    return topup_data
+# def parse_topup_data(topups):
+#     topups = sorted(topups, key=itemgetter('name', 'sell_price'), reverse=True)
+#     topup_provider = []
+#     for topup in topups:
+#         if topup['name'] not in topup_provider:
+#             topup_provider.append(topup['name'])
+#     list_amount = []
+#     for topup in topups:
+#         if topup['sell_price'] not in list_amount:
+#             list_amount.append(topup['sell_price'])
+#     topup_data = []
+#     for provider in topup_provider:
+#         _new_item = dict()
+#         for x in range(len(topups)):
+#             if provider == topups[x]['name']:
+#                 _new_item['name'] = provider
+#                 if topups[x]['sell_price'] == list_amount[0]:
+#                     if _Global.TID == '110322':
+#                         _new_item['bigDenom'] = 270
+#                     else:
+#                         _new_item['bigDenom'] = topups[x]['sell_price']
+#                 if topups[x]['sell_price'] == list_amount[1]:
+#                     if _Global.TID == '110322':
+#                         _new_item['smallDenom'] = 170
+#                     else:
+#                         _new_item['smallDenom'] = topups[x]['sell_price']
+#                 if topups[x]['sell_price'] == list_amount[2]:
+#                     if _Global.TID == '110322':
+#                         _new_item['tinyDenom'] = 17
+#                     else:
+#                         _new_item['tinyDenom'] = topups[x]['sell_price']
+#         topup_data.append(_new_item)
+#     return topup_data
 
 
 def get_amount(idx, listx):

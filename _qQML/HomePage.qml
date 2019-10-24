@@ -21,14 +21,15 @@ Base{
     property bool kalogButton: false
     property bool withSlider: true
     property bool mandiriAvailable: false
+    property bool first_run: true
     isPanelActive: false
 
     Stack.onStatusChanged:{
         if(Stack.status == Stack.Activating){
-            _SLOT.get_kiosk_status();
+            if (first_run) _SLOT.get_kiosk_status();
             _SLOT.start_idle_mode();
             _SLOT.kiosk_get_product_stock();
-            _SLOT.start_get_topup_readiness();
+//            _SLOT.start_get_topup_readiness();
             press = "0";
             resetMediaTimer();
             kalogButton = false;
@@ -134,16 +135,26 @@ Base{
             if (productData[2].status==103 && parseInt(productData[2].stock) > 0) productCount3 = parseInt(productData[2].stock);
         }
         productCountAll = productCount1 + productCount2 + productCount3
-        console.log('product stock count : ', productCount1, productCount2, productCount3, productCountAll);
+//        console.log('product stock count : ', productCount1, productCount2, productCount3, productCountAll);
     }
 
     function get_kiosk_status(r){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-        console.log("get_kiosk_status on ", now, " : ", JSON.stringify(r));
+        console.log("get_kiosk_status", now, r);
+
+        first_run = false;
+
         var kiosk = JSON.parse(r);
         base.globalBoxName = kiosk.name;
         box_version.text = kiosk.version;
         box_tid.text = kiosk.tid;
+
+        //Handle Feature Button From Kiosk Status
+        check_saldo_button.visible = (kiosk.feature.balance_check == 1)
+        topup_saldo_button.visible = (kiosk.feature.top_up_balance == 1)
+        buy_card_button.visible = (kiosk.feature.buy_card == 1)
+        ppob_button.visible = (kiosk.feature.ppob == 1)
+
         if (kiosk.status == "ONLINE" || kiosk.status == "AVAILABLE") {
             kioskStatus = true;
             box_connection.color = 'green';
@@ -257,6 +268,7 @@ Base{
             text_: qsTr("Cek Saldo")
             text2_: qsTr("Balance Check")
             modeReverse: false
+            visible: false
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
@@ -280,6 +292,7 @@ Base{
             text_: qsTr("Topup Saldo")
             text2_: qsTr("Topup Balance")
             modeReverse: false
+            visible: false
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
@@ -300,7 +313,7 @@ Base{
         }
 
         MasterButtonNew {
-            id: buy_saldo_button
+            id: buy_card_button
             x: 150
             anchors.verticalCenter: parent.verticalCenter
             img_: "source/beli_kartu.png"
@@ -309,6 +322,7 @@ Base{
             modeReverse: false
             color_: (productCountAll > 0) ? 'white' : 'gray'
             opacity: 1
+            visible: false
             MouseArea{
                 enabled: (productCountAll > 0) ? true : false
                 anchors.fill: parent
@@ -357,6 +371,7 @@ Base{
             text_: qsTr("Bayar/Beli")
             text2_: qsTr("Pay/Buy")
             modeReverse: false
+            visible: false
             MouseArea{
                 anchors.fill: parent
                 onClicked: {

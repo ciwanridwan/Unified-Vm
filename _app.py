@@ -482,6 +482,10 @@ class SlotHandler(QObject):
         _PPOBService.start_get_ppob_product()
     start_get_ppob_product = pyqtSlot()(start_get_ppob_product)
 
+    def start_kiosk_get_payment_method(self):
+        _KioskService.start_kiosk_get_payment_method()
+    start_kiosk_get_payment_method = pyqtSlot()(start_kiosk_get_payment_method)
+
 
 def s_handler():
     _KioskService.K_SIGNDLER.SIGNAL_GET_FILE_LIST.connect(view.rootObject().result_get_file_list)
@@ -564,13 +568,14 @@ def s_handler():
     _SettlementService.ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.connect(view.rootObject().result_mandiri_settlement)
     _UpdateAppService.UPDATEAPP_SIGNDLER.SIGNAL_UPDATE_APP.connect(view.rootObject().result_update_app)
     _PPOBService.PPOB_SIGNDLER.SIGNAL_GET_PRODUCTS.connect(view.rootObject().result_get_ppob_product)
+    _KioskService.K_SIGNDLER.SIGNAL_GET_PAYMENT_METHOD.connect(view.rootObject().result_get_payment_method)
 
 
 LOGGER = None
 
 
 def safely_shutdown(mode):
-    print("safely_shutdown_initiated...")
+    print("pyt: safely_shutdown_initiated...")
     # _Command.handle_file(mode='w', param='315|', path=_Command.MI_GUI)
     # sleep(1)
     os.system('taskkill /f /im cmd.exe')
@@ -599,7 +604,7 @@ def config_log():
         LOGGER = logging.getLogger()
         _Global.init_temp_data()
     except Exception as e:
-        print("Logging Configuration ERROR : ", e)
+        print("pyt: Logging Configuration ERROR : ", e)
 
 
 def get_disk_info():
@@ -710,7 +715,13 @@ def set_tvc_player(command):
         # print("pyt: External Command Disabled for 64 Bit")
     elif command == "START":
         if not process_exist("TVCPlayer.scr"):
+            print('pyt: Execute Command --> /_pPlayer/start.bat')
             os.system(sys.path[0] + '/_pPlayer/start.bat')
+            # while True:
+            #     sleep(600)
+            #     print('pyt: Execute Command --> /_pPlayer/stop.bat')
+            #     os.system(sys.path[0] + '/_pPlayer/stop.bat')
+            #     sleep(3000)
             # print("pyt: External Command Disabled for 64 Bit")
         else:
             pass
@@ -725,7 +736,7 @@ def set_ext_keyboard(command):
         if not process_exist('osk.exe'):
             os.system('osk')
         else:
-            print('External Keyboard is already running..!')
+            print('pyt: External Keyboard is already running..!')
     else:
         return
 
@@ -825,8 +836,8 @@ if __name__ == '__main__':
     view = QQuickView()
     context = view.rootContext()
     context.setContextProperty('_SLOT', SLOT_HANDLER)
-    print("Checking Auth to Server...")
-    _Sync.start_check_connection(url=setting['server'] + 'ping', param=setting)
+    print("pyt: Checking Auth to Server...")
+    _Sync.start_check_connection(url=setting['server'].replace('v2/', '')+'ping', param=setting)
     translator = QTranslator()
     translator.load(path + 'INA.qm')
     app.installTranslator(translator)
@@ -838,74 +849,74 @@ if __name__ == '__main__':
     view.setFlags(Qt.WindowFullscreenButtonHint)
     view.setFlags(Qt.FramelessWindowHint)
     view.resize(GLOBAL_WIDTH, GLOBAL_HEIGHT - 1)
-    print("Getting Machine Status...")
-    _Sync.start_sync_machine_status()
-    sleep(1)
-    print("Adjusting Local Table...")
+    # print("pyt: Getting Machine Status...")
+    # _Sync.start_sync_machine_status()
+    # sleep(1)
+    print("pyt: Adjusting Local Table...")
     _KioskService.adjust_table('_AdjustReceipts.sql')
     _KioskService.adjust_table('_TopUpRecords.sql', 'TopUpRecords')
     _KioskService.adjust_table('_SAMAudit.sql', 'SAMAudit')
     _KioskService.adjust_table('_TransactionFailure.sql', 'TransactionFailure')
     sleep(1)
-    print("Remove Improper Data...")
+    print("pyt: Remove Improper Data...")
     _KioskService.reset_db_record()
     sleep(1)
-    print("HouseKeeping Old Local Data...")
+    print("pyt: HouseKeeping Old Local Data...")
     _KioskService.house_keeping(age_month=2)
     sleep(1)
-    print("Syncing Remote Task...")
+    print("pyt: Syncing Remote Task...")
     _Sync.start_sync_task()
     sleep(1)
-    print("Syncing Product Item...")
+    print("pyt: Syncing Product Item...")
     _Sync.start_sync_product_data()
     sleep(.5)
-    print("Syncing Transaction...")
+    print("pyt: Syncing Transaction...")
     _Sync.start_sync_data_transaction()
     sleep(.5)
-    print("Syncing Topup Records...")
+    print("pyt: Syncing Topup Records...")
     _Sync.start_sync_topup_records()
     sleep(.5)
-    print("Syncing Topup Amount...")
+    print("pyt: Syncing Topup Amount...")
     _Sync.start_get_topup_amount()
     sleep(.5)
     # print("Syncing Product Stock...")
     # _Sync.start_sync_product_stock()
     # sleep(.5)
-    print("Syncing SAM Audit...")
+    print("pyt: Syncing SAM Audit...")
     _Sync.start_sync_sam_audit()
     sleep(.5)
-    print("Syncing Transaction Failure Data...")
+    print("pyt: Syncing Transaction Failure Data...")
     _Sync.start_sync_data_transaction_failure()
     sleep(.5)
     # print("Syncing BNI Settlement...")
     # _Sync.start_sync_settlement_bni()
     if setting['reloadService'] is True:
         sleep(.5)
-        print("Restarting MDDTopUpService...")
+        print("pyt: Restarting MDDTopUpService...")
         _KioskService.start_restart_mdd_service()
     if _Global.MEI['status'] is True:
         sleep(1)
-        print("Connecting to MEI Bill Acceptor...")
+        print("pyt: Connecting to MEI Bill Acceptor...")
         _MEI.mei_standby_mode()
     if _Global.GRG['status'] is True:
         sleep(1)
-        print("Connecting to GRG Bill Acceptor...")
+        print("pyt: Connecting to GRG Bill Acceptor...")
         _GRG.init_grg()
     if _Global.QPROX['status'] is True:
         sleep(1)
-        print("Connecting Into Prepaid Reader...")
+        print("pyt: Connecting Into Prepaid Reader...")
         if _QPROX.open_qprox() is True:
             sleep(1)
-            print("INIT Prepaid Reader...")
+            print("pyt: INIT Prepaid Reader...")
             _QPROX.init_qprox()
         else:
-            print("[ERROR] Connect to Prepaid Reader...")
+            print("pyt: [ERROR] Connect to Prepaid Reader...")
     sleep(.5)
     if _Global.CD['status'] is True:
-        print("[INFO] Re-Init CD V2 Configuration...")
+        print("pyt: [INFO] Re-Init CD V2 Configuration...")
         _CD.reinit_v2_config()
     sleep(.5)
-    print("Triggering Mandiri Balance Validation...")
+    print("pyt: Triggering Mandiri Balance Validation...")
     _SettlementService.start_validate_update_balance()
     #     sleep(.25)
     #     print("[INFO] Test Connecting Into Card Dispenser...102")

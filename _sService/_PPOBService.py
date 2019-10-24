@@ -22,16 +22,15 @@ def start_get_ppob_product():
 
 
 def get_ppob_product():
-    # _Helper.dump(_Global.LAST_GET_PPOB)
-    # _Helper.dump(_Helper.now() - _Global.LAST_GET_PPOB)
-    if _Global.LAST_GET_PPOB != 0 and (_Global.LAST_GET_PPOB + (60 * 60 * 1000)) > _Helper.now():
-        products = _Global.get_from_temp(temp='ppob-product', mode='json')
+    if (_Global.LAST_GET_PPOB + (60 * 60 * 1000)) > _Helper.now():
+        products = _Global.load_from_temp_data(temp='ppob-product', mode='json')
     else:
         s, r = _NetworkAccess.get_from_url(url=_Global.BACKEND_URL+'get/product')
         if s == 200 and r['result'] == 'OK':
             products = r['data']
             _Global.LAST_GET_PPOB = _Helper.now()
-            _Global.log_to_temp(temp='ppob-product', content=json.dumps(products))
+            _Global.log_to_temp_config('last^get^ppob', _Global.LAST_GET_PPOB)
+            _Global.store_to_temp_data(temp='ppob-product', content=json.dumps(products))
         else:
-            products = _Global.get_from_temp(temp='ppob-product', mode='json')
+            products = _Global.load_from_temp_data(temp='ppob-product', mode='json')
     PPOB_SIGNDLER.SIGNAL_GET_PRODUCTS.emit(json.dumps(products))

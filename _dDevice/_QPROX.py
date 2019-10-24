@@ -308,7 +308,7 @@ def auth_ka(_slot=None, initial=True):
     LOGGER.debug(("auth_ka : ", _slot, result))
     if response == 0 and _Global.KA_NIK == result:
         # Log Auth Time
-        _Global.log_to_config()
+        _Global.log_to_temp_config()
         INIT_MANDIRI = True
         ka_info_mandiri(slot=_slot)
         if initial is False or __single_sam is True:
@@ -791,7 +791,7 @@ def init_online(rsp=None, slot=None):
     if response == 0 and result is not None:
         ka_info_mandiri(slot=slot)
         QP_SIGNDLER.SIGNAL_INIT_ONLINE_QPROX.emit('INIT_ONLINE|SUCCESS')
-        _Global.log_to_config(section='last^update')
+        _Global.log_to_temp_config(section='last^update')
         return True
     else:
         _Global.NFC_ERROR = 'INIT_ONLINE_ERROR'

@@ -97,6 +97,7 @@ Rectangle {
     signal result_mandiri_settlement(string str)
     signal result_update_app(string str)
     signal result_get_ppob_product(string str)
+    signal result_get_payment_method(string str)
 
     //==================================================================================================//
 

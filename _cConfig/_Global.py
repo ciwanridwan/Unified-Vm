@@ -37,18 +37,7 @@ PRINTER_STATUS = "NORMAL"
 PAYMENT_CANCEL = _ConfigParser.get_set_value('TERMINAL', 'payment^cancel', '1')
 PAYMENT_CONFIRM = _ConfigParser.get_set_value('TERMINAL', 'payment^confirm', '0')
 IS_PIR = True if _ConfigParser.get_set_value('TERMINAL', 'pir^usage', '0') == '1' else False
-
-PAYMENT_SETTING = None
-THEME_SETTING = None
-THEME_NAME = ''
-KIOSK_REAL_STATUS = 'ONLINE'
-RECEIPT_LOGO = 'mandiri_logo.gif'
-REPO_USERNAME = _ConfigParser.get_set_value('REPOSITORY', 'username', 'developer')
-REPO_PASSWORD = _ConfigParser.get_set_value('REPOSITORY', 'password', 'Mdd*123#')
-
-# SERVICE_VERSION = open(os.path.join('C:\\', '_SOCKET_', 'SERVICE.VER'), 'r').readlines()[-1].replace('\n', '')
-SERVICE_VERSION = 'N/A'
-TEMP_FOLDER = ''
+TEMP_FOLDER = sys.path[0] + '/_tTmp/'
 
 
 def init_temp_data():
@@ -58,7 +47,7 @@ def init_temp_data():
     TEMP_FOLDER = sys.path[0] + '/_tTmp/'
 
 
-def log_to_temp(temp, content):
+def store_to_temp_data(temp, content):
     if '.data' not in temp:
         temp = temp + '.data'
     temp_path = os.path.join(TEMP_FOLDER, temp)
@@ -67,20 +56,30 @@ def log_to_temp(temp, content):
         t.close()
 
 
-def get_from_temp(temp, mode='text'):
+def load_from_temp_data(temp, mode='text'):
     if '.data' not in temp:
         temp = temp + '.data'
     temp_path = os.path.join(TEMP_FOLDER, temp)
     if not os.path.exists(temp_path):
         with open(temp_path, 'w+') as t:
-            t.write('')
+            t.write('{}')
             t.close()
     content = open(temp_path, 'r').read().strip()
     if mode == 'json':
-        if len(content) == 0:
-            return {}
         return json.loads(content)
     return content
+
+
+TOPUP_AMOUNT_SETTING = load_from_temp_data('topup-amount-setting', 'json')
+FEATURE_SETTING = load_from_temp_data('feature-setting', 'json')
+PAYMENT_SETTING = load_from_temp_data('payment-setting', 'json')
+THEME_SETTING = load_from_temp_data('theme-setting', 'json')
+THEME_NAME = _ConfigParser.get_value('TEMPORARY', 'theme^name')
+KIOSK_REAL_STATUS = 'ONLINE'
+RECEIPT_LOGO = _ConfigParser.get_set_value('TEMPORARY', 'receipt^logo', 'mandiri_logo.gif')
+REPO_USERNAME = _ConfigParser.get_set_value('REPOSITORY', 'username', 'developer')
+REPO_PASSWORD = _ConfigParser.get_set_value('REPOSITORY', 'password', 'Mdd*123#')
+SERVICE_VERSION = _ConfigParser.get_set_value('TEMPORARY', 'service^version', '---')
 
 
 def get_service_version():
@@ -92,6 +91,7 @@ def get_service_version():
         ___stat, ___resp = _NetworkAccess.get_local(SERVICE_URL + '999&param=0')
         if ___stat == 200:
             SERVICE_VERSION = ___resp['Response']
+            log_to_temp_config('service^version', SERVICE_VERSION)
     except Exception as e:
         LOGGER.warning((___stat, ___resp, e))
     finally:
@@ -171,19 +171,6 @@ BANKS = [{
     "TID": TID_BCA,
 }]
 
-# [SFTP]
-# host = 103.28.14.188
-# user = tj-kiosk
-# pass = tj-kiosk123
-# port = 22222
-#
-# [FTP]
-# host = ---
-# user = ---
-# pass = ---
-# port = 21
-
-
 SFTP_MANDIRI = {
     'status': True,
     'host': _ConfigParser.get_set_value('SFTP', 'mdr^host', '103.28.14.188'),
@@ -216,8 +203,6 @@ KA_PIN2 = _ConfigParser.get_value('QPROX', 'ka^pin2')
 KL_PIN = _ConfigParser.get_value('QPROX', 'kl^pin')
 KA_NIK = _ConfigParser.get_set_value('QPROX', 'ka^nik', '2345')
 
-# WALLET STATUS
-# Assigned From QPROX Module
 MANDIRI_WALLET_1 = 0
 MANDIRI_WALLET_2 = 0
 MANDIRI_ACTIVE_WALLET = 0
@@ -226,7 +211,7 @@ MANDIRI_NO_2 = _ConfigParser.get_set_value('QPROX', 'mandiri^sam^uid^2', '---')
 MANDIRI_REVERSE_SLOT_MODE = False
 MANDIRI_SINGLE_SAM = True if _ConfigParser.get_set_value('QPROX', 'mandiri^single^sam', '1') == '1' else False
 if MANDIRI_SINGLE_SAM is True:
-    _ConfigParser.set_value('QPROX', 'mandiri^single^sam', '1')
+    _ConfigParser.set_value('QPROX', 'mandiri^active^slot', '1')
 MANDIRI_ACTIVE = int(_ConfigParser.get_set_value('QPROX', 'mandiri^active^slot', '1'))
 
 BNI_SAM_1_WALLET = 0
@@ -242,8 +227,6 @@ DKI_WALLET = 0
 BNI_SAM_1_NO = ''
 BNI_SAM_2_NO = ''
 
-# DEVICE ERROR STATUS
-# Assigned From Multiple Module
 EDC_ERROR = ''
 NFC_ERROR = ''
 MEI_ERROR = ''
@@ -253,20 +236,20 @@ WEBCAM_ERROR = ''
 CD1_ERROR = ''
 CD2_ERROR = ''
 CD3_ERROR = ''
-ALLOWED_CONFIG_LOG = ['last^auth', 'last^update']
 
 
-def log_to_config(section='last^auth'):
+def log_to_temp_config(section='last^auth', content=''):
     global LAST_AUTH, LAST_UPDATE
-    if section not in ALLOWED_CONFIG_LOG:
-        LOGGER.warning(('NOT_ALLOWED', section, ALLOWED_CONFIG_LOG))
-        return
     __timestamp = _Helper.now()
     if section == 'last^auth':
         LAST_AUTH = __timestamp
-    if section == 'last^update':
+        content = str(__timestamp)
+    elif section == 'last^update':
         LAST_UPDATE = __timestamp
-    _ConfigParser.set_value('TEMPORARY', section, str(__timestamp))
+        content = str(__timestamp)
+    else:
+        content = str(content)
+    _ConfigParser.set_value('TEMPORARY', section, content)
 
 
 def active_auth_session():

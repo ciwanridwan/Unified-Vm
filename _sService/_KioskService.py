@@ -42,6 +42,7 @@ class KioskSignalHandler(QObject):
     SIGNAL_GET_TOPUP_AMOUNT = pyqtSignal(str)
     SIGNAL_STORE_TOPUP = pyqtSignal(str)
     SIGNAL_GET_MACHINE_SUMMARY = pyqtSignal(str)
+    SIGNAL_GET_PAYMENT_METHOD = pyqtSignal(str)
 
 
 K_SIGNDLER = KioskSignalHandler()
@@ -66,7 +67,9 @@ def kiosk_status():
         'version': _Global.VERSION,
         'status': _Global.KIOSK_STATUS,
         'real_status': _Global.KIOSK_REAL_STATUS,
-        'tid': _Global.TID
+        'tid': _Global.TID,
+        # 'payment': _Global.PAYMENT_SETTING,
+        'feature': _Global.FEATURE_SETTING,
     }))
 
 
@@ -77,8 +80,8 @@ def update_kiosk_status(r):
         LOGGER.info(("get_printer_status : ", _Global.PRINTER_STATUS))
         if len(r['data']['kiosk']) == 0:
             _Global.KIOSK_SETTING = _DAO.init_kiosk()[0]
-            _Global.KIOSK_ADMIN = _Global.KIOSK_SETTING['defaultAdmin']
-            _Global.KIOSK_MARGIN = _Global.KIOSK_SETTING['defaultMargin']
+            _Global.KIOSK_ADMIN = int(_Global.KIOSK_SETTING['defaultAdmin'])
+            _Global.KIOSK_MARGIN = int(_Global.KIOSK_SETTING['defaultMargin'])
             _Global.KIOSK_NAME = _Global.KIOSK_SETTING['name']
             if _Global.PRINTER_STATUS == "NORMAL":
                 _Global.KIOSK_STATUS = 'ONLINE'
@@ -88,7 +91,11 @@ def update_kiosk_status(r):
             _Global.KIOSK_MARGIN = int(_Global.KIOSK_SETTING['defaultMargin'])
             _Global.KIOSK_ADMIN = int(_Global.KIOSK_SETTING['defaultAdmin'])
             _Global.PAYMENT_SETTING = r['data']['payment']
+            _Global.store_to_temp_data('payment-setting', json.dumps(r['data']['payment']))
             _Global.THEME_SETTING = r['data']['theme']
+            _Global.store_to_temp_data('theme-setting', json.dumps(r['data']['theme']))
+            _Global.FEATURE_SETTING = r['data']['feature']
+            _Global.store_to_temp_data('feature-setting', json.dumps(r['data']['feature']))
             define_theme(_Global.THEME_SETTING)
             if r['result'] == 'OK' and _Global.PRINTER_STATUS == "NORMAL":
                 _Global.KIOSK_STATUS = 'ONLINE'
@@ -98,12 +105,13 @@ def update_kiosk_status(r):
     except Exception as e:
         LOGGER.warning(("update_kiosk_status : ", str(e)))
     finally:
-        kiosk_status()
+        # kiosk_status()
         pprint(_Global.KIOSK_SETTING)
 
 
 def define_theme(d):
     _Global.THEME_NAME = d['name']
+    _Global.log_to_temp_config('theme^name', d['name'])
     config_js = sys.path[0] + '/_qQml/config.js'
     content_js = ''
     if type(d['master_logo']) != list:
@@ -135,6 +143,7 @@ def define_theme(d):
     store, receipt_logo = _NetworkAccess.item_download(d['receipt_logo'], os.getcwd() + '/_rReceipts')
     if store is True:
         _Global.RECEIPT_LOGO = receipt_logo
+        _Global.log_to_temp_config('receipt^logo', receipt_logo)
     content_js += "var backgrounds = " + json.dumps(backgrounds) + ";" + os.linesep
     with open(config_js, 'w+') as config_qml:
         config_qml.write(content_js)
@@ -870,25 +879,22 @@ def store_transaction_global(param, retry=False):
         CARD_NO = ''
 
 
-TOPUP_AMOUNT_DATA = [
-    {'bigDenom': 100000, 'tinyDenom': 20000, 'smallDenom': 50000, 'name': 'MANDIRI'},
-    {'bigDenom': 100000, 'tinyDenom': 20000, 'smallDenom': 50000, 'name': 'BNI'}
-]
-
-
 def start_kiosk_get_topup_amount():
     _Helper.get_pool().apply_async(kiosk_get_topup_amount)
 
 
 def kiosk_get_topup_amount():
-    global TOPUP_AMOUNT_DATA
-    LOGGER.info(('kiosk_get_topup_amount', str(TOPUP_AMOUNT_DATA)))
-    if TID == '110322':
-        TOPUP_AMOUNT_DATA = [
-            {'bigDenom': 270, 'tinyDenom': 17, 'smallDenom': 170, 'name': 'MANDIRI'},
-            {'bigDenom': 270, 'tinyDenom': 17, 'smallDenom': 170, 'name': 'BNI'}
-        ]
-    K_SIGNDLER.SIGNAL_GET_TOPUP_AMOUNT.emit(json.dumps(TOPUP_AMOUNT_DATA))
+    LOGGER.info(('kiosk_get_topup_amount', str(_Global.TOPUP_AMOUNT_SETTING)))
+    K_SIGNDLER.SIGNAL_GET_TOPUP_AMOUNT.emit(json.dumps(_Global.TOPUP_AMOUNT_SETTING))
+
+
+def start_kiosk_get_payment_method():
+    _Helper.get_pool().apply_async(kiosk_get_payment_method)
+
+
+def kiosk_get_payment_method():
+    LOGGER.info(('kiosk_get_payment_method', str(_Global.PAYMENT_SETTING)))
+    K_SIGNDLER.SIGNAL_GET_PAYMENT_METHOD.emit(json.dumps(_Global.PAYMENT_SETTING))
 
 
 def start_store_topup_transaction(param):
