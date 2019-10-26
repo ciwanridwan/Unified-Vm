@@ -173,7 +173,7 @@ def define_ads(a):
         if file.endswith('.mp4') or file.endswith('.wmv') or file.endswith('.avi') or file.endswith('.mpeg'):
             __current_list.append(file)
     __must_delete = list(set(__current_list) - set(__playlist))
-    _Helper.dump(__must_delete)
+    # _Helper.dump(__must_delete)
     if len(__must_delete) > 0:
         for d in __must_delete:
             file_delete = os.path.join(__tvc_path, d)
@@ -182,7 +182,7 @@ def define_ads(a):
                 K_SIGNDLER.SIGNAL_SYNC_ADS_CONTENT.emit('SYNC_ADS|DELETE_EXPIRED_'+d.upper())
                 os.remove(file_delete)
     __must_download = list(set(__playlist) - set(__current_list))
-    _Helper.dump(__must_download)
+    # _Helper.dump(__must_download)
     while len(__must_download) > 0:
         for l in __must_download:
             media_link = get_metadata_link(l, __metadata)
@@ -191,11 +191,11 @@ def define_ads(a):
             _Helper.dump(media_link)
             if media_link is not False:
                 stream, media = _NetworkAccess.stream_large_download(media_link, l, _Global.TEMP_FOLDER, __tvc_path)
-                _Helper.dump(_Global.TEMP_FOLDER)
-                _Helper.dump(__tvc_path)
+                # _Helper.dump(_Global.TEMP_FOLDER)
+                # _Helper.dump(__tvc_path)
                 if stream is True:
                     __must_download.remove(l)
-                    _Helper.dump(__must_download)
+                    # _Helper.dump(__must_download)
     K_SIGNDLER.SIGNAL_SYNC_ADS_CONTENT.emit('SYNC_ADS|SUCCESS')
     return True
 
