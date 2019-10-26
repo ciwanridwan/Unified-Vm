@@ -186,3 +186,23 @@ def item_download(url, path):
         shutil.copyfileobj(r.raw, f)
     del r
     return True, item
+
+
+def stream_large_download(url, item, temp_path, final_path):
+    if not os.path.exists(temp_path):
+        os.makedirs(temp_path)
+    file = os.path.join(temp_path, item)
+    new_file = os.path.join(final_path, item)
+    if os.path.exists(new_file):
+        return True, item
+    r = requests.get(url, stream=True, allow_redirects=True, verify=False)
+    if r.status_code != 200:
+        return False, item
+    with open(file, 'wb') as media:
+        for chunk in r.iter_content(chunk_size=1024*1024):
+            if chunk:
+                media.write(chunk)
+    shutil.copy(file, new_file)
+    os.remove(file)
+    del r
+    return True, item

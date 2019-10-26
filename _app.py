@@ -486,6 +486,10 @@ class SlotHandler(QObject):
         _KioskService.start_kiosk_get_payment_method()
     start_kiosk_get_payment_method = pyqtSlot()(start_kiosk_get_payment_method)
 
+    def start_define_ads(self):
+        _KioskService.start_define_ads()
+    start_define_ads = pyqtSlot()(start_define_ads)
+
 
 def s_handler():
     _KioskService.K_SIGNDLER.SIGNAL_GET_FILE_LIST.connect(view.rootObject().result_get_file_list)
@@ -569,6 +573,7 @@ def s_handler():
     _UpdateAppService.UPDATEAPP_SIGNDLER.SIGNAL_UPDATE_APP.connect(view.rootObject().result_update_app)
     _PPOBService.PPOB_SIGNDLER.SIGNAL_GET_PRODUCTS.connect(view.rootObject().result_get_ppob_product)
     _KioskService.K_SIGNDLER.SIGNAL_GET_PAYMENT_METHOD.connect(view.rootObject().result_get_payment_method)
+    _KioskService.K_SIGNDLER.SIGNAL_SYNC_ADS_CONTENT.connect(view.rootObject().result_sync_ads)
 
 
 LOGGER = None
@@ -712,17 +717,16 @@ def set_tvc_player(command):
         return
     elif command == "STOP":
         os.system(sys.path[0] + '/_pPlayer/stop.bat')
-        # print("pyt: External Command Disabled for 64 Bit")
+        print('pyt: Execute Command --> /_pPlayer/stop.bat')
     elif command == "START":
         if not process_exist("TVCPlayer.scr"):
             print('pyt: Execute Command --> /_pPlayer/start.bat')
             os.system(sys.path[0] + '/_pPlayer/start.bat')
-            # while True:
-            #     sleep(600)
-            #     print('pyt: Execute Command --> /_pPlayer/stop.bat')
-            #     os.system(sys.path[0] + '/_pPlayer/stop.bat')
-            #     sleep(3000)
-            # print("pyt: External Command Disabled for 64 Bit")
+            while True:
+                sleep(60)
+                print('pyt: Auto Execute Command --> /_pPlayer/stop.bat')
+                os.system(sys.path[0] + '/_pPlayer/stop.bat')
+                # sleep(3000)
         else:
             pass
 
@@ -786,12 +790,10 @@ def install_font():
     try:
         font_dir = os.path.join(os.getcwd(), '_fFonts')
         available_fonts = [f for f in os.listdir(font_dir) if f.endswith('.ttf')]
-        # print('available_fonts : ' + json.dumps(available_fonts))
         system_font_dir = os.path.join('C:\\', 'Windows', 'Fonts')
         installed_fonts = [f for f in os.listdir(system_font_dir) if f.endswith('.ttf')]
-        # print('installed_fonts : ' + json.dumps(installed_fonts))
         new_fonts = list(set(available_fonts) - set(installed_fonts))
-        print('pyt: new_fonts found : ' + json.dumps(new_fonts))
+        print('pyt: Found fonts to be installed : ' + json.dumps(new_fonts))
         if len(new_fonts) > 0:
             for font in new_fonts:
                 f_path = os.path.join(font_dir, font)
@@ -849,9 +851,9 @@ if __name__ == '__main__':
     view.setFlags(Qt.WindowFullscreenButtonHint)
     view.setFlags(Qt.FramelessWindowHint)
     view.resize(GLOBAL_WIDTH, GLOBAL_HEIGHT - 1)
-    # print("pyt: Getting Machine Status...")
-    # _Sync.start_sync_machine_status()
-    # sleep(1)
+    print("pyt: Syncing Ads Content...")
+    _KioskService.start_define_ads(3)
+    sleep(1)
     print("pyt: Adjusting Local Table...")
     _KioskService.adjust_table('_AdjustReceipts.sql')
     _KioskService.adjust_table('_TopUpRecords.sql', 'TopUpRecords')
@@ -879,9 +881,6 @@ if __name__ == '__main__':
     print("pyt: Syncing Topup Amount...")
     _Sync.start_get_topup_amount()
     sleep(.5)
-    # print("Syncing Product Stock...")
-    # _Sync.start_sync_product_stock()
-    # sleep(.5)
     print("pyt: Syncing SAM Audit...")
     _Sync.start_sync_sam_audit()
     sleep(.5)
@@ -907,7 +906,7 @@ if __name__ == '__main__':
         print("pyt: Connecting Into Prepaid Reader...")
         if _QPROX.open_qprox() is True:
             sleep(1)
-            print("pyt: INIT Prepaid Reader...")
+            print("pyt: [INFO] Init Prepaid Reader...")
             _QPROX.init_qprox()
         else:
             print("pyt: [ERROR] Connect to Prepaid Reader...")
@@ -918,15 +917,6 @@ if __name__ == '__main__':
     sleep(.5)
     print("pyt: Triggering Mandiri Balance Validation...")
     _SettlementService.start_validate_update_balance()
-    #     sleep(.25)
-    #     print("[INFO] Test Connecting Into Card Dispenser...102")
-    #     _CD.start_multiple_eject('102')
-    #     sleep(.25)
-    #     print("[INFO] Test Connecting Into Card Dispenser...103")
-    #     _CD.start_multiple_eject('103')
-    # if _Global.TEST_MODE is True:
-    #     print("[INFO] Test Push File Over SFTP")
-    #     _SFTPAccess.get_file('kiosk.ver')
     view.show()
     app.exec_()
     del view

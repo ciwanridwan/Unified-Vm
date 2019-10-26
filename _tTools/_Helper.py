@@ -10,7 +10,7 @@ import random
 import binascii
 from _nNetwork import _NetworkAccess
 import subprocess
-import json
+from sys import _getframe as whois
 
 LOGGER = logging.getLogger()
 POOL = ThreadPool(16)
@@ -59,21 +59,21 @@ def get_uuid():
     return str(uuid.uuid1().hex)
 
 
-def get_value_from(key, map_, default_value=None):
-    if map_ is None:
-        return default_value
-    if key in map_.keys():
-        return map_[key]
-    return default_value
+def get_value_from(__key, __map, __default=None):
+    if __map is None:
+        return __default
+    if __key in __map.keys():
+        return __map[__key]
+    return __default
 
 
 def get_random_chars(length=3, chars='ABCDEFGHJKMNPQRSTUVWXYZ'):
-    random_ = ''
+    __random = ''
     i = 0
     while i < length:
-        random_ += random.choice(chars)
+        __random += random.choice(chars)
         i += 1
-    return random_
+    return __random
 
 
 def file2crc32(filename):
@@ -111,23 +111,24 @@ def reverse_hexdec(string):
 
 
 def dump(s, iterate=False):
+    caller = whois(1).f_code.co_name
     if type(s) == str:
-        print('[DUMP] : ' + str(type(s)) + ' ==> ' + str(s))
+        print('pyt: DUMP [' + str(caller) + '] >>> ' + str(type(s)) + ' >>> ' + str(s))
     elif type(s) == list:
         if iterate is True:
             for l in s:
-                print('[DUMP] : ' + str(type(l)) + ' ==> ' + str(l))
+                print('pyt: DUMP [' + str(caller) + '] >>> ' + str(type(l)) + ' >>> ' + str(l))
         else:
-            print('[DUMP] : ' + str(type(s)) + ' ==> ' + json.dumps(s))
+            print('pyt: DUMP [' + str(caller) + '] >>> ' + str(type(s)) + ' >>> ' + str(s))
     else:
-        print('[DUMP] : ' + str(type(s)) + ' ==> ' + str(s))
+        print('pyt: DUMP [' + str(caller) + '] >>> ' + str(type(s)) + ' >>> ' + str(s))
 
 
 def os_command(command, key, reverse=False):
     process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
     response = process.communicate()[0].decode('utf-8').strip().split("\r\n")
-    # dump(command)
-    # dump(response)
+    dump(command)
+    dump(response)
     if len(response) > 0:
         if not reverse and key in response[-1]:
             return True

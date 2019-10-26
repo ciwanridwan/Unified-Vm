@@ -69,39 +69,40 @@ Rectangle{
     Row{
         id: partners_logo
         spacing: 3
-        width: (275 * partner_logos.length)
-        height: 80
+        property int item_width: 225
+        width: (item_width * partner_logos.length)
+        height: 60
         anchors.verticalCenter: header_opacity.verticalCenter
         anchors.right: parent.right
         anchors.rightMargin: 25
 
         Image{
-            width: 275
-            height: 100
+            width: parent.item_width
+            height: parent.height
             source: (partner_logos[0] !== undefined) ? "source/logo/" + partner_logos[0] : ''
             fillMode: Image.PreserveAspectFit
             visible: (partner_logos[0] !== undefined)
         }
 
         Image{
-            width: 275
-            height: 100
+            width: parent.item_width
+            height: parent.height
             source: (partner_logos[1] !== undefined) ? "source/logo/" + partner_logos[1] : ''
             fillMode: Image.PreserveAspectFit
             visible: (partner_logos[1] !== undefined)
         }
 
         Image{
-            width: 275
-            height: 100
+            width: parent.item_width
+            height: parent.height
             source: (partner_logos[2] !== undefined) ? "source/logo/" + partner_logos[2] : ''
             fillMode: Image.PreserveAspectFit
             visible: (partner_logos[2] !== undefined)
         }
 
         Image{
-            width: 275
-            height: 100
+            width: parent.item_width
+            height: parent.height
             source: (partner_logos[3] !== undefined) ? "source/logo/" + partner_logos[3] : ''
             fillMode: Image.PreserveAspectFit
             visible: (partner_logos[3] !== undefined)

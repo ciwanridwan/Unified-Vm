@@ -1,14 +1,9 @@
 __author__ = "fitrah.wahyudi.imam@gmail.com"
 
-import json
 import logging
 from PyQt5.QtCore import QObject, pyqtSignal
-from _cConfig import _ConfigParser, _Global
+from _cConfig import _Global
 from _tTools import _Helper
-from _nNetwork import _NetworkAccess
-import hashlib
-import os
-import sys
 
 
 class UpdateAppSignalHandler(QObject):

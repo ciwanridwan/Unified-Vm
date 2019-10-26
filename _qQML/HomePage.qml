@@ -70,6 +70,7 @@ Base{
         console.log('get_ppob_product', now, p);
          press = '0';
          popup_loading.close();
+//         my_layer.push(ppob_page, {data: p, type: 'category'});
     }
 
     function resetMediaTimer(){
@@ -381,7 +382,7 @@ Base{
                     press = "1";
                     _SLOT.set_tvc_player("STOP");
                     popup_loading.open();
-                    _SLOT.start_get_ppob_product()
+                    _SLOT.start_get_ppob_product();
 //                    my_layer.push(topup_prepaid_denom, {shopType: 'topup'});
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();

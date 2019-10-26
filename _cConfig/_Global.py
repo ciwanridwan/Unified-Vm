@@ -74,6 +74,7 @@ TOPUP_AMOUNT_SETTING = load_from_temp_data('topup-amount-setting', 'json')
 FEATURE_SETTING = load_from_temp_data('feature-setting', 'json')
 PAYMENT_SETTING = load_from_temp_data('payment-setting', 'json')
 THEME_SETTING = load_from_temp_data('theme-setting', 'json')
+ADS_SETTING = load_from_temp_data('ads-setting', 'json')
 THEME_NAME = _ConfigParser.get_value('TEMPORARY', 'theme^name')
 KIOSK_REAL_STATUS = 'ONLINE'
 RECEIPT_LOGO = _ConfigParser.get_set_value('TEMPORARY', 'receipt^logo', 'mandiri_logo.gif')

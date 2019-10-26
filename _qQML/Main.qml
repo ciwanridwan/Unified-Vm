@@ -98,6 +98,7 @@ Rectangle {
     signal result_update_app(string str)
     signal result_get_ppob_product(string str)
     signal result_get_payment_method(string str)
+    signal result_sync_ads(string str)
 
     //==================================================================================================//
 
@@ -257,6 +258,10 @@ Rectangle {
 
     Component {id: mandiri_payment_process
         MandiriPaymentProcess{}
+    }
+
+    Component {id: ppob_page
+        PPOBPage{}
     }
 
 

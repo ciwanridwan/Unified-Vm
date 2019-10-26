@@ -43,6 +43,7 @@ class KioskSignalHandler(QObject):
     SIGNAL_STORE_TOPUP = pyqtSignal(str)
     SIGNAL_GET_MACHINE_SUMMARY = pyqtSignal(str)
     SIGNAL_GET_PAYMENT_METHOD = pyqtSignal(str)
+    SIGNAL_SYNC_ADS_CONTENT = pyqtSignal(str)
 
 
 K_SIGNDLER = KioskSignalHandler()
@@ -97,6 +98,8 @@ def update_kiosk_status(r):
             _Global.FEATURE_SETTING = r['data']['feature']
             _Global.store_to_temp_data('feature-setting', json.dumps(r['data']['feature']))
             define_theme(_Global.THEME_SETTING)
+            _Global.store_to_temp_data('ads-setting', json.dumps(r['data']['ads']))
+            # define_ads(_Global.ADS_SETTING)
             if r['result'] == 'OK' and _Global.PRINTER_STATUS == "NORMAL":
                 _Global.KIOSK_STATUS = 'ONLINE'
             _DAO.flush_table('Terminal')
@@ -149,6 +152,61 @@ def define_theme(d):
         config_qml.write(content_js)
         config_qml.close()
     LOGGER.info(('define_theme : ', config_js, content_js))
+
+
+def start_define_ads(wait_for=5):
+    sleep(wait_for)
+    _Helper.get_pool().apply_async(define_ads, (_Global.ADS_SETTING, ))
+
+
+def define_ads(a):
+    if a is None or len(a) == 0:
+        LOGGER.warning(("define_ads : ", 'Missing ADS_SETTING'))
+        K_SIGNDLER.SIGNAL_SYNC_ADS_CONTENT.emit('SYNC_ADS|MISSING_ADS_SETTING')
+        return False
+    __metadata = a['metadata']
+    __playlist = a['playlist']
+    __tvc_path = sys.path[0] + '/_vVideo'
+    __current_list = []
+    __all_file = os.listdir(__tvc_path)
+    for file in __all_file:
+        if file.endswith('.mp4') or file.endswith('.wmv') or file.endswith('.avi') or file.endswith('.mpeg'):
+            __current_list.append(file)
+    __must_delete = list(set(__current_list) - set(__playlist))
+    _Helper.dump(__must_delete)
+    if len(__must_delete) > 0:
+        for d in __must_delete:
+            file_delete = os.path.join(__tvc_path, d)
+            if os.path.exists(file_delete):
+                LOGGER.debug(("remove expired media : ", file_delete))
+                K_SIGNDLER.SIGNAL_SYNC_ADS_CONTENT.emit('SYNC_ADS|DELETE_EXPIRED_'+d.upper())
+                os.remove(file_delete)
+    __must_download = list(set(__playlist) - set(__current_list))
+    _Helper.dump(__must_download)
+    while len(__must_download) > 0:
+        for l in __must_download:
+            media_link = get_metadata_link(l, __metadata)
+            LOGGER.debug(("add new media : ", media_link))
+            K_SIGNDLER.SIGNAL_SYNC_ADS_CONTENT.emit('SYNC_ADS|ADD_NEW_'+l.upper())
+            _Helper.dump(media_link)
+            if media_link is not False:
+                stream, media = _NetworkAccess.stream_large_download(media_link, l, _Global.TEMP_FOLDER, __tvc_path)
+                _Helper.dump(_Global.TEMP_FOLDER)
+                _Helper.dump(__tvc_path)
+                if stream is True:
+                    __must_download.remove(l)
+                    _Helper.dump(__must_download)
+    K_SIGNDLER.SIGNAL_SYNC_ADS_CONTENT.emit('SYNC_ADS|SUCCESS')
+    return True
+
+
+def get_metadata_link(media, data):
+    if len(data) == 0 or media is None:
+        return False
+    for x in range(len(data)):
+        if media == data[x]['name']:
+            return data[x]['path']
+    return False
 
 
 def get_kiosk_price_setting():
