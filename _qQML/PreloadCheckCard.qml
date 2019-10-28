@@ -7,7 +7,7 @@ Base{
     isBoxNameActive: false
     property var textMain: 'Letakkan kartu e-Money Anda di alat pembaca kartu yang bertanda '
     property var textSlave: 'Pastikan kartu Anda tetap berada di alat pembaca kartu sampai transaksi selesai'
-    property var imageSource: "source/reader_sign.png"
+    property var imageSource: "source/tap_card.png"
     property bool smallerSlaveSize: true
     property int textSize: 45
     visible: false

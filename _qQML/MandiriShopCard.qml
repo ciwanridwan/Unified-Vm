@@ -246,14 +246,14 @@ Base{
     }
 
 
-    BackButton{
+    CircleButton{
         id:back_button
         anchors.left: parent.left
-        anchors.leftMargin: 120
+        anchors.leftMargin: 50
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 50
-        visible: !popup_loading.visible && !global_frame.visible
+        anchors.bottomMargin: 30
         button_text: 'BATAL'
+        visible: !popup_loading.visible && !global_frame.visible
         modeReverse: true
         MouseArea{
             anchors.fill: parent
@@ -263,12 +263,12 @@ Base{
         }
     }
 
-    NextButton{
+    CircleButton{
         id: next_button
         anchors.right: parent.right
-        anchors.rightMargin: 100
+        anchors.rightMargin: 50
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 50
+        anchors.bottomMargin: 30
         button_text: 'LANJUT'
         visible: !popup_loading.visible && !global_frame.visible
         modeReverse: true

@@ -490,6 +490,18 @@ class SlotHandler(QObject):
         _KioskService.start_define_ads()
     start_define_ads = pyqtSlot()(start_define_ads)
 
+    def start_check_ppob_product(self, msisdn, product_id):
+        _PPOBService.start_check_ppob_product(msisdn, product_id)
+    start_check_ppob_product = pyqtSlot(str, str)(start_check_ppob_product)
+
+    def start_do_pay_ppob(self, payload):
+        _PPOBService.start_do_pay_ppob(payload)
+    start_do_pay_ppob = pyqtSlot(str)(start_do_pay_ppob)
+
+    def start_do_topup_ppob(self, payload):
+        _PPOBService.start_do_topup_ppob(payload)
+    start_do_topup_ppob = pyqtSlot(str)(start_do_topup_ppob)
+
 
 def s_handler():
     _KioskService.K_SIGNDLER.SIGNAL_GET_FILE_LIST.connect(view.rootObject().result_get_file_list)
@@ -574,6 +586,8 @@ def s_handler():
     _PPOBService.PPOB_SIGNDLER.SIGNAL_GET_PRODUCTS.connect(view.rootObject().result_get_ppob_product)
     _KioskService.K_SIGNDLER.SIGNAL_GET_PAYMENT_METHOD.connect(view.rootObject().result_get_payment_method)
     _KioskService.K_SIGNDLER.SIGNAL_SYNC_ADS_CONTENT.connect(view.rootObject().result_sync_ads)
+    _PPOBService.PPOB_SIGNDLER.SIGNAL_CHECK_PPOB.connect(view.rootObject().result_check_ppob)
+    _PPOBService.PPOB_SIGNDLER.SIGNAL_TRX_PPOB.connect(view.rootObject().result_trx_ppob)
 
 
 LOGGER = None

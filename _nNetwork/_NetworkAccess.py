@@ -165,15 +165,20 @@ def get_local(url, param=None, log=True):
         response = r.json()
     except Exception as e:
         LOGGER.warning((url, ERROR_RESPONSE, e))
+        del r
         return r.status_code, ERROR_RESPONSE
 
     if log is True:
         LOGGER.debug(('<URL>: ' + str(url) + " <STAT>: " + str(r.status_code) + " <RESP>: " + str(response)))
+    del r
     return r.status_code, response
 
 
-def item_download(url, path):
-    item = url.split('/')[-1]
+def item_download(url, path, name=None):
+    if name is None:
+        item = url.split('/')[-1]
+    else:
+        item = name
     if not os.path.exists(path):
         os.makedirs(path)
     file = os.path.join(path, item)

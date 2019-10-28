@@ -57,9 +57,14 @@ Base{
         }
     }
 
-    BackButton{
+    CircleButton{
         id:back_button
-        x: 100 ;y: 40;
+        anchors.left: parent.left
+        anchors.leftMargin: 50
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 30
+        button_text: 'BATAL'
+        modeReverse: true
         MouseArea{
             anchors.fill: parent
             onClicked: {
@@ -73,6 +78,21 @@ Base{
 //    DatePickerNew{
 //        id: datepicker
 //    }
+
+    function false_notif(param){
+        press = '0';
+        switch_frame('source/smiley_down.png', 'Maaf Sementara Mesin Tidak Dapat Digunakan', '', 'backToMain', false )
+        return;
+    }
+
+    function switch_frame(imageSource, textMain, textSlave, closeMode, smallerText){
+        global_frame.imageSource = imageSource;
+        global_frame.textMain = textMain;
+        global_frame.textSlave = textSlave;
+        global_frame.closeMode = closeMode;
+        global_frame.smallerSlaveSize = smallerText;
+        global_frame.open();
+    }
 
 
 
@@ -105,6 +125,14 @@ Base{
         id:loading_view
         z: 99
         show_text: "Finding Flight..."
+    }
+
+    PopupLoading{
+        id: popup_loading
+    }
+
+    GlobalFrame{
+        id: global_frame
     }
 
 

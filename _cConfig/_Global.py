@@ -553,3 +553,14 @@ def get_active_sam(bank='MANDIRI', reverse=False):
             return str(MANDIRI_ACTIVE)
     else:
         return
+
+
+def empty(s=None):
+    if s is None:
+        return True
+    elif type(s) == int and s == 0:
+        return True
+    elif type(s) != int and len(s) == 0:
+        return True
+    else:
+        return False

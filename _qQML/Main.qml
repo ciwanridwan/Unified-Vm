@@ -99,6 +99,9 @@ Rectangle {
     signal result_get_ppob_product(string str)
     signal result_get_payment_method(string str)
     signal result_sync_ads(string str)
+    signal result_check_ppob(string str)
+    signal result_trx_ppob(string String)
+
 
     //==================================================================================================//
 
@@ -260,8 +263,12 @@ Rectangle {
         MandiriPaymentProcess{}
     }
 
-    Component {id: ppob_page
-        PPOBPage{}
+    Component {id: ppob_category
+        PPOBCategoryPage{}
+    }
+
+    Component {id: ppob_product
+        PPOBProductPage{}
     }
 
 

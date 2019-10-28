@@ -134,15 +134,15 @@ Base{
         }
     }
 
-    BackButton{
+    CircleButton{
         id:back_button
         anchors.left: parent.left
-        anchors.leftMargin: 100
+        anchors.leftMargin: 50
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 50
+        anchors.bottomMargin: 30
         button_text: 'BATAL'
-        visible: !popup_loading.visible && !preload_check_card.visible
         modeReverse: true
+        visible: !popup_loading.visible && !preload_check_card.visible
         MouseArea{
             anchors.fill: parent
             onClicked: {
@@ -152,12 +152,12 @@ Base{
         }
     }
 
-    NextButton{
+    CircleButton{
         id: next_button
         anchors.right: parent.right
-        anchors.rightMargin: 100
+        anchors.rightMargin: 50
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 50
+        anchors.bottomMargin: 30
         button_text: 'ISI SALDO'
         modeReverse: true
         visible: !popup_loading.visible && !preload_check_card.visible
@@ -450,7 +450,8 @@ Base{
 
     PreloadCheckCard{
         id: preload_check_card
-        NextButton{
+//        visible: true
+        CircleButton{
             id: cancel_button_preload
             anchors.left: parent.left
             anchors.leftMargin: 100
@@ -467,7 +468,7 @@ Base{
             }
         }
 
-        NextButton{
+        CircleButton{
             id: next_button_preload
             anchors.right: parent.right
             anchors.rightMargin: 100

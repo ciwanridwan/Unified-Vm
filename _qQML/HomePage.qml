@@ -26,9 +26,9 @@ Base{
 
     Stack.onStatusChanged:{
         if(Stack.status == Stack.Activating){
-            if (first_run) _SLOT.get_kiosk_status();
             _SLOT.start_idle_mode();
             _SLOT.kiosk_get_product_stock();
+            if (first_run) _SLOT.get_kiosk_status();
 //            _SLOT.start_get_topup_readiness();
             press = "0";
             resetMediaTimer();
@@ -70,7 +70,7 @@ Base{
         console.log('get_ppob_product', now, p);
          press = '0';
          popup_loading.close();
-//         my_layer.push(ppob_page, {data: p, type: 'category'});
+         my_layer.push(ppob_category, {ppobData: p});
     }
 
     function resetMediaTimer(){
@@ -248,6 +248,7 @@ Base{
         anchors.topMargin: 350
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: 'Selamat Datang di Mandiri e-Money Terminal'
+        visible: !popup_loading.visible
         size_: 50
         color_: "white"
 

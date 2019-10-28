@@ -8,6 +8,7 @@
 /_rRemoteFiles/
 /_dDB/kiosk.db
 setting.ini
+setting.ini.bak
 _cCommand/__pycache__/
 _cConfig/__pycache__/
 _dDAO/__pycache__/

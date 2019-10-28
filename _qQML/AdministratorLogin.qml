@@ -93,12 +93,13 @@ Base{
         }
     }
 
-    BackButton{
+    CircleButton{
         id:back_button
         anchors.left: parent.left
-        anchors.leftMargin: 120
+        anchors.leftMargin: 50
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 50
+        anchors.bottomMargin: 30
+        button_text: 'BATAL'
         z: 10
         visible: !popup_loading.visible
         modeReverse: true
