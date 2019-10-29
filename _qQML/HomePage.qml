@@ -415,10 +415,11 @@ Base{
             triggeredOnStart:true
             onTriggered:{
                 tvc_loading.counter -= 1
+//                _SLOT.post_tvc_log('Integrasi Transportasi.mp4');
                 if(tvc_loading.counter == 0){
                     console.log("starting tvc player...");
-//                    if (!mediaOnPlaying) my_layer.push(media_page, {mode: 'mediaPlayer'});
-                    _SLOT.set_tvc_player('START')
+                    if (!mediaOnPlaying) my_layer.push(media_page, {mode: 'mediaPlayer'});
+//                    _SLOT.set_tvc_player('START')
                     tvc_loading.counter = tvc_timeout;
                     show_tvc_loading.restart();
                 }

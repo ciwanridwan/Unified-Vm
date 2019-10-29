@@ -500,7 +500,11 @@ def update_tvc_log(media):
         LOGGER.debug((media, str(_Global.ADS_SETTING['playlist']), 'MEDIA_NOT_FOUND_IN_PLAYLIST'))
         return
     media_code = media.replace(' ', '^')
+    # _Helper.dump(media_code)
     media_today_path = sys.path[0]+'/_tTmp/'+media_code+'/'+time.strftime("%Y-%m-%d")+'.count'
+    # _Helper.dump(media_today_path)
+    if not os.path.isdir(sys.path[0]+'/_tTmp/'+media_code):
+        os.mkdir(sys.path[0]+'/_tTmp/'+media_code, 777)
     if not os.path.exists(media_today_path):
         count = 1
         with open(media_today_path, 'w+') as c:
@@ -535,7 +539,7 @@ def send_tvc_log(media, count, media_code=None):
         "date": time.strftime("%Y-%m-%d")
     }
     try:
-        status, response = _NetworkAccess.post_to_url('count/ads', param)
+        status, response = _NetworkAccess.post_to_url(_Global.BACKEND_URL+'count/ads', param)
         _Global.log_to_temp_config(media_code, str(_Helper.now()))
         LOGGER.info((media, str(count), status, response))
     except Exception as e:

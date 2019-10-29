@@ -10,9 +10,6 @@ Rectangle {
     color: 'transparent'
     property var top_color: "#f03838"
     property var language: "INA"
-    property var raw_origin: undefined
-    property var raw_destination: undefined
-    property var raw_transit: undefined
     property var globalBoxName: 'VM01 - Box Name'
     property bool mediaOnPlaying: false
 

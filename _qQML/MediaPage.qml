@@ -3,6 +3,7 @@ import QtQuick.Controls 1.2
 import Qt.labs.folderlistmodel 1.0
 import QtMultimedia 5.0
 import "screen.js" as SCREEN
+import "running.js" as RUN
 
 
 Rectangle{
@@ -22,7 +23,7 @@ Rectangle{
 
     Stack.onStatusChanged:{
         if(Stack.status==Stack.Activating){
-            console.log('ads mode : ' +  mode)
+//            console.log('ads mode : ' +  mode)
             if(mode=="mediaPlayer" && media_files.length == 0){
                 _SLOT.get_file_list(img_path);
             }
@@ -92,7 +93,7 @@ Rectangle{
             index = i;
             index %= media_files.length;
             player.source = img_path_ + media_files[index];
-//            slot_handler.start_post_tvclog(media_files[index])
+            _SLOT.post_tvc_log(media_files[index])
             player.play();
             mediaOnPlaying = true;
         }
@@ -164,7 +165,7 @@ Rectangle{
         anchors.verticalCenter: header_opacity.verticalCenter
         anchors.left: parent.left
         anchors.leftMargin: 50
-        source: "source/emoney_logo.png"
+        source: RUN.logo
         fillMode: Image.PreserveAspectFit
     }
 
@@ -175,7 +176,7 @@ Rectangle{
         anchors.verticalCenter: header_opacity.verticalCenter
         anchors.right: parent.right
         anchors.rightMargin: 50
-        source: "source/mandiri_logo.png"
+        source: RUN.logo
         fillMode: Image.PreserveAspectFit
     }
 
@@ -199,8 +200,8 @@ Rectangle{
             id: moving_text
             x: parent.width
             anchors.fill: running_text_box
-            color: "darkblue"
-            text: 'Mesin Ini Hanya Menerima Pembelian Dan Isi Ulang Kartu e-Money Mandiri.                          <<<Sentuh Layar Untuk Memulai Transaksi>>>'
+            color: RUN.text_color
+            text: RUN.running_text
             anchors.verticalCenter: parent.verticalCenter
             font.pixelSize: 50
             verticalAlignment: Text.AlignVCenter
