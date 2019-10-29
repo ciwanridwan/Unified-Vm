@@ -7,7 +7,7 @@ Base{
     isBoxNameActive: false
     property var textMain: 'Silakan Menunggu'
     property var textSlave: ''
-    property var imageSource: "source/loading_static.png"
+    property var imageSource: "source/sand-clock-animated-2.gif"
     property bool smallerSlaveSize: false
     property int textSize: 45
     visible: false

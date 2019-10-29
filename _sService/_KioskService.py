@@ -98,6 +98,7 @@ def update_kiosk_status(r):
             _Global.FEATURE_SETTING = r['data']['feature']
             _Global.store_to_temp_data('feature-setting', json.dumps(r['data']['feature']))
             define_theme(_Global.THEME_SETTING)
+            _Global.ADS_SETTING = r['data']['ads']
             _Global.store_to_temp_data('ads-setting', json.dumps(r['data']['ads']))
             # define_ads(_Global.ADS_SETTING)
             if r['result'] == 'OK' and _Global.PRINTER_STATUS == "NORMAL":
@@ -452,7 +453,8 @@ def get_file_list(dir_):
 
 
 def file_list(dir_):
-    if dir_ == "" or dir_ is None:
+    if _Global.empty(dir_):
+        LOGGER.warning((dir_, 'MISSING_DIRECTORY'))
         return
     ext_files = '.*'
     if "Video" in str(dir_):
@@ -461,20 +463,20 @@ def file_list(dir_):
         ext_files = ('.png', '.jpeg', '.jpg')
     elif "Music" in str(dir_):
         ext_files = ('.mp3', '.ogg', '.wav')
+    _dir_ = dir_.replace(".", "")
     try:
-        _dir_ = dir_.replace(".", "")
-        _tvclist = [xyz for xyz in os.listdir(sys.path[0] + _dir_) if xyz.endswith(ext_files)]
-        # post_tvc_list(json.dumps(_tvclist))
         files = {
-            "result": _tvclist,
+            "result": [x for x in os.listdir(sys.path[0] + _dir_) if x.endswith(ext_files)],
             "dir": dir_
         }
-        # print(files)
-        LOGGER.info(("getting files from : ", _dir_, str(files)))
+        if "Video" in str(dir_):
+            files["old_result"] = files["result"]
+            files["result"] = _Global.ADS_SETTING['playlist']
+        LOGGER.info((_dir_, str(files)))
         K_SIGNDLER.SIGNAL_GET_FILE_LIST.emit(json.dumps(files))
     except Exception as e:
         K_SIGNDLER.SIGNAL_GET_FILE_LIST.emit("ERROR")
-        LOGGER.warning(("file_list: ", e))
+        LOGGER.warning((_dir_, str(e)))
 
 
 def post_tvc_list(list_):
@@ -489,23 +491,55 @@ def post_tvc_list(list_):
 
 
 def post_tvc_log(media):
-    _Helper.get_pool().apply_async(tvc_log, (media,))
+    _Helper.get_pool().apply_async(update_tvc_log, (media,))
 
 
-def tvc_log(media):
-    if media is None or media == "":
+def update_tvc_log(media):
+    # Function to update the media count locally and keep it for on hour
+    if media not in _Global.ADS_SETTING['playlist']:
+        LOGGER.debug((media, str(_Global.ADS_SETTING['playlist']), 'MEDIA_NOT_FOUND_IN_PLAYLIST'))
         return
+    media_code = media.replace(' ', '^')
+    media_today_path = sys.path[0]+'/_tTmp/'+media_code+'/'+time.strftime("%Y-%m-%d")+'.count'
+    if not os.path.exists(media_today_path):
+        count = 1
+        with open(media_today_path, 'w+') as c:
+            c.write(str(count))
+            c.close()
+    else:
+        last_count = int(open(media_today_path, 'r').read().strip())
+        count = last_count + 1
+        with open(media_today_path, 'w') as c:
+            c.write(str(count))
+            c.close()
+    last_update_media = int(_ConfigParser.get_set_value('TEMPORARY', media_code, '0'))
+    if (last_update_media + (60 * 60 * 1000)) > _Helper.now():
+        LOGGER.debug((media, str(count), str(last_update_media), 'SKIP_NEXT_LOOP'))
+        return
+    else:
+        send_tvc_log(media, count, media_code)
+
+
+def send_tvc_log(media, count, media_code=None):
+    if _Global.empty(media):
+        LOGGER.warning((media, str(count), 'MISSING_MEDIA_NAME'))
+        return
+    if _Global.empty(count):
+        LOGGER.warning((media, str(count), 'MISSING_MEDIA_COUNT'))
+        return
+    if media_code is None:
+        media_code = media.replace(' ', '^')
     param = {
-        "filename": media,
-        "country": "ID",
-        "playtime": time.strftime("%Y-%m-%d %H")
+        "media": media,
+        "count": str(count),
+        "date": time.strftime("%Y-%m-%d")
     }
     try:
-        #TODO Create Backend URL
-        status, response = _NetworkAccess.post_to_url('box/tvcLog', param)
-        LOGGER.info(("tvc_log: ", response))
+        status, response = _NetworkAccess.post_to_url('count/ads', param)
+        _Global.log_to_temp_config(media_code, str(_Helper.now()))
+        LOGGER.info((media, str(count), status, response))
     except Exception as e:
-        LOGGER.warning(("tvc_log: ", e))
+        LOGGER.warning((media, str(count), str(e)))
 
 
 def start_get_device_status():

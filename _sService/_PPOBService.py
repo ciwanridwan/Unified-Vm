@@ -75,7 +75,7 @@ def check_ppob_product(msisdn='', product_id=''):
             'msisdn': msisdn,
             'product_id': product_id
         }
-        s, r = _NetworkAccess.post_to_url(url=_Global.BACKEND_URL+'check-bill', param=param)
+        s, r = _NetworkAccess.post_to_url(url=_Global.BACKEND_URL+'ppob/check', param=param)
         if s == 200 and r['result'] == 'OK':
             PPOB_SIGNDLER.SIGNAL_CHECK_PPOB.emit('PPOB_CHECK|' + json.dumps(r['data']))
         else:
@@ -97,6 +97,7 @@ def start_do_topup_ppob(payload):
 
 
 def do_trx_ppob(payload, mode='PAY'):
+    # product_id,msisdn,amount,reff_no,payment_type,product_category,operator
     payload = json.loads(payload)
     if _Global.empty(payload['msisdn']):
         LOGGER.warning((str(payload), 'MISSING_MSISDN'))
@@ -107,26 +108,29 @@ def do_trx_ppob(payload, mode='PAY'):
         PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|MISSING_PRODUCT_ID')
         return
     if _Global.empty(payload['amount']):
-        LOGGER.warning((str(payload),'MISSING_AMOUNT'))
+        LOGGER.warning((str(payload), 'MISSING_AMOUNT'))
         PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|MISSING_AMOUNT')
         return
     if _Global.empty(payload['reff_no']):
         LOGGER.warning((str(payload), 'MISSING_REFF_NO'))
         PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|MISSING_REFF_NO')
         return
-    if _Global.empty(payload['category']):
-        LOGGER.warning((str(payload), 'MISSING_CATEGORY'))
-        PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|MISSING_CATEGORY')
+    if _Global.empty(payload['product_category']):
+        LOGGER.warning((str(payload), 'MISSING_PRODUCT_CATEGORY'))
+        PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|MISSING_PRODUCT_CATEGORY')
         return
-    if _Global.empty(payload['payment_method']):
-        LOGGER.warning((str(payload), 'MISSING_PAYMENT_METHOD'))
-        PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|MISSING_PAYMENT_METHOD')
+    if _Global.empty(payload['payment_type']):
+        LOGGER.warning((str(payload), 'MISSING_PAYMENT_TYPE'))
+        PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|MISSING_PAYMENT_TYPE')
+        return
+    if _Global.empty(payload['operator']):
+        LOGGER.warning((str(payload), 'MISSING_OPERATOR'))
+        PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|MISSING_OPERATOR')
         return
     try:
-        # TODO Change To Actual Endpoint
-        url = _Global.BACKEND_URL+'pay-bill'
+        url = _Global.BACKEND_URL+'ppob/pay'
         if mode == 'TOPUP':
-            url = _Global.BACKEND_URL+'topup-bill'
+            url = _Global.BACKEND_URL+'ppob/topup'
         s, r = _NetworkAccess.post_to_url(url=url, param=payload)
         if s == 200 and r['result'] == 'OK' and r['data'] is not None:
             PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|' + json.dumps(r['data']))

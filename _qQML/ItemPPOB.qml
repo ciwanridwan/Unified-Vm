@@ -2,7 +2,7 @@ import QtQuick 2.0
 import QtGraphicalEffects 1.0
 
 Rectangle {
-    property bool modeReverse: true
+    property bool modeReverse: false
     property var color_: (modeReverse) ? "white" : "black"
     property var img_:"source/topup_kartu.png"
     property var text_:"Telkomsel 100000"
@@ -13,10 +13,11 @@ Rectangle {
     height: 400
     color: 'transparent'
     visible: true
+
     Rectangle{
         id: background_base
         anchors.fill: parent
-        color: 'white'
+        color: color_
         opacity: .3
     }
     Image{
@@ -37,7 +38,7 @@ Rectangle {
     }
     Text{
         id: text_button
-        color: 'white'
+        color: text_color
         text: text_.toUpperCase()
         style: Text.Sunken
         font.pixelSize: 30
@@ -51,7 +52,7 @@ Rectangle {
     }
     Text{
         id: price_text
-        color: 'white'
+        color: text_color
         text: text2_.toUpperCase()
         font.pixelSize: 25
         anchors.bottomMargin: 10

@@ -2,13 +2,13 @@ import QtQuick 2.4
 import QtQuick.Controls 1.2
 
 Rectangle{
-    width:160
-    height:160
+    width:120
+    height:120
     color:"transparent"
     property bool modeReverse: false
-    property string button_text: 'lanjut'
+    property string button_text: 'KEMBALI'
     property real globalOpacity: .50
-    property int fontSize: 40
+    property int fontSize: 35
 
     Rectangle{
         anchors.fill: parent
