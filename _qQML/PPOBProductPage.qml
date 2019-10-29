@@ -38,6 +38,7 @@ Base{
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('parse_item_category', now, c);
         product_model.clear();
+        gridViewPPOB.model = product_model;
         var p = JSON.parse(ppobData)
         for (var i=0;i < p.length;i++){
             if (p[i]['category']==c){
@@ -51,7 +52,6 @@ Base{
 
         }
 
-        gridViewPPOB.model = product_model;
         popup_loading.close();
     }
 
@@ -178,6 +178,10 @@ Base{
             clip: true
             focus: true
             delegate: component_ppob
+            add: Transition {
+                    NumberAnimation { property: "opacity"; from: 0; to: 1.0; duration: 500 }
+                    NumberAnimation { property: "scale"; from: 0; to: 1.0; duration: 500 }
+                }
         }
 
         ListModel {

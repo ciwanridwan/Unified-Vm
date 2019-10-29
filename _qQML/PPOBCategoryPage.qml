@@ -51,13 +51,13 @@ Base{
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('parse_item_category', now, c);
         category_model.clear();
+        gridViewPPOB.model = category_model;
         for (var _c=0; _c < category.length;_c++){
             category_model.append({
                                       'category_text': category[_c],
                                       'category_url': 'source/ppob_category/'+category[_c]+'.png'
                                   })
         }
-        gridViewPPOB.model = category_model;
         popup_loading.close();
     }
 
@@ -184,6 +184,10 @@ Base{
             clip: true
             focus: true
             delegate: component_ppob
+            add: Transition {
+                    NumberAnimation { property: "opacity"; from: 0; to: 1.0; duration: 500 }
+                    NumberAnimation { property: "scale"; from: 0; to: 1.0; duration: 500 }
+                }
         }
 
         ListModel {

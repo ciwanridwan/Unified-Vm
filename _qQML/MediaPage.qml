@@ -3,7 +3,7 @@ import QtQuick.Controls 1.2
 import Qt.labs.folderlistmodel 1.0
 import QtMultimedia 5.0
 import "screen.js" as SCREEN
-import "running.js" as RUN
+import "config.js" as CONF
 
 
 Rectangle{
@@ -138,14 +138,7 @@ Rectangle{
                 my_layer.pop();
                 mediaOnPlaying = false;
             }
-            onDoubleClicked: {
-                player.stop();
-                while (media_files.length > 0) {
-                    media_files.pop();
-                }
-                my_layer.pop();
-                mediaOnPlaying = false;
-            }
+            onDoubleClicked: onClicked
         }
     }
 
@@ -165,7 +158,7 @@ Rectangle{
         anchors.verticalCenter: header_opacity.verticalCenter
         anchors.left: parent.left
         anchors.leftMargin: 50
-        source: RUN.logo
+        source: 'source/logo/'+CONF.master_logo[0]
         fillMode: Image.PreserveAspectFit
     }
 
@@ -176,8 +169,9 @@ Rectangle{
         anchors.verticalCenter: header_opacity.verticalCenter
         anchors.right: parent.right
         anchors.rightMargin: 50
-        source: RUN.logo
+        source: ''
         fillMode: Image.PreserveAspectFit
+        visible: false
     }
 
     Rectangle{
@@ -200,8 +194,8 @@ Rectangle{
             id: moving_text
             x: parent.width
             anchors.fill: running_text_box
-            color: RUN.text_color
-            text: RUN.running_text
+            color: CONF.text_color
+            text: CONF.running_text
             anchors.verticalCenter: parent.verticalCenter
             font.pixelSize: 50
             verticalAlignment: Text.AlignVCenter

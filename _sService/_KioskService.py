@@ -79,7 +79,7 @@ def update_kiosk_status(r):
     try:
         _Global.PRINTER_STATUS = get_printer_status_v2()
         LOGGER.info(("get_printer_status : ", _Global.PRINTER_STATUS))
-        if len(r['data']['kiosk']) == 0:
+        if _Global.empty(r['data']):
             _Global.KIOSK_SETTING = _DAO.init_kiosk()[0]
             _Global.KIOSK_ADMIN = int(_Global.KIOSK_SETTING['defaultAdmin'])
             _Global.KIOSK_MARGIN = int(_Global.KIOSK_SETTING['defaultMargin'])
@@ -127,7 +127,7 @@ def define_theme(d):
             master_logo.append(image)
         else:
             continue
-    content_js += "var master_logo = " + json.dumps(master_logo) + ";" + os.linesep
+    content_js += 'var master_logo = ' + json.dumps(master_logo) + ';' + os.linesep
     partner_logos = []
     for p in d['partner_logos']:
         download, image = _NetworkAccess.item_download(p, os.getcwd() + '/_qQml/source/logo')
@@ -135,7 +135,7 @@ def define_theme(d):
             partner_logos.append(image)
         else:
             continue
-    content_js += "var partner_logos = " + json.dumps(partner_logos) + ";" + os.linesep
+    content_js += 'var partner_logos = ' + json.dumps(partner_logos) + ';' + os.linesep
     backgrounds = []
     for b in d['backgrounds']:
         download, image = _NetworkAccess.item_download(b, os.getcwd() + '/_qQml/source/background')
@@ -143,16 +143,25 @@ def define_theme(d):
             backgrounds.append(image)
         else:
             continue
+    content_js += 'var backgrounds = ' + json.dumps(backgrounds) + ';' + os.linesep
+    # Running Text
+    if not _Global.empty(d['running_text']):
+        content_js += 'var running_text = "' + d['running_text'] + '";' + os.linesep
+    # Running Text Color
+    if not _Global.empty(d['running_text_color']):
+        content_js += 'var text_color = "' + d['running_text_color'] + '";' + os.linesep
+    # Receipt Custom Text
+    if not _Global.empty(d['receipt_custom_text']):
+        _Global.CUSTOM_RECEIPT_TEXT = d['receipt_custom_text']
     # Receipt Logo
     store, receipt_logo = _NetworkAccess.item_download(d['receipt_logo'], os.getcwd() + '/_rReceipts')
     if store is True:
         _Global.RECEIPT_LOGO = receipt_logo
         _Global.log_to_temp_config('receipt^logo', receipt_logo)
-    content_js += "var backgrounds = " + json.dumps(backgrounds) + ";" + os.linesep
     with open(config_js, 'w+') as config_qml:
         config_qml.write(content_js)
         config_qml.close()
-    LOGGER.info(('define_theme : ', config_js, content_js))
+    LOGGER.info((config_js, content_js))
 
 
 def start_define_ads(wait_for=5):
@@ -183,20 +192,15 @@ def define_ads(a):
                 K_SIGNDLER.SIGNAL_SYNC_ADS_CONTENT.emit('SYNC_ADS|DELETE_EXPIRED_'+d.upper())
                 os.remove(file_delete)
     __must_download = list(set(__playlist) - set(__current_list))
-    # _Helper.dump(__must_download)
     while len(__must_download) > 0:
         for l in __must_download:
             media_link = get_metadata_link(l, __metadata)
             LOGGER.debug(("add new media : ", media_link))
             K_SIGNDLER.SIGNAL_SYNC_ADS_CONTENT.emit('SYNC_ADS|ADD_NEW_'+l.upper())
-            _Helper.dump(media_link)
             if media_link is not False:
                 stream, media = _NetworkAccess.stream_large_download(media_link, l, _Global.TEMP_FOLDER, __tvc_path)
-                # _Helper.dump(_Global.TEMP_FOLDER)
-                # _Helper.dump(__tvc_path)
                 if stream is True:
                     __must_download.remove(l)
-                    # _Helper.dump(__must_download)
     K_SIGNDLER.SIGNAL_SYNC_ADS_CONTENT.emit('SYNC_ADS|SUCCESS')
     return True
 
@@ -244,7 +248,7 @@ def force_rename(file1, file2):
         move(file1, file2)
         return True
     except Exception as e:
-        LOGGER.warning(("force_rename : ", file1, file2, str(e)))
+        LOGGER.warning((file1, file2, str(e)))
         return False
 
 
@@ -266,7 +270,7 @@ def kiosk_name():
 
 def update_machine_stat(_url):
     _param = machine_summary()
-    LOGGER.info(('update_machine_stat:', _url, str(_param)))
+    LOGGER.info(( _url, str(_param)))
     s, r = _NetworkAccess.post_to_url(url=_url, param=_param)
     return True if s == 200 and r['result'] == 'OK' else False
 
@@ -296,10 +300,10 @@ def get_machine_summary():
                                                      'WHERE status="EDC|OPEN" ')
         result['cash_available'] = _DAO.custom_query(' SELECT sum(amount) as total FROM Cash '
                                                      'WHERE collectedAt is null ')
-        LOGGER.info(('get_machine_summary', str(result)))
+        LOGGER.info(('SUCCESS', str(result)))
         K_SIGNDLER.SIGNAL_GET_MACHINE_SUMMARY.emit(json.dumps(result))
     except Exception as e:
-        LOGGER.warning(('get_machine_summary', str(e)))
+        LOGGER.warning(('FAILED', str(e)))
 
 
 def machine_summary():
@@ -344,7 +348,7 @@ def machine_summary():
         summary["ram_space"] = get_ram_space()
         summary['paper_printer'] = get_printer_status_v2()
     except Exception as e:
-        LOGGER.warning(('machine_summary : ', str(e)))
+        LOGGER.warning(('FAILED', str(e)))
     finally:
         return summary
 
@@ -356,7 +360,7 @@ def get_ram_space():
             ram_space.append(int(e.FreePhysicalMemory.strip()) / 1024)
             return "%.2f" % ram_space[0]
     except Exception as e:
-        LOGGER.warning(("get_ram_space : ", str(e)))
+        LOGGER.warning(("FAILED", str(e)))
         return "%.2f" % -1
 
 
@@ -367,7 +371,7 @@ def get_disk_space(caption):
             d_space.append(int(d.FreeSpace.strip()) / 1024 / 1024)
             return "%.2f" % d_space[0]
     except Exception as e:
-        LOGGER.warning(("get_disk_space " + caption + " ", str(e)))
+        LOGGER.warning(("FAILED", caption, str(e)))
         return "%.2f" % -1
 
 
@@ -385,7 +389,7 @@ def get_printer_status():
         else:
             return 'UNKNOWN_ERROR'
     except Exception as e:
-        LOGGER.warning(("get_printer_status : ", str(e)))
+        LOGGER.warning(("FAILED", str(e)))
         return 'NOT_DETECTED'
 
 
@@ -407,7 +411,7 @@ def get_printer_status_v2():
         else:
             return 'UNKNOWN_ERROR'
     except Exception as e:
-        LOGGER.warning(("get_printer_status_v2 : ", str(e)))
+        LOGGER.warning(("FAILED", str(e)))
         return 'UNKNOWN_ERROR'
 
 
@@ -422,7 +426,7 @@ def get_cpu_temp():
             cpu_temp.append((int(g.CurrentTemperature) / 10) - 273.15 + variance)
             return "%.2f" % cpu_temp[0]
     except Exception as e:
-        LOGGER.warning(("get_cpu_temp : ", str(e)))
+        LOGGER.warning(("FAILED", str(e)))
         return "%.2f" % (common - variance)
     # return "%.2f" % (common - variance)
 
@@ -430,9 +434,9 @@ def get_cpu_temp():
 def execute_command(command):
     try:
         os.system(command)
-        LOGGER.info(('execute_command:', command))
+        LOGGER.info(('SUCCESS', command))
     except Exception as e:
-        LOGGER.warning(('execute_command:', str(e)))
+        LOGGER.warning(('FAILED', str(e)))
 
 
 def post_gui_version():
@@ -443,9 +447,9 @@ def gui_info():
     try:
         # NO-NEED Budled with Kiosk Status
         status, response = _NetworkAccess.post_to_url('box/guiInfo', {"gui_version": str(_Global.VERSION)})
-        LOGGER.info(('gui_info: ', str(status), str(response)))
+        LOGGER.info(('SUCCESS', str(status), str(response)))
     except Exception as e:
-        LOGGER.warning(('gui_info: ', e))
+        LOGGER.warning(('FAILED', str(e)))
 
 
 def get_file_list(dir_):
@@ -485,9 +489,9 @@ def post_tvc_list(list_):
     try:
         #TODO Create Backend URL
         status, response = _NetworkAccess.post_to_url('box/tvcList', {"tvclist": list_})
-        LOGGER.info(('post_tvc_list: ', response))
+        LOGGER.info(('SUCCESS', response))
     except Exception as e:
-        LOGGER.warning(("post_tvc_list: ", e))
+        LOGGER.warning(("FAILED", str(e)))
 
 
 def post_tvc_log(media):
@@ -587,7 +591,7 @@ def list_uncollected_cash():
         'data': list_cash
     }
     K_SIGNDLER.SIGNAL_LIST_CASH.emit(json.dumps(response))
-    LOGGER.info(('Getting_list_cash', json.dumps(response)))
+    LOGGER.info(('SUCCESS', json.dumps(response)))
 
 
 def start_begin_collect_cash():
@@ -630,9 +634,9 @@ def post_cash_collection(l, t):
             "updatedAt": t
         }
         status, response = _NetworkAccess.post_to_url(_Global.BACKEND_URL + 'collect/cash', param)
-        LOGGER.info(("post_cash_collection : ", response))
+        LOGGER.info(("SUCCESS", response))
     except Exception as e:
-        LOGGER.warning(("post_cash_collection : ", e))
+        LOGGER.warning(("FAILED", str(e)))
 
 
 def start_adjust_table(p):
@@ -648,7 +652,7 @@ def adjust_table(p, t='Receipts'):
             LOGGER.info(('Table Not Found, ', e, 'Adjusting : ', p))
             _DAO.adjust_table(p)
     except Exception as e:
-        LOGGER.warning(('adjust_table : ', e, t))
+        LOGGER.warning(('FAILED', str(e), t))
 
 
 PREV_RECEIPT_RAW_DATA = None

@@ -69,8 +69,8 @@ Base{
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('get_ppob_product', now, p);
          press = '0';
-         popup_loading.close();
          my_layer.push(ppob_category, {ppobData: p});
+        popup_loading.close();
     }
 
     function resetMediaTimer(){

@@ -8,7 +8,7 @@ Rectangle{
     property bool modeReverse: false
     property string button_text: 'KEMBALI'
     property real globalOpacity: .50
-    property int fontSize: 35
+    property int fontSize: 30
 
     Rectangle{
         anchors.fill: parent
@@ -27,7 +27,7 @@ Rectangle{
         horizontalAlignment: Text.AlignHCenter
         font.family:"Ubuntu"
         anchors.horizontalCenter: parent.horizontalCenter
-        font.pixelSize: (button_text.length > 5 ) ? 25 : fontSize
+        font.pixelSize: (button_text.length > 5 ) ? 23 : fontSize
         font.bold: true
     }
 

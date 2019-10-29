@@ -38,11 +38,13 @@ Rectangle {
     }
     Text{
         id: text_button
+        width: parent.width
         color: text_color
         text: text_.toUpperCase()
+        wrapMode: Text.WordWrap
         style: Text.Sunken
-        font.pixelSize: 30
-        anchors.bottomMargin: 70
+        font.pixelSize: (text_.length < 16) ? 30 : 25
+        anchors.bottomMargin: 75
         anchors.horizontalCenterOffset: 0
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
