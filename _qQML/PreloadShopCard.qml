@@ -28,9 +28,9 @@ Base{
         anchors.top: parent.top
         anchors.topMargin: 300
         anchors.horizontalCenter: parent.horizontalCenter
-        show_text: 'Penting : Informasi Pembelian Kartu Mandiri e-Money'
+        show_text: 'Penting : Informasi Pembelian Kartu'
         size_: 50
-        color_: "white"
+        color_: "yellow"
 
     }
 

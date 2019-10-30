@@ -268,6 +268,9 @@ Rectangle {
         PPOBProductPage{}
     }
 
+    Component {id: global_input_number
+        GlobalInputNumber{}
+    }
 
 }
 

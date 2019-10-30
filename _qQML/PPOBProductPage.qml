@@ -200,15 +200,12 @@ Base{
                     anchors.fill: parent;
                     onClicked: {
                         console.log('Selected Product : ', JSON.stringify(raw));
-
+                        my_layer.push(global_input_number, {selectedProduct: raw, mode: 'PPOB'});
                     }
                 }
             }
         }
     }
-
-
-
 
 
     //==============================================================
