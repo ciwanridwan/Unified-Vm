@@ -32,6 +32,7 @@ from _sService import _TopupService
 from _sService import _SettlementService
 from _sService import _UpdateAppService
 from _sService import _PPOBService
+from _sService import _QRPaymentService
 import json
 
 
@@ -502,6 +503,50 @@ class SlotHandler(QObject):
         _PPOBService.start_do_topup_ppob(payload)
     start_do_topup_ppob = pyqtSlot(str)(start_do_topup_ppob)
 
+    def start_check_trx_online(self, reff_no):
+        _PPOBService.start_check_trx_online(reff_no)
+    start_check_trx_online = pyqtSlot(str)(start_check_trx_online)
+
+    def start_get_qr_gopay(self, payload):
+        _QRPaymentService.start_get_qr_gopay(payload)
+    start_get_qr_gopay = pyqtSlot(str)(start_get_qr_gopay)
+
+    def start_get_qr_dana(self, payload):
+        _QRPaymentService.start_get_qr_dana(payload)
+    start_get_qr_dana = pyqtSlot(str)(start_get_qr_dana)
+
+    def start_get_qr_ovo(self, payload):
+        _QRPaymentService.start_get_qr_ovo(payload)
+    start_get_qr_ovo = pyqtSlot(str)(start_get_qr_ovo)
+
+    def start_get_qr_linkaja(self, payload):
+        _QRPaymentService.start_get_qr_linkaja(payload)
+    start_get_qr_linkaja = pyqtSlot(str)(start_get_qr_linkaja)
+
+    def start_do_check_gopay_qr(self, payload):
+        _QRPaymentService.start_do_check_gopay_qr(payload)
+    start_do_check_gopay_qr = pyqtSlot(str)(start_do_check_gopay_qr)
+
+    def start_do_check_dana_qr(self, payload):
+        _QRPaymentService.start_do_check_dana_qr(payload)
+    start_do_check_dana_qr = pyqtSlot(str)(start_do_check_dana_qr)
+
+    def start_do_check_ovo_qr(self, payload):
+        _QRPaymentService.start_do_check_ovo_qr(payload)
+    start_do_check_ovo_qr = pyqtSlot(str)(start_do_check_ovo_qr)
+
+    def start_do_check_linkaja_qr(self, payload):
+        _QRPaymentService.start_do_check_linkaja_qr(payload)
+    start_do_check_linkaja_qr = pyqtSlot(str)(start_do_check_linkaja_qr)
+
+    def start_do_pay_ovo_qr(self, payload):
+        _QRPaymentService.start_do_pay_ovo_qr(payload)
+    start_do_pay_ovo_qr = pyqtSlot(str)(start_do_pay_ovo_qr)
+
+    def start_confirm_ovo_qr(self, payload):
+        _QRPaymentService.start_confirm_ovo_qr(payload)
+    start_confirm_ovo_qr = pyqtSlot(str)(start_confirm_ovo_qr)
+
 
 def s_handler():
     _KioskService.K_SIGNDLER.SIGNAL_GET_FILE_LIST.connect(view.rootObject().result_get_file_list)
@@ -588,6 +633,11 @@ def s_handler():
     _KioskService.K_SIGNDLER.SIGNAL_SYNC_ADS_CONTENT.connect(view.rootObject().result_sync_ads)
     _PPOBService.PPOB_SIGNDLER.SIGNAL_CHECK_PPOB.connect(view.rootObject().result_check_ppob)
     _PPOBService.PPOB_SIGNDLER.SIGNAL_TRX_PPOB.connect(view.rootObject().result_trx_ppob)
+    _PPOBService.PPOB_SIGNDLER.SIGNAL_TRX_CHECK.connect(view.rootObject().result_check_trx)
+    _QRPaymentService.QR_SIGNDLER.SIGNAL_GET_QR.connect(view.rootObject().result_get_qr)
+    _QRPaymentService.QR_SIGNDLER.SIGNAL_PAY_QR.connect(view.rootObject().result_pay_qr)
+    _QRPaymentService.QR_SIGNDLER.SIGNAL_CHECK_QR.connect(view.rootObject().result_check_qr)
+    _QRPaymentService.QR_SIGNDLER.SIGNAL_CONFIRM_QRN.connect(view.rootObject().result_confirm_qr)
 
 
 LOGGER = None
@@ -641,6 +691,7 @@ def get_disk_info():
 
 
 def get_screen_resolution():
+    global GLOBAL_HEIGHT, GLOBAL_WIDTH
     try:
         import ctypes
         user32 = ctypes.windll.user32
@@ -648,6 +699,8 @@ def get_screen_resolution():
         _RES = [user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)]
         LOGGER.info(('get_screen_resolution : ', str(_RES)))
         screen_js = sys.path[0] + '/_qQml/screen.js'
+        GLOBAL_WIDTH = _RES[0]
+        GLOBAL_HEIGHT = _RES[1]
         content_js = 'var size = { "width": ' + str(_RES[0]) + ', "height": ' + str(_RES[1]) + '};'
         with open(screen_js, 'w+') as s:
             s.write(content_js)

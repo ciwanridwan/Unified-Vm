@@ -211,7 +211,7 @@ Base{
                 if(press != "0"){
                     return
                 }
-                if (max_count > textInput.length > min_count ){
+                if (max_count+1 > textInput.length > min_count ){
                     var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
                     press = "1"
                     console.log('number input', now, textInput);

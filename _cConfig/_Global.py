@@ -84,6 +84,18 @@ SERVICE_VERSION = _ConfigParser.get_set_value('TEMPORARY', 'service^version', '-
 # TODO: Set this into receipt
 CUSTOM_RECEIPT_TEXT = _ConfigParser.get_set_value('TEMPORARY', 'receipt^custom^text', '')
 
+QR_HOST = _ConfigParser.get_set_value('QR', 'qr^host', 'https://apiv2.mdd.co.id:30307/v1/')
+QR_TOKEN = _ConfigParser.get_set_value('QR', 'qr^token', 'e6f092a0fa88d9cac8dac3d2162f1450')
+QR_MID = _ConfigParser.get_set_value('QR', 'qr^mid', '000972721511382bf739669cce165808')
+
+
+def serialize_payload(data, specification='MDD_CORE_API'):
+    if specification == 'MDD_CORE_API':
+        data['token'] = QR_TOKEN
+        data['mid'] = QR_MID
+        data['tid'] = TID
+    return data
+
 
 def get_service_version():
     global SERVICE_VERSION

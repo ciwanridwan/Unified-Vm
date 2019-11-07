@@ -7,7 +7,7 @@ from _cConfig import _Global
 from _tTools import _Helper
 from _nNetwork import _NetworkAccess
 import sys
-import os
+# import os
 
 
 class PPOBSignalHandler(QObject):
@@ -15,6 +15,7 @@ class PPOBSignalHandler(QObject):
     SIGNAL_GET_PRODUCTS = pyqtSignal(str)
     SIGNAL_CHECK_PPOB = pyqtSignal(str)
     SIGNAL_TRX_PPOB = pyqtSignal(str)
+    SIGNAL_TRX_CHECK = pyqtSignal(str)
 
 
 PPOB_SIGNDLER = PPOBSignalHandler()
@@ -140,3 +141,28 @@ def do_trx_ppob(payload, mode='PAY'):
     except Exception as e:
         LOGGER.warning((str(payload), mode, str(e)))
         PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|ERROR')
+
+
+def start_check_trx_online(reff_no):
+    _Helper.get_pool().apply_async(do_check_trx, (reff_no,))
+
+
+def do_check_trx(reff_no):
+    if _Global.empty(reff_no):
+        LOGGER.warning((str(reff_no), 'MISSING_REFF_NO'))
+        PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|MISSING_REFF_NO')
+        return
+    payload = {
+        'reff_no': reff_no
+    }
+    try:
+        url = _Global.BACKEND_URL+'trx/detail'
+        s, r = _NetworkAccess.post_to_url(url=url, param=payload)
+        if s == 200 and r['result'] == 'OK' and r['data'] is not None:
+            PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|' + json.dumps(r['data']))
+        else:
+            PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|ERROR')
+        LOGGER.debug((str(payload), str(r)))
+    except Exception as e:
+        LOGGER.warning((str(payload), str(e)))
+        PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|ERROR')

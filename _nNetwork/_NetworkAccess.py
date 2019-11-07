@@ -98,9 +98,7 @@ def get_from_url(url, param=None, header=None, log=True):
         return -1, NO_INTERNET
 
     try:
-        if 'tibox' in url:
-            response = r.text
-        elif 'ping' in url:
+        if '/ping' in url:
             response = r.text
         else:
             response = r.json()
@@ -134,9 +132,7 @@ def post_to_url(url, param=None, header=None, log=True):
         return -1, NO_INTERNET
 
     try:
-        if 'tibox' in url:
-            response = r.text
-        elif 'ping' in url:
+        if '/ping' in url:
             response = r.text
         else:
             response = r.json()
@@ -165,12 +161,10 @@ def get_local(url, param=None, log=True):
         response = r.json()
     except Exception as e:
         LOGGER.warning((url, ERROR_RESPONSE, e))
-        del r
         return r.status_code, ERROR_RESPONSE
 
     if log is True:
         LOGGER.debug(('<URL>: ' + str(url) + " <STAT>: " + str(r.status_code) + " <RESP>: " + str(response)))
-    del r
     return r.status_code, response
 
 

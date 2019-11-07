@@ -97,7 +97,12 @@ Rectangle {
     signal result_get_payment_method(string str)
     signal result_sync_ads(string str)
     signal result_check_ppob(string str)
-    signal result_trx_ppob(string String)
+    signal result_trx_ppob(string str)
+    signal result_check_trx(string str)
+    signal result_get_qr(string str)
+    signal result_pay_qr(string str)
+    signal result_check_qr(string str)
+    signal result_confirm_qr(string str)
 
 
     //==================================================================================================//
