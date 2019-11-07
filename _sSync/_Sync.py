@@ -415,6 +415,10 @@ def start_get_product_stock():
             products = r['data']
             _DAO.flush_table('ProductStock')
             for product in products:
+                if product['url_image'] is not None:
+                    download, image = _NetworkAccess.item_download(product['url_image'], os.getcwd() + '/_qQml/source')
+                    if download is True:
+                        product['remarks'] = product['remarks'] + '|' + image
                 _DAO.insert_product_stock(product)
             _KioskService.get_product_stock()
             return 'UPDATE_STOCK_SUCCESS'

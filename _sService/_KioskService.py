@@ -810,12 +810,11 @@ def get_product_stock():
                 s['image'] = __image
                 if '|' in s['remarks']:
                     __image = s['remarks'].split('|')[1]
+                    download, check_image = _NetworkAccess.item_download(s['url_image'], os.getcwd() + '/_qQml/source')
+                    if download is True:
+                        __image = check_image
                     s['image'] = 'source/' + __image
                     s['remarks'] = s['remarks'].split('|')[0]
-                elif s['url_image'] is not None:
-                    download, __image = _NetworkAccess.item_download(s['url_image'], os.getcwd() + '/_qQml/source')
-                    if download is True:
-                        s['image'] = 'source/' + __image
         LOGGER.debug(("get_product_stock : ", str(stock)))
         K_SIGNDLER.SIGNAL_GET_PRODUCT_STOCK.emit(json.dumps(stock))
     except Exception as e:
