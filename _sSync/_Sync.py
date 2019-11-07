@@ -10,8 +10,8 @@ import logging
 from _sService import _KioskService
 from _dDevice import _EDC
 from _dDevice import _GRG
-from _dDevice import _QPROX
-from operator import itemgetter
+# from _dDevice import _QPROX
+# from operator import itemgetter
 import json
 from _sService import _UserService
 from _sService import _SettlementService
