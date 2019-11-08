@@ -1,6 +1,8 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.3
+import QtQuick.Layouts 1.3
 import "base_function.js" as FUNC
+
 
 Base{
     id: base_page
@@ -27,35 +29,35 @@ Base{
     Component.onDestruction:{
     }
 
-    Rectangle{
-        id: rec_timer
-        width:10
-        height:10
-        y:10
-        color:"transparent"
-        QtObject{
-            id:abc
-            property int counter
-            Component.onCompleted:{
-                abc.counter = timer_value
-            }
-        }
+//    Rectangle{
+//        id: rec_timer
+//        width:10
+//        height:10
+//        y:10
+//        color:"transparent"
+//        QtObject{
+//            id:abc
+//            property int counter
+//            Component.onCompleted:{
+//                abc.counter = timer_value
+//            }
+//        }
 
-        Timer{
-            id:my_timer
-            interval:1000
-            repeat:true
-            running:true
-            triggeredOnStart:true
-            onTriggered:{
-                abc.counter -= 1
-                if(abc.counter < 0){
-                    my_timer.stop()
-                    my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }))
-                }
-            }
-        }
-    }
+//        Timer{
+//            id:my_timer
+//            interval:1000
+//            repeat:true
+//            running:true
+//            triggeredOnStart:true
+//            onTriggered:{
+//                abc.counter -= 1
+//                if(abc.counter < 0){
+//                    my_timer.stop()
+//                    my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }))
+//                }
+//            }
+//        }
+//    }
 
     CircleButton{
         id:back_button
@@ -96,7 +98,6 @@ Base{
 
 
 
-
     //==============================================================
 
     ConfirmView{
@@ -125,6 +126,8 @@ Base{
         id:loading_view
         z: 99
         show_text: "Finding Flight..."
+
+
     }
 
     PopupLoading{

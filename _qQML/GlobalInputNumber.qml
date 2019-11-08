@@ -208,9 +208,7 @@ Base{
 
         function functionIn(str){
             if(str == "OK"){
-                if(press != "0"){
-                    return
-                }
+                if(press != "0") return;
                 if (max_count+1 > textInput.length > min_count ){
                     var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
                     press = "1"

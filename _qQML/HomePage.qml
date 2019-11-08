@@ -197,32 +197,12 @@ Base{
         press = '0';
         switch_frame('source/smiley_down.png', 'Maaf Sementara Mesin Tidak Dapat Digunakan', '', 'backToMain', false )
         return;
-//        standard_notif_view.z = 100;
-//        standard_notif_view._button_text = 'tutup';
-//        if (param==undefined){
-//            standard_notif_view.show_text = "Mohon Maaf";
-//            standard_notif_view.show_detail = "Terjadi Kesalahan Pada Sistem, Mohon Coba Lagi Beberapa Saat";
-//        } else {
-//            standard_notif_view.show_text = param.split('|')[0];
-//            standard_notif_view.show_detail = param.split('|')[1];
-//        }
-//        standard_notif_view.open();
     }
 
     function kalog_notif(param){
         press = '0';
         switch_frame('source/smiley_down.png', 'Maaf Sementara Mesin Tidak Dapat Untuk', 'Melakukan Pengisian Kartu', 'closeWindow', false )
         return;
-//        kalogin_notif_view.z = 100;
-//        kalogin_notif_view._button_text = 'login';
-//        if (param==undefined){
-//            kalogin_notif_view.show_text = "Dear Admin";
-//            kalogin_notif_view.show_detail = "Silakan Tempelkan Kartu Login Terlebih Dahulu Untuk Aktivasi Fitur Topup";
-//        } else {
-//            kalogin_notif_view.show_text = param.split('|')[0];
-//            kalogin_notif_view.show_detail = param.split('|')[1];
-//        }
-//        kalogin_notif_view.open();
     }
 
     function switch_frame(imageSource, textMain, textSlave, closeMode, smallerText){
