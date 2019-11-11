@@ -637,7 +637,7 @@ def s_handler():
     _QRPaymentService.QR_SIGNDLER.SIGNAL_GET_QR.connect(view.rootObject().result_get_qr)
     _QRPaymentService.QR_SIGNDLER.SIGNAL_PAY_QR.connect(view.rootObject().result_pay_qr)
     _QRPaymentService.QR_SIGNDLER.SIGNAL_CHECK_QR.connect(view.rootObject().result_check_qr)
-    _QRPaymentService.QR_SIGNDLER.SIGNAL_CONFIRM_QRN.connect(view.rootObject().result_confirm_qr)
+    _QRPaymentService.QR_SIGNDLER.SIGNAL_CONFIRM_QR.connect(view.rootObject().result_confirm_qr)
 
 
 LOGGER = None

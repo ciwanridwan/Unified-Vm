@@ -38,6 +38,8 @@ PAYMENT_CANCEL = _ConfigParser.get_set_value('TERMINAL', 'payment^cancel', '1')
 PAYMENT_CONFIRM = _ConfigParser.get_set_value('TERMINAL', 'payment^confirm', '0')
 IS_PIR = True if _ConfigParser.get_set_value('TERMINAL', 'pir^usage', '0') == '1' else False
 TEMP_FOLDER = sys.path[0] + '/_tTmp/'
+if not os.path.exists(TEMP_FOLDER):
+    os.makedirs(TEMP_FOLDER)
 
 
 def init_temp_data():
@@ -134,19 +136,19 @@ ADJUST_AMOUNT_MINIMUM = 0
 TRIGGER_MANUAL_TOPUP = True
 ALLOW_DO_TOPUP = True
 
-MID_MAN = _ConfigParser.get_value('QPROX', 'mid^man')
-TID_MAN = _ConfigParser.get_value('QPROX', 'tid^man')
-SAM_MAN = _ConfigParser.get_value('QPROX', 'sam^man')
-MID_BNI = _ConfigParser.get_value('QPROX', 'mid^bni')
-TID_BNI = _ConfigParser.get_value('QPROX', 'tid^bni')
-MC_BNI = _ConfigParser.get_value('QPROX', 'mc^bni')
-SAM1_BNI = _ConfigParser.get_value('QPROX', 'sam1^bni')
-SAM2_BNI = _ConfigParser.get_value('QPROX', 'sam2^bni')
-MID_BRI = _ConfigParser.get_value('QPROX', 'mid^bri')
-TID_BRI = _ConfigParser.get_value('QPROX', 'tid^bri')
-PROCODE_BRI = _ConfigParser.get_value('QPROX', 'procode^bri')
-MID_BCA = _ConfigParser.get_value('QPROX', 'mid^bca')
-TID_BCA = _ConfigParser.get_value('QPROX', 'tid^bca')
+MID_MAN = _ConfigParser.get_set_value('QPROX', 'mid^man', '---')
+TID_MAN = _ConfigParser.get_set_value('QPROX', 'tid^man', '---')
+SAM_MAN = _ConfigParser.get_set_value('QPROX', 'sam^man', '---')
+MID_BNI = _ConfigParser.get_set_value('QPROX', 'mid^bni', '---')
+TID_BNI = _ConfigParser.get_set_value('QPROX', 'tid^bni', '---')
+MC_BNI = _ConfigParser.get_set_value('QPROX', 'mc^bni', '---')
+SAM1_BNI = _ConfigParser.get_set_value('QPROX', 'sam1^bni', '---')
+SAM2_BNI = _ConfigParser.get_set_value('QPROX', 'sam2^bni', '---')
+MID_BRI = _ConfigParser.get_set_value('QPROX', 'mid^bri', '---')
+TID_BRI = _ConfigParser.get_set_value('QPROX', 'tid^bri', '---')
+PROCODE_BRI = _ConfigParser.get_set_value('QPROX', 'procode^bri', '---')
+MID_BCA = _ConfigParser.get_set_value('QPROX', 'mid^bca', '---')
+TID_BCA = _ConfigParser.get_set_value('QPROX', 'tid^bca', '---')
 
 SERVICE_URL = 'http://localhost:9000/Service/GET?type=json&cmd='
 
@@ -213,9 +215,9 @@ FTP = {
 
 }
 
-KA_PIN1 = _ConfigParser.get_value('QPROX', 'ka^pin1')
-KA_PIN2 = _ConfigParser.get_value('QPROX', 'ka^pin2')
-KL_PIN = _ConfigParser.get_value('QPROX', 'kl^pin')
+KA_PIN1 = _ConfigParser.get_set_value('QPROX', 'ka^pin1', '---')
+KA_PIN2 = _ConfigParser.get_set_value('QPROX', 'ka^pin2', '---')
+KL_PIN = _ConfigParser.get_set_value('QPROX', 'kl^pin', '---')
 KA_NIK = _ConfigParser.get_set_value('QPROX', 'ka^nik', '2345')
 
 MANDIRI_WALLET_1 = 0

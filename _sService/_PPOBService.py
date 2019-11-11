@@ -156,7 +156,7 @@ def do_check_trx(reff_no):
         'reff_no': reff_no
     }
     try:
-        url = _Global.BACKEND_URL+'trx/detail'
+        url = _Global.BACKEND_URL+'ppob/trx/detail'
         s, r = _NetworkAccess.post_to_url(url=url, param=payload)
         if s == 200 and r['result'] == 'OK' and r['data'] is not None:
             PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|' + json.dumps(r['data']))

@@ -25,6 +25,7 @@ Base{
             abc.counter = timer_value
             my_timer.start()
             define_wording()
+            press = '0'
 
         }
         if(Stack.status==Stack.Deactivating){
@@ -34,9 +35,11 @@ Base{
     }
 
     Component.onCompleted:{
+        base.result_check_trx.connect(get_trx_check_result);
     }
 
     Component.onDestruction:{
+        base.result_check_trx.disconnect(get_trx_check_result);
     }
 
     Rectangle{
@@ -72,9 +75,9 @@ Base{
     CircleButton{
         id:back_button
         anchors.left: parent.left
-        anchors.leftMargin: 50
+        anchors.leftMargin: 100
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 30
+        anchors.bottomMargin: 50
         button_text: 'BATAL'
         modeReverse: true
         MouseArea{
@@ -86,7 +89,22 @@ Base{
     }
 
 
+    function get_trx_check_result(r){
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('get_trx_check_result', now, r);
+        //TODO Set View For This Result
+        popup_loading.close();
+
+
+    }
+
+
     function define_wording(){
+        if (mode=='SEARCH_TRX'){
+            wording_text = 'Masukkan Minimal 6 Digit (Dari Belakang) Nomor Transaksi Anda';
+            min_count = 6;
+            return;
+        }
         if (mode=='PPOB' && selectedProduct==undefined){
             false_notif('Pastikan Anda Telah Memilih Product Untuk Transaksi', 'backToPrevious');
             return
@@ -224,7 +242,11 @@ Base{
                             //TODO Create Object, Send View To Confirmation Layer
                             console.log('TODO Create Object, Send View To Confirmation Layer');
                             return;
-                        }
+                        }                        
+                    case 'SEARCH_TRX':
+                        console.log('Checking Transaction Number : ', textInput);
+                        _SLOT.start_check_trx_online(textInput);
+                        return
                     default:
                         false_notif('No Handle Set For This Action', 'backToMain');
                         return
@@ -263,7 +285,48 @@ Base{
     }
 
 
+    CircleButton{
+        id:next_button
+        anchors.right: parent.right
+        anchors.rightMargin: 100
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 50
+        button_text: 'LANJUT'
+        modeReverse: true
+        MouseArea{
+            anchors.fill: parent
+            onClicked: {
+                console.log('button "LANJUT" is pressed..!')
+                if(press != "0") return;
+                if (max_count+1 > textInput.length){
+                    var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+                    press = "1"
+                    console.log('number input', now, textInput);
+                    popup_loading.open()
+                    switch(mode){
+                    case 'PPOB':
+                        if (checkMode){
+                            //TODO Call PPOB Slot Function For Checking
+                            console.log('TODO Call PPOB Slot Function For Checking');
+                            return;
 
+                        } else {
+                            //TODO Create Object, Send View To Confirmation Layer
+                            console.log('TODO Create Object, Send View To Confirmation Layer');
+                            return;
+                        }
+                    case 'SEARCH_TRX':
+//                        console.log('Checking Transaction Number : ', textInput);
+                        _SLOT.start_check_trx_online(textInput);
+                        return
+                    default:
+                        false_notif('No Handle Set For This Action', 'backToMain');
+                        return
+                    }
+                }
+            }
+        }
+    }
 
 
     //==============================================================
@@ -275,6 +338,12 @@ Base{
 
     GlobalFrame{
         id: global_frame
+    }
+
+    LoadingView{
+        id:loading_view
+        z: 99
+        show_text: "Finding Flight..."
     }
 
 

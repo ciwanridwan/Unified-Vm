@@ -178,6 +178,8 @@ def define_ads(a):
     __metadata = a['metadata']
     __playlist = a['playlist']
     __tvc_path = sys.path[0] + '/_vVideo'
+    if not os.path.exists(__tvc_path):
+        os.makedirs(__tvc_path)
     __current_list = []
     __all_file = os.listdir(__tvc_path)
     for file in __all_file:
