@@ -346,11 +346,24 @@ def get_devices():
 def get_devices_status():
     return {
         "QPROX": "AVAILABLE" if QPROX["status"] is True else "NOT_AVAILABLE",
-        "EDC": "AVAILABLE" if EDC["status"] is True else "NOT_AVAILABLE",
+        "EDC": "AVAILABLE" if (EDC["status"] is True and check_payment('card') is True) else "NOT_AVAILABLE",
         "CD": "AVAILABLE" if CD["status"] is True else "NOT_AVAILABLE",
-        "MEI": "AVAILABLE" if MEI["status"] is True else "NOT_AVAILABLE",
-        "GRG": "AVAILABLE" if GRG["status"] is True else "NOT_AVAILABLE"
+        "MEI": "AVAILABLE" if (MEI["status"] is True and check_payment('cash') is True) else "NOT_AVAILABLE",
+        "GRG": "AVAILABLE" if (GRG["status"] is True and check_payment('cash') is True) else "NOT_AVAILABLE",
+        "QR_OVO": "AVAILABLE" if check_payment('ovo') is True else "NOT_AVAILABLE",
+        "QR_DANA": "AVAILABLE" if check_payment('dana') is True else "NOT_AVAILABLE",
+        "QR_GOPAY": "AVAILABLE" if check_payment('gopay') is True else "NOT_AVAILABLE",
+        "QR_LINKAJA": "AVAILABLE" if check_payment('linkaja') is True else "NOT_AVAILABLE",
     }
+
+
+def check_payment(name='ovo'):
+    if len(PAYMENT_SETTING) == 0 or empty(PAYMENT_SETTING):
+        return False
+    for x in range(len(PAYMENT_SETTING)):
+        if PAYMENT_SETTING[x]['name'].lower() == name:
+            return True
+    return False
 
 
 def start_upload_device_state(device, status):

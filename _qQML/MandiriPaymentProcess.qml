@@ -2,9 +2,12 @@ import QtQuick 2.4
 import QtQuick.Controls 1.3
 import QtGraphicalEffects 1.0
 import "base_function.js" as FUNC
+import "screen.js" as SCREEN
 
 Base{
     id: base_page
+    width: parseInt(SCREEN.size.width)
+    height: parseInt(SCREEN.size.height)
     property int timer_value: 300
     property var press: '0'
     property var details: undefined
@@ -26,7 +29,9 @@ Base{
     property bool centerOnlyButton: false
     property int attemptCD: 0
 
-    idx_bg: 3
+    property var qrPayload: undefined
+
+    idx_bg: 0
     imgPanel: 'source/cash black.png'
     textPanel: 'Proses Pembayaran'
     imgPanelScale: .8
@@ -44,6 +49,7 @@ Base{
             modeButtonPopup = 'check_balance'
             topupSuccess = false;
             reprintAttempt = 0;
+            qrPayload = undefined;
             attemptCD = 0;
             define_first_notif();
             frameWithButton = false;
@@ -70,6 +76,8 @@ Base{
         base.result_grg_receive.connect(grg_payment_result);
         base.result_grg_stop.connect(grg_payment_result);
         base.result_grg_status.connect(grg_payment_result);
+        base.result_get_qr.connect(qr_get_result);
+        base.result_check_qr.connect(qr_check_result);
     }
 
     Component.onDestruction:{
@@ -88,6 +96,58 @@ Base{
         base.result_grg_receive.disconnect(grg_payment_result);
         base.result_grg_stop.disconnect(grg_payment_result);
         base.result_grg_status.disconnect(grg_payment_result);
+        base.result_get_qr.disconnect(qr_get_result);
+        base.result_check_qr.disconnect(qr_check_result);
+    }
+
+    function qr_check_result(r){
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('qr_check_result', now, r);
+        var mode = r.split('|')[1]
+        var result = r.split('|')[2]
+        if (['NOT_AVAILABLE', 'MISSING_AMOUNT', 'MISSING_TRX_ID', 'ERROR'].indexOf(result) > -1){
+            switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Coba Lagi Dalam Beberapa Saat', 'backToMain', true )
+            return;
+        }
+        if (result=='SUCCESS'){
+            var info = JSON.parse(r.split('|')[3]);
+            console.log('qr_check_result', mode, result, info);
+            qr_payment_frame.success()
+            payment_complete('ppob')
+            var qrMode = mode.toLowerCase();
+            switch(qrMode){
+            case 'ovo':
+                _SLOT.start_confirm_ovo_qr(JSON.stringify(qrPayload));
+                break;
+            }
+        }
+    }
+
+    function qr_get_result(r){
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('qr_get_result', now, r);
+        var mode = r.split('|')[1]
+        var result = r.split('|')[2]
+        if (['NOT_AVAILABLE', 'MISSING_AMOUNT', 'MISSING_TRX_ID', 'ERROR'].indexOf(result) > -1){
+            switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Coba Lagi Dalam Beberapa Saat', 'backToMain', true )
+            return;
+        }
+        var info = JSON.parse(result);
+        var qrMode = mode.toLowerCase();
+        qr_payment_frame.modeQR = qrMode;
+        qr_payment_frame.imageSource = info.data.qr;
+        qr_payment_frame.open();
+        switch(qrMode){
+        case 'ovo':
+            _SLOT.start_do_pay_ovo_qr(JSON.stringify(qrPayload));
+            break;
+        case 'gopay':
+            _SLOT.start_do_check_gopay_qr(JSON.stringify(qrPayload));
+            break;
+        case 'linkaja':
+            _SLOT.start_do_check_linkaja_qr(JSON.stringify(qrPayload));
+            break;
+        }
     }
 
     function topup_result(t){
@@ -219,7 +279,7 @@ Base{
         }
         console.log('payment_complete', JSON.stringify(details))
         if (details.provider==undefined) details.provider = 'e-Money Mandiri';
-        _SLOT.start_store_transaction_global(JSON.stringify(details))
+        if (mode!='ppob') _SLOT.start_store_transaction_global(JSON.stringify(details))
         isPaid = true;
 //        abc.counter = 15;
 //        my_timer.restart();
@@ -248,6 +308,9 @@ Base{
                 switch_frame('source/reader_sign.png', textMain2, textSlave2, 'closeWindow|10', false )
                 perform_do_topup();
 //                slave_title.text = 'Sedang Memproses Isi Ulang Kartu Prabayar Anda...\nPastikan Kartu Prabayar Anda Masih Menempel Di Reader.'
+                break;
+            case 'ppob':
+                // TODO: Add PPOB Payment Release
                 break;
         }
     }
@@ -494,6 +557,28 @@ Base{
             _SLOT.create_sale_edc_with_struct_id(totalPrice.toString(), structId);
             notif_text = 'Masukan Kartu Debit dan Kode PIN Pada EDC Di Bawah';
         }
+        if (['ovo', 'gopay', 'dana', 'linkaja'].indexOf(details.payment) > -1){
+            totalPrice = parseInt(details.value) * parseInt(details.qty);
+            qrPayload = {
+                trx_id: details.shop_type + details.epoch.toString(),
+                amount: totalPrice.toString()
+            }
+            switch(details.payment){
+            case 'linkaja':
+                _SLOT.start_get_qr_linkaja(JSON.stringify(qrPayload));
+                break;
+            case 'ovo':
+                _SLOT.start_get_qr_ovo(JSON.stringify(qrPayload));
+                break;
+            case 'gopay':
+                _SLOT.start_get_qr_gopay(JSON.stringify(qrPayload));
+                break;
+            case 'dana':
+                _SLOT.start_get_qr_dana(JSON.stringify(qrPayload));
+                break;
+            }
+
+        }
     }
 
     Rectangle{
@@ -535,15 +620,16 @@ Base{
         }
     }
 
-    BackButton{
+    CircleButton{
         id:back_button
         anchors.left: parent.left
-        anchors.leftMargin: 120
+        anchors.leftMargin: 100
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 50
+        button_text: 'BATAL'
+        modeReverse: true
         z: 10
         visible: !popup_loading.visible && !global_frame.visible
-        modeReverse: true
 
         MouseArea{
             anchors.fill: parent
@@ -1068,7 +1154,7 @@ Base{
 
     GlobalFrame{
         id: global_frame
-        NextButton{
+        CircleButton{
             id: cancel_button_global
             anchors.left: parent.left
             anchors.leftMargin: 100
@@ -1086,7 +1172,7 @@ Base{
             }
         }
 
-        NextButton{
+        CircleButton{
             id: next_button_global
             anchors.right: parent.right
             anchors.rightMargin: (centerOnlyButton) ? 825 : 100
@@ -1128,6 +1214,11 @@ Base{
                 }
             }
         }
+    }
+
+
+    QRPaymentFrame{
+        id: qr_payment_frame
     }
 
 }

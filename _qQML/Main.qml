@@ -277,6 +277,10 @@ Rectangle {
         GlobalInputNumber{}
     }
 
+//    Component {id: global_confirm_frame
+//        GlobalConfirmationFrame
+//    }
+
 }
 
 

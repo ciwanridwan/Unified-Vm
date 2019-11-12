@@ -53,9 +53,10 @@ Base{
         category_model.clear();
         gridViewPPOB.model = category_model;
         for (var _c=0; _c < category.length;_c++){
+            var logo_category = FUNC.strip(category[_c].toLowerCase())
             category_model.append({
                                       'category_text': category[_c],
-                                      'category_url': 'source/ppob_category/'+category[_c]+'.png'
+                                      'category_url': 'source/ppob_category/'+logo_category+'.png'
                                   })
         }
         popup_loading.close();
@@ -150,13 +151,24 @@ Base{
     //==============================================================
     //PUT MAIN COMPONENT HERE
 
+    MainTitle{
+        anchors.top: parent.top
+        anchors.topMargin: 180
+        anchors.horizontalCenter: parent.horizontalCenter
+        show_text: 'Pilih Kategori Produk'
+        visible: !popup_loading.visible
+        size_: 50
+        color_: "white"
+
+    }
+
     Item  {
         id: flickable_items
-        width:320*4
-        height:parent.height-200
+        width: 1550
+        height: 800
         anchors.verticalCenterOffset: 100
-        anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
+        anchors.horizontalCenter: parent.horizontalCenter
 
         ScrollBarVertical{
             id: vertical_sbar
@@ -168,12 +180,12 @@ Base{
 
         GridView{
             id: gridViewPPOB
-            cellHeight: 420
-            cellWidth: 320
+            cellHeight: 203
+            cellWidth: 379
             anchors.fill: parent
             flickableDirection: Flickable.VerticalFlick
-            contentHeight: 400
-            contentWidth: 300
+            contentHeight: 183
+            contentWidth: 359
             flickDeceleration: 750
             maximumFlickVelocity: 1500
             layoutDirection: Qt.LeftToRight
@@ -196,11 +208,10 @@ Base{
 
         Component{
             id: component_ppob
-            ItemPPOB{
+            SmallSimplyItemPPOB{
                 id: item_ppob;
-                showText2: false;
-                text_: category_text
-                img_: category_url
+                modeReverse: true
+                sourceImage: category_url
                 MouseArea{
                     anchors.fill: parent;
                     onClicked: {
@@ -213,11 +224,7 @@ Base{
     }
 
 
-
-
-
     //==============================================================
-
 
 
     ConfirmView{

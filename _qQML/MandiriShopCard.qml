@@ -8,7 +8,7 @@ Base{
     property int timer_value: 300
     property var press: '0'
     property var cart: undefined
-    property var shop_type: 'shop' // 'shop', 'topup'
+    property var shop_type: 'shop' // 'shop', 'topup', 'ppob'
     property var productData: undefined
     property var productCount: 0
     property var itemCount: 1
@@ -20,8 +20,13 @@ Base{
     property bool multipleEject: false
     property int productIdx: -1
     property bool cashEnable: false
-    property bool debitEnable: false
+    property bool cardEnable: false
+    property bool qrOvoEnable: false
+    property bool qrDanaEnable: false
+    property bool qrGopayEnable: false
+    property bool qrLinkajaEnable: false
     property var cdReadiness: undefined
+    property var totalPaymentEnable: 0
 
     property variant availItems: []
 
@@ -35,7 +40,7 @@ Base{
 
     property bool mainVisible: false
 
-    idx_bg: 2
+    idx_bg: 0
     imgPanel: 'source/beli_kartu.png'
     textPanel: 'Pembelian Kartu Prabayar'
     signal get_payment_method_signal(string str)
@@ -107,10 +112,29 @@ Base{
         var device = JSON.parse(s);
         if (device.MEI == 'AVAILABLE' || device.GRG == 'AVAILABLE'){
             cashEnable = true;
+            totalPaymentEnable += 1;
         }
-        if (device.EDC == 'AVAILABLE'){
-            debitEnable = true;
+        if (device.EDC == 'AVAILABLE') {
+            cardEnable = true;
+            totalPaymentEnable += 1;
         }
+        if (device.QR_LINKAJA == 'AVAILABLE') {
+            qrLinkajaEnable = true;
+            totalPaymentEnable += 1;
+        }
+        if (device.QR_DANA == 'AVAILABLE') {
+            qrDanaEnable = true;
+            totalPaymentEnable += 1;
+        }
+        if (device.QR_GOPAY == 'AVAILABLE') {
+            qrGopayEnable = true;
+            totalPaymentEnable += 1;
+        }
+        if (device.QR_OVO == 'AVAILABLE') {
+            qrOvoEnable = true;
+            totalPaymentEnable += 1;
+        }
+
     }
 
     function process_selected_payment(p){
@@ -137,6 +161,7 @@ Base{
     function get_wording(i){
         if (i=='shop') return 'Pembelian Kartu';
         if (i=='topup') return 'TopUp Kartu';
+        if (i=='ppob') return 'Pembayaran/Pembelian Item';
     }
 
     function adjust_count(t){
@@ -404,6 +429,10 @@ Base{
             anchors.fill: parent
             anchors.margins: 20
             delegate: delegate_item_view
+            add: Transition {
+                    NumberAnimation { property: "opacity"; from: 0; to: 1.0; duration: 500 }
+                    NumberAnimation { property: "scale"; from: 0; to: 1.0; duration: 500 }
+                }
             //model: groceryItem_listModel -> Defined on function below
         }
 
@@ -749,7 +778,13 @@ Base{
         id: select_payment
         visible: isConfirm
         calledFrom: 'shop_prepaid_card'
-
+        _cashEnable: cashEnable
+        _cardEnable: cardEnable
+        _qrOvoEnable: qrOvoEnable
+        _qrDanaEnable: qrDanaEnable
+        _qrGopayEnable: qrGopayEnable
+        _qrLinkAjaEnable: qrLinkajaEnable
+        totalEnable: totalPaymentEnable
     }
 
     PopupLoading{

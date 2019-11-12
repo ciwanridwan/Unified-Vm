@@ -42,10 +42,11 @@ Base{
         var p = JSON.parse(ppobData)
         for (var i=0;i < p.length;i++){
             if (p[i]['category']==c){
+                var prod_name = p[i]['category'].toUpperCase() + ' - ' + p[i]['operator'] + ' ' + 'Rp. ' + FUNC.insert_dot(p[i]['rs_price']) + ',-';
                 product_model.append({
-                                         'ppob_text': p[i]['description'],
-                                         'ppob_url': 'source/ppob_icon/' + p[i]['operator'] + '.png',
-                                         'ppob_price': 'Rp. ' + FUNC.insert_dot(p[i]['amount']) + ',-',
+                                         'ppob_name': prod_name,
+                                         'ppob_desc': p[i]['description'],
+                                         'ppob_price': 'Rp. ' + FUNC.insert_dot(p[i]['rs_price']) + ',-',
                                          'raw': p[i]
                                       })
             }
@@ -90,7 +91,6 @@ Base{
         global_frame.withTimer = false;
         global_frame.open();
     }
-
 
 
     Rectangle{
@@ -144,10 +144,21 @@ Base{
     //==============================================================
     //PUT MAIN COMPONENT HERE
 
+    MainTitle{
+        anchors.top: parent.top
+        anchors.topMargin: 180
+        anchors.horizontalCenter: parent.horizontalCenter
+        show_text: 'Pilih Nominal / Item Produk'
+        visible: !popup_loading.visible
+        size_: 50
+        color_: "white"
+
+    }
+
     Item  {
         id: flickable_items
-        width:320*4
-        height:parent.height-200
+        width: 1100
+        height: 750
         anchors.verticalCenterOffset: 100
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
@@ -162,12 +173,12 @@ Base{
 
         GridView{
             id: gridViewPPOB
-            cellHeight: 420
-            cellWidth: 320
+            cellHeight: 170
+            cellWidth: 1010
             anchors.fill: parent
             flickableDirection: Flickable.VerticalFlick
-            contentHeight: 400
-            contentWidth: 300
+            contentHeight: 150
+            contentWidth: 1000
             flickDeceleration: 750
             maximumFlickVelocity: 1500
             layoutDirection: Qt.LeftToRight
@@ -190,12 +201,10 @@ Base{
 
         Component{
             id: component_ppob
-            ItemPPOB{
+            LongItemPPOB{
                 id: item_ppob;
-                showText2: true;
-                text2_: ppob_price;
-                text_: ppob_text;
-                img_: ppob_url;
+                text_: ppob_name;
+                text2_: ppob_desc;
                 MouseArea{
                     anchors.fill: parent;
                     onClicked: {
@@ -209,7 +218,6 @@ Base{
 
 
     //==============================================================
-
 
 
     ConfirmView{

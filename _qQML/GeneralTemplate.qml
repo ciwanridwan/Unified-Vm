@@ -29,35 +29,35 @@ Base{
     Component.onDestruction:{
     }
 
-//    Rectangle{
-//        id: rec_timer
-//        width:10
-//        height:10
-//        y:10
-//        color:"transparent"
-//        QtObject{
-//            id:abc
-//            property int counter
-//            Component.onCompleted:{
-//                abc.counter = timer_value
-//            }
-//        }
+    Rectangle{
+        id: rec_timer
+        width:10
+        height:10
+        y:10
+        color:"transparent"
+        QtObject{
+            id:abc
+            property int counter
+            Component.onCompleted:{
+                abc.counter = timer_value
+            }
+        }
 
-//        Timer{
-//            id:my_timer
-//            interval:1000
-//            repeat:true
-//            running:true
-//            triggeredOnStart:true
-//            onTriggered:{
-//                abc.counter -= 1
-//                if(abc.counter < 0){
-//                    my_timer.stop()
-//                    my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }))
-//                }
-//            }
-//        }
-//    }
+        Timer{
+            id:my_timer
+            interval:1000
+            repeat:true
+            running:true
+            triggeredOnStart:true
+            onTriggered:{
+                abc.counter -= 1
+                if(abc.counter < 0){
+                    my_timer.stop()
+                    my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }))
+                }
+            }
+        }
+    }
 
     CircleButton{
         id:back_button
@@ -77,9 +77,6 @@ Base{
 
     //==============================================================
     //PUT MAIN COMPONENT HERE
-//    DatePickerNew{
-//        id: datepicker
-//    }
 
     function false_notif(param){
         press = '0';

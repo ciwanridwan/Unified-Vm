@@ -80,7 +80,7 @@ Base{
                 case 'backToMain':
                     my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
                     break;
-                case 'backToPrev':
+                case 'backToPrev': case 'backToPrevious':
                     my_layer.pop();
                     break;
                 default: close();

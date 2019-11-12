@@ -240,3 +240,7 @@ function insert_space_four(str){
     return str.replace(/[^\dA-Z]/g, '').replace(/(.{4})/g, '$1   ');
 }
 
+function strip(str){
+    return str.split(' ').join('')
+}
+

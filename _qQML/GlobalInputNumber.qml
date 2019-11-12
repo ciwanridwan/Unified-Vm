@@ -4,7 +4,7 @@ import "base_function.js" as FUNC
 import "config.js" as CONF
 
 Base{
-    id: base_page
+    id: global_input_number
     mode_: "reverse"
     isPanelActive: false
     isHeaderActive: true
@@ -19,9 +19,25 @@ Base{
     property var selectedProduct: undefined
     property var wording_text: ''
     property bool checkMode: false
+    property bool frameWithButton: false
+
+    property bool cashEnable: false
+    property bool cardEnable: false
+    property bool qrOvoEnable: false
+    property bool qrDanaEnable: false
+    property bool qrGopayEnable: false
+    property bool qrLinkajaEnable: false
+    property var totalPaymentEnable: 0
+
+    property bool isConfirm: false
+
+    signal get_payment_method_signal(string str)
+    signal set_confirmation(string str)
+
 
     Stack.onStatusChanged:{
         if(Stack.status==Stack.Activating){
+            console.log('mode', mode);
             abc.counter = timer_value
             my_timer.start()
             define_wording()
@@ -35,11 +51,19 @@ Base{
     }
 
     Component.onCompleted:{
+        set_confirmation.connect(set_confirm);
+        get_payment_method_signal.connect(process_selected_payment);
         base.result_check_trx.connect(get_trx_check_result);
+        base.result_get_device.connect(get_device_status);
+
     }
 
     Component.onDestruction:{
+        set_confirmation.disconnect(set_confirm);
+        get_payment_method_signal.disconnect(process_selected_payment);
         base.result_check_trx.disconnect(get_trx_check_result);
+        base.result_get_device.disconnect(get_device_status);
+
     }
 
     Rectangle{
@@ -89,12 +113,39 @@ Base{
     }
 
 
+    function set_confirm(_mode){
+        console.log('Confirmation Flagged By', _mode)
+        global_confirmation_page.close()
+        isConfirm = true;
+    }
+
+
     function get_trx_check_result(r){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-        console.log('get_trx_check_result', now, r);
-        //TODO Set View For This Result
+//        console.log('get_trx_check_result', now, r);
         popup_loading.close();
-
+        var res = r.split('|')[1]
+        if (['ERROR', 'MISSING_REFF_NO'].indexOf(res) > -1){
+            false_notif('Terjadi Kesalahan Saat Memeriksa Nomor Order Anda', 'backToPrevious', res);
+            return;
+        }
+        var data = JSON.parse(res);
+        console.log('get_trx_check_result', now, res);
+        global_confirmation_frame.label1 = 'label1'
+        global_confirmation_frame.data1 = '---'
+        global_confirmation_frame.label2 = 'label2'
+        global_confirmation_frame.data2 = '---'
+        global_confirmation_frame.label3 = 'label3'
+        global_confirmation_frame.data3 = '---'
+        global_confirmation_frame.label4 = 'label4'
+        global_confirmation_frame.data4 = '---'
+        global_confirmation_frame.label5 = 'label5'
+        global_confirmation_frame.data5 = '---'
+        global_confirmation_frame.label6 = 'label6'
+        global_confirmation_frame.data6 = '---'
+        global_confirmation_frame.label7 = 'label7'
+        global_confirmation_frame.data7 = '---'
+        global_confirmation_frame.open();
 
     }
 
@@ -109,6 +160,7 @@ Base{
             false_notif('Pastikan Anda Telah Memilih Product Untuk Transaksi', 'backToPrevious');
             return
         }
+        _SLOT.start_get_device_status();
         var category = selectedProduct.category.toLowerCase()
         switch(category){
             case 'listrik': case 'tagihan': case 'tagihan air':
@@ -117,7 +169,7 @@ Base{
                 min_count = 19;
             break;
             case 'pulsa': case 'paket data': case 'ojek online':
-                wording_text = 'Masukkan Nomor Seluler Tujuan';
+                wording_text = 'Masukkan Nomor Telepon Tujuan';
                 min_count = 10;
             break;
             case 'uang elektronik':
@@ -163,6 +215,59 @@ Base{
         global_frame.smallerSlaveSize = smallerText;
         global_frame.withTimer = false;
         global_frame.open();
+    }
+
+
+    function process_selected_payment(channel){
+        var globalDetails = get_cart_details(channel);
+        my_layer.push(mandiri_payment_process, {details: globalDetails});
+    }
+
+    function get_cart_details(channel){
+        var details = {
+            payment: channel,
+            shop_type: 'ppob',
+            time: new Date().toLocaleTimeString(Qt.locale("id_ID"), "hh:mm:ss"),
+            date: new Date().toLocaleDateString(Qt.locale("id_ID"), Locale.ShortFormat),
+            epoch: new Date().getTime()
+        }
+        details.qty = '1';
+        details.value = selectedProduct.rs_price.toString();
+        details.provider = selectedProduct.operator;
+        details.admin_fee = '0';
+        details.status = selectedProduct.status;
+        details.raw = selectedProduct;
+        return details;
+    }
+
+    function get_device_status(s){
+        console.log('get_device_status', s);
+        var device = JSON.parse(s);
+        if (device.MEI == 'AVAILABLE' || device.GRG == 'AVAILABLE'){
+            cashEnable = true;
+            totalPaymentEnable += 1;
+        }
+        if (device.EDC == 'AVAILABLE') {
+            cardEnable = true;
+            totalPaymentEnable += 1;
+        }
+        if (device.QR_LINKAJA == 'AVAILABLE') {
+            qrLinkajaEnable = true;
+            totalPaymentEnable += 1;
+        }
+        if (device.QR_DANA == 'AVAILABLE') {
+            qrDanaEnable = true;
+            totalPaymentEnable += 1;
+        }
+        if (device.QR_GOPAY == 'AVAILABLE') {
+            qrGopayEnable = true;
+            totalPaymentEnable += 1;
+        }
+        if (device.QR_OVO == 'AVAILABLE') {
+            qrOvoEnable = true;
+            totalPaymentEnable += 1;
+        }
+
     }
 
     //==============================================================
@@ -319,6 +424,9 @@ Base{
 //                        console.log('Checking Transaction Number : ', textInput);
                         _SLOT.start_check_trx_online(textInput);
                         return
+                    case 'WA_INVOICE':
+                        // TODO: Add SLOT Function Check WA Payment
+                           return
                     default:
                         false_notif('No Handle Set For This Action', 'backToMain');
                         return
@@ -344,6 +452,25 @@ Base{
         id:loading_view
         z: 99
         show_text: "Finding Flight..."
+    }
+
+
+    GlobalConfirmationFrame{
+        id: global_confirmation_frame
+        calledFrom: 'global_input_number'
+
+
+    SelectPaymentPopupNotif{
+        id: select_payment
+        visible: isConfirm
+        calledFrom: 'global_input_number'
+        _cashEnable: cashEnable
+        _cardEnable: cardEnable
+        _qrOvoEnable: qrOvoEnable
+        _qrDanaEnable: qrDanaEnable
+        _qrGopayEnable: qrGopayEnable
+        _qrLinkAjaEnable: qrLinkajaEnable
+        totalEnable: totalPaymentEnable
     }
 
 

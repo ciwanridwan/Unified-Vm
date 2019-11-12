@@ -7,7 +7,7 @@ Base{
     id: prepaid_topup_denom
     property int timer_value: 120
     property var press: '0'
-    idx_bg: 1
+    idx_bg: 0
     property var denomTopup: undefined
     property var provider: 'e-Money Mandiri'
     property bool emoneyAvailable: false
@@ -26,8 +26,13 @@ Base{
     property var globalDetails
     property var shopType: 'topup'
     property bool cashEnable: false
-    property bool debitEnable: false
+    property bool cardEnable: false
+    property bool qrOvoEnable: false
+    property bool qrDanaEnable: false
+    property bool qrGopayEnable: false
+    property bool qrLinkajaEnable: false
     property bool mainVisible: false
+    property var totalPaymentEnable: 0
 
     property var bniWallet1: 0
     property var bniWallet2: 0
@@ -106,10 +111,29 @@ Base{
         var device = JSON.parse(s);
         if (device.MEI == 'AVAILABLE' || device.GRG == 'AVAILABLE'){
             cashEnable = true;
+            totalPaymentEnable += 1;
         }
-        if (device.EDC == 'AVAILABLE'){
-            debitEnable = true;
+        if (device.EDC == 'AVAILABLE') {
+            cardEnable = true;
+            totalPaymentEnable += 1;
         }
+        if (device.QR_LINKAJA == 'AVAILABLE') {
+            qrLinkajaEnable = true;
+            totalPaymentEnable += 1;
+        }
+        if (device.QR_DANA == 'AVAILABLE') {
+            qrDanaEnable = true;
+            totalPaymentEnable += 1;
+        }
+        if (device.QR_GOPAY == 'AVAILABLE') {
+            qrGopayEnable = true;
+            totalPaymentEnable += 1;
+        }
+        if (device.QR_OVO == 'AVAILABLE') {
+            qrOvoEnable = true;
+            totalPaymentEnable += 1;
+        }
+
     }
 
     function set_selected_payment(denom, method){
@@ -149,6 +173,7 @@ Base{
                 details.denom = details.value;
                 details.final_balance = parseInt(details.denom) + parseInt(cardData.balance);
                 break;
+            // TODO: Add Another Payment Method
         }
         globalDetails = details;
         my_layer.push(mandiri_payment_process, {details: globalDetails});
@@ -253,7 +278,7 @@ Base{
             false_notif('Mohon Maaf|Silakan Pilih Nilai Denom Lainnya.');
             return;
         }
-        if (cashEnable && debitEnable){
+        if (totalPaymentEnable > 2){
             stepMode = 2;
 //            _nominal.labelContent = 'Rp. ' +  FUNC.insert_dot(globalCart.value.toString()) + ',-';
         } else if (cashEnable && !debitEnable){
@@ -327,6 +352,7 @@ Base{
         cardBalance = parseInt(last_balance);
         press = '0';
         shopType = 'topup';
+        //TODO Reset Provider To Default Item
         provider = 'e-Money Mandiri';
         mainVisible = true;
 //        init_topup_denom(bank_name);
@@ -753,33 +779,6 @@ Base{
 
     //==============================================================
 
-//    ConfirmView{
-//        id: confirm_view
-//        show_text: "Dear Customer"
-//        show_detail: "Proceed This ?."
-//        z: 99
-//        MouseArea{
-//            id: ok_confirm_view
-//            x: 668; y:691
-//            width: 190; height: 50;
-//            onClicked: {
-//            }
-//        }
-//    }
-
-//    NotifView{
-//        id: notif_view
-//        isSuccess: false
-//        show_text: "Dear Customer"
-//        show_detail: "Please Ensure You have set Your plan correctly."
-//        z: 99
-//    }
-
-//    LoadingView{
-//        id:loading_view
-//        z: 99
-//        show_text: "Finding Flight..."
-//    }
 
     StandardNotifView{
         id: standard_notif_view
@@ -823,6 +822,13 @@ Base{
         id: select_payment
         visible: (stepMode==2) ? true : false
         withBackground: false
+        _cashEnable: cashEnable
+        _cardEnable: cardEnable
+        _qrOvoEnable: qrOvoEnable
+        _qrDanaEnable: qrDanaEnable
+        _qrGopayEnable: qrGopayEnable
+        _qrLinkAjaEnable: qrLinkajaEnable
+        totalEnable: totalPaymentEnable
     }
 
     PopupLoading{

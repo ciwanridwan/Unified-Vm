@@ -3,13 +3,20 @@ import QtQuick.Controls 1.2
 import QtGraphicalEffects 1.0
 import "screen.js" as SCREEN
 
+
 Rectangle{
-    id:notification_standard
-    property var show_img: "source/promo_black.png"
+    id:select_payment_popup
     property var show_text: qsTr("Silakan Pilih Metode Bayar")
     property bool withBackground: true
     property bool modeReverse: true
     property var calledFrom: 'prepaid_topup_denom'
+    property bool _cashEnable: false
+    property bool _cardEnable: false
+    property bool _qrOvoEnable: false
+    property bool _qrDanaEnable: false
+    property bool _qrGopayEnable: false
+    property bool _qrLinkAjaEnable: false
+    property var totalEnable: 3
     visible: false
     color: 'transparent'
     width: parseInt(SCREEN.size.width)
@@ -29,42 +36,17 @@ Rectangle{
 
     Rectangle{
         id: notif_rec
-        width: 800
-        height: 500
-        color: (modeReverse) ? "white" : "#1D294D"
+        width: totalEnable * 200
+        height: 600
+        color: (modeReverse) ? "white" : "black"
         opacity: .97
-        radius: 20
-        anchors.horizontalCenterOffset: 150
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        Image  {
-            id: image
-            x: 20
-            y: 20
-            width: 100
-            height: 100
-            anchors.left: parent.left
-            anchors.leftMargin: 10
-            anchors.top: parent.top
-            anchors.topMargin: 10
-            scale: 0.8
-            source: show_img
-            fillMode: Image.PreserveAspectFit
-            visible: (modeReverse) ? true : false
-        }
-        ColorOverlay {
-            visible: !image.visible
-            anchors.fill: image
-            source: image
-            scale: 0.8
-            color: "#ffffff"
-        }
-
     }
 
     Text {
         id: main_text
-        color: (modeReverse) ? "#1D294D" : "white"
+        color: (modeReverse) ? "black" : "white"
         text: show_text
         font.bold: true
         verticalAlignment: Text.AlignVCenter
@@ -92,6 +74,7 @@ Rectangle{
             img_: "source/cash black.png"
             text_: qsTr("Tunai")
             text2_: qsTr("Cash")
+            visible: _cashEnable
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
@@ -106,6 +89,11 @@ Rectangle{
                         shop_prepaid_card.press = '1';
                         shop_prepaid_card.get_payment_method_signal(payment);
                     }
+                    if (calledFrom=='global_input_number'){
+                        if (global_input_number.press != '0') return;
+                        global_input_number.press = '1';
+                        global_input_number.get_payment_method_signal(payment);
+                    }
                 }
             }
         }
@@ -117,6 +105,7 @@ Rectangle{
             img_: "source/credit card black.png"
             text_: qsTr("Kartu Debit")
             text2_: qsTr("Debit Card")
+            visible: _cardEnable
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
@@ -131,10 +120,144 @@ Rectangle{
                         shop_prepaid_card.press = '1';
                         shop_prepaid_card.get_payment_method_signal(payment);
                     }
+                    if (calledFrom=='global_input_number'){
+                        if (global_input_number.press != '0') return;
+                        global_input_number.press = '1';
+                        global_input_number.get_payment_method_signal(payment);
+                    }
 
                 }
             }
         }
+
+        MasterButtonNew {
+            width: 180
+            height: 250
+            anchors.verticalCenter: parent.verticalCenter
+            img_: "source/credit card black.png"
+            text_: qsTr("QR OVO")
+            text2_: qsTr("QR OVO")
+            visible: _qrOvoEnable
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    var payment = 'ovo';
+                    if (calledFrom=='prepaid_topup_denom'){
+                        if (prepaid_topup_denom.press != '0') return;
+                        prepaid_topup_denom.press = '1';
+                        prepaid_topup_denom.select_payment_signal(payment);
+                    }
+                    if (calledFrom=='shop_prepaid_card'){
+                        if (shop_prepaid_card.press != '0') return;
+                        shop_prepaid_card.press = '1';
+                        shop_prepaid_card.get_payment_method_signal(payment);
+                    }
+                    if (calledFrom=='global_input_number'){
+                        if (global_input_number.press != '0') return;
+                        global_input_number.press = '1';
+                        global_input_number.get_payment_method_signal(payment);
+                    }
+
+                }
+            }
+        }
+
+        MasterButtonNew {
+            width: 180
+            height: 250
+            anchors.verticalCenter: parent.verticalCenter
+            img_: "source/credit card black.png"
+            text_: qsTr("QR LinkAja")
+            text2_: qsTr("QR LinkAja")
+            visible: _qrLinkAjaEnable
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    var payment = 'linkaja';
+                    if (calledFrom=='prepaid_topup_denom'){
+                        if (prepaid_topup_denom.press != '0') return;
+                        prepaid_topup_denom.press = '1';
+                        prepaid_topup_denom.select_payment_signal(payment);
+                    }
+                    if (calledFrom=='shop_prepaid_card'){
+                        if (shop_prepaid_card.press != '0') return;
+                        shop_prepaid_card.press = '1';
+                        shop_prepaid_card.get_payment_method_signal(payment);
+                    }
+                    if (calledFrom=='global_input_number'){
+                        if (global_input_number.press != '0') return;
+                        global_input_number.press = '1';
+                        global_input_number.get_payment_method_signal(payment);
+                    }
+
+                }
+            }
+        }
+
+        MasterButtonNew {
+            width: 180
+            height: 250
+            anchors.verticalCenter: parent.verticalCenter
+            img_: "source/credit card black.png"
+            text_: qsTr("QR Gopay")
+            text2_: qsTr("QR Gopay")
+            visible: _qrGopayEnable
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    var payment = 'gopay';
+                    if (calledFrom=='prepaid_topup_denom'){
+                        if (prepaid_topup_denom.press != '0') return;
+                        prepaid_topup_denom.press = '1';
+                        prepaid_topup_denom.select_payment_signal(payment);
+                    }
+                    if (calledFrom=='shop_prepaid_card'){
+                        if (shop_prepaid_card.press != '0') return;
+                        shop_prepaid_card.press = '1';
+                        shop_prepaid_card.get_payment_method_signal(payment);
+                    }
+                    if (calledFrom=='global_input_number'){
+                        if (global_input_number.press != '0') return;
+                        global_input_number.press = '1';
+                        global_input_number.get_payment_method_signal(payment);
+                    }
+
+                }
+            }
+        }
+
+        MasterButtonNew {
+            width: 180
+            height: 250
+            anchors.verticalCenter: parent.verticalCenter
+            img_: "source/credit card black.png"
+            text_: qsTr("QR Dana")
+            text2_: qsTr("QR Dana")
+            visible: _qrDanaEnable
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    var payment = 'dana';
+                    if (calledFrom=='prepaid_topup_denom'){
+                        if (prepaid_topup_denom.press != '0') return;
+                        prepaid_topup_denom.press = '1';
+                        prepaid_topup_denom.select_payment_signal(payment);
+                    }
+                    if (calledFrom=='shop_prepaid_card'){
+                        if (shop_prepaid_card.press != '0') return;
+                        shop_prepaid_card.press = '1';
+                        shop_prepaid_card.get_payment_method_signal(payment);
+                    }
+                    if (calledFrom=='global_input_number'){
+                        if (global_input_number.press != '0') return;
+                        global_input_number.press = '1';
+                        global_input_number.get_payment_method_signal(payment);
+                    }
+
+                }
+            }
+        }
+
     }
 
 }
