@@ -939,6 +939,7 @@ def store_transaction_global(param, retry=False):
             'mid': '',
             'pid': __pid,
             # 'tpid': get_tpid(string=_key),
+            # Create Simple Mapping For TRXID
             'tpid': '713251f9e9694c629147f57b64e79d35' if _key == 'SALE_EMONEY' else 'deeb4e043fcd11e8b4670ed5f89f718b',
             'sale': __total_price,
             'amount': __total_price,

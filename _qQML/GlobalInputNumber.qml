@@ -187,9 +187,11 @@ Base{
         if (i.mode=='card_collection'){
             rows.push({label: 'Produk', content: i.card.name});
             rows.push({label: 'Deskripsi', content: i.card.remarks});
-            rows.push({label: 'Jumlah', content: '1'});
-            rows.push({label: 'Harga', content: FUNC.insert_dot(i.card.sell_price)});
-            rows.push({label: 'Total', content: FUNC.insert_dot(i.card.sell_price)});
+            rows.push({label: 'Jumlah', content: i.qty.toString()});
+            var unit_price = parseInt(i.card.sell_price);
+            rows.push({label: 'Harga', content: FUNC.insert_dot(unit_price.toString())});
+            var total_price = parseInt(i.qty) * unit_price;
+            rows.push({label: 'Total', content: FUNC.insert_dot(total_price.toString())});
         }
         generateConfirm(rows, true);
     }
@@ -226,13 +228,13 @@ Base{
         if (vCollectionData==undefined){
             isConfirm = true;
         } else {
+            popup_loading.open();
             switch(vCollectionMode){
             case 'card_collection':
                 console.log('Card Collection...')
                 switch_frame('source/sand-clock-animated-2.gif', 'Memproses Kartu Baru Anda', 'Mohon Tunggu Beberapa Saat', 'closeWindow', true )
                 var attempt = vCollectionData.slot.toString();
                 var multiply = vCollectionData.qty.toString();
-                popup_loading.open();
                 _SLOT.start_multiple_eject(attempt, multiply);
                 break;
             case 'mandiri_topup':
@@ -322,7 +324,7 @@ Base{
 
     function define_wording(){
         if (mode=='WA_REDEEM'){
-            wording_text = 'Masukkan Nomor Invoice Dari WhatsApp Anda';
+            wording_text = 'Masukkan Kode Voucher (VCODE) Dari WhatsApp Anda';
             min_count = 8;
             return;
         }
@@ -344,7 +346,7 @@ Base{
                 min_count = 19;
             break;
             case 'pulsa': case 'paket data': case 'ojek online':
-                wording_text = 'Masukkan Nomor Telepon Tujuan';
+                wording_text = 'Masukkan Nomor Telepon Seluler Tujuan';
                 min_count = 10;
             break;
             case 'uang elektronik':
@@ -352,7 +354,7 @@ Base{
                 min_count = 15;
             break;
             default:
-                wording_text = 'Masukkan Nomor Pelanggan Anda';
+                wording_text = 'Masukkan Nomor Pelanggan/Tagihan Anda';
                 min_count = 15;
         }
     }
@@ -561,7 +563,6 @@ Base{
                             var msisdn = textInput;
                             var product_id = selectedProduct.product_id;
                             _SLOT.start_check_ppob_product(msisdn, product_id);
-                            popup_loading.open();
                             return;
                         } else {
                             var rows = [
