@@ -166,7 +166,7 @@ Base{
         id: flickable_items
         width: 1550
         height: 800
-        anchors.verticalCenterOffset: 100
+        anchors.verticalCenterOffset: 120
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
 

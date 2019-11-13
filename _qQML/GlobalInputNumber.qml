@@ -31,6 +31,8 @@ Base{
     property var totalPaymentEnable: 0
 
     property bool isConfirm: false
+    property var vCollectionMode: undefined
+    property var vCollectionData: undefined
 
     signal get_payment_method_signal(string str)
     signal set_confirmation(string str)
@@ -39,9 +41,12 @@ Base{
     Stack.onStatusChanged:{
         if(Stack.status==Stack.Activating){
             console.log('mode', mode);
-            abc.counter = timer_value
-            my_timer.start()
-            define_wording()
+            abc.counter = timer_value;
+            my_timer.start();
+            define_wording();
+            isConfirm = false;
+            vCollectionMode = undefined;
+            vCollectionData = undefined;
             press = '0'
 
         }
@@ -59,6 +64,7 @@ Base{
         base.result_check_ppob.connect(get_check_ppob_result);
         base.result_check_voucher.connect(get_check_voucher);
         base.result_use_voucher.connect(get_use_voucher);
+        base.result_cd_move.connect(card_eject_result);
 
     }
 
@@ -70,6 +76,7 @@ Base{
         base.result_check_ppob.disconnect(get_check_ppob_result);
         base.result_check_voucher.disconnect(get_check_voucher);
         base.result_use_voucher.disconnect(get_use_voucher);
+        base.result_cd_move.disconnect(card_eject_result);
 
     }
 
@@ -119,6 +126,34 @@ Base{
         }
     }
 
+    function card_eject_result(r){
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('card_eject_result', now, r);
+        popup_loading.close();
+        abc.counter = 30;
+        my_timer.restart();
+//        if (r=='EJECT|PARTIAL'){
+//            press = '0';
+//            attemptCD -= 1;
+//            switch_frame('source/take_card.png', 'Silakan Ambil Kartu Anda', 'Kemudian Tekan Tombol Lanjut', 'closeWindow|25', true );
+//            centerOnlyButton = true;
+//            modeButtonPopup = 'retrigger_card';
+//            return;
+//        }
+        if (r == 'EJECT|ERROR') {
+            switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Ambil Struk Transaksi Anda Hubungi Layanan Pelanggan', 'backToMain', true )
+        }
+        if (r == 'EJECT|SUCCESS') {
+            abc.counter = 7;
+            my_timer.restart();
+            switch_frame('source/thumb_ok.png', 'Silakan Ambil Kartu dan Struk Transaksi Anda', 'Terima Kasih', 'backToMain', false )
+            //TODO: Printout Redeem Voucher with SLOT Function
+            //TODO: Flagging Voucher To USED status with SLOT Function
+            //TODO: Card Stock Correction
+            //_SLOT.start_sale_print_global();
+        }
+    }
+
 
     function get_use_voucher(v){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
@@ -135,15 +170,30 @@ Base{
 
     function get_check_voucher(v){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-        console.log('get_check_voucher', now, v);
+//        console.log('get_check_voucher', now, v);
         var res = v.split('|')[1];
-        if (['ERROR', 'MISSING_VOUCHER_NUMBER', 'MISSING_PRODUCT_ID'].indexOf(res) > -1){
+        if (['ERROR', 'MISSING_VOUCHER_NUMBER', 'MISSING_PRODUCT_ID', 'EMPTY'].indexOf(res) > -1){
             false_notif('Terjadi Kesalahan Saat Memeriksa Kode Voucher Anda', 'backToPrevious', res);
             return;
         }
-        //TODO: Parse Voucher Result Into Confirmation Page, Handle End Process
-
+        console.log('get_check_voucher', now, res);
+        var i = JSON.parse(res)
+        vCollectionData = i;
+        vCollectionMode = i.mode;
+        var rows = [
+            {label: 'Tanggal', content: now},
+            {label: 'No Voucher', content: i.product},
+        ]
+        if (i.mode=='card_collection'){
+            rows.push({label: 'Produk', content: i.card.name});
+            rows.push({label: 'Deskripsi', content: i.card.remarks});
+            rows.push({label: 'Jumlah', content: '1'});
+            rows.push({label: 'Harga', content: FUNC.insert_dot(i.card.sell_price)});
+            rows.push({label: 'Total', content: FUNC.insert_dot(i.card.sell_price)});
+        }
+        generateConfirm(rows, true);
     }
+
 
     function get_check_ppob_result(r){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
@@ -173,7 +223,30 @@ Base{
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('Confirmation Flagged By', _mode, now)
         global_confirmation_frame.close()
-        isConfirm = true;
+        if (vCollectionData==undefined){
+            isConfirm = true;
+        } else {
+            switch(vCollectionMode){
+            case 'card_collection':
+                console.log('Card Collection...')
+                switch_frame('source/sand-clock-animated-2.gif', 'Memproses Kartu Baru Anda', 'Mohon Tunggu Beberapa Saat', 'closeWindow', true )
+                var attempt = vCollectionData.slot.toString();
+                var multiply = vCollectionData.qty.toString();
+                popup_loading.open();
+                _SLOT.start_multiple_eject(attempt, multiply);
+                break;
+            case 'mandiri_topup':
+                console.log('Mandiri Topup...')
+                break;
+            case 'bni_topup':
+                console.log('BNI Topup...')
+                break;
+            case 'dki_topup':
+                console.log('DKI Topup...')
+                break;
+
+            }
+        }
     }
 
 
@@ -471,6 +544,7 @@ Base{
         anchors.bottomMargin: 50
         button_text: 'LANJUT'
         modeReverse: true
+        visible: !global_confirmation_frame.visible && !isConfirm && !popup_loading.visible
         MouseArea{
             anchors.fill: parent
             onClicked: {
@@ -496,8 +570,8 @@ Base{
                                 {label: 'Produk', content: selectedProduct.product_id},
                                 {label: 'Deskripsi', content: selectedProduct.description},
                                 {label: 'Jumlah', content: '1'},
-                                {label: 'Harga', content: selectedProduct.rs_price},
-                                {label: 'Total', content: selectedProduct.rs_price}
+                                {label: 'Harga', content: FUNC.insert_dot(selectedProduct.rs_price.toString())},
+                                {label: 'Total', content: FUNC.insert_dot(selectedProduct.rs_price.toString())},
                             ]
                             generateConfirm(rows, true);
                             return;
@@ -507,7 +581,6 @@ Base{
                         _SLOT.start_check_trx_online(textInput);
                         return
                     case 'WA_REDEEM':
-                        // TODO: Check SLOT Function Check WA Payment
                         console.log('Checking WA Invoice Number : ', textInput);
                         _SLOT.start_check_voucher(textInput);
                         return;

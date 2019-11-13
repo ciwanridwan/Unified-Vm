@@ -83,13 +83,26 @@ def check_voucher(voucher):
         PR_SIGNDLER.SIGNAL_CHECK_VOUCHER.emit('CHECK_VOUCHER|MISSING_VOUCHER_NUMBER')
         return
     payload = {
-        'voucher': voucher
+        'vcode': voucher
     }
     try:
         url = _Global.BACKEND_URL+'ppob/voucher/check'
         s, r = _NetworkAccess.post_to_url(url=url, param=payload)
-        if s == 200 and r['result'] == 'OK' and r['data'] is not None:
-            PR_SIGNDLER.SIGNAL_CHECK_VOUCHER.emit('CHECK_VOUCHER|' + json.dumps(r['data']))
+        if s == 200 and r['result'] == 'OK' and r['data']['Response'] == '0':
+            product_id = r['data']['product']
+            check_product = _DAO.check_product_status_by_pid({'pid': product_id})
+            if len(check_product) > 0:
+                output = {
+                    'mode': 'card_collection',
+                    'product': product_id,
+                    'qty': r['data']['qty_available'],
+                    'raw_voucher': r['data'],
+                    'card': check_product[0],
+                    'slot': check_product[0]['status']
+                }
+                PR_SIGNDLER.SIGNAL_CHECK_VOUCHER.emit('CHECK_VOUCHER|' + json.dumps(output))
+            else:
+                PR_SIGNDLER.SIGNAL_CHECK_VOUCHER.emit('CHECK_VOUCHER|EMPTY')
         else:
             PR_SIGNDLER.SIGNAL_CHECK_VOUCHER.emit('CHECK_VOUCHER|ERROR')
         LOGGER.debug((str(payload), str(r)))
@@ -112,8 +125,8 @@ def use_voucher(voucher, reff_no):
         PR_SIGNDLER.SIGNAL_USE_VOUCHER.emit('USE_VOUCHER|MISSING_REFF_NO')
         return
     payload = {
-        'voucher': voucher,
-        'reff_no': reff_no
+        'vcode': voucher,
+        'note_ref': reff_no
     }
     try:
         url = _Global.BACKEND_URL+'ppob/voucher/use'

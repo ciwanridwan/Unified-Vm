@@ -812,10 +812,10 @@ def get_product_stock():
                 if '|' in s['remarks']:
                     s['image'] = s['remarks'].split('|')[1]
                     s['remarks'] = s['remarks'].split('|')[0]
-        LOGGER.debug(("get_product_stock : ", str(stock)))
+        LOGGER.debug((str(stock)))
         K_SIGNDLER.SIGNAL_GET_PRODUCT_STOCK.emit(json.dumps(stock))
     except Exception as e:
-        LOGGER.warning(("get_product_stock : ", e))
+        LOGGER.warning((e))
         K_SIGNDLER.SIGNAL_GET_PRODUCT_STOCK.emit(json.dumps(stock))
 
 

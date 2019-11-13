@@ -77,17 +77,28 @@ Base{
             anchors.fill: parent
             onClicked: {
                 _SLOT.user_action_log('Press "LANJUT" In Confirmation Page');
-                console.log('Press LANJUT in Confirmation Page')
                 if (!modeConfirm){
-                    destroy();
+                    console.log('Press "OK" in Confirmation Page')
+                    switch(closeMode){
+                    case 'backToMain':
+                        my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
+                        break;
+                    case 'backToPrev': case 'backToPrevious':
+                        my_layer.pop();
+                        break;
+                    default: close();
+                        break;
+                    }
                     return;
-                }
-                switch(calledFrom){
-                case 'global_input_number':
-                    global_input_number.set_confirmation('global_confirmation_frame');
-                    return;
-                default:
-                    return;
+                } else {
+                    console.log('Press "LANJUT" in Confirmation Page')
+                    switch(calledFrom){
+                    case 'global_input_number':
+                        global_input_number.set_confirmation('global_confirmation_frame');
+                        return;
+                    default:
+                        return;
+                    }
                 }
             }
         }
@@ -140,24 +151,33 @@ Base{
             showDuration -= 1;
             if (showDuration==0) {
                 show_timer.stop();
-                destroy();
+                switch(closeMode){
+                case 'backToMain':
+                    my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
+                    break;
+                case 'backToPrev': case 'backToPrevious':
+                    my_layer.pop();
+                    break;
+                default: close();
+                    break;
+                }
             }
         }
     }
 
 
-    function destroy(){
-        switch(closeMode){
-        case 'backToMain':
-            my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
-            break;
-        case 'backToPrev': case 'backToPrevious':
-            my_layer.pop();
-            break;
-        default: close();
-            break;
-        }
-    }
+//    function destroy(){
+//        switch(closeMode){
+//        case 'backToMain':
+//            my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
+//            break;
+//        case 'backToPrev': case 'backToPrevious':
+//            my_layer.pop();
+//            break;
+//        default: close();
+//            break;
+//        }
+//    }
 
 
     function open(){
@@ -166,14 +186,12 @@ Base{
             showDuration = timerDuration;
             show_timer.start();
         }
-        return;
     }
 
 
     function close(){
         globalConfirmationFrame.visible = false;
         if (withTimer) show_timer.stop();
-        return;
     }
 
 }
