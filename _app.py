@@ -547,6 +547,14 @@ class SlotHandler(QObject):
         _QRPaymentService.start_confirm_ovo_qr(payload)
     start_confirm_ovo_qr = pyqtSlot(str)(start_confirm_ovo_qr)
 
+    def start_check_voucher(self, voucher):
+        _ProductService.start_check_voucher(voucher)
+    start_check_voucher = pyqtSlot(str)(start_check_voucher)
+
+    def start_use_voucher(self, voucher, reff_no):
+        _ProductService.start_use_voucher(voucher, reff_no)
+    start_use_voucher = pyqtSlot(str, str)(start_use_voucher)
+
 
 def s_handler():
     _KioskService.K_SIGNDLER.SIGNAL_GET_FILE_LIST.connect(view.rootObject().result_get_file_list)
@@ -638,7 +646,8 @@ def s_handler():
     _QRPaymentService.QR_SIGNDLER.SIGNAL_PAY_QR.connect(view.rootObject().result_pay_qr)
     _QRPaymentService.QR_SIGNDLER.SIGNAL_CHECK_QR.connect(view.rootObject().result_check_qr)
     _QRPaymentService.QR_SIGNDLER.SIGNAL_CONFIRM_QR.connect(view.rootObject().result_confirm_qr)
-
+    _ProductService.PR_SIGNDLER.SIGNAL_CHECK_VOUCHER.connect(view.rootObject().result_check_voucher)
+    _ProductService.PR_SIGNDLER.SIGNAL_USE_VOUCHER.connect(view.rootObject().result_use_voucher)
 
 LOGGER = None
 

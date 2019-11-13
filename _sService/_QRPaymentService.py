@@ -43,6 +43,7 @@ def start_get_qr_linkaja(payload):
 
 
 def do_get_qr(payload, mode):
+    payload = json.loads(payload)
     if mode in ['GOPAY', 'OVO', 'DANA']:
         LOGGER.warning((str(payload), mode, 'NOT_AVAILABLE'))
         QR_SIGNDLER.SIGNAL_GET_QR.emit('GET_QR|'+mode+'|NOT_AVAILABLE')
@@ -90,6 +91,7 @@ def start_do_check_linkaja_qr(payload):
 
 
 def do_check_qr(payload, mode):
+    payload = json.loads(payload)
     if mode in ['GOPAY', 'OVO', 'DANA']:
         LOGGER.warning((str(payload), mode, 'NOT_AVAILABLE'))
         QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|NOT_AVAILABLE')
@@ -147,6 +149,7 @@ def start_do_pay_ovo_qr(payload):
 
 
 def do_pay_qr(payload, mode):
+    payload = json.loads(payload)
     if mode in ['GOPAY', 'DANA', 'LINKAJA']:
         LOGGER.warning((str(payload), mode, 'NOT_AVAILABLE'))
         QR_SIGNDLER.SIGNAL_PAY_QR.emit('PAY_QR|'+mode+'|NOT_AVAILABLE')
@@ -179,6 +182,7 @@ def start_confirm_ovo_qr(payload):
 
 
 def do_confirm_qr(payload, mode):
+    payload = json.loads(payload)
     if mode in ['GOPAY', 'DANA', 'LINKAJA']:
         LOGGER.warning((str(payload), mode, 'NOT_AVAILABLE'))
         QR_SIGNDLER.SIGNAL_CONFIRM_QR.emit('CONFIRM_QR|'+mode+'|NOT_AVAILABLE')

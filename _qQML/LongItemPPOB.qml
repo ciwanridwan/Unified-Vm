@@ -1,6 +1,7 @@
 import QtQuick 2.0
 import QtGraphicalEffects 1.0
 
+
 Rectangle {
     id: rectangle
     property bool modeReverse: false
@@ -42,7 +43,7 @@ Rectangle {
         id: select_item
         width: parent.width
         color: color_
-        text: "Pilih"
+        text: "Pilih >"
         anchors.right: parent.right
         anchors.rightMargin: 25
         anchors.top: parent.top

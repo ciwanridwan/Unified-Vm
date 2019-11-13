@@ -399,8 +399,10 @@ Base{
                 tvc_loading.counter -= 1
                 if (tvc_loading.counter%2==0){
                     search_trx_buttom.color = 'yellow';
+                    wa_redeem_button.color = '#4FCE5D'
                 } else {
                     search_trx_buttom.color = 'white';
+                    wa_redeem_button.color = 'white';
                 }
 //                _SLOT.post_tvc_log('Integrasi Transportasi.mp4');
                 if(tvc_loading.counter == 0){
@@ -460,11 +462,11 @@ Base{
         width: 100
         height: 300
         Text{
-            text: 'CEK STATUS'
+            text: 'CEK\nTRANSAKSI'
             font.pixelSize: 30
             anchors.horizontalCenterOffset: -10
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 100
+            anchors.bottomMargin: 80
             anchors.horizontalCenter: parent.horizontalCenter
             font.family:"Ubuntu"
             font.bold: true
@@ -489,7 +491,7 @@ Base{
             onClicked: {
                 if (press!="0") return;
                 press = "1";
-                _SLOT.user_action_log('Press "Search_TRX" Button');
+                _SLOT.user_action_log('Press "SEARCH_TRX" Button');
                 console.log('Search Trx Button is Pressed..!');
                 _SLOT.set_tvc_player("STOP");
                 _SLOT.stop_idle_mode();
@@ -497,6 +499,55 @@ Base{
             }
         }
     }
+
+    Rectangle{
+        id: wa_redeem_button
+        color: 'white'
+        radius: 20
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 275
+        anchors.right: parent.right
+        anchors.rightMargin: -15
+        width: 100
+        height: 300
+        Text{
+            text: "WHATSAPP\nREDEEM"
+            font.pixelSize: 28
+            anchors.horizontalCenterOffset: -10
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 80
+            anchors.horizontalCenter: parent.horizontalCenter
+            font.family:"Ubuntu"
+            font.bold: true
+            rotation: 270
+            verticalAlignment: Text.AlignVCenter
+            horizontalAlignment: Text.AlignHCenter
+        }
+        Image{
+            y: 0
+            width: 100
+            height: 100
+            anchors.horizontalCenterOffset: 0
+            anchors.horizontalCenter: parent.horizontalCenter
+            scale: 0.75
+            source: "source/whatsapp_transparent_black.png"
+            fillMode: Image.PreserveAspectCrop
+        }
+
+        MouseArea{
+            anchors.fill: parent
+            onClicked: {
+                if (press!="0") return;
+                press = "1";
+                _SLOT.user_action_log('Press "WA_REDEEM" Button');
+                console.log('WA Redeem Button is Pressed..!');
+                _SLOT.set_tvc_player("STOP");
+                _SLOT.stop_idle_mode();
+                my_layer.push(global_input_number, {mode: 'WA_REDEEM'});
+            }
+        }
+    }
+
 
     Rectangle{
         id: machine_status_rec

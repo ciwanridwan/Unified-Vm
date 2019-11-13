@@ -150,12 +150,14 @@ Base{
 
     function open(){
         qr_payment_frame.visible = true;
+        successPayment = false;
         showDuration = timerDuration;
         show_timer.start();
     }
 
     function close(){
         qr_payment_frame.visible = false;
+        successPayment = false;
         show_timer.stop();
     }
 

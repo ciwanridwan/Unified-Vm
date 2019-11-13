@@ -113,7 +113,9 @@ Base{
             var info = JSON.parse(r.split('|')[3]);
             console.log('qr_check_result', mode, result, info);
             qr_payment_frame.success()
-            payment_complete('ppob')
+            details.payment_details = info;
+            details.payment_received = details.value;
+            payment_complete(details.shop_type)
             var qrMode = mode.toLowerCase();
             switch(qrMode){
             case 'ovo':

@@ -65,7 +65,6 @@ Rectangle{
         anchors.horizontalCenter: notif_rec.horizontalCenter
         spacing: 60
         anchors.verticalCenter: notif_rec.verticalCenter
-        visible: !standard_notif_view.visible
 
         MasterButtonNew {
             width: 180

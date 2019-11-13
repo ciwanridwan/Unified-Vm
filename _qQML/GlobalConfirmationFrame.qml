@@ -12,10 +12,11 @@ Base{
     property var textMain: 'Ringkasan Transaksi'
     property bool withTimer: false
     property int textSize: 40
-    property int timerDuration: 5
+    property int timerDuration: 15
     property int showDuration: timerDuration
     property var closeMode: 'closeWindow' // 'closeWindow', 'backToMain', 'backToPrev'
     property var calledFrom: 'global_input_number'
+    property bool modeConfirm: false
     property alias label1: row1.labelName
     property alias data1: row1.labelContent
     property alias label2: row2.labelName
@@ -70,13 +71,17 @@ Base{
         anchors.rightMargin: 100
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 50
-        button_text: 'LANJUT'
+        button_text: (modeConfirm) ? 'LANJUT' : 'O K'
         modeReverse: true
         MouseArea{
             anchors.fill: parent
             onClicked: {
                 _SLOT.user_action_log('Press "LANJUT" In Confirmation Page');
                 console.log('Press LANJUT in Confirmation Page')
+                if (!modeConfirm){
+                    destroy();
+                    return;
+                }
                 switch(calledFrom){
                 case 'global_input_number':
                     global_input_number.set_confirmation('global_confirmation_frame');
@@ -135,29 +140,40 @@ Base{
             showDuration -= 1;
             if (showDuration==0) {
                 show_timer.stop();
-                switch(closeMode){
-                case 'backToMain':
-                    my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
-                    break;
-                case 'backToPrev': case 'backToPrevious':
-                    my_layer.pop();
-                    break;
-                default: close();
-                    break;
-                }
+                destroy();
             }
+        }
+    }
+
+
+    function destroy(){
+        switch(closeMode){
+        case 'backToMain':
+            my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
+            break;
+        case 'backToPrev': case 'backToPrevious':
+            my_layer.pop();
+            break;
+        default: close();
+            break;
         }
     }
 
 
     function open(){
         globalConfirmationFrame.visible = true;
-        showDuration = timerDuration;
-        show_timer.start();
+        if (withTimer){
+            showDuration = timerDuration;
+            show_timer.start();
+        }
+        return;
     }
+
 
     function close(){
         globalConfirmationFrame.visible = false;
-        show_timer.stop();
+        if (withTimer) show_timer.stop();
+        return;
     }
+
 }

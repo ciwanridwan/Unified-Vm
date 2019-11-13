@@ -103,6 +103,8 @@ Rectangle {
     signal result_pay_qr(string str)
     signal result_check_qr(string str)
     signal result_confirm_qr(string str)
+    signal result_check_voucher(string str)
+    signal result_use_voucher(string str)
 
 
     //==================================================================================================//

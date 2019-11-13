@@ -241,6 +241,20 @@ function insert_space_four(str){
 }
 
 function strip(str){
-    return str.split(' ').join('')
+    return str.split(' ').join('');
 }
+
+function get_value(v){
+    if (v==undefined) return '';
+    return v;
+}
+
+function count_size(obj){
+    var count = 0;
+    for (var i in obj) {
+       if (obj.hasOwnProperty(i)) count++;
+    }
+    return count;
+}
+
 

@@ -52,7 +52,7 @@ Rectangle{
 
     Text{
         id: content_text2
-        width: parent.width - (paddingLeft+bground_content_text.width+label_text.width)
+        width: parent.width - (paddingLeft+label_text.width)
         height: parent.height
         text: labelContent
         verticalAlignment: Text.AlignVCenter

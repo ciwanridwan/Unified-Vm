@@ -1,5 +1,7 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.2
+import QtGraphicalEffects 1.0
+
 
 Rectangle{
     id:full_numpad
@@ -8,6 +10,11 @@ Rectangle{
     color:"transparent"
     signal strButtonClick(string str)
     signal funcButtonClicked(string str)
+    visible: false
+    opacity: visible ? 1.0 : 0.0
+    Behavior on opacity {
+        NumberAnimation  { duration: 500 ; easing.type: Easing.InOutQuad  }
+    }
 
 
     NumButtonCircle{
