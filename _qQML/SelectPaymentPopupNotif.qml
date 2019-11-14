@@ -16,7 +16,7 @@ Rectangle{
     property bool _qrDanaEnable: false
     property bool _qrGopayEnable: false
     property bool _qrLinkAjaEnable: false
-    property var totalEnable: 3
+    property var totalEnable: 6
     visible: false
     color: 'transparent'
     width: parseInt(SCREEN.size.width)
@@ -36,17 +36,17 @@ Rectangle{
 
     Rectangle{
         id: notif_rec
-        width: totalEnable * 200
-        height: 600
-        color: (modeReverse) ? "white" : "black"
-        opacity: .97
+        width: parent.width
+        height: 500
+        color: (modeReverse) ? "black" : "white"
+        opacity: .8
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
     }
 
     Text {
         id: main_text
-        color: (modeReverse) ? "black" : "white"
+        color: (modeReverse) ? "white" : "black"
         text: show_text
         font.bold: true
         verticalAlignment: Text.AlignVCenter
@@ -67,8 +67,8 @@ Rectangle{
         anchors.verticalCenter: notif_rec.verticalCenter
 
         MasterButtonNew {
-            width: 180
-            height: 250
+            width: 200
+            height: 270
             anchors.verticalCenter: parent.verticalCenter
             img_: "source/cash black.png"
             text_: qsTr("Tunai")
@@ -98,8 +98,8 @@ Rectangle{
         }
 
         MasterButtonNew {
-            width: 180
-            height: 250
+            width: 200
+            height: 270
             anchors.verticalCenter: parent.verticalCenter
             img_: "source/credit card black.png"
             text_: qsTr("Kartu Debit")
@@ -130,10 +130,10 @@ Rectangle{
         }
 
         MasterButtonNew {
-            width: 180
-            height: 250
+            width: 200
+            height: 270
             anchors.verticalCenter: parent.verticalCenter
-            img_: "source/credit card black.png"
+            img_: "source/qr_ovo.png"
             text_: qsTr("QR OVO")
             text2_: qsTr("QR OVO")
             visible: _qrOvoEnable
@@ -162,10 +162,10 @@ Rectangle{
         }
 
         MasterButtonNew {
-            width: 180
-            height: 250
+            width: 200
+            height: 270
             anchors.verticalCenter: parent.verticalCenter
-            img_: "source/credit card black.png"
+            img_: "source/qr_linkaja.png"
             text_: qsTr("QR LinkAja")
             text2_: qsTr("QR LinkAja")
             visible: _qrLinkAjaEnable
@@ -194,10 +194,10 @@ Rectangle{
         }
 
         MasterButtonNew {
-            width: 180
-            height: 250
+            width: 200
+            height: 270
             anchors.verticalCenter: parent.verticalCenter
-            img_: "source/credit card black.png"
+            img_: "source/qr_gopay.png"
             text_: qsTr("QR Gopay")
             text2_: qsTr("QR Gopay")
             visible: _qrGopayEnable
@@ -226,10 +226,10 @@ Rectangle{
         }
 
         MasterButtonNew {
-            width: 180
-            height: 250
+            width: 200
+            height: 270
             anchors.verticalCenter: parent.verticalCenter
-            img_: "source/credit card black.png"
+            img_: "source/qr_dana.png"
             text_: qsTr("QR Dana")
             text2_: qsTr("QR Dana")
             visible: _qrDanaEnable

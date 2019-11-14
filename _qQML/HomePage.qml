@@ -399,15 +399,18 @@ Base{
                 tvc_loading.counter -= 1
                 if (tvc_loading.counter%2==0){
                     search_trx_buttom.color = 'yellow';
-                    wa_redeem_button.color = '#4FCE5D'
+                    wa_voucher_button.color = '#4FCE5D';
                 } else {
                     search_trx_buttom.color = 'white';
-                    wa_redeem_button.color = 'white';
+                    wa_voucher_button.color = 'white';
                 }
 //                _SLOT.post_tvc_log('Integrasi Transportasi.mp4');
                 if(tvc_loading.counter == 0){
-                    console.log("starting tvc player...");
-                    if (!mediaOnPlaying) my_layer.push(media_page, {mode: 'mediaPlayer'});
+                    if (!mediaOnPlaying) {
+                        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+                        console.log("starting tvc player...", now);
+                        my_layer.push(media_page, {mode: 'mediaPlayer'});
+                    }
 //                    _SLOT.set_tvc_player('START')
                     tvc_loading.counter = tvc_timeout;
                     show_tvc_loading.restart();
@@ -501,7 +504,7 @@ Base{
     }
 
     Rectangle{
-        id: wa_redeem_button
+        id: wa_voucher_button
         color: 'white'
         radius: 20
         anchors.bottom: parent.bottom
@@ -511,7 +514,7 @@ Base{
         width: 100
         height: 300
         Text{
-            text: "WHATSAPP\nREDEEM"
+            text: "WHATSAPP\nVOUCHER"
             font.pixelSize: 28
             anchors.horizontalCenterOffset: -10
             anchors.bottom: parent.bottom
@@ -539,11 +542,11 @@ Base{
             onClicked: {
                 if (press!="0") return;
                 press = "1";
-                _SLOT.user_action_log('Press "WA_REDEEM" Button');
-                console.log('WA Redeem Button is Pressed..!');
+                _SLOT.user_action_log('Press "WA_VOUCHER" Button');
+                console.log('WA Voucher Button is Pressed..!');
                 _SLOT.set_tvc_player("STOP");
                 _SLOT.stop_idle_mode();
-                my_layer.push(global_input_number, {mode: 'WA_REDEEM'});
+                my_layer.push(global_input_number, {mode: 'WA_VOUCHER'});
             }
         }
     }

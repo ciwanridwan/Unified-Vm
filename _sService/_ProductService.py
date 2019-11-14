@@ -96,7 +96,7 @@ def check_voucher(voucher):
                     'mode': 'card_collection',
                     'product': product_id,
                     'qty': r['data']['qty_available'],
-                    'raw_voucher': r['data'],
+                    'voucher_details': r['data'],
                     'card': check_product[0],
                     'slot': check_product[0]['status']
                 }
@@ -124,9 +124,16 @@ def use_voucher(voucher, reff_no):
         LOGGER.warning((str(reff_no), 'MISSING_REFF_NO'))
         PR_SIGNDLER.SIGNAL_USE_VOUCHER.emit('USE_VOUCHER|MISSING_REFF_NO')
         return
+    product_id = reff_no.split('-')[1]
+    check_product = _DAO.check_product_status_by_pid({'pid': product_id})
+    if len(check_product) > 0:
+        _DAO.update_product_stock({
+                'pid': product_id,
+                'stock': check_product[0]['stock'] - 1,
+            })
     payload = {
         'vcode': voucher,
-        'note_ref': reff_no
+        'note_ref': reff_no + '-' + _Global.TID
     }
     try:
         url = _Global.BACKEND_URL+'ppob/voucher/use'

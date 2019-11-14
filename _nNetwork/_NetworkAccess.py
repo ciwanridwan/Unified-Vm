@@ -123,7 +123,7 @@ def post_to_url(url, param=None, header=None, log=True):
         s = requests.session()
         s.keep_alive = False
         # s.headers['Connection'] = 'close'
-        if 'https://apiv2.mdd.co.id:30307' in url:
+        if 'http://apiv2.mdd.co.id:10107' in url:
             r = requests.post(url, headers=header, json=param, timeout=180)
         else:
             r = requests.post(url, headers=header, json=param, timeout=GLOBAL_TIMEOUT)

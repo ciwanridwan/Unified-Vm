@@ -42,11 +42,21 @@ Base{
         var p = JSON.parse(ppobData)
         for (var i=0;i < p.length;i++){
             if (p[i]['category']==c){
-                var prod_name = p[i]['category'].toUpperCase() + ' - ' + p[i]['operator'] + ' ' + 'Rp. ' + FUNC.insert_dot(p[i]['rs_price']) + ',-';
+                var formated_price = 'Rp. ' + FUNC.insert_dot(p[i]['rs_price']) + ',-';
+                var prod_name = p[i]['category'].toUpperCase() + ' - ' + p[i]['operator'] + ' ' + formated_price;
+                var desc = p[i]['description'];
+                if (['TAGIHAN', 'TAGIHAN AIR'].indexOf(p[i]['category'].toUpperCase()) > -1 ) {
+                    prod_name = p[i]['category'].toUpperCase() + ' - ' + p[i]['description'];
+                    desc = 'Plus Biaya Admin ' + formated_price;
+                }
+                if (['VOUCHER', 'ZAKAT', 'PAKET INTERNET', 'UANG ELEKTRONIK', 'GAME', 'OJEK ONLINE', 'PULSA', 'LISTRIK'].indexOf(p[i]['category'].toUpperCase()) > -1 ) {
+                    prod_name = p[i]['description'];
+                    desc = p[i]['operator'] + ' ' + 'Rp. ' + FUNC.insert_dot(p[i]['rs_price']) + ',-';
+                }
                 product_model.append({
                                          'ppob_name': prod_name,
-                                         'ppob_desc': p[i]['description'],
-                                         'ppob_price': 'Rp. ' + FUNC.insert_dot(p[i]['rs_price']) + ',-',
+                                         'ppob_desc': desc,
+                                         'ppob_price': formated_price,
                                          'raw': p[i]
                                       })
             }

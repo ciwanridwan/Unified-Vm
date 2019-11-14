@@ -29,7 +29,7 @@ Rectangle {
         anchors.topMargin: 25
         anchors.left: parent.left
         anchors.leftMargin: 25
-        font.pixelSize: 40
+        font.pixelSize: (text_.length > 35) ? 30 : 40
         wrapMode: Text.WordWrap
         style: Text.Sunken
         anchors.horizontalCenterOffset: 0

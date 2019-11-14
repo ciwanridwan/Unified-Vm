@@ -40,7 +40,7 @@ Base{
 
     Stack.onStatusChanged:{
         if(Stack.status==Stack.Activating){
-            console.log('mode', mode);
+            console.log('mode', mode, JSON.stringify(selectedProduct));
             abc.counter = timer_value;
             my_timer.start();
             define_wording();
@@ -144,13 +144,12 @@ Base{
             switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Ambil Struk Transaksi Anda Hubungi Layanan Pelanggan', 'backToMain', true )
         }
         if (r == 'EJECT|SUCCESS') {
-            abc.counter = 7;
-            my_timer.restart();
+//            abc.counter = 7;
+//            my_timer.restart();
             switch_frame('source/thumb_ok.png', 'Silakan Ambil Kartu dan Struk Transaksi Anda', 'Terima Kasih', 'backToMain', false )
+            var reff_no_voucher = new Date().getTime().toString() + '-' + vCollectionData.product.toString() + '-' + vCollectionData.slot.toString()
+            _SLOT.start_use_voucher(textInput, reff_no_voucher);
             //TODO: Printout Redeem Voucher with SLOT Function
-            //TODO: Flagging Voucher To USED status with SLOT Function
-            //TODO: Card Stock Correction
-            //_SLOT.start_sale_print_global();
         }
     }
 
@@ -163,8 +162,6 @@ Base{
             false_notif('Terjadi Kesalahan Saat Menggunakan Kode Voucher Anda', 'backToPrevious', res);
             return;
         }
-        //TODO: Do we need to Handle End Process?
-
     }
 
 
@@ -205,17 +202,26 @@ Base{
             false_notif('Terjadi Kesalahan Saat Memeriksa Nomor Tagihan Anda', 'backToPrevious', res);
             return;
         }
-        var i = JSON.parse(res);
         console.log('get_check_ppob_result', now, res);
-        //TODO: Check PPOB Parsing Result
+        var i = JSON.parse(res);
+        if (i.payable != 0){
+            false_notif('Tagihan Anda Tidak Ditemukan/Belum Tersedia Saat Ini', 'backToPrevious', res);
+            return;
+        }
+        selectedProduct.customer = i.customer;
+        selectedProduct.value = i.total.toString();
+        selectedProduct.admin_fee = i.admin_fee;
+        selectedProduct.msisdn = i.msisdn;
+        selectedProduct.provider = 'Tagihan ' + i.category;
+        selectedProduct.raw = i;
+        selectedProduct.mode = 'tagihan';
         var rows = [
             {label: 'Tanggal', content: now},
-            {label: 'Kategori', content: selectedProduct.category.toUpperCase()},
-            {label: 'Produk', content: selectedProduct.product_id},
-            {label: 'Deskripsi', content: selectedProduct.description},
-            {label: 'Biaya Admin', content: '1'},
-            {label: 'Harga', content: selectedProduct.rs_price.toString()},
-            {label: 'Total', content: selectedProduct.rs_price.toString()}
+            {label: 'Tagihan', content: i.category.toUpperCase() + ' ' + i.msisdn},
+            {label: 'Pelanggan', content: i.customer},
+            {label: 'Biaya', content: i.ori_amount.toString()},
+            {label: 'Biaya Admin', content: i.admin_fee.toString()},
+            {label: 'Total', content: i.total.toString()}
         ]
         generateConfirm(rows, true);
     }
@@ -224,8 +230,9 @@ Base{
     function do_set_confirm(_mode){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('Confirmation Flagged By', _mode, now)
-        global_confirmation_frame.close()
+        global_confirmation_frame.no_button()
         if (vCollectionData==undefined){
+            popup_loading.close();
             isConfirm = true;
         } else {
             popup_loading.open();
@@ -251,7 +258,6 @@ Base{
         }
     }
 
-
     function get_trx_check_result(r){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
 //        console.log('get_trx_check_result', now, r);
@@ -263,17 +269,22 @@ Base{
         }
         var i = JSON.parse(res);
         console.log('get_trx_check_result', now, res);
-        var trx_name = i.category;
-        if (i.category == 'TOPUP'){
-            trx_name = 'TOPUP ' + FUNC.get_value(i.remarks.raw.provider) + ' - ' + FUNC.get_value(i.remarks.raw.card_no)
-        }
+        var trx_name = '';
+        if (i.category == 'PPOB') trx_name = i.category + ' ' + i.remarks.product_id;
+        if (i.category == 'TOPUP')
+            trx_name = i.category + ' ' + FUNC.get_value(i.remarks.raw.provider) + ' ' + FUNC.get_value(i.remarks.raw.card_no);
+        if (i.category == 'SHOP') trx_name = i.category + ' ' + i.remarks.provider;
+        var amount = FUNC.insert_dot(i.receipt_amount.toString());
+        if (i.remarks.payment_received==undefined) i.remarks.payment_received = i.receipt_amount;
+        if (i.status!='PAID' || i.status=='FAILED') amount = FUNC.insert_dot(i.remarks.payment_received.toString());
+        if (i.payment_method=='MEI' || i.payment_method=='cash') i.payment_method = "CASH";
         var rows = [
             {label: 'No Transaksi', content: FUNC.get_value(i.product_id)},
             {label: 'Tanggal', content: FUNC.get_value(i.date)},
-            {label: 'Nama Transaksi', content: trx_name},
+            {label: 'Jenis Transaksi', content: trx_name},
             {label: 'Nilai Bayar', content: FUNC.insert_dot(i.amount.toString())},
-            {label: 'Nilai Diterima', content: FUNC.insert_dot(i.receipt_amount.toString())},
-            {label: 'Metode Bayar', content: i.remarks.payment.toUpperCase()},
+            {label: 'Nilai Diterima', content: amount},
+            {label: 'Metode Bayar', content: i.payment_method.toUpperCase()},
             {label: 'Status', content: i.status}
         ]
         generateConfirm(rows, false, 'backToMain');
@@ -319,11 +330,12 @@ Base{
                 global_confirmation_frame.data7 = rows[i].content;
             }
         }
+        press = '0';
         global_confirmation_frame.open();
     }
 
     function define_wording(){
-        if (mode=='WA_REDEEM'){
+        if (mode=='WA_VOUCHER'){
             wording_text = 'Masukkan Kode Voucher (VCODE) Dari WhatsApp Anda';
             min_count = 8;
             return;
@@ -333,10 +345,10 @@ Base{
             min_count = 6;
             return;
         }
-        if (mode=='PPOB' && selectedProduct==undefined){
-            false_notif('Pastikan Anda Telah Memilih Product Untuk Transaksi', 'backToPrevious');
-            return
-        }
+//        if (mode=='PPOB' && selectedProduct==undefined){
+//            false_notif('Pastikan Anda Telah Memilih Product Untuk Transaksi', 'backToPrevious');
+//            return
+//        }
         _SLOT.start_get_device_status();
         var category = selectedProduct.category.toLowerCase()
         switch(category){
@@ -394,28 +406,17 @@ Base{
         global_frame.open();
     }
 
-
     function process_selected_payment(channel){
-        var globalDetails = get_cart_details(channel);
-        my_layer.push(mandiri_payment_process, {details: globalDetails});
+        selectedProduct.payment = channel;
+        selectedProduct.shop_type = 'ppob';
+        selectedProduct.qty = 1;
+        selectedProduct.status = '1';
+        selectedProduct.time = new Date().toLocaleTimeString(Qt.locale("id_ID"), "hh:mm:ss");
+        selectedProduct.date = new Date().toLocaleDateString(Qt.locale("id_ID"), Locale.ShortFormat);
+        selectedProduct.epoch = new Date().getTime();
+        my_layer.push(mandiri_payment_process, {details: selectedProduct});
     }
 
-    function get_cart_details(channel){
-        var details = {
-            payment: channel,
-            shop_type: 'ppob',
-            time: new Date().toLocaleTimeString(Qt.locale("id_ID"), "hh:mm:ss"),
-            date: new Date().toLocaleDateString(Qt.locale("id_ID"), Locale.ShortFormat),
-            epoch: new Date().getTime()
-        }
-        details.qty = '1';
-        details.value = selectedProduct.rs_price.toString();
-        details.provider = selectedProduct.operator;
-        details.admin_fee = '0';
-        details.status = selectedProduct.status;
-        details.raw = selectedProduct;
-        return details;
-    }
 
     function get_device_status(s){
         console.log('get_device_status', s);
@@ -444,6 +445,8 @@ Base{
             qrOvoEnable = true;
             totalPaymentEnable += 1;
         }
+        //================================
+//        isConfirm = true;
 
     }
 
@@ -555,7 +558,7 @@ Base{
                 if (max_count+1 > textInput.length){
                     var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
                     press = "1"
-                    console.log('number input', now, textInput);
+//                    console.log('number input', now, textInput);
                     popup_loading.open()
                     switch(mode){
                     case 'PPOB':
@@ -565,24 +568,31 @@ Base{
                             _SLOT.start_check_ppob_product(msisdn, product_id);
                             return;
                         } else {
+                            var product_name = selectedProduct.category.toUpperCase() + ' ' + selectedProduct.description;
                             var rows = [
                                 {label: 'Tanggal', content: now},
-                                {label: 'Kategori', content: selectedProduct.category.toUpperCase()},
-                                {label: 'Produk', content: selectedProduct.product_id},
-                                {label: 'Deskripsi', content: selectedProduct.description},
+                                {label: 'Produk', content: product_name},
+                                {label: 'No Tujuan', content: textInput},
                                 {label: 'Jumlah', content: '1'},
                                 {label: 'Harga', content: FUNC.insert_dot(selectedProduct.rs_price.toString())},
                                 {label: 'Total', content: FUNC.insert_dot(selectedProduct.rs_price.toString())},
                             ]
+                            selectedProduct.customer = textInput;
+                            selectedProduct.value = selectedProduct.rs_price.toString();
+                            selectedProduct.admin_fee = '0';
+                            selectedProduct.msisdn = textInput;
+                            selectedProduct.provider = selectedProduct.category;
+                            selectedProduct.raw = selectedProduct;
+                            selectedProduct.mode = 'non-tagihan';
                             generateConfirm(rows, true);
                             return;
                         }
                     case 'SEARCH_TRX':
-                        console.log('Checking Transaction Number : ', textInput);
+                        console.log('Checking Transaction Number : ', now, textInput);
                         _SLOT.start_check_trx_online(textInput);
                         return
-                    case 'WA_REDEEM':
-                        console.log('Checking WA Invoice Number : ', textInput);
+                    case 'WA_VOUCHER':
+                        console.log('Checking WA Invoice Number : ', now, textInput);
                         _SLOT.start_check_voucher(textInput);
                         return;
                     default:

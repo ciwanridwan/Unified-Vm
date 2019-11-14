@@ -38,10 +38,10 @@ Base{
 
     Stack.onStatusChanged:{
         if(Stack.status==Stack.Activating){
-            if (details != undefined) console.log('details', JSON.stringify(details));
+//            if (details != undefined) console.log('details', JSON.stringify(details));
+            define_first_notif();
             abc.counter = timer_value;
             my_timer.start();
-            open_preload_notif();
             press = '0';
             uniqueCode = ''
             receivedCash = 0;
@@ -51,7 +51,6 @@ Base{
             reprintAttempt = 0;
             qrPayload = undefined;
             attemptCD = 0;
-            define_first_notif();
             frameWithButton = false;
             centerOnlyButton = false;
         }
@@ -78,6 +77,7 @@ Base{
         base.result_grg_status.connect(grg_payment_result);
         base.result_get_qr.connect(qr_get_result);
         base.result_check_qr.connect(qr_check_result);
+        base.result_trx_ppob.connect(ppob_trx_result);
     }
 
     Component.onDestruction:{
@@ -98,6 +98,24 @@ Base{
         base.result_grg_status.disconnect(grg_payment_result);
         base.result_get_qr.disconnect(qr_get_result);
         base.result_check_qr.disconnect(qr_check_result);
+        base.result_trx_ppob.disconnect(ppob_trx_result);
+    }
+
+    function ppob_trx_result(p){
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('ppob_trx_result', now, p);
+        details.ppob_result = '-1';
+        var result = r.split('|')[1]
+        if (['MISSING_MSISDN', 'MISSING_PRODUCT_ID','MISSING_AMOUNT','MISSING_OPERATOR', 'MISSING_PAYMENT_TYPE', 'MISSING_PRODUCT_CATEGORY', 'MISSING_REFF_NO', 'ERROR'].indexOf(result) > -1){
+            switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Ambil Struk Sebagai Bukti', 'backToMain', true )
+            //TODO: SLOT Function To PrintOut Failed PPOB Trx Bring Payload From 'details'
+            return;
+        }
+        var info = JSON.parse(result);
+        details.ppob_result = info;
+        switch_frame('source/take_receipt.png', 'Terima Kasih', 'Silakan Ambil Struk Transaksi Anda', 'backToMain', true );
+        //TODO: SLOT Function To PrintOut Success PPOB Trx Bring Payload From 'details'
+
     }
 
     function qr_check_result(r){
@@ -111,7 +129,8 @@ Base{
         }
         if (result=='SUCCESS'){
             var info = JSON.parse(r.split('|')[3]);
-            console.log('qr_check_result', mode, result, info);
+            now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+            console.log('qr_check_result', now, mode, result, info);
             qr_payment_frame.success()
             details.payment_details = info;
             details.payment_received = details.value;
@@ -138,6 +157,7 @@ Base{
         var qrMode = mode.toLowerCase();
         qr_payment_frame.modeQR = qrMode;
         qr_payment_frame.imageSource = info.data.qr;
+        popup_loading.close();
         qr_payment_frame.open();
         switch(qrMode){
         case 'ovo':
@@ -153,7 +173,8 @@ Base{
     }
 
     function topup_result(t){
-        console.log('topup_result', t);
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('topup_result', now, t);
         global_frame.close();
         popup_loading.close();
         abc.counter = 30;
@@ -312,7 +333,20 @@ Base{
 //                slave_title.text = 'Sedang Memproses Isi Ulang Kartu Prabayar Anda...\nPastikan Kartu Prabayar Anda Masih Menempel Di Reader.'
                 break;
             case 'ppob':
-                // TODO: Add PPOB Payment Release
+                var payload = {
+                    msisdn: details.msisdn,
+                    product_id: details.product_id,
+                    amount: details.value.toString(),
+                    reff_no: details.shop_type + details.epoch.toString(),
+                    product_category: details.category,
+                    payment_type: details.payment,
+                    operator: details.operator
+                }
+                if (details.mode=='tagihan'){
+                    _SLOT.start_do_pay_ppob(JSON.stringify(payload));
+                } else {
+                    _SLOT.start_do_topup_ppob(JSON.stringify(payload));
+                }
                 break;
         }
     }
@@ -536,30 +570,20 @@ Base{
         if (i=='topup') return 'TopUp Kartu';
         if (i=='cash') return 'Tunai';
         if (i=='debit') return 'Kartu Debit';
+        if (i=='ppob') return 'Pembayaran/Pembelian';
 
     }
 
     function define_first_notif(){
-        _SLOT.start_set_payment(details.payment);
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+
         adminFee = parseInt(details.admin_fee);
         var epoch_string = details.epoch.toString();
         uniqueCode = epoch_string.substring(epoch_string.length-6);
-        if (details.payment == 'cash') {
-            totalPrice = parseInt(details.value) * parseInt(details.qty);
-            getDenom = totalPrice - adminFee;
-            notif_text = 'Masukan Uang Tunai Anda Pada Bill Acceptor Di Bawah';
-            _SLOT.start_set_direct_price(totalPrice.toString());
-//            _SLOT.start_accept_mei();
-            _SLOT.start_grg_receive_note()
-        }
-        if (details.payment == 'debit') {
-            getDenom = parseInt(details.value);
-            totalPrice = getDenom + adminFee;
-            var structId = details.shop_type + details.epoch.toString();
-            _SLOT.create_sale_edc_with_struct_id(totalPrice.toString(), structId);
-            notif_text = 'Masukan Kartu Debit dan Kode PIN Pada EDC Di Bawah';
-        }
         if (['ovo', 'gopay', 'dana', 'linkaja'].indexOf(details.payment) > -1){
+            console.log('generating_qr', now, details.payment);
+            global_frame.textMain = 'Persiapkan Aplikasi ' + details.payment.toUpperCase() + ' Pada Gawai Anda!';
+            popup_loading.open();
             totalPrice = parseInt(details.value) * parseInt(details.qty);
             qrPayload = {
                 trx_id: details.shop_type + details.epoch.toString(),
@@ -581,6 +605,24 @@ Base{
             }
 
         }
+        open_preload_notif();
+        _SLOT.start_set_payment(details.payment);
+        if (details.payment == 'cash') {
+            totalPrice = parseInt(details.value) * parseInt(details.qty);
+            getDenom = totalPrice - adminFee;
+            notif_text = 'Masukan Uang Tunai Anda Pada Bill Acceptor Di Bawah';
+            _SLOT.start_set_direct_price(totalPrice.toString());
+//            _SLOT.start_accept_mei();
+            _SLOT.start_grg_receive_note()
+        }
+        if (details.payment == 'debit') {
+            getDenom = parseInt(details.value);
+            totalPrice = getDenom + adminFee;
+            var structId = details.shop_type + details.epoch.toString();
+            _SLOT.create_sale_edc_with_struct_id(totalPrice.toString(), structId);
+            notif_text = 'Masukan Kartu Debit dan Kode PIN Pada EDC Di Bawah';
+        }
+
     }
 
     Rectangle{
@@ -1028,7 +1070,7 @@ Base{
         show_text: 'Silakan Masukkan Uang Anda'
         size_: 50
         color_: "white"
-        visible: !global_frame.visible && !popup_loading.visible
+        visible: !global_frame.visible && !popup_loading.visible && !qr_payment_frame.visible
 
     }
 
@@ -1045,7 +1087,7 @@ Base{
         horizontalAlignment: Text.AlignHCenter
         font.family:"Ubuntu"
         font.pixelSize: 50
-        visible: !global_frame.visible && !popup_loading.visible
+        visible: !global_frame.visible && !popup_loading.visible && !qr_payment_frame.visible
     }
 
     Text {
@@ -1061,7 +1103,7 @@ Base{
         horizontalAlignment: Text.AlignRight
         font.family:"Ubuntu"
         font.pixelSize: 50
-        visible: !global_frame.visible && !popup_loading.visible
+        visible: !global_frame.visible && !popup_loading.visible && !qr_payment_frame.visible
     }
 
     Text {
@@ -1077,7 +1119,7 @@ Base{
         horizontalAlignment: Text.AlignHCenter
         font.family:"Ubuntu"
         font.pixelSize: 50
-        visible: !global_frame.visible && !popup_loading.visible
+        visible: !global_frame.visible && !popup_loading.visible && !qr_payment_frame.visible
     }
 
     Text {
@@ -1093,14 +1135,14 @@ Base{
         horizontalAlignment: Text.AlignRight
         font.family:"Ubuntu"
         font.pixelSize: 50
-        visible: !global_frame.visible && !popup_loading.visible
+        visible: !global_frame.visible && !popup_loading.visible && !qr_payment_frame.visible
     }
 
     BoxTitle{
         id: notice_no_change
         width: 1000
         height: 100
-        visible: !isPaid
+        visible: !isPaid && (details.payment=='cash')
         radius: 50
         fontSize: 40
         border.width: 0

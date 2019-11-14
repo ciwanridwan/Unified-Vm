@@ -72,19 +72,55 @@ def check_ppob_product(msisdn='', product_id=''):
         PPOB_SIGNDLER.SIGNAL_CHECK_PPOB.emit('PPOB_CHECK|MISSING_PRODUCT_ID')
         return
     try:
+        # mcash/cek/TELKOM/161101001530
+        # mcash/cek/BPJS/0001264047118
+        # mcash/cek/PLN/173000000485
+        # mcash/cek/MATRIX/08164300888
+        # mcash/cek/PALYJA/000603544
         param = {
             'msisdn': msisdn,
             'product_id': product_id
         }
         s, r = _NetworkAccess.post_to_url(url=_Global.BACKEND_URL+'ppob/check', param=param)
         if s == 200 and r['result'] == 'OK':
-            PPOB_SIGNDLER.SIGNAL_CHECK_PPOB.emit('PPOB_CHECK|' + json.dumps(r['data']))
+            output = r['data']
+            customer_name = ''
+            total_pay = 0
+            payable = 0
+            if 'BERHASIL' in output['msg']:
+                customer_name = extract_customer_name(msisdn, output['msg'])
+                total_pay = int(output['ori_amount']) + int(output['admin_fee'])
+                payable = 1
+            output['customer'] = customer_name
+            output['total'] = total_pay
+            output['payable'] = payable
+            output['msisdn'] = msisdn
+            output['category'] = product_id
+            PPOB_SIGNDLER.SIGNAL_CHECK_PPOB.emit('PPOB_CHECK|' + json.dumps(output))
         else:
             PPOB_SIGNDLER.SIGNAL_CHECK_PPOB.emit('PPOB_CHECK|ERROR')
         LOGGER.debug((msisdn, product_id, str(r)))
     except Exception as e:
         LOGGER.warning((msisdn, product_id, str(e)))
         PPOB_SIGNDLER.SIGNAL_CHECK_PPOB.emit('PPOB_CHECK|ERROR')
+
+
+def extract_customer_name(key, message):
+    customer = ''
+    if 'GAGAL' in message:
+        return customer
+    key = key[:-2]
+    idx = message.find(key)
+    if idx < 0:
+        return customer
+    clean_message = message[idx:].split(' adalah')[0]
+    messages = clean_message.split(' ')
+    c = []
+    for m in messages:
+        if m not in [' -a-n', 'adalah'] and not m.isdigit() and messages[0] != m and len(m) > 1:
+            c.append(m)
+    customer = ' '.join(c)
+    return customer
 
 
 def start_do_pay_ppob(payload):

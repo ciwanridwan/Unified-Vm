@@ -78,7 +78,7 @@ Base{
         visible: !successPayment
         Text{
             anchors.fill: parent
-            text: show_timer
+            text: showDuration
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
             font.pixelSize: 40

@@ -17,6 +17,7 @@ Base{
     property var closeMode: 'closeWindow' // 'closeWindow', 'backToMain', 'backToPrev'
     property var calledFrom: 'global_input_number'
     property bool modeConfirm: false
+    property bool disableButton: false
     property alias label1: row1.labelName
     property alias data1: row1.labelContent
     property alias label2: row2.labelName
@@ -56,6 +57,7 @@ Base{
         anchors.bottomMargin: 50
         button_text: 'BATAL'
         modeReverse: true
+        visible: !disableButton
         MouseArea{
             anchors.fill: parent
             onClicked: {
@@ -73,6 +75,7 @@ Base{
         anchors.bottomMargin: 50
         button_text: (modeConfirm) ? 'LANJUT' : 'O K'
         modeReverse: true
+        visible: !disableButton
         MouseArea{
             anchors.fill: parent
             onClicked: {
@@ -107,6 +110,7 @@ Base{
     Column{
         width: 900
         height: 500
+        anchors.horizontalCenterOffset: 50
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         spacing: 20
@@ -192,6 +196,10 @@ Base{
     function close(){
         globalConfirmationFrame.visible = false;
         if (withTimer) show_timer.stop();
+    }
+
+    function no_button(){
+        disableButton = true;
     }
 
 }

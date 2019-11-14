@@ -212,10 +212,12 @@ Base{
                 id: item_ppob;
                 modeReverse: true
                 sourceImage: category_url
+                categoryName: category_text
                 MouseArea{
                     anchors.fill: parent;
                     onClicked: {
-                        console.log('Selected Category : ', category_text);
+                        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+                        console.log('Selected Category : ', now, category_text);
                         my_layer.push(ppob_product, {ppobData: ppobData, selectedCategory: category_text})
                     }
                 }
