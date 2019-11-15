@@ -10,7 +10,7 @@ Base{
     height: parseInt(SCREEN.size.height)
     property int timer_value: 300
     property var press: '0'
-    property var details: undefined
+    property var details
     property var notif_text: 'Masukan Uang Tunai Anda Pada Bill Acceptor di bawah'
     property bool isPaid: false
     property int receivedCash: 0
@@ -29,7 +29,7 @@ Base{
     property bool centerOnlyButton: false
     property int attemptCD: 0
 
-    property var qrPayload: undefined
+    property var qrPayload
 
     idx_bg: 0
     imgPanel: 'source/cash black.png'
@@ -38,7 +38,7 @@ Base{
 
     Stack.onStatusChanged:{
         if(Stack.status==Stack.Activating){
-//            if (details != undefined) console.log('details', JSON.stringify(details));
+            if (details != undefined) console.log('product details', JSON.stringify(details));
             define_first_notif();
             abc.counter = timer_value;
             my_timer.start();
@@ -78,6 +78,7 @@ Base{
         base.result_get_qr.connect(qr_get_result);
         base.result_check_qr.connect(qr_check_result);
         base.result_trx_ppob.connect(ppob_trx_result);
+        base.result_pay_qr.connect(qr_check_result);
     }
 
     Component.onDestruction:{
@@ -99,13 +100,15 @@ Base{
         base.result_get_qr.disconnect(qr_get_result);
         base.result_check_qr.disconnect(qr_check_result);
         base.result_trx_ppob.disconnect(ppob_trx_result);
+        base.result_pay_qr.disconnect(qr_check_result);
+
     }
 
     function ppob_trx_result(p){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('ppob_trx_result', now, p);
         details.ppob_result = '-1';
-        var result = r.split('|')[1]
+        var result = p.split('|')[1]
         if (['MISSING_MSISDN', 'MISSING_PRODUCT_ID','MISSING_AMOUNT','MISSING_OPERATOR', 'MISSING_PAYMENT_TYPE', 'MISSING_PRODUCT_CATEGORY', 'MISSING_REFF_NO', 'ERROR'].indexOf(result) > -1){
             switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Ambil Struk Sebagai Bukti', 'backToMain', true )
             //TODO: SLOT Function To PrintOut Failed PPOB Trx Bring Payload From 'details'
@@ -134,13 +137,13 @@ Base{
             qr_payment_frame.success()
             details.payment_details = info;
             details.payment_received = details.value;
-            payment_complete(details.shop_type)
-            var qrMode = mode.toLowerCase();
-            switch(qrMode){
-            case 'ovo':
-                _SLOT.start_confirm_ovo_qr(JSON.stringify(qrPayload));
-                break;
-            }
+            payment_complete(details.shop_type);
+//            var qrMode = mode.toLowerCase();
+//            switch(qrMode){
+//            case 'ovo':
+//                _SLOT.start_confirm_ovo_qr(JSON.stringify(qrPayload));
+//                break;
+//            }
         }
     }
 
@@ -149,27 +152,19 @@ Base{
         console.log('qr_get_result', now, r);
         var mode = r.split('|')[1]
         var result = r.split('|')[2]
-        if (['NOT_AVAILABLE', 'MISSING_AMOUNT', 'MISSING_TRX_ID', 'ERROR'].indexOf(result) > -1){
+        if (['NOT_AVAILABLE', 'MISSING_AMOUNT', 'MISSING_TRX_ID', 'ERROR', 'MODE_NOT_FOUND'].indexOf(result) > -1){
             switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Coba Lagi Dalam Beberapa Saat', 'backToMain', true )
             return;
         }
+        popup_loading.close();
         var info = JSON.parse(result);
         var qrMode = mode.toLowerCase();
         qr_payment_frame.modeQR = qrMode;
-        qr_payment_frame.imageSource = info.data.qr;
-        popup_loading.close();
+        qr_payment_frame.imageSource = info.qr;
+//        if (qrMode=='ovo') _SLOT.start_do_pay_ovo_qr(JSON.stringify(qrPayload));
+//        if (qrMode=='gopay') _SLOT.start_do_check_gopay_qr(JSON.stringify(qrPayload));
+//        if (qrMode=='linkaja') _SLOT.start_do_check_linkaja_qr(JSON.stringify(qrPayload));
         qr_payment_frame.open();
-        switch(qrMode){
-        case 'ovo':
-            _SLOT.start_do_pay_ovo_qr(JSON.stringify(qrPayload));
-            break;
-        case 'gopay':
-            _SLOT.start_do_check_gopay_qr(JSON.stringify(qrPayload));
-            break;
-        case 'linkaja':
-            _SLOT.start_do_check_linkaja_qr(JSON.stringify(qrPayload));
-            break;
-        }
     }
 
     function topup_result(t){
@@ -295,12 +290,13 @@ Base{
     }
 
     function payment_complete(mode){
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
     //        popup_loading.close();
         if (mode != undefined){
-            console.log('payment_complete', mode)
+            console.log('payment_complete', now, mode)
             details.notes = mode + ' - ' + new Date().getTime().toString();
         }
-        console.log('payment_complete', JSON.stringify(details))
+        console.log('payment_complete', now, JSON.stringify(details))
         if (details.provider==undefined) details.provider = 'e-Money Mandiri';
         if (mode!='ppob') _SLOT.start_store_transaction_global(JSON.stringify(details))
         isPaid = true;
@@ -342,7 +338,7 @@ Base{
                     payment_type: details.payment,
                     operator: details.operator
                 }
-                if (details.mode=='tagihan'){
+                if (details.ppob_mode=='tagihan'){
                     _SLOT.start_do_pay_ppob(JSON.stringify(payload));
                 } else {
                     _SLOT.start_do_topup_ppob(JSON.stringify(payload));
@@ -571,56 +567,49 @@ Base{
         if (i=='cash') return 'Tunai';
         if (i=='debit') return 'Kartu Debit';
         if (i=='ppob') return 'Pembayaran/Pembelian';
-
     }
 
     function define_first_notif(){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-
         adminFee = parseInt(details.admin_fee);
         var epoch_string = details.epoch.toString();
         uniqueCode = epoch_string.substring(epoch_string.length-6);
         if (['ovo', 'gopay', 'dana', 'linkaja'].indexOf(details.payment) > -1){
             console.log('generating_qr', now, details.payment);
-            global_frame.textMain = 'Persiapkan Aplikasi ' + details.payment.toUpperCase() + ' Pada Gawai Anda!';
-            popup_loading.open();
+            var msg = 'Persiapkan Aplikasi ' + details.payment.toUpperCase() + ' Pada Gawai Anda!';
+            open_preload_notif(msg, 'source/phone_qr.png');
             totalPrice = parseInt(details.value) * parseInt(details.qty);
             qrPayload = {
                 trx_id: details.shop_type + details.epoch.toString(),
-                amount: totalPrice.toString()
+                amount: totalPrice.toString(),
+                mode: details.payment
             }
-            switch(details.payment){
-            case 'linkaja':
-                _SLOT.start_get_qr_linkaja(JSON.stringify(qrPayload));
-                break;
-            case 'ovo':
-                _SLOT.start_get_qr_ovo(JSON.stringify(qrPayload));
-                break;
-            case 'gopay':
-                _SLOT.start_get_qr_gopay(JSON.stringify(qrPayload));
-                break;
-            case 'dana':
-                _SLOT.start_get_qr_dana(JSON.stringify(qrPayload));
-                break;
+            _SLOT.start_get_qr_global(JSON.stringify(qrPayload));
+            _SLOT.python_dump(JSON.stringify(qrPayload));
+//            if (details.payment=='linkaja') _SLOT.start_get_qr_linkaja(JSON.stringify(qrPayload));
+//            if (details.payment=='ovo') _SLOT.start_get_qr_ovo(JSON.stringify(qrPayload));
+//            if (details.payment=='gopay') _SLOT.start_get_qr_gopay(JSON.stringify(qrPayload));
+//            if (details.payment=='dana') _SLOT.start_get_qr_dana(JSON.stringify(qrPayload));
+            popup_loading.open();
+            return;
+        } else {
+            open_preload_notif();
+            _SLOT.start_set_payment(details.payment);
+            if (details.payment == 'cash') {
+                totalPrice = parseInt(details.value) * parseInt(details.qty);
+                getDenom = totalPrice - adminFee;
+                notif_text = 'Masukan Uang Tunai Anda Pada Bill Acceptor Di Bawah';
+                _SLOT.start_set_direct_price(totalPrice.toString());
+    //            _SLOT.start_accept_mei();
+                _SLOT.start_grg_receive_note()
             }
-
-        }
-        open_preload_notif();
-        _SLOT.start_set_payment(details.payment);
-        if (details.payment == 'cash') {
-            totalPrice = parseInt(details.value) * parseInt(details.qty);
-            getDenom = totalPrice - adminFee;
-            notif_text = 'Masukan Uang Tunai Anda Pada Bill Acceptor Di Bawah';
-            _SLOT.start_set_direct_price(totalPrice.toString());
-//            _SLOT.start_accept_mei();
-            _SLOT.start_grg_receive_note()
-        }
-        if (details.payment == 'debit') {
-            getDenom = parseInt(details.value);
-            totalPrice = getDenom + adminFee;
-            var structId = details.shop_type + details.epoch.toString();
-            _SLOT.create_sale_edc_with_struct_id(totalPrice.toString(), structId);
-            notif_text = 'Masukan Kartu Debit dan Kode PIN Pada EDC Di Bawah';
+            if (details.payment == 'debit') {
+                getDenom = parseInt(details.value);
+                totalPrice = getDenom + adminFee;
+                var structId = details.shop_type + details.epoch.toString();
+                _SLOT.create_sale_edc_with_struct_id(totalPrice.toString(), structId);
+                notif_text = 'Masukan Kartu Debit dan Kode PIN Pada EDC Di Bawah';
+            }
         }
 
     }
@@ -699,9 +688,11 @@ Base{
     //==============================================================
     //PUT MAIN COMPONENT HERE
 
-    function open_preload_notif(){
+    function open_preload_notif(msg, img){
         press = '0';
-        switch_frame('source/insert_money.png', 'Masukkan Uang Anda', '', 'closeWindow', false )
+        if (msg==undefined) msg = 'Masukkan Uang Anda';
+        if (img==undefined) img = 'source/insert_money.png';
+        switch_frame(img, msg, '', 'closeWindow', false )
         return;
     }
 

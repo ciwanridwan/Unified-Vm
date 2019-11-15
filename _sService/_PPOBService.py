@@ -164,6 +164,7 @@ def do_trx_ppob(payload, mode='PAY'):
         LOGGER.warning((str(payload), 'MISSING_OPERATOR'))
         PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|MISSING_OPERATOR')
         return
+    _Helper.dump(payload)
     try:
         url = _Global.BACKEND_URL+'ppob/pay'
         if mode == 'TOPUP':
@@ -171,9 +172,10 @@ def do_trx_ppob(payload, mode='PAY'):
         s, r = _NetworkAccess.post_to_url(url=url, param=payload)
         if s == 200 and r['result'] == 'OK' and r['data'] is not None:
             PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|' + json.dumps(r['data']))
+            LOGGER.debug((str(payload), mode, str(r)))
         else:
             PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|ERROR')
-        LOGGER.debug((str(payload), mode, str(r)))
+            LOGGER.warning((str(payload), mode, str(r)))
     except Exception as e:
         LOGGER.warning((str(payload), mode, str(e)))
         PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|ERROR')

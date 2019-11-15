@@ -455,6 +455,10 @@ class SlotHandler(QObject):
         _KioskService.user_action_log(log)
     user_action_log = pyqtSlot(str)(user_action_log)
 
+    def python_dump(self, log):
+        _KioskService.python_dump(log)
+    python_dump = pyqtSlot(str)(python_dump)
+
     def start_do_mandiri_topup_settlement(self):
         _SettlementService.start_do_mandiri_topup_settlement()
     start_do_mandiri_topup_settlement = pyqtSlot()(start_do_mandiri_topup_settlement)
@@ -554,6 +558,10 @@ class SlotHandler(QObject):
     def start_use_voucher(self, voucher, reff_no):
         _ProductService.start_use_voucher(voucher, reff_no)
     start_use_voucher = pyqtSlot(str, str)(start_use_voucher)
+
+    def start_get_qr_global(self, payload):
+        _QRPaymentService.start_get_qr_global(payload)
+    start_get_qr_global = pyqtSlot(str)(start_get_qr_global)
 
 
 def s_handler():

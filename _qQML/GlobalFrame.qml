@@ -7,7 +7,7 @@ Base{
     isBoxNameActive: false
     property var textMain: 'Silakan Ambil Kartu dan Struk Transaksi Anda'
     property var textSlave: 'Terima Kasih'
-    property var imageSource: "source/thumb_ok.png"
+    property var imageSource: "source/phone_qr.png"
     property bool smallerSlaveSize: true
     property bool withTimer: true
     property int textSize: 40
@@ -20,12 +20,6 @@ Base{
         NumberAnimation  { duration: 500 ; easing.type: Easing.InOutQuad  }
     }
 
-//    Rectangle{
-//        anchors.fill: parent
-//        color: "gray"
-//        opacity: 0.5
-//    }
-
     Column{
         width: 900
         height: 500
@@ -33,6 +27,7 @@ Base{
         anchors.verticalCenter: parent.verticalCenter
         spacing: 30
         AnimatedImage  {
+            id: original_image
             width: 300
             height: 300
             scale: 0.9
@@ -40,6 +35,14 @@ Base{
             source: imageSource
             fillMode: Image.PreserveAspectFit
         }
+//        ColorOverlay {
+//            id: reverse_original_image
+//            anchors.fill: original_image
+//            source: original_image
+//            color: 'white'
+//            scale: original_image.scale
+//            visible: (imageSource.indexOf('black') > -1)
+//        }
         Text{
             text: textMain
             wrapMode: Text.WordWrap

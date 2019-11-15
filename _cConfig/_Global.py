@@ -96,8 +96,9 @@ def serialize_payload(data, specification='MDD_CORE_API'):
         data['token'] = QR_TOKEN
         data['mid'] = QR_MID
         data['tid'] = TID
-        if data.has_key('trx_id'):
+        if 'trx_id' in data:
             data['trx_id'] = data['trx_id'] + '-' + TID
+        _Helper.dump(data)
     return data
 
 
@@ -586,7 +587,7 @@ def get_active_sam(bank='MANDIRI', reverse=False):
         return
 
 
-def empty(s=None):
+def empty(s):
     if s is None:
         return True
     elif type(s) == int and s == 0:

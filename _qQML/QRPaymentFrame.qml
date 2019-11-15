@@ -1,9 +1,13 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.2
 import QtGraphicalEffects 1.0
+import "screen.js" as SCREEN
+
 
 Base{
     id: qr_payment_frame
+    width: parseInt(SCREEN.size.width)
+    height: parseInt(SCREEN.size.height)
     isBoxNameActive: false
     property var modeQR: "linkaja"
     property var textMain: 'Scan QR Berikut Dengan Aplikasi ' + modeQR.toUpperCase()
@@ -13,9 +17,9 @@ Base{
     property bool smallerSlaveSize: true
     property bool withTimer: true
     property int textSize: 40
-    property int timerDuration: 60
+    property int timerDuration: 90
     property int showDuration: timerDuration
-    property var closeMode: 'closeWindow' // 'closeWindow', 'backToMain', 'backToPrev'
+    property var closeMode: 'backToMain' // 'closeWindow', 'backToMain', 'backToPrev'
     visible: false
     opacity: visible ? 1.0 : 0.0
     Behavior on opacity {
@@ -90,18 +94,19 @@ Base{
 
     Rectangle{
         id: rec_payment_success
-        width: 900
+        width: parent.width
         height: 500
         anchors.top: parent.top
         anchors.topMargin: 200
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         color: "white"
+        opacity: 1
         visible: successPayment
         AnimatedImage  {
             width: 200
             height: 200
-            scale: 0.8
+            scale: 0.5
             anchors.fill: parent
             source: 'source/ok_payment_blue.gif'
             fillMode: Image.PreserveAspectFit
@@ -131,6 +136,9 @@ Base{
         running: parent.visible && withTimer
         onTriggered: {
             showDuration -= 1;
+            if (showDuration < 15){
+                textSlave = 'Belum ditemukan pembayaran, Transaksi akan dibatalkan dalam...'
+            }
             if (showDuration==0) {
                 show_timer.stop();
                 switch(closeMode){
@@ -163,7 +171,9 @@ Base{
 
     function success(){
         successPayment = true;
-        delay(3000, close())
+        delay(3000, function(){
+            close();
+        });
     }
 
     Timer {

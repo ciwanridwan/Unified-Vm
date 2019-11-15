@@ -257,4 +257,12 @@ function count_size(obj){
     return count;
 }
 
+function convert_obj(obj){
+    var newObj = {};
+    for (var i in obj) {
+       if (obj.hasOwnProperty(i)) newObj[i] = obj[i];
+    }
+    return newObj;
+}
+
 

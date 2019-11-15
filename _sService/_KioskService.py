@@ -1087,6 +1087,10 @@ def user_action_log(log):
     LOGGER.info(('[USER_ACTION]', str(log)))
 
 
+def python_dump(log):
+    LOGGER.debug(('[DUMP]', str(log)))
+
+
 def house_keeping(age_month=1):
     _DAO.clean_old_data(tables=['Cash', 'Receipts', 'Settlement', 'Product', 'SAMAudit', 'SAMRecords',
                                 'TopupRecords', 'TransactionFailure', 'Transactions'],

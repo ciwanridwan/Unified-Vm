@@ -145,6 +145,7 @@ Base{
         MouseArea{
             anchors.fill: parent
             onClicked: {
+                _SLOT.user_action_log('press "KEMBALI" In PPOB Product Page');
                 my_timer.stop()
                 my_layer.pop()
             }
@@ -218,8 +219,17 @@ Base{
                 MouseArea{
                     anchors.fill: parent;
                     onClicked: {
-                        console.log('Selected Product : ', JSON.stringify(raw));
-                        my_layer.push(global_input_number, {selectedProduct: raw, mode: 'PPOB'});
+                        _SLOT.user_action_log('choose "'+ppob_name+'" PPOB Product');
+                        var details = {
+                            category: raw.category,
+                            operator: raw.operator,
+                            description: raw.description,
+                            product_id: raw.product_id,
+                            rs_price: raw.rs_price,
+                            amount: raw.amount
+                        }
+                        console.log('Set Selected Product Into Input Layer: ', JSON.stringify(details));
+                        my_layer.push(global_input_number, {selectedProduct: details, mode: 'PPOB'});
                     }
                 }
             }

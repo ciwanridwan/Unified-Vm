@@ -142,6 +142,7 @@ Base{
         MouseArea{
             anchors.fill: parent
             onClicked: {
+                _SLOT.user_action_log('press "KEMBALI" In PPOB Category Page');
                 my_timer.stop()
                 my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }))
             }
@@ -218,6 +219,7 @@ Base{
                     onClicked: {
                         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
                         console.log('Selected Category : ', now, category_text);
+                        _SLOT.user_action_log('choose "'+category_text+'" PPOB Category');
                         my_layer.push(ppob_product, {ppobData: ppobData, selectedCategory: category_text})
                     }
                 }

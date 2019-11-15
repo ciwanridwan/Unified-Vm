@@ -77,6 +77,7 @@ Rectangle{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
+                    _SLOT.user_action_log('choose "CASH" Payment Method');
                     var payment = 'cash';
                     if (calledFrom=='prepaid_topup_denom'){
                         if (prepaid_topup_denom.press != '0') return;
@@ -108,6 +109,7 @@ Rectangle{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
+                    _SLOT.user_action_log('choose "DEBIT/CREDIT" Payment Method');
                     var payment = 'debit';
                     if (calledFrom=='prepaid_topup_denom'){
                         if (prepaid_topup_denom.press != '0') return;
@@ -140,6 +142,7 @@ Rectangle{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
+                    _SLOT.user_action_log('choose "OVO" Payment Method');
                     var payment = 'ovo';
                     if (calledFrom=='prepaid_topup_denom'){
                         if (prepaid_topup_denom.press != '0') return;
@@ -172,6 +175,7 @@ Rectangle{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
+                    _SLOT.user_action_log('choose "LINKAJA" Payment Method');
                     var payment = 'linkaja';
                     if (calledFrom=='prepaid_topup_denom'){
                         if (prepaid_topup_denom.press != '0') return;
@@ -204,6 +208,7 @@ Rectangle{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
+                    _SLOT.user_action_log('choose "GOPAY" Payment Method');
                     var payment = 'gopay';
                     if (calledFrom=='prepaid_topup_denom'){
                         if (prepaid_topup_denom.press != '0') return;
@@ -236,6 +241,7 @@ Rectangle{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
+                    _SLOT.user_action_log('choose "DANA" Payment Method');
                     var payment = 'dana';
                     if (calledFrom=='prepaid_topup_denom'){
                         if (prepaid_topup_denom.press != '0') return;

@@ -372,7 +372,7 @@ def handle_tasks(tasks):
         if task['taskName'] == 'RESET_STOCK_PRODUCT':
             _DAO.clear_stock_product()
             update_task(task, 'RESET_STOCK_PRODUCT_SUCCESS')
-        if task['taskName'] == 'REMOTE_UPDATE_STOCK':
+        if task['taskName'] == 'UPDATE_STOCK_PRODUCT':
             result = start_get_product_stock()
             update_task(task, result)
         if task['taskName'] == 'UPDATE_KIOSK':

@@ -17,7 +17,7 @@ Base{
     property var press: "0"
     property var textInput: ""
     property var mode: undefined
-    property var selectedProduct: undefined
+    property var selectedProduct
     property var wording_text: ''
     property bool checkMode: false
     property bool frameWithButton: false
@@ -31,8 +31,10 @@ Base{
     property var totalPaymentEnable: 0
 
     property bool isConfirm: false
-    property var vCollectionMode: undefined
-    property var vCollectionData: undefined
+    property var ppobMode
+    property var ppobTagihanData
+    property var vCollectionMode
+    property var vCollectionData
 
     signal get_payment_method_signal(string str)
     signal set_confirmation(string str)
@@ -40,7 +42,7 @@ Base{
 
     Stack.onStatusChanged:{
         if(Stack.status==Stack.Activating){
-            console.log('mode', mode, JSON.stringify(selectedProduct));
+//            console.log('mode', mode, JSON.stringify(selectedProduct));
             abc.counter = timer_value;
             my_timer.start();
             define_wording();
@@ -121,6 +123,7 @@ Base{
         MouseArea{
             anchors.fill: parent
             onClicked: {
+                _SLOT.user_action_log('press "BATAL" In Input Number Page');
                 my_layer.pop()
             }
         }
@@ -208,13 +211,14 @@ Base{
             false_notif('Tagihan Anda Tidak Ditemukan/Belum Tersedia Saat Ini', 'backToPrevious', res);
             return;
         }
-        selectedProduct.customer = i.customer;
-        selectedProduct.value = i.total.toString();
-        selectedProduct.admin_fee = i.admin_fee;
-        selectedProduct.msisdn = i.msisdn;
-        selectedProduct.provider = 'Tagihan ' + i.category;
-        selectedProduct.raw = i;
-        selectedProduct.mode = 'tagihan';
+        ppobTagihanData = {
+            customer: i.customer,
+            value: i.total.toString(),
+            admin_fee: i.admin_fee,
+            msisdn: i.msisdn,
+            provider: 'Tagihan ' + i.category,
+            billing_check: i,
+        }
         var rows = [
             {label: 'Tanggal', content: now},
             {label: 'Tagihan', content: i.category.toUpperCase() + ' ' + i.msisdn},
@@ -407,14 +411,39 @@ Base{
     }
 
     function process_selected_payment(channel){
-        selectedProduct.payment = channel;
-        selectedProduct.shop_type = 'ppob';
-        selectedProduct.qty = 1;
-        selectedProduct.status = '1';
-        selectedProduct.time = new Date().toLocaleTimeString(Qt.locale("id_ID"), "hh:mm:ss");
-        selectedProduct.date = new Date().toLocaleDateString(Qt.locale("id_ID"), Locale.ShortFormat);
-        selectedProduct.epoch = new Date().getTime();
-        my_layer.push(mandiri_payment_process, {details: selectedProduct});
+        var details = {
+            payment: channel,
+            shop_type: 'ppob',
+            time: new Date().toLocaleTimeString(Qt.locale("id_ID"), "hh:mm:ss"),
+            date: new Date().toLocaleDateString(Qt.locale("id_ID"), Locale.ShortFormat),
+            epoch: new Date().getTime()
+        }
+        details.qty = 1;
+        details.status = '1';
+        details.raw = selectedProduct;
+        details.category = selectedProduct.category;
+        details.operator = selectedProduct.operator;
+        details.description = selectedProduct.description;
+        details.product_id = selectedProduct.product_id;
+        details.rs_price = selectedProduct.rs_price;
+        details.amount = selectedProduct.amount;
+        details.ppob_mode = ppobMode;
+        if (ppobTagihanData!==undefined && ppobMode=='tagihan'){
+            details.customer = ppobTagihanData.customer;
+            details.value = ppobTagihanData.value;
+            details.admin_fee = ppobTagihanData.admin_fee;
+            details.msisdn = ppobTagihanData.msisdn;
+            details.provider = ppobTagihanData.provider;
+            details.billing_check = ppobTagihanData.billing_check;
+        } else if (ppobMode=='non-tagihan'){
+            details.customer = textInput;
+            details.value = selectedProduct.rs_price.toString();
+            details.admin_fee = '0';
+            details.msisdn = textInput;
+            details.provider = selectedProduct.category + ' ' + selectedProduct.description;
+        }
+        _SLOT.python_dump(JSON.stringify(details));
+        my_layer.push(mandiri_payment_process, {details: details});
     }
 
 
@@ -554,6 +583,7 @@ Base{
             anchors.fill: parent
             onClicked: {
                 console.log('button "LANJUT" is pressed..!')
+                _SLOT.user_action_log('press "LANJUT" In Input Number Page');
                 if(press != "0") return;
                 if (max_count+1 > textInput.length){
                     var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
@@ -565,6 +595,7 @@ Base{
                         if (checkMode){
                             var msisdn = textInput;
                             var product_id = selectedProduct.product_id;
+                            ppobMode = 'tagihan';
                             _SLOT.start_check_ppob_product(msisdn, product_id);
                             return;
                         } else {
@@ -577,13 +608,7 @@ Base{
                                 {label: 'Harga', content: FUNC.insert_dot(selectedProduct.rs_price.toString())},
                                 {label: 'Total', content: FUNC.insert_dot(selectedProduct.rs_price.toString())},
                             ]
-                            selectedProduct.customer = textInput;
-                            selectedProduct.value = selectedProduct.rs_price.toString();
-                            selectedProduct.admin_fee = '0';
-                            selectedProduct.msisdn = textInput;
-                            selectedProduct.provider = selectedProduct.category;
-                            selectedProduct.raw = selectedProduct;
-                            selectedProduct.mode = 'non-tagihan';
+                            ppobMode = 'non-tagihan';
                             generateConfirm(rows, true);
                             return;
                         }
