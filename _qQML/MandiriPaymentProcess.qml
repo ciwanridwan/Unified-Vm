@@ -107,18 +107,20 @@ Base{
     function ppob_trx_result(p){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('ppob_trx_result', now, p);
-        details.ppob_result = '-1';
         var result = p.split('|')[1]
         if (['MISSING_MSISDN', 'MISSING_PRODUCT_ID','MISSING_AMOUNT','MISSING_OPERATOR', 'MISSING_PAYMENT_TYPE', 'MISSING_PRODUCT_CATEGORY', 'MISSING_REFF_NO', 'ERROR'].indexOf(result) > -1){
             switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Ambil Struk Sebagai Bukti', 'backToMain', true )
-            //TODO: SLOT Function To PrintOut Failed PPOB Trx Bring Payload From 'details'
+            _SLOT.start_direct_store_transaction_data(JSON.stringify(details));
+            _SLOT.python_dump(JSON.stringify(details))
+            _SLOT.start_sale_print_global();
             return;
         }
         var info = JSON.parse(result);
-        details.ppob_result = info;
+        details.ppob_details = info;
+        _SLOT.start_direct_store_transaction_data(JSON.stringify(details));
+        _SLOT.python_dump(JSON.stringify(details))
+        _SLOT.start_sale_print_global();
         switch_frame('source/take_receipt.png', 'Terima Kasih', 'Silakan Ambil Struk Transaksi Anda', 'backToMain', true );
-        //TODO: SLOT Function To PrintOut Success PPOB Trx Bring Payload From 'details'
-
     }
 
     function qr_check_result(r){
@@ -136,7 +138,7 @@ Base{
             console.log('qr_check_result', now, mode, result, info);
             qr_payment_frame.success()
             details.payment_details = info;
-            details.payment_received = details.value;
+            details.payment_received = details.value.toString();
             payment_complete(details.shop_type);
 //            var qrMode = mode.toLowerCase();
 //            switch(qrMode){
@@ -232,7 +234,8 @@ Base{
     }
 
     function print_result(p){
-        console.log('print_result', p)
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('print_result', now, p)
 //        if (p!='SALEPRINT|DONE'){
 //            abc.counter = 10;
 //            my_timer.restart();
@@ -244,7 +247,8 @@ Base{
     }
 
     function store_result(r){
-        console.log('store_result', r)
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('store_result', now, r)
         if (r.indexOf('ERROR') > -1 || r.indexOf('FAILED|STORE_TRX') > -1){
 //            _SLOT.retry_store_transaction_global()
             console.log('Retry To Store The Data into DB')
@@ -252,17 +256,19 @@ Base{
     }
 
     function print_failed_transaction(channel){
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('print_failed_transaction', now, channel, JSON.stringify(details));
         if (channel=='cash'){
             details.payment_error = 'GRG_ERROR';
             details.payment_received = receivedCash.toString();
-            console.log('print_failed_transaction', channel, JSON.stringify(details));
             _SLOT.start_store_transaction_global(JSON.stringify(details));
             _SLOT.start_sale_print_global();
         }
     }
 
     function card_eject_result(r){
-        console.log('card_eject_result', r);
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('card_eject_result', now, r);
         global_frame.close();
         popup_loading.close();
         abc.counter = 30;
@@ -348,7 +354,8 @@ Base{
     }
 
     function grg_payment_result(r){
-        console.log("grg_payment_result : ", r)
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log("grg_payment_result : ", now, r)
         var grgFunction = r.split('|')[0]
         var grgResult = r.split('|')[1]
         if (grgFunction == 'RECEIVE_GRG'){
@@ -406,7 +413,8 @@ Base{
     }
 
     function mei_payment_result(r){
-        console.log("mei_payment_result : ", r)
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log("mei_payment_result : ", now, r)
         var meiFunction = r.split('|')[0]
         var meiResult = r.split('|')[1]
         if (meiFunction == 'STACK'){
@@ -442,7 +450,9 @@ Base{
     }
 
     function edc_payment_result(r){
-        console.log("edc_payment_result : ", r)
+        //TODO: adjust Signal Handler Recipient
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log("edc_payment_result : ", now, r)
         if (r==undefined||r==""||r.indexOf("ERROR") > -1){
             false_notif();
             return;
@@ -522,7 +532,8 @@ Base{
     }
 
     function get_balance(text){
-        console.log('get_balance', text);
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('get_balance', now, text);
         press = '0';
         standard_notif_view.buttonEnabled = true;
         popup_loading.close();
@@ -550,6 +561,7 @@ Base{
     }
 
     function perform_do_topup(){
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         var provider = details.provider;
         if (provider==undefined) provider = 'e-Money Mandiri';
         var amount = getDenom.toString();

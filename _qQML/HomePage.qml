@@ -424,7 +424,7 @@ Base{
         color: 'white'
         radius: 20
         anchors.top: parent.top
-        anchors.topMargin: 150
+        anchors.topMargin: 200
         anchors.left: parent.left
         anchors.leftMargin: -30
         width: 100
@@ -546,7 +546,7 @@ Base{
                 console.log('WA Voucher Button is Pressed..!');
                 _SLOT.set_tvc_player("STOP");
                 _SLOT.stop_idle_mode();
-                my_layer.push(global_input_number, {mode: 'WA_VOUCHER'});
+                preload_whatasapp_voucher.open()
             }
         }
     }
@@ -750,6 +750,52 @@ Base{
 
     GlobalFrame{
         id: global_frame
+    }
+
+    PreloadWhatsappVoucher{
+        id: preload_whatasapp_voucher
+        CircleButton{
+            id: cancel_button_preload
+            anchors.left: parent.left
+            anchors.leftMargin: 100
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 50
+            button_text: 'BATAL'
+            modeReverse: true
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('Press "BATAL"');
+                    preload_whatasapp_voucher.close();
+                    _SLOT.start_idle_mode();
+                    _SLOT.kiosk_get_product_stock();
+                    if (first_run) _SLOT.get_kiosk_status();
+        //            _SLOT.start_get_topup_readiness();
+                    press = "0";
+                    resetMediaTimer();
+                }
+            }
+        }
+
+        CircleButton{
+            id: next_button_preload
+            anchors.right: parent.right
+            anchors.rightMargin: 100
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 50
+            button_text: 'LANJUT'
+            modeReverse: true
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('Press "LANJUT"');
+                    preload_whatasapp_voucher.close()
+                    my_layer.push(global_input_number, {mode: 'WA_VOUCHER'});
+
+                }
+            }
+        }
+
     }
 
 }

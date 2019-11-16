@@ -207,8 +207,8 @@ Base{
         }
         console.log('get_check_ppob_result', now, res);
         var i = JSON.parse(res);
-        if (i.payable != 0){
-            false_notif('Tagihan Anda Tidak Ditemukan/Belum Tersedia Saat Ini', 'backToPrevious', res);
+        if (i.payable == 0){
+            false_notif('Tagihan Anda Tidak Ditemukan/Belum Tersedia Saat Ini', 'backToPrevious', 'NOT_AVAILABLE');
             return;
         }
         ppobTagihanData = {
@@ -223,9 +223,9 @@ Base{
             {label: 'Tanggal', content: now},
             {label: 'Tagihan', content: i.category.toUpperCase() + ' ' + i.msisdn},
             {label: 'Pelanggan', content: i.customer},
-            {label: 'Biaya', content: i.ori_amount.toString()},
-            {label: 'Biaya Admin', content: i.admin_fee.toString()},
-            {label: 'Total', content: i.total.toString()}
+            {label: 'Biaya', content: FUNC.insert_dot(i.ori_amount.toString())},
+            {label: 'Biaya Admin', content: FUNC.insert_dot(i.admin_fee.toString())},
+            {label: 'Total', content: FUNC.insert_dot(i.total.toString())}
         ]
         generateConfirm(rows, true);
     }
@@ -448,7 +448,8 @@ Base{
 
 
     function get_device_status(s){
-        console.log('get_device_status', s);
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('get_device_status', now, s);
         var device = JSON.parse(s);
         if (device.MEI == 'AVAILABLE' || device.GRG == 'AVAILABLE'){
             cashEnable = true;

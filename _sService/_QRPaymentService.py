@@ -58,7 +58,7 @@ def start_get_qr_global(payload):
     _Helper.get_pool().apply_async(do_get_qr, (payload, mode,))
 
 
-def do_get_qr(payload, mode):
+def do_get_qr(payload, mode, serialize=True):
     payload = json.loads(payload)
     if mode in ['GOPAY', 'DANA']:
         LOGGER.warning((str(payload), mode, 'NOT_AVAILABLE'))
@@ -72,9 +72,10 @@ def do_get_qr(payload, mode):
         LOGGER.warning((str(payload), mode, 'MISSING_TRX_ID'))
         QR_SIGNDLER.SIGNAL_GET_QR.emit('GET_QR|'+mode+'|MISSING_TRX_ID')
         return
-    param = serialize_payload(payload)
+    if serialize is True:
+        param = serialize_payload(payload)
     if _Global.TEST_MODE is True:
-        amount = int(param['amount']) / 1000
+        amount = int(int(param['amount']) / 1000)
         param['amount'] = str(amount)
     try:
         url = _Global.QR_HOST+mode.lower()+'/get-qr'
@@ -83,6 +84,9 @@ def do_get_qr(payload, mode):
             if '10107' in url:
                 r['data']['qr'] = r['data']['qr'].replace('https', 'http')
             QR_SIGNDLER.SIGNAL_GET_QR.emit('GET_QR|'+mode+'|' + json.dumps(r['data']))
+            if mode in ['LINKAJA']:
+                param['refference'] = param['trx_id']
+                param['trx_id'] = r['data']['trx_id']
             LOGGER.debug((str(param), str(r)))
             handle_check_process(json.dumps(param), mode)
         else:
@@ -146,10 +150,11 @@ def do_check_qr(payload, mode, serialize=True):
             if s == 200 and r['response']['code'] == 200:
                 success = check_payment_result(r['data'], mode)
                 QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|' + json.dumps(r['data']))
+                LOGGER.debug((str(payload), str(r)))
             else:
                 QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|ERROR')
+                LOGGER.warning((str(payload), str(r)))
                 break;
-            LOGGER.debug((str(payload), str(r)))
         except Exception as e:
             LOGGER.warning((str(payload), str(e)))
             QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|ERROR')
@@ -157,7 +162,7 @@ def do_check_qr(payload, mode, serialize=True):
         if success is True:
             # QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|SUCCESS|' + json.dumps(r['data']))
             break
-        if attempt == 20:
+        if attempt == 30:
             LOGGER.warning((str(payload), 'TIMEOUT', str(attempt*3)))
             QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|TIMEOUT')
             break
@@ -167,12 +172,10 @@ def do_check_qr(payload, mode, serialize=True):
 def check_payment_result(result, mode):
     if _Global.empty(result):
         return False
-    if mode == 'LINKAJA':
-        if result['status'] == 'PAID':
-            return True
-    if mode == 'GOPAY':
-        if result['status'] == 'SETTLEMENT':
-            return True
+    if mode in ['LINKAJA'] and result['status'] == 'PAID':
+        return True
+    if mode in ['GOPAY'] and result['status'] == 'SETTLEMENT':
+        return True
     return False
 
 

@@ -862,6 +862,15 @@ def retry_store_transaction_global():
     _Helper.get_pool().apply_async(store_transaction_global, (_param, _retry,))
 
 
+def start_direct_store_transaction_data(payload):
+    _Helper.get_pool().apply_async(direct_store_transaction_data, (payload,))
+
+
+def direct_store_transaction_data(payload):
+    global GLOBAL_TRANSACTION_DATA
+    GLOBAL_TRANSACTION_DATA = json.loads(payload)
+
+
 def store_transaction_global(param, retry=False):
     global GLOBAL_TRANSACTION_DATA, MEI_HISTORY, TRX_ID_SALE, PID_SALE, CARD_NO, PID_STOCK_SALE
     GLOBAL_TRANSACTION_DATA = json.loads(param)

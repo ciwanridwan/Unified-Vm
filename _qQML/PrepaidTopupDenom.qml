@@ -837,7 +837,7 @@ Base{
 
     GlobalFrame{
         id: global_frame
-        NextButton{
+        CircleButton{
             id: cancel_button_global
             anchors.left: parent.left
             anchors.leftMargin: 100
@@ -855,7 +855,7 @@ Base{
             }
         }
 
-        NextButton{
+        CircleButton{
             id: next_button_global
             anchors.right: parent.right
             anchors.rightMargin: 100
@@ -892,7 +892,7 @@ Base{
 
     PreloadCheckCard{
         id: preload_check_card
-        NextButton{
+        CircleButton{
             id: cancel_button_preload
             anchors.left: parent.left
             anchors.leftMargin: 100
@@ -909,7 +909,7 @@ Base{
             }
         }
 
-        NextButton{
+        CircleButton{
             id: next_button_preload
             anchors.right: parent.right
             anchors.rightMargin: 100

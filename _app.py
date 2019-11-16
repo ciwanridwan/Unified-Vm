@@ -563,6 +563,18 @@ class SlotHandler(QObject):
         _QRPaymentService.start_get_qr_global(payload)
     start_get_qr_global = pyqtSlot(str)(start_get_qr_global)
 
+    def start_direct_store_transaction_data(self, payload):
+        _KioskService.start_direct_store_transaction_data(payload)
+    start_direct_store_transaction_data = pyqtSlot(str)(start_direct_store_transaction_data)
+
+    def start_check_diva_balance(self, username):
+        _PPOBService.start_check_diva_balance(username)
+    start_check_diva_balance = pyqtSlot(str)(start_check_diva_balance)
+
+    def start_transfer_balance(self, payload):
+        _PPOBService.start_transfer_balance(payload)
+    start_transfer_balance = pyqtSlot(str)(start_transfer_balance)
+
 
 def s_handler():
     _KioskService.K_SIGNDLER.SIGNAL_GET_FILE_LIST.connect(view.rootObject().result_get_file_list)
@@ -656,6 +668,9 @@ def s_handler():
     _QRPaymentService.QR_SIGNDLER.SIGNAL_CONFIRM_QR.connect(view.rootObject().result_confirm_qr)
     _ProductService.PR_SIGNDLER.SIGNAL_CHECK_VOUCHER.connect(view.rootObject().result_check_voucher)
     _ProductService.PR_SIGNDLER.SIGNAL_USE_VOUCHER.connect(view.rootObject().result_use_voucher)
+    _PPOBService.PPOB_SIGNDLER.SIGNAL_CHECK_BALANCE.connect(view.rootObject().result_diva_balance_check)
+    _PPOBService.PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.connect(view.rootObject().result_diva_transfer_balance)
+
 
 LOGGER = None
 

@@ -105,6 +105,8 @@ Rectangle {
     signal result_confirm_qr(string str)
     signal result_check_voucher(string str)
     signal result_use_voucher(string str)
+    signal result_diva_balance_check(string str)
+    signal result_diva_transfer_balance(string str)
 
 
     //==================================================================================================//

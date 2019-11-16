@@ -96,7 +96,7 @@ def serialize_payload(data, specification='MDD_CORE_API'):
         data['token'] = QR_TOKEN
         data['mid'] = QR_MID
         data['tid'] = TID
-        if 'trx_id' in data:
+        if 'trx_id' in data.keys():
             data['trx_id'] = data['trx_id'] + '-' + TID
         _Helper.dump(data)
     return data

@@ -27,7 +27,7 @@ Base{
     }
 
     Column{
-        width: 900
+        width: parent.width
         height: 500
         anchors.top: parent.top
         anchors.topMargin: 200
@@ -100,7 +100,7 @@ Base{
         anchors.topMargin: 200
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        color: "white"
+        color: "black"
         opacity: 1
         visible: successPayment
         AnimatedImage  {
@@ -108,11 +108,11 @@ Base{
             height: 200
             scale: 0.5
             anchors.fill: parent
-            source: 'source/ok_payment_blue.gif'
+            source: 'source/success.png'
             fillMode: Image.PreserveAspectFit
         }
         Text{
-            text: 'Pembayaran Berhasil'
+            text: 'Pembayaran QR Berhasil'
             anchors.horizontalCenterOffset: 0
             anchors.top: parent.top
             anchors.topMargin: 25
@@ -122,7 +122,7 @@ Base{
             font.pixelSize: 50
             anchors.horizontalCenter: parent.horizontalCenter
             font.bold: true
-            color: 'darkblue'
+            color: 'white'
             verticalAlignment: Text.AlignVCenter
             font.family:"Ubuntu"
         }
@@ -137,7 +137,8 @@ Base{
         onTriggered: {
             showDuration -= 1;
             if (showDuration < 15){
-                textSlave = 'Belum ditemukan pembayaran, Transaksi akan dibatalkan dalam...'
+                textSlave = 'Menunggu pembayaran atau Transaksi akan dibatalkan dalam...';
+                textSlave.font.pixelSize = 30;
             }
             if (showDuration==0) {
                 show_timer.stop();

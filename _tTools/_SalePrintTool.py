@@ -154,29 +154,45 @@ def start_reprint_global():
 
 
 LAST_TRX = None
+SMALL_SPACE = 3.5
+REGULAR_SPACE = 8.5
+PADDING_LEFT = 0
 
 
-def sale_print_global(ext='.pdf'):
+def sale_print_global(ext='.pdf', use_last=False):
     global LAST_TRX, HEADER_TEXT1
-    if _KioskService.GLOBAL_TRANSACTION_DATA is None:
+    if not use_last:
+        if _KioskService.GLOBAL_TRANSACTION_DATA is None:
+            LOGGER.warning(('Cannot Generate Receipt Data', 'GLOBAL_TRANSACTION_DATA', 'None'))
+            SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
+            return
+        LAST_TRX = _KioskService.GLOBAL_TRANSACTION_DATA
+    p = LAST_TRX
+    if p['shop_type'] == 'topup':    
+        print_topup_trx(p, 'ISI ULANG PRABAYAR')    
+    if p['shop_type'] == 'shop':    
+        print_shop_trx(p, 'PEMBELIAN PRABAYAR')
+    if p['shop_type'] == 'ppob':    
+        print_ppob_trx(p, 'PEMBELIAN/PEMBAYARAN')
+
+
+def print_topup_trx(p, t, ext='.pdf'):
+    global HEADER_TEXT1
+    if _Global.empty(p):
         LOGGER.warning(('Cannot Generate Receipt Data', 'GLOBAL_TRANSACTION_DATA', 'None'))
         SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
         return
-    LAST_TRX = _KioskService.GLOBAL_TRANSACTION_DATA
-    p = LAST_TRX
     pdf = None
     # Init Variables
-    small_space = 3.5
-    regular_space = 8.5
-    padding_left = 0
+    small_space = SMALL_SPACE
+    regular_space = REGULAR_SPACE
+    padding_left = PADDING_LEFT
     trxid = ''
     # failure = 'USER_CANCELLATION'
     cash = 0
     try:
         cash = int(p['payment_received'])
-        HEADER_TEXT1 = 'ISI ULANG'
-        if p['shop_type'] != 'topup':
-            HEADER_TEXT1 = 'PEMBELIAN KARTU'
+        HEADER_TEXT1 = t
         # paper_ = get_paper_size('\r\n'.join(p.keys()))
         pdf = PDF('P', 'mm', (80, 140))
         # LOGGER.info(('Registering New Font', font_path('UnispaceBold.ttf')))
@@ -191,130 +207,95 @@ def sale_print_global(ext='.pdf'):
         pdf.cell(padding_left, 0, 'Jam : ' + datetime.strftime(datetime.now(), '%H:%M'), 0, 0, 'R')
         pdf.ln(small_space*2)
         pdf.set_font(USED_FONT, '', regular_space)
-        __title = 'TOPUP E-MONEY' if HEADER_TEXT1 == 'ISI ULANG' else 'PEMBELIAN E-MONEY'
+        __title = t
         pdf.cell(padding_left, 0, __title, 0, 0, 'L')
         pdf.ln(small_space)
         pdf.set_font(USED_FONT, '', regular_space)
         trxid = p['shop_type']+str(p['epoch'])
-        pdf.cell(padding_left, 0, 'NO TRX : '+trxid, 0, 0, 'L')
+        pdf.cell(padding_left, 0, 'NO TRX    : '+trxid, 0, 0, 'L')
         pdf.ln(small_space)
+        pdf.ln(small_space)
+        pdf.set_font(USED_FONT, '', regular_space)
+        pdf.cell(padding_left, 0, 'PEMBAYARAN: ' + p['payment'].upper(), 0, 0, 'L')
         # pdf.set_font(USED_FONT, '', regular_space)
         # pdf.cell(padding_left, 0, p['shop_type'].upper()+' '+p['provider'], 0, 0, 'L')
         if 'payment_error' not in p.keys():
-            if p['shop_type'] == 'topup':
-                if 'topup_details' in p.keys():
-                    # pdf.ln(small_space)
-                    # pdf.set_font(USED_FONT, '', regular_space)
-                    # if 'Mandiri' in p['provider']:
-                    #     pdf.cell(padding_left, 0, 'TID : ' + _Global.TID_MAN, 0, 0, 'L')
-                    # else:
-                    #     pdf.cell(padding_left, 0, 'TID : ' + _Global.TID_BNI, 0, 0, 'L')
-                    pdf.ln(small_space)
-                    pdf.set_font(USED_FONT, '', regular_space)
-                    __refill = int(p['value']) - int(p['admin_fee'])
-                    pdf.cell(padding_left, 0, 'ISI ULANG   : Rp. ' + clean_number(str(__refill)), 0, 0, 'L')
-                    pdf.ln(small_space)
-                    pdf.set_font(USED_FONT, '', regular_space)
-                    pdf.cell(padding_left, 0, 'BIAYA ADMIN : Rp. ' + clean_number(p['admin_fee']), 0, 0, 'L')
-                    pdf.ln(small_space)
-                    pdf.set_font(USED_FONT, '', regular_space)
-                    total_pay = str(int(int(p['value']) * int(p['qty'])))
-                    pdf.cell(padding_left, 0, 'TOTAL BAYAR : Rp. ' + clean_number(total_pay), 0, 0, 'L')
-                    pdf.ln(small_space)
-                    pdf.set_font(USED_FONT, '', regular_space)
-                    pdf.cell(padding_left, 0, 'UANG MASUK  : Rp. ' + clean_number(str(cash)), 0, 0, 'L')
-                    pdf.ln(small_space)
-                    pdf.set_font(USED_FONT, '', regular_space)
-                    pdf.cell(padding_left, 0, 'UANG KEMBALI: Rp. ' + clean_number('0'), 0, 0, 'L')
-                    pdf.ln(small_space)
-                    pdf.set_font(USED_FONT, '', regular_space)
-                    pdf.cell(padding_left, 0, 'NO. KARTU   : Rp. ' + p['topup_details']['card_no'], 0, 0, 'L')
-                    pdf.ln(small_space)
-                    pdf.set_font(USED_FONT, '', regular_space)
-                    saldo_awal = int(p['topup_details']['last_balance']) - (int(p['value']) - int(p['admin_fee']))
-                    pdf.cell(padding_left, 0, 'SALDO AWAL  : Rp. ' + clean_number(str(saldo_awal)), 0, 0, 'L')
-                    pdf.ln(small_space)
-                    pdf.set_font(USED_FONT, '', regular_space)
-                    pdf.cell(padding_left, 0, 'SALDO AKHIR : Rp. ' + clean_number(str(p['final_balance'])), 0, 0, 'L')
-                    pdf.ln(small_space*2)
-                    pdf.set_font(USED_FONT, '', regular_space-1)
-                    pdf.cell(0, 0, 'DENGAN ISI ULANG INI, PEMEGANG', 0, 0, 'L')
-                    pdf.ln(small_space-1)
-                    pdf.set_font(USED_FONT, '', regular_space-1)
-                    pdf.cell(0, 0, 'KARTU MENYATAKAN TUNDUK DAN', 0, 0, 'L')
-                    pdf.ln(small_space-1)
-                    pdf.set_font(USED_FONT, '', regular_space-1)
-                    pdf.cell(0, 0, 'MENGIKAT DIRI PADA SYARAT DAN', 0, 0, 'L')
-                    pdf.ln(small_space-1)
-                    pdf.set_font(USED_FONT, '', regular_space-1)
-                    pdf.cell(0, 0, 'KETENTUAN MANDIRI E-MONEY YANG TERDAPAT', 0, 0, 'L')
-                    pdf.ln(small_space-1)
-                    pdf.set_font(USED_FONT, '', regular_space-1)
-                    pdf.cell(0, 0, 'PADA WWW.BANKMANDIRI.CO.ID', 0, 0, 'L')
-                else:
-                    pdf.ln(small_space)
-                    pdf.set_font(USED_FONT, '', regular_space)
-                    pdf.cell(padding_left, 0, 'NO. KARTU    : ' + p['raw']['card_no'], 0, 0, 'L')
-                    pdf.ln(small_space)
-                    pdf.set_font(USED_FONT, '', regular_space)
-                    pdf.cell(padding_left, 0, 'SISA SALDO   : Rp. ' + clean_number(p['raw']['prev_balance']), 0, 0, 'L')
-                    pdf.ln(small_space)
-                    pdf.set_font(USED_FONT, '', regular_space)
-                    pdf.cell(padding_left, 0, 'STATUS ISI ULANG KARTU GAGAL', 0, 0, 'L')
-                    pdf.ln(small_space)
-                    pdf.set_font(USED_FONT, '', regular_space)
-                    pdf.cell(padding_left, 0, 'UANG DITERIMA: Rp. ' + clean_number(str(p['payment_received'])), 0, 0,
-                             'L')
-                    pdf.ln(small_space)
-                    pdf.set_font(USED_FONT, '', regular_space-1)
-                    pdf.cell(padding_left, 0, 'SILAKAN HUBUNGI LAYANAN PELANGGAN', 0, 0, 'L')
-                    pdf.ln(small_space)
-                    pdf.set_font(USED_FONT, '', regular_space-1)
-                    pdf.cell(padding_left, 0, '(SIMPAN STRUK INI SEBAGAI BUKTI)', 0, 0, 'L')
-                    # failure = 'TOPUP_FAILURE'
-
-            else:
+            if 'topup_details' in p.keys():
+                # pdf.ln(small_space)
+                # pdf.set_font(USED_FONT, '', regular_space)
+                # if 'Mandiri' in p['provider']:
+                #     pdf.cell(padding_left, 0, 'TID : ' + _Global.TID_MAN, 0, 0, 'L')
+                # else:
+                #     pdf.cell(padding_left, 0, 'TID : ' + _Global.TID_BNI, 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
-                pdf.cell(padding_left, 0, 'JUMLAH KARTU: ' + str(p['qty']), 0, 0, 'L')
+                __refill = int(p['value']) - int(p['admin_fee'])
+                pdf.cell(padding_left, 0, 'ISI ULANG   : Rp. ' + clean_number(str(__refill)), 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
-                pdf.cell(padding_left, 0, str(p['qty']) + ' x ' + clean_number(p['value']), 0, 0, 'R')
+                pdf.cell(padding_left, 0, 'BIAYA ADMIN : Rp. ' + clean_number(p['admin_fee']), 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                total_pay = str(int(int(p['value']) * int(p['qty'])))
+                pdf.cell(padding_left, 0, 'TOTAL BAYAR : Rp. ' + clean_number(total_pay), 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
                 pdf.cell(padding_left, 0, 'UANG MASUK  : Rp. ' + clean_number(str(cash)), 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
                 pdf.cell(padding_left, 0, 'UANG KEMBALI: Rp. ' + clean_number('0'), 0, 0, 'L')
-                # price_unit = str(int(int(p['value'])/p['qty']))
-                # sub_total = p['value']
-                # if p['payment'] == 'cash' and p['shop_type'] == 'topup':
-                #     sub_total = str(int(p['value']) - int(p['admin_fee']))
-                #     price_unit = str(int(int(sub_total) / p['qty']))
-                pdf.ln(small_space*2)
-                pdf.set_font(USED_FONT, '', regular_space+2)
-                total_pay = str(int(int(p['value']) * int(p['qty'])))
-                pdf.cell(0, 0, 'TOTAL BAYAR : Rp. ' + clean_number(total_pay), 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'NO. KARTU   : Rp. ' + p['topup_details']['card_no'], 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                saldo_awal = int(p['topup_details']['last_balance']) - (int(p['value']) - int(p['admin_fee']))
+                pdf.cell(padding_left, 0, 'SALDO AWAL  : Rp. ' + clean_number(str(saldo_awal)), 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'SALDO AKHIR : Rp. ' + clean_number(str(p['final_balance'])), 0, 0, 'L')
                 pdf.ln(small_space*2)
                 pdf.set_font(USED_FONT, '', regular_space-1)
-                pdf.cell(0, 0, 'PEMEGANG KARTU MENYATAKAN TUNDUK DAN', 0, 0, 'L')
+                pdf.cell(0, 0, 'DENGAN ISI ULANG INI, PEMEGANG', 0, 0, 'L')
+                pdf.ln(small_space-1)
+                pdf.set_font(USED_FONT, '', regular_space-1)
+                pdf.cell(0, 0, 'KARTU MENYATAKAN TUNDUK DAN', 0, 0, 'L')
                 pdf.ln(small_space-1)
                 pdf.set_font(USED_FONT, '', regular_space-1)
                 pdf.cell(0, 0, 'MENGIKAT DIRI PADA SYARAT DAN', 0, 0, 'L')
                 pdf.ln(small_space-1)
                 pdf.set_font(USED_FONT, '', regular_space-1)
-                pdf.cell(0, 0, 'KETENTUAN MANDIRI E-MONEY YANG TERDAPAT', 0, 0, 'L')
-                pdf.ln(small_space-1)
-                pdf.set_font(USED_FONT, '', regular_space-1)
-                pdf.cell(0, 0, 'PADA WWW.BANKMANDIRI.CO.ID', 0, 0, 'L')
-        else:
-            if p['shop_type'] == 'topup':
-                pdf.ln(small_space*2)
+                pdf.cell(0, 0, 'KETENTUAN BANK PENERBIT KARTU', 0, 0, 'L')
+                # pdf.ln(small_space-1)
+                # pdf.set_font(USED_FONT, '', regular_space-1)
+                # pdf.cell(0, 0, 'PADA WWW.BANKMANDIRI.CO.ID', 0, 0, 'L')
+            else:
+                pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
                 pdf.cell(padding_left, 0, 'NO. KARTU    : ' + p['raw']['card_no'], 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
                 pdf.cell(padding_left, 0, 'SISA SALDO   : Rp. ' + clean_number(p['raw']['prev_balance']), 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'STATUS ISI ULANG KARTU GAGAL', 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'UANG DITERIMA: Rp. ' + clean_number(str(p['payment_received'])), 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space-1)
+                pdf.cell(padding_left, 0, 'SILAKAN HUBUNGI LAYANAN PELANGGAN', 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space-1)
+                pdf.cell(padding_left, 0, '(SIMPAN STRUK INI SEBAGAI BUKTI)', 0, 0, 'L')
+                    # failure = 'TOPUP_FAILURE'
+        else:
+            pdf.ln(small_space*2)
+            pdf.set_font(USED_FONT, '', regular_space)
+            pdf.cell(padding_left, 0, 'NO. KARTU    : ' + p['raw']['card_no'], 0, 0, 'L')
+            pdf.ln(small_space)
+            pdf.set_font(USED_FONT, '', regular_space)
+            pdf.cell(padding_left, 0, 'SISA SALDO   : Rp. ' + clean_number(p['raw']['prev_balance']), 0, 0, 'L')
             pdf.ln(small_space*2)
             pdf.set_font(USED_FONT, '', regular_space)
             pdf.cell(padding_left, 0, 'TERJADI BATAL/GAGAL BAYAR TRANSAKSI', 0, 0, 'L')
@@ -354,186 +335,101 @@ def sale_print_global(ext='.pdf'):
             # Send Failure To Backend
             _Global.store_upload_failed_trx(trxid, p.get('pid', ''), cash, failure, p.get('payment', 'cash'),
                                             json.dumps(p))
-        save_receipt_local(trxid[-6:], json.dumps(p), 'CUSTOMER_TRX')
+        save_receipt_local(trxid[-6:], json.dumps(p), 'CUSTOMER_TOPUP_TRX')
         del pdf
 
 
-def sale_reprint_global(ext='.pdf'):
+def print_shop_trx(p, t, ext='.pdf'):
     global HEADER_TEXT1
-    if LAST_TRX is None:
-        LOGGER.warning(('Cannot Generate Receipt Data', 'LAST GLOBAL_TRANSACTION_DATA', 'None'))
-        SPRINTTOOL_SIGNDLER.SIGNAL_SALE_REPRINT_GLOBAL.emit('SALE-REPRINT|ERROR')
+    if _Global.empty(p):
+        LOGGER.warning(('Cannot Generate Receipt Data', 'GLOBAL_TRANSACTION_DATA', 'None'))
+        SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
         return
     pdf = None
     # Init Variables
-    tiny_space = 4
-    extra_size = 8
-    line_size = 7.5
-    padding_left = 0
+    small_space = SMALL_SPACE
+    regular_space = REGULAR_SPACE
+    padding_left = PADDING_LEFT
     trxid = ''
-    failure = 'USER_CANCELLATION'
+    # failure = 'USER_CANCELLATION'
     cash = 0
-    p = dict()
     try:
-        p = LAST_TRX
-        HEADER_TEXT1 = 'ISI ULANG'
-        if p['shop_type'] != 'topup':
-            HEADER_TEXT1 = 'PEMBELIAN KARTU'
+        cash = int(p['payment_received'])
+        HEADER_TEXT1 = t
         # paper_ = get_paper_size('\r\n'.join(p.keys()))
         pdf = PDF('P', 'mm', (80, 140))
         # LOGGER.info(('Registering New Font', font_path('UnispaceBold.ttf')))
         # pdf.add_font('UniSpace', '', font_path('UnispaceBold.ttf'), uni=True)
         pdf.add_page()
-        file_name = datetime.strftime(datetime.now(), '%Y%m%d%H%M%S')+'-'+p['shop_type']+'-copy2'
+        file_name = datetime.strftime(datetime.now(), '%Y%m%d%H%M%S')+'-'+p['shop_type']
         # Layouting
         pdf.cell(padding_left, 0, '_' * MAX_LENGTH, 0, 0, 'C')
-        pdf.ln(tiny_space)
-        pdf.set_font(USED_FONT, '', line_size)
-        pdf.cell(padding_left, 0, 'Tanggal : '+datetime.strftime(datetime.now(), '%Y-%m-%d')+' Jam : ' +
-                 datetime.strftime(datetime.now(), '%H:%M'), 0, 0, 'L')
-        pdf.ln(extra_size)
-        pdf.set_font(USED_FONT, '', line_size)
-        __title = 'TOPUP E-MONEY' if HEADER_TEXT1 == 'ISI ULANG' else 'PEMBELIAN E-MONEY'
+        pdf.ln(small_space)
+        pdf.set_font(USED_FONT, '', regular_space)
+        pdf.cell(padding_left, 0, 'Tanggal : '+datetime.strftime(datetime.now(), '%Y-%m-%d'), 0, 0, 'L')
+        pdf.cell(padding_left, 0, 'Jam : ' + datetime.strftime(datetime.now(), '%H:%M'), 0, 0, 'R')
+        pdf.ln(small_space*2)
+        pdf.set_font(USED_FONT, '', regular_space)
+        __title = t
         pdf.cell(padding_left, 0, __title, 0, 0, 'L')
-        pdf.ln(tiny_space)
-        pdf.set_font(USED_FONT, '', line_size)
+        pdf.ln(small_space)
+        pdf.set_font(USED_FONT, '', regular_space)
         trxid = p['shop_type']+str(p['epoch'])
-        pdf.cell(padding_left, 0, 'NO TRX : '+trxid, 0, 0, 'L')
-        pdf.ln(extra_size)
-        pdf.set_font(USED_FONT, '', line_size)
-        pdf.cell(padding_left, 0, p['shop_type'].upper()+' '+p['provider'], 0, 0, 'L')
+        pdf.cell(padding_left, 0, 'NO TRX    : '+trxid, 0, 0, 'L')
+        pdf.ln(small_space)
+        pdf.ln(small_space)
+        pdf.set_font(USED_FONT, '', regular_space)
+        pdf.cell(padding_left, 0, 'PEMBAYARAN: ' + p['payment'].upper(), 0, 0, 'L')
+        # pdf.set_font(USED_FONT, '', regular_space)
+        # pdf.cell(padding_left, 0, p['shop_type'].upper()+' '+p['provider'], 0, 0, 'L')
         if 'payment_error' not in p.keys():
-            if p['shop_type'] == 'topup':
-                if 'topup_details' in p.keys():
-                    # pdf.ln(tiny_space)
-                    # pdf.set_font(USED_FONT, '', line_size)
-                    # if 'Mandiri' in p['provider']:
-                    #     pdf.cell(padding_left, 0, 'TID : ' + _Global.TID_MAN, 0, 0, 'L')
-                    # else:
-                    #     pdf.cell(padding_left, 0, 'TID : ' + _Global.TID_BNI, 0, 0, 'L')
-                    pdf.ln(tiny_space)
-                    pdf.set_font(USED_FONT, '', line_size)
-                    __refill = int(p['value']) - int(p['admin_fee'])
-                    pdf.cell(padding_left, 0, 'ISI ULANG  : Rp. ' + clean_number(str(__refill)), 0, 0, 'L')
-                    pdf.ln(tiny_space)
-                    pdf.set_font(USED_FONT, '', line_size)
-                    pdf.cell(padding_left, 0, 'BIAYA ADMIN: Rp. ' + clean_number(p['admin_fee']), 0, 0, 'L')
-                    pdf.ln(tiny_space)
-                    pdf.set_font(USED_FONT, '', line_size)
-                    total_pay = str(int(int(p['value']) * int(p['qty'])))
-                    pdf.cell(padding_left, 0, 'TOTAL BAYAR: Rp. ' + clean_number(total_pay), 0, 0, 'L')
-                    pdf.ln(tiny_space)
-                    pdf.set_font(USED_FONT, '', line_size)
-                    pdf.cell(padding_left, 0, 'UANG MASUK : Rp. ' + clean_number(str(cash)), 0, 0, 'L')
-                    pdf.ln(tiny_space)
-                    pdf.set_font(USED_FONT, '', line_size)
-                    pdf.cell(padding_left, 0, 'UANG KEMBALI: Rp. ' + clean_number('0'), 0, 0, 'L')
-                    pdf.ln(tiny_space)
-                    pdf.set_font(USED_FONT, '', line_size)
-                    pdf.cell(padding_left, 0, 'NO. KARTU   : Rp. ' + p['topup_details']['card_no'], 0, 0, 'L')
-                    pdf.ln(tiny_space)
-                    pdf.set_font(USED_FONT, '', line_size)
-                    saldo_awal = int(p['topup_details']['last_balance']) - (int(p['value']) - int(p['admin_fee']))
-                    pdf.cell(padding_left, 0, 'SALDO AWAL  : Rp. ' + clean_number(str(saldo_awal)), 0, 0, 'L')
-                    pdf.ln(tiny_space)
-                    pdf.set_font(USED_FONT, '', line_size)
-                    pdf.cell(padding_left, 0, 'SALDO AKHIR : Rp. ' + clean_number(str(p['final_balance'])), 0, 0, 'L')
-                    pdf.ln(extra_size)
-                    pdf.set_font(USED_FONT, '', line_size-1)
-                    pdf.cell(0, 0, 'DENGAN ISI ULANG INI, PEMEGANG', 0, 0, 'L')
-                    pdf.ln(1)
-                    pdf.set_font(USED_FONT, '', line_size-1)
-                    pdf.cell(0, 0, 'KARTU MENYATAKAN TUNDUK DAN', 0, 0, 'L')
-                    pdf.ln(1)
-                    pdf.set_font(USED_FONT, '', line_size-1)
-                    pdf.cell(0, 0, 'MENGIKAT DIRI PADA SYARAT DAN', 0, 0, 'L')
-                    pdf.ln(1)
-                    pdf.set_font(USED_FONT, '', line_size-1)
-                    pdf.cell(0, 0, 'KETENTUAN MANDIRI E-MONEY YANG TERDEKAT', 0, 0, 'L')
-                    pdf.ln(1)
-                    pdf.set_font(USED_FONT, '', line_size-1)
-                    pdf.cell(0, 0, 'PADA WWW.BANKMANDIRI.CO.ID', 0, 0, 'L')
-                else:
-                    pdf.ln(tiny_space)
-                    pdf.set_font(USED_FONT, '', line_size)
-                    pdf.cell(padding_left, 0, 'NO. KARTU : ' + p['raw']['card_no'], 0, 0, 'L')
-                    pdf.ln(tiny_space)
-                    pdf.set_font(USED_FONT, '', line_size)
-                    pdf.cell(padding_left, 0, 'SALDO : Rp. ' + clean_number(p['raw']['prev_balance']), 0, 0, 'L')
-                    pdf.ln(tiny_space)
-                    pdf.set_font(USED_FONT, '', line_size)
-                    pdf.cell(padding_left, 0, 'STATUS ISI ULANG KARTU GAGAL', 0, 0, 'L')
-                    pdf.ln(tiny_space)
-                    pdf.set_font(USED_FONT, '', line_size)
-                    pdf.cell(padding_left, 0, 'UANG DITERIMA : Rp. ' + clean_number(str(p['payment_received'])), 0, 0,
-                             'L')
-                    pdf.ln(tiny_space)
-                    pdf.set_font(USED_FONT, '', line_size-1)
-                    pdf.cell(padding_left, 0, 'SILAKAN HUBUNGI LAYANAN PELANGGAN', 0, 0, 'L')
-                    pdf.ln(tiny_space)
-                    pdf.set_font(USED_FONT, '', line_size-1)
-                    pdf.cell(padding_left, 0, '(SIMPAN STRUK INI SEBAGAI BUKTI)', 0, 0, 'L')
-                    failure = 'TOPUP_FAILURE'
-            # pdf.ln(extra_size)
-            # pdf.set_font(USED_FONT, '', line_size)
-            # sub_total = str(int(int(p['value'])/1.1))
-            # vat = str(int(p['value'])-int(sub_total))
-            # pdf.cell(padding_left, 0, 'SubTotal: Rp. ' + clean_number(sub_total), 0, 0, 'R')
-            # if p['shop_type'] == 'topup':
-            # pdf.ln(tiny_space)
-            # pdf.set_font('UniSpace', '', line_size)
-            # pdf.cell(padding_left, 0, 'VAT 10%: Rp. ' + clean_number(vat), 0, 0, 'R')
-            # pdf.ln(tiny_space)
-            # pdf.set_font(USED_FONT, '', line_size)
-            # pdf.cell(padding_left, 0, 'Payment: ' + p['payment'].upper(), 0, 0, 'R')
-            # pdf.ln(tiny_space)
-            # pdf.set_font(USED_FONT, '', line_size)
-            # if 'payment_received' in p.keys():
-            # return_money = str(int(p['payment_received']) - int(p['value']))
-            # pdf.cell(padding_left, 0, 'Total Pay: Rp. ' + clean_number(p['payment_received']), 0, 0, 'R')
-            # pdf.ln(tiny_space)
-            # pdf.set_font(USED_FONT, '', line_size)
-            # pdf.cell(padding_left, 0, 'Change: Rp. ' + clean_number(return_money), 0, 0, 'R')
-            # else:
-            # pdf.cell(padding_left, 0, 'Total Pay: Rp. ' + clean_number(p['value']), 0, 0, 'R')
-            # pdf.ln(tiny_space)
-            # pdf.set_font(USED_FONT, '', line_size)
-            # pdf.cell(padding_left, 0, 'Change: Rp. 0', 0, 0, 'R')
-            # if p['shop_type'] == 'topup':
-            # pdf.ln(tiny_space)
-            # pdf.set_font(USED_FONT, '', line_size)
-            # if p['payment'] == 'cash':
-            #     pdf.cell(0, 0, 'TOTAL: Rp. ' + clean_number(p['value']), 0, 0, 'R')
-            # else:
-            #     ___total = str(int(p['value']) + int(p['admin_fee']))
-            #     pdf.cell(0, 0, 'TOTAL: Rp. ' + clean_number(___total), 0, 0, 'R')
-            else:
-                pdf.ln(tiny_space)
-                pdf.set_font(USED_FONT, '', line_size)
+            pdf.ln(small_space)
+            pdf.set_font(USED_FONT, '', regular_space)
+            pdf.cell(padding_left, 0, 'JUMLAH KARTU: ' + str(p['qty']), 0, 0, 'L')
+            pdf.ln(small_space)
+            pdf.set_font(USED_FONT, '', regular_space)
+            pdf.cell(padding_left, 0, str(p['qty']) + ' x ' + clean_number(p['value']), 0, 0, 'R')
+            pdf.ln(small_space)
+            pdf.set_font(USED_FONT, '', regular_space)
+            pdf.cell(padding_left, 0, 'UANG MASUK  : Rp. ' + clean_number(str(cash)), 0, 0, 'L')
+            pdf.ln(small_space)
+            pdf.set_font(USED_FONT, '', regular_space)
+            pdf.cell(padding_left, 0, 'UANG KEMBALI: Rp. ' + clean_number('0'), 0, 0, 'L')
                 # price_unit = str(int(int(p['value'])/p['qty']))
                 # sub_total = p['value']
                 # if p['payment'] == 'cash' and p['shop_type'] == 'topup':
                 #     sub_total = str(int(p['value']) - int(p['admin_fee']))
                 #     price_unit = str(int(int(sub_total) / p['qty']))
-                pdf.cell(padding_left, 0, str(p['qty']) + ' x ' + clean_number(p['value']), 0, 0, 'R')
-                pdf.ln(extra_size)
-                pdf.set_font(USED_FONT, '', extra_size+2)
-                total_pay = str(int(int(p['value']) * int(p['qty'])))
-                pdf.cell(0, 0, 'TOTAL BAYAR: Rp. ' + clean_number(total_pay), 0, 0, 'L')
-        else:
-            pdf.ln(tiny_space)
-            pdf.set_font(USED_FONT, '', line_size)
-            pdf.cell(padding_left, 0, 'TERJADI BATAL/GAGAL BAYAR TRANSAKSI', 0, 0, 'L')
-            pdf.ln(tiny_space)
-            pdf.set_font(USED_FONT, '', line_size)
-            pdf.cell(padding_left, 0, 'UANG DITERIMA : Rp. ' + clean_number(str(p['payment_received'])), 0, 0, 'L')
-            pdf.ln(tiny_space)
-            pdf.set_font(USED_FONT, '', line_size)
-            pdf.cell(padding_left, 0, 'SILAKAN HUBUNGI LAYANAN PELANGGAN', 0, 0, 'L')
-            pdf.ln(tiny_space)
-            pdf.set_font(USED_FONT, '', line_size)
+            pdf.ln(small_space*2)
+            pdf.set_font(USED_FONT, '', regular_space+2)
+            total_pay = str(int(int(p['value']) * int(p['qty'])))
+            pdf.cell(0, 0, 'TOTAL BAYAR : Rp. ' + clean_number(total_pay), 0, 0, 'L')
+            pdf.ln(small_space*2)
+            pdf.set_font(USED_FONT, '', regular_space-1)
+            pdf.cell(0, 0, 'PEMEGANG KARTU MENYATAKAN TUNDUK DAN', 0, 0, 'L')
+            pdf.ln(small_space-1)
+            pdf.set_font(USED_FONT, '', regular_space-1)
+            pdf.cell(0, 0, 'MENGIKAT DIRI PADA SYARAT DAN', 0, 0, 'L')
+            pdf.ln(small_space-1)
+            pdf.set_font(USED_FONT, '', regular_space-1)
+            pdf.cell(0, 0, 'KETENTUAN BANK PENERBIT KARTU', 0, 0, 'L')
+            pdf.set_font(USED_FONT, '', regular_space-1)
             pdf.cell(padding_left, 0, '(SIMPAN STRUK INI SEBAGAI BUKTI)', 0, 0, 'L')
-        pdf.ln(tiny_space)
+            # failure = 'TOPUP_FAILURE'
+        else:
+            pdf.ln(small_space*2)
+            pdf.set_font(USED_FONT, '', regular_space)
+            pdf.cell(padding_left, 0, 'TERJADI BATAL/GAGAL BAYAR TRANSAKSI', 0, 0, 'L')
+            pdf.ln(small_space)
+            pdf.set_font(USED_FONT, '', regular_space)
+            pdf.cell(padding_left, 0, 'UANG DITERIMA : Rp. ' + clean_number(str(p['payment_received'])), 0, 0, 'L')
+            pdf.ln(small_space*4)
+            pdf.set_font(USED_FONT, '', regular_space)
+            pdf.cell(padding_left, 0, 'SILAKAN HUBUNGI LAYANAN PELANGGAN', 0, 0, 'L')
+            pdf.ln(small_space)
+            pdf.set_font(USED_FONT, '', regular_space)
+            pdf.cell(padding_left, 0, '(SIMPAN STRUK INI SEBAGAI BUKTI)', 0, 0, 'L')
+        pdf.ln(small_space)
         # End Layouting
         pdf_file = get_path(file_name+ext)
         pdf.output(pdf_file, 'F')
@@ -542,13 +438,13 @@ def sale_reprint_global(ext='.pdf'):
         print_ = _Printer.ghost_print(pdf_file)
         print("pyt : sending pdf to default printer : {}".format(str(print_)))
         SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|DONE')
-        failure = 'USER_CANCELLATION'
-        if 'payment_error' in p.keys() or (p['shop_type'] == 'topup' and 'topup_details' not in p.keys()):
-            if p['shop_type'] == 'topup' and 'topup_details' not in p.keys():
-                failure = 'TOPUP_FAILURE'
-            # Send Failure To Backend
-            _Global.store_upload_failed_trx(trxid, p.get('pid', ''), cash, failure, p.get('payment', 'cash'),
-                                            json.dumps(p))
+        # failure = 'USER_CANCELLATION'
+        # if 'payment_error' in p.keys() or (p['shop_type'] == 'topup' and 'topup_details' not in p.keys()):
+        #     if p['shop_type'] == 'topup' and 'topup_details' not in p.keys():
+        #         failure = 'TOPUP_FAILURE'
+        #     # Send Failure To Backend
+        #     _Global.store_upload_failed_trx(trxid, p.get('pid', ''), cash, failure, p.get('payment', 'cash'),
+        #                                     json.dumps(p))
     except Exception as e:
         LOGGER.warning(str(e))
         SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
@@ -560,8 +456,124 @@ def sale_reprint_global(ext='.pdf'):
             # Send Failure To Backend
             _Global.store_upload_failed_trx(trxid, p.get('pid', ''), cash, failure, p.get('payment', 'cash'),
                                             json.dumps(p))
-        save_receipt_local(trxid[-6:], json.dumps(p), 'CUSTOMER_TRX')
+        save_receipt_local(trxid[-6:], json.dumps(p), 'CUSTOMER_SHOP_TRX')
         del pdf
+
+
+def print_ppob_trx(p, t, ext='.pdf'):
+    global HEADER_TEXT1
+    if _Global.empty(p):
+        LOGGER.warning(('Cannot Generate Receipt Data', 'GLOBAL_TRANSACTION_DATA', 'None'))
+        SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
+        return
+    pdf = None
+    # Init Variables
+    small_space = SMALL_SPACE
+    regular_space = REGULAR_SPACE
+    padding_left = PADDING_LEFT
+    trxid = ''
+    # failure = 'USER_CANCELLATION'
+    cash = 0
+    try:
+        cash = int(p['payment_received'])
+        HEADER_TEXT1 = t
+        # paper_ = get_paper_size('\r\n'.join(p.keys()))
+        pdf = PDF('P', 'mm', (80, 140))
+        # LOGGER.info(('Registering New Font', font_path('UnispaceBold.ttf')))
+        # pdf.add_font('UniSpace', '', font_path('UnispaceBold.ttf'), uni=True)
+        pdf.add_page()
+        file_name = datetime.strftime(datetime.now(), '%Y%m%d%H%M%S')+'-'+p['shop_type']
+        # Layouting
+        pdf.cell(padding_left, 0, '_' * MAX_LENGTH, 0, 0, 'C')
+        pdf.ln(small_space)
+        pdf.set_font(USED_FONT, '', regular_space)
+        pdf.cell(padding_left, 0, 'Tanggal : '+datetime.strftime(datetime.now(), '%Y-%m-%d'), 0, 0, 'L')
+        pdf.cell(padding_left, 0, 'Jam : ' + datetime.strftime(datetime.now(), '%H:%M'), 0, 0, 'R')
+        pdf.ln(small_space*2)
+        pdf.set_font(USED_FONT, '', regular_space)
+        __title = t
+        pdf.cell(padding_left, 0, __title, 0, 0, 'L')
+        pdf.ln(small_space)
+        pdf.set_font(USED_FONT, '', regular_space)
+        trxid = p['shop_type']+str(p['epoch'])
+        pdf.cell(padding_left, 0, 'NO TRX    : '+trxid, 0, 0, 'L')
+        pdf.ln(small_space)
+        pdf.ln(small_space)
+        pdf.set_font(USED_FONT, '', regular_space)
+        pdf.cell(padding_left, 0, 'PEMBAYARAN: ' + p['payment'].upper(), 0, 0, 'L')
+        # pdf.ln(small_space)
+        # pdf.set_font(USED_FONT, '', regular_space)
+        # pdf.cell(padding_left, 0, 'KATEGORI  : ' + str(p['category']), 0, 0, 'L')
+        pdf.ln(small_space)
+        pdf.set_font(USED_FONT, '', regular_space)
+        pdf.cell(padding_left, 0, 'PROVIDER  : ' + str(p['provider']), 0, 0, 'L')
+        pdf.ln(small_space)
+        pdf.set_font(USED_FONT, '', regular_space)
+        pdf.cell(padding_left, 0, 'MSISDN    : ' + str(p['msisdn']), 0, 0, 'L')
+        # pdf.set_font(USED_FONT, '', regular_space)
+        # pdf.cell(padding_left, 0, p['shop_type'].upper()+' '+p['provider'], 0, 0, 'L')
+        if 'payment_error' not in p.keys():
+            if p['ppob_mode'] == 'tagihan':
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'PELANGGAN     : Rp. ' + str(p['customer']), 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'BESAR TAGIHAN : Rp. ' + clean_number(str(p['value'])), 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'BIAYA ADMIN   : Rp. ' + clean_number(str(p['admin_fee'])), 0, 0, 'L')
+            else:
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'JUMLAH        : ' + str(p['qty']), 0, 0, 'L')
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'HARGA SATUAN  : Rp. ' + clean_number(str(p['value'])), 0, 0, 'L')
+                if 'sn' in p['ppob_details'].keys():
+                    pdf.ln(small_space)
+                    pdf.set_font(USED_FONT, '', regular_space)
+                    pdf.cell(padding_left, 0, 'TOKEN/SN  : ' + str(p['ppob_details']['sn'][:24]), 0, 0, 'L')
+            pdf.ln(small_space*2)
+            pdf.set_font(USED_FONT, '', regular_space+2)
+            total_pay = str(int(int(p['value']) * int(p['qty'])))
+            pdf.cell(0, 0, 'TOTAL BAYAR : Rp. ' + clean_number(total_pay), 0, 0, 'L')
+            pdf.ln(small_space*2)
+            pdf.set_font(USED_FONT, '', regular_space-1)
+            pdf.cell(padding_left, 0, '(SIMPAN STRUK INI SEBAGAI BUKTI)', 0, 0, 'L')
+            # failure = 'TOPUP_FAILURE'
+        else:
+            pdf.ln(small_space*2)
+            pdf.set_font(USED_FONT, '', regular_space)
+            pdf.cell(padding_left, 0, 'TERJADI BATAL/GAGAL BAYAR TRANSAKSI', 0, 0, 'L')
+            pdf.ln(small_space)
+            pdf.set_font(USED_FONT, '', regular_space)
+            pdf.cell(padding_left, 0, 'UANG DITERIMA : Rp. ' + clean_number(str(p['payment_received'])), 0, 0, 'L')
+            pdf.ln(small_space*4)
+            pdf.set_font(USED_FONT, '', regular_space)
+            pdf.cell(padding_left, 0, 'SILAKAN HUBUNGI LAYANAN PELANGGAN', 0, 0, 'L')
+            pdf.ln(small_space)
+            pdf.set_font(USED_FONT, '', regular_space)
+            pdf.cell(padding_left, 0, '(SIMPAN STRUK INI SEBAGAI BUKTI)', 0, 0, 'L')
+        pdf.ln(small_space)
+        # End Layouting
+        pdf_file = get_path(file_name+ext)
+        pdf.output(pdf_file, 'F')
+        LOGGER.debug(('pdf sale_print_global : ', file_name))
+        # Print-out to printer
+        print_ = _Printer.ghost_print(pdf_file)
+        print("pyt : sending pdf to default printer : {}".format(str(print_)))
+        SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|DONE')
+    except Exception as e:
+        LOGGER.warning(str(e))
+        SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
+    finally:
+        save_receipt_local(trxid[-6:], json.dumps(p), 'CUSTOMER_PPOB_TRX')
+        del pdf
+
+
+def sale_reprint_global(ext='.pdf'):
+    sale_print_global(ext=ext, use_last=True)
 
 
 def clean_number(sn):
@@ -702,7 +714,7 @@ def save_receipt_local(__id, __data, __type):
 def start_admin_print_global(struct_id):
     _Helper.get_pool().apply_async(admin_print_global, (struct_id,))
 
-
+# TODO: Enhance Admin Printout Details
 def admin_print_global(struct_id, ext='.pdf'):
     pdf = None
     # Init Variables

@@ -16,6 +16,8 @@ class PPOBSignalHandler(QObject):
     SIGNAL_CHECK_PPOB = pyqtSignal(str)
     SIGNAL_TRX_PPOB = pyqtSignal(str)
     SIGNAL_TRX_CHECK = pyqtSignal(str)
+    SIGNAL_CHECK_BALANCE = pyqtSignal(str)
+    SIGNAL_TRANSFER_BALANCE = pyqtSignal(str)
 
 
 PPOB_SIGNDLER = PPOBSignalHandler()
@@ -96,6 +98,7 @@ def check_ppob_product(msisdn='', product_id=''):
             output['payable'] = payable
             output['msisdn'] = msisdn
             output['category'] = product_id
+            _Helper.dump(output)
             PPOB_SIGNDLER.SIGNAL_CHECK_PPOB.emit('PPOB_CHECK|' + json.dumps(output))
         else:
             PPOB_SIGNDLER.SIGNAL_CHECK_PPOB.emit('PPOB_CHECK|ERROR')
@@ -204,3 +207,60 @@ def do_check_trx(reff_no):
     except Exception as e:
         LOGGER.warning((str(payload), str(e)))
         PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|ERROR')
+
+
+def start_check_diva_balance(username):
+    _Helper.get_pool().apply_async(check_diva_balance, (username,))
+
+
+def check_diva_balance(username):
+    if _Global.empty(username):
+        LOGGER.warning((str(username), 'MISSING_USERNAME'))
+        PPOB_SIGNDLER.SIGNAL_CHECK_BALANCE.emit('BALANCE_CHECK|MISSING_USERNAME')
+        return
+    payload = {
+        'customer_login': username
+    }
+    try:
+        url = _Global.BACKEND_URL+'diva/inquiry'
+        s, r = _NetworkAccess.post_to_url(url=url, param=payload)
+        if s == 200 and r['result'] == 'OK' and r['data'] is not None:
+            PPOB_SIGNDLER.SIGNAL_CHECK_BALANCE.emit('BALANCE_CHECK|' + json.dumps(r['data']))
+        else:
+            PPOB_SIGNDLER.SIGNAL_CHECK_BALANCE.emit('BALANCE_CHECK|ERROR')
+        LOGGER.debug((str(payload), str(r)))
+    except Exception as e:
+        LOGGER.warning((str(payload), str(e)))
+        PPOB_SIGNDLER.SIGNAL_CHECK_BALANCE.emit('BALANCE_CHECK|ERROR')
+
+
+def start_transfer_balance(payload):
+    _Helper.get_pool().apply_async(diva_transfer_balance, (payload,))
+
+
+def diva_transfer_balance(payload):
+    payload = json.loads(payload)
+    if _Global.empty(payload['reff_no']):
+        LOGGER.warning((str(payload), 'MISSING_REFF_NO'))
+        PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|MISSING_REFF_NO')
+        return
+    if _Global.empty(payload['username']):
+        LOGGER.warning((str(payload), 'MISSING_USERNAME'))
+        PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|MISSING_USERNAME')
+        return
+    if _Global.empty(payload['amount']):
+        LOGGER.warning((str(payload), 'MISSING_AMOUNT'))
+        PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|MISSING_AMOUNT')
+        return
+    payload['customer_login'] = payload['username']
+    try:
+        url = _Global.BACKEND_URL+'diva/transfer'
+        s, r = _NetworkAccess.post_to_url(url=url, param=payload)
+        if s == 200 and r['result'] == 'OK' and r['data'] is not None:
+            PPOB_SIGNDLER.SIGNAL_CHECK_BALANCE.emit('BALANCE_CHECK|' + json.dumps(r['data']))
+        else:
+            PPOB_SIGNDLER.SIGNAL_CHECK_BALANCE.emit('BALANCE_CHECK|ERROR')
+        LOGGER.debug((str(payload), str(r)))
+    except Exception as e:
+        LOGGER.warning((str(payload), str(e)))
+        PPOB_SIGNDLER.SIGNAL_CHECK_BALANCE.emit('BALANCE_CHECK|ERROR')
