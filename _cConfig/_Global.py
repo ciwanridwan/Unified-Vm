@@ -35,6 +35,8 @@ KIOSK_MARGIN = 3
 KIOSK_ADMIN = 1500
 PRINTER_STATUS = "NORMAL"
 PAYMENT_CANCEL = _ConfigParser.get_set_value('TERMINAL', 'payment^cancel', '1')
+EXCEED_PAYMENT = _ConfigParser.get_set_value('TERMINAL', 'exceed^payment', '0')
+ALLOW_EXCEED_PAYMENT = True if EXCEED_PAYMENT == '1' else False
 PAYMENT_CONFIRM = _ConfigParser.get_set_value('TERMINAL', 'payment^confirm', '0')
 IS_PIR = True if _ConfigParser.get_set_value('TERMINAL', 'pir^usage', '0') == '1' else False
 TEMP_FOLDER = sys.path[0] + '/_tTmp/'

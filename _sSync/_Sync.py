@@ -390,6 +390,11 @@ def handle_tasks(tasks):
             age_month = int(task['taskName'][-1])
             result = _KioskService.house_keeping(age_month)
             update_task(task, result)
+        if task['taskName'] == 'REFRESH_PPOB_PRODUCT':
+            result = 'TRIGGERED_INTO_SYSTEM'
+            _Global.log_to_temp_config('last^get^ppob', '0')
+            update_task(task, result)
+
     # TODO Add Another TaskType
 
 

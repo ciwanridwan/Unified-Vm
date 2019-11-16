@@ -64,8 +64,8 @@ class PDF(FPDF):
         self.set_font(USED_FONT, '', GLOBAL_FONT_SIZE)
         self.ln(SPACING)
         self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE, HEADER_TEXT1, 0, 0, 'C')
-        self.ln(SPACING)
-        self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE, HEADER_TEXT2, 0, 0, 'C')
+        # self.ln(SPACING)
+        # self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE, HEADER_TEXT2, 0, 0, 'C')
         self.ln(SPACING)
         self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE, 'TERMINAL : '+_KioskService.TID, 0, 0, 'C')
         self.ln(SPACING)
@@ -81,7 +81,7 @@ class PDF(FPDF):
         self.ln(SPACING)
         self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE-1, 'PENANGANAN KELUHAN DAPAT', 0, 0, 'C')
         self.ln(SPACING-1)
-        self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE-1, 'MENGHUBUNGI MANDIRI CALL 14000', 0, 0, 'C')
+        self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE-1, 'MENGHUBUNGI 081XXXXXXXXX', 0, 0, 'C')
 
 
 class GeneralPDF(FPDF):
@@ -855,7 +855,7 @@ def admin_print_global(struct_id, ext='.pdf'):
 
 
 def mark_sync_collected_data(s):
-    if s is not False:
+    if s is True:
         _DAO.custom_update(' UPDATE Transactions SET bankMid = "999", bankTid = "999" WHERE paymentType = "MEI" ')
         operator = 'OPERATOR'
         if _UserService.USER is not None:

@@ -223,7 +223,7 @@ def start_receive_note():
 
 
 def is_exceed_payment(target, value_in, current_value):
-    if _Global.TID == '110322':
+    if _Global.ALLOW_EXCEED_PAYMENT is True:
         return False
     actual = int(value_in) + int(current_value)
     if actual > int(target):
