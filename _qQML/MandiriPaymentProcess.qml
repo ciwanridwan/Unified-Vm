@@ -3,6 +3,8 @@ import QtQuick.Controls 1.3
 import QtGraphicalEffects 1.0
 import "base_function.js" as FUNC
 import "screen.js" as SCREEN
+import "config.js" as CONF
+
 
 Base{
     id: base_page
@@ -19,17 +21,18 @@ Base{
     property var totalPrice: 0
     property var getDenom: 0
     property var adminFee: 0
-    property var modeButtonPopup: 'check_balance';
+    property var modeButtonPopup;
     property bool topupSuccess: false
     property int reprintAttempt: 0
     property var uniqueCode: ''
-    property string cancelText: 'BATAL'
-    property string proceedText: 'LANJUT'
+
     property bool frameWithButton: false
     property bool centerOnlyButton: false
     property int attemptCD: 0
 
     property var qrPayload
+    property var preloadNotif: 'refundWhatsapp'
+    property var customerPhone: ''
 
     idx_bg: 0
     imgPanel: 'source/cash black.png'
@@ -39,14 +42,19 @@ Base{
     Stack.onStatusChanged:{
         if(Stack.status==Stack.Activating){
             if (details != undefined) console.log('product details', JSON.stringify(details));
-            define_first_notif();
+            if (preloadNotif==undefined){
+                define_first_notif();
+            } else {
+                popup_input_number.open('Silakan Masukkan No WhatsApp Anda')
+            }
+            modeButtonPopup = 'check_balance';
             abc.counter = timer_value;
             my_timer.start();
             press = '0';
             uniqueCode = ''
+            customerPhone = ''
             receivedCash = 0;
             isPaid = false;
-            modeButtonPopup = 'check_balance'
             topupSuccess = false;
             reprintAttempt = 0;
             qrPayload = undefined;
@@ -79,6 +87,7 @@ Base{
         base.result_check_qr.connect(qr_check_result);
         base.result_trx_ppob.connect(ppob_trx_result);
         base.result_pay_qr.connect(qr_check_result);
+        base.result_diva_transfer_balance.connect(transfer_balance_result)
     }
 
     Component.onDestruction:{
@@ -101,7 +110,35 @@ Base{
         base.result_check_qr.disconnect(qr_check_result);
         base.result_trx_ppob.disconnect(ppob_trx_result);
         base.result_pay_qr.disconnect(qr_check_result);
+        base.result_diva_transfer_balance.disconnect(transfer_balance_result)
 
+    }
+
+    function do_refund_balance(){
+        popup_loading.open();
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        var refundPayload = {
+            amount: details.value,
+            customer: customerPhone,
+            reff_no: details.shop_type + details.epoch.toString()
+        }
+        console.log('do_refund_balance', now, JSON.stringify(refundPayload));
+        _SLOT.start_transfer_balance(JSON.stringify(refundPayload))
+    }
+
+
+    function transfer_balance_result(t){
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('transfer_balance_result', now, t);
+        var result = t.split('|')[1]
+        details.refund_status = 1
+        if (['MISSING_REFF_NO','MISSING_AMOUNT','MISSING_CUSTOMER', 'ERROR'].indexOf(result) > -1){
+            details.refund_status = 0
+        }
+        popup_loading.close();
+        _SLOT.start_direct_store_transaction_data(JSON.stringify(details));
+        _SLOT.python_dump(JSON.stringify(details))
+        _SLOT.start_sale_print_global();
     }
 
     function ppob_trx_result(p){
@@ -109,10 +146,16 @@ Base{
         console.log('ppob_trx_result', now, p);
         var result = p.split('|')[1]
         if (['MISSING_MSISDN', 'MISSING_PRODUCT_ID','MISSING_AMOUNT','MISSING_OPERATOR', 'MISSING_PAYMENT_TYPE', 'MISSING_PRODUCT_CATEGORY', 'MISSING_REFF_NO', 'ERROR'].indexOf(result) > -1){
-            switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Ambil Struk Sebagai Bukti', 'backToMain', true )
-            _SLOT.start_direct_store_transaction_data(JSON.stringify(details));
-            _SLOT.python_dump(JSON.stringify(details))
-            _SLOT.start_sale_print_global();
+            details.process_error = 1
+            if (customerPhone!='') {
+                switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Memproses Pengembalian Dana Anda', 'closeWindow', true )
+                do_refund_balance();
+            } else {
+                switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Ambil Struk Sebagai Bukti', 'backToMain', true )
+                _SLOT.start_direct_store_transaction_data(JSON.stringify(details));
+                _SLOT.python_dump(JSON.stringify(details))
+                _SLOT.start_sale_print_global();
+            }
             return;
         }
         var info = JSON.parse(result);
@@ -221,6 +264,12 @@ Base{
 //                slave_title.text = 'Terjadi Kegagalan Pada Proses Isi Ulang Karena Kartu Tidak Terdeteksi.\nSilakan Ambil Struk Anda Di Bawah dan Hubungi Layanan Pelanggan.';
 //                slave_title.visible = true;
             } else {
+                details.process_error = 1
+                if (customerPhone!='') {
+                    switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Memproses Pengembalian Dana Anda', 'closeWindow', true )
+                    do_refund_balance();
+                    return
+                }
                 switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Ambil Struk Transaksi Anda Hubungi Layanan Pelanggan', 'backToMain', true )
 //                slave_title.text = 'Silakan Ambil Struk Anda Di Bawah.\nJika Saldo Kartu Prabayar Anda Gagal Terisi, Silakan Hubungi Layanan Pelanggan.';
 //                slave_title.visible = true;
@@ -261,8 +310,14 @@ Base{
         if (channel=='cash'){
             details.payment_error = 'GRG_ERROR';
             details.payment_received = receivedCash.toString();
-            _SLOT.start_store_transaction_global(JSON.stringify(details));
-            _SLOT.start_sale_print_global();
+            if (customerPhone!=''){
+                switch_frame('source/smiley_down.png', 'Terjadi Pembatalan', 'Memproses Pengembalian Dana Anda', 'closeWindow', true );
+                do_refund_balance();
+                return;
+            } else {
+                _SLOT.start_store_transaction_global(JSON.stringify(details));
+                _SLOT.start_sale_print_global();
+            }
         }
     }
 
@@ -282,7 +337,13 @@ Base{
             return;
         }
         if (r == 'EJECT|ERROR') {
+            details.process_error = 1
 //            slave_title.text = 'Silakan Ambil Struk Anda Di Bawah.\nJika Kartu Tidak Keluar, Silakan Hubungi Layanan Pelanggan.';
+            if (customerPhone!='') {
+                switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Memproses Pengembalian Dana Anda', 'closeWindow', true );
+                do_refund_balance();
+                return;
+            }
             switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Ambil Struk Transaksi Anda Hubungi Layanan Pelanggan', 'backToMain', true )
         }
         if (r == 'EJECT|SUCCESS') {
@@ -306,8 +367,8 @@ Base{
         if (details.provider==undefined) details.provider = 'e-Money Mandiri';
         if (mode!='ppob') _SLOT.start_store_transaction_global(JSON.stringify(details))
         isPaid = true;
-//        abc.counter = 15;
-//        my_timer.restart();
+        abc.counter = timer_value;
+        my_timer.restart();
 //        arrow_down.visible = false;
 //        arrow_down.anchors.rightMargin = 900;
 //        back_button.button_text = 'selesai';
@@ -1152,9 +1213,9 @@ Base{
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 200
         anchors.horizontalCenter: parent.horizontalCenter
-        title_text: 'MESIN INI TIDAK MENYEDIAKAN KEMBALIAN UANG'
+        title_text: 'JIKA TERJADI GAGAL/BATAL TRANSAKSI\nPENGEMBALIAN DANA DIALIHKAN KE SALDO TJ ANDA ' + customerPhone+ ' (Powered By DUWIT)'
 //        modeReverse: (abc.counter %2 == 0) ? true : false
-        boxColor: '#1D294D'
+        boxColor: CONF.text_color
 
     }
 
@@ -1207,7 +1268,7 @@ Base{
             anchors.leftMargin: 100
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 50
-            button_text: cancelText
+            button_text: 'BATAL'
             modeReverse: true
             visible: frameWithButton
             MouseArea{
@@ -1225,7 +1286,7 @@ Base{
             anchors.rightMargin: (centerOnlyButton) ? 825 : 100
             anchors.bottom: parent.bottom
             anchors.bottomMargin: (centerOnlyButton) ? 100 : 50
-            button_text: proceedText
+            button_text: 'LANJUT'
             modeReverse: true
             visible: frameWithButton || centerOnlyButton
             MouseArea{
@@ -1266,6 +1327,53 @@ Base{
 
     QRPaymentFrame{
         id: qr_payment_frame
+    }
+
+    PopupInputNumber{
+        id: popup_input_number
+
+        CircleButton{
+            id: cancel_button_input_number
+            anchors.left: parent.left
+            anchors.leftMargin: 100
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 50
+            button_text: 'BATAL'
+            modeReverse: true
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('Press "BATAL" in Input Whatsapp Number');
+                    popup_input_number.close()
+                    my_layer.pop();
+                }
+            }
+        }
+
+        CircleButton{
+            id: next_button_input_number
+            anchors.left: parent.left
+            anchors.leftMargin: 100
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 50
+            button_text: 'LANJUT'
+            modeReverse: true
+            visible: parent.canProceed
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    if (press != '0') return;
+                    press = '1';
+                    _SLOT.user_action_log('Press "LANJUT" in Input Whatsapp Number');
+                    var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+                    customerPhone = popup_input_number.numberInput;
+                    details.refund_number = customerPhone;
+                    console.log('customerPhone', customerPhone, now);
+                    popup_input_number.close();
+                    define_first_notif();
+                }
+            }
+        }
     }
 
 }

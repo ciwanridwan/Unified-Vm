@@ -244,15 +244,15 @@ def diva_transfer_balance(payload):
         LOGGER.warning((str(payload), 'MISSING_REFF_NO'))
         PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|MISSING_REFF_NO')
         return
-    if _Global.empty(payload['username']):
-        LOGGER.warning((str(payload), 'MISSING_USERNAME'))
-        PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|MISSING_USERNAME')
+    if _Global.empty(payload['customer']):
+        LOGGER.warning((str(payload), 'MISSING_CUSTOMER'))
+        PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|MISSING_CUSTOMER')
         return
     if _Global.empty(payload['amount']):
         LOGGER.warning((str(payload), 'MISSING_AMOUNT'))
         PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|MISSING_AMOUNT')
         return
-    payload['customer_login'] = payload['username']
+    payload['customer_login'] = payload['customer']
     try:
         url = _Global.BACKEND_URL+'diva/transfer'
         s, r = _NetworkAccess.post_to_url(url=url, param=payload)

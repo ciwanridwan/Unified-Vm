@@ -87,6 +87,8 @@ REPO_PASSWORD = _ConfigParser.get_set_value('REPOSITORY', 'password', 'Mdd*123#'
 SERVICE_VERSION = _ConfigParser.get_set_value('TEMPORARY', 'service^version', '---')
 # TODO: Set this into receipt
 CUSTOM_RECEIPT_TEXT = _ConfigParser.get_set_value('TEMPORARY', 'receipt^custom^text', '')
+COLOR_TEXT = _ConfigParser.get_set_value('TEMPORARY', 'color^text', 'white')
+COLOR_BACK = _ConfigParser.get_set_value('TEMPORARY', 'color^text', 'black')
 
 QR_HOST = _ConfigParser.get_set_value('QR', 'qr^host', 'http://apiv2.mdd.co.id:10107/v1/')
 QR_TOKEN = _ConfigParser.get_set_value('QR', 'qr^token', 'e6f092a0fa88d9cac8dac3d2162f1450')

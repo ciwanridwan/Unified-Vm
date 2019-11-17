@@ -149,7 +149,9 @@ def define_theme(d):
         content_js += 'var running_text = "' + d['running_text'] + '";' + os.linesep
     # Running Text Color
     if not _Global.empty(d['running_text_color']):
-        content_js += 'var text_color = "' + d['running_text_color'] + '";' + os.linesep
+        content_js += 'var frame_color = "' + d['running_text_color'] + '";' + os.linesep
+        content_js += 'var text_color = "' + _Global.COLOR_TEXT+ '";' + os.linesep
+        content_js += 'var background_color = "' + _Global.COLOR_BACK+ '";' + os.linesep
     # Receipt Custom Text
     if not _Global.empty(d['receipt_custom_text']):
         _Global.CUSTOM_RECEIPT_TEXT = d['receipt_custom_text']

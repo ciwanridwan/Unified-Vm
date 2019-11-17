@@ -2,6 +2,7 @@ import QtQuick 2.4
 import QtQuick.Controls 1.2
 import QtGraphicalEffects 1.0
 import "screen.js" as SCREEN
+import "config.js" as CONF
 
 
 Rectangle{
@@ -30,34 +31,47 @@ Rectangle{
         id: base_overlay
         visible: withBackground
         anchors.fill: parent
-        color: "black"
+        color: CONF.background_color
         opacity: 0.6
     }
 
     Rectangle{
         id: notif_rec
         width: parent.width
-        height: 500
-        color: (modeReverse) ? "black" : "white"
-        opacity: .8
+        height: parent.height - 300
+//        color: (modeReverse) ? "black" : "white"
+//        opacity: .8
+        color: CONF.frame_color
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
+
+        MainTitle{
+            id: main_text
+            anchors.top: parent.top
+            anchors.topMargin: 50
+            anchors.horizontalCenter: parent.horizontalCenter
+            show_text: show_text
+            size_: 50
+            color_: CONF.text_color
+        }
     }
 
-    Text {
-        id: main_text
-        color: (modeReverse) ? "white" : "black"
-        text: show_text
-        font.bold: true
-        verticalAlignment: Text.AlignVCenter
-        horizontalAlignment: Text.AlignHCenter
-        anchors.top: notif_rec.top
-        anchors.topMargin: 50
-        anchors.horizontalCenterOffset: 5
-        font.family:"Ubuntu"
-        anchors.horizontalCenter: notif_rec.horizontalCenter
-        font.pixelSize: 30
-    }
+//    Text {
+//        id: main_text
+//        color: (modeReverse) ? "white" : "black"
+//        color: CONF.text_color
+//        text: show_text
+//        font.bold: true
+//        verticalAlignment: Text.AlignVCenter
+//        horizontalAlignment: Text.AlignHCenter
+//        anchors.top: notif_rec.top
+//        anchors.topMargin: 50
+//        anchors.horizontalCenterOffset: 5
+//        font.family:"Ubuntu"
+//        anchors.horizontalCenter: notif_rec.horizontalCenter
+//        font.pixelSize: 30
+//    }
+
 
     Row{
         id: row_button
