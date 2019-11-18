@@ -17,10 +17,12 @@ Rectangle{
     property var numberInput: ""
     property string mainTitle: "Masukkan Nomor WhatsApp Anda"
     property var titleImage: "source/whatsapp_transparent_white.png"
-    property bool canProceed: false
     property bool withBackground: true
     property int min_count: 9
-    property var pattern: '081'
+    property var pattern: '08'
+    property var calledFrom
+    property var handleButtonVisibility
+
     visible: false
     scale: visible ? 1.0 : 0.1
     Behavior on scale {
@@ -45,7 +47,7 @@ Rectangle{
 
         MainTitle{
             anchors.top: parent.top
-            anchors.topMargin: 50
+            anchors.topMargin: 40
             anchors.horizontalCenter: parent.horizontalCenter
             show_text: mainTitle
             size_: 50
@@ -120,11 +122,11 @@ Rectangle{
             }
 
             function functionIn(str){
-                if(str=="Back"){
+                if(str == "Back"){
                     count--
-                    numberInput=numberInput.substring(0,numberInput.length-1);
+                    numberInput = numberInput.substring(0,numberInput.length-1);
                 }
-                if(str=="Clear"){
+                if(str == "Clear"){
                     count = 0;
                     numberInput = "";
                 }
@@ -132,18 +134,18 @@ Rectangle{
 
             function typeIn(str){
                 if (str == "" && count > 0){
-                    if(count>=max_count){
-                        count=max_count
+                    if(count >= max_count){
+                        count = max_count
                     }
                     count--
-                    numberInput=numberInput.substring(0,count);
+                    numberInput = numberInput.substring(0,count);
                 }
-                if (str!=""&&count<max_count){
+                if (str != "" && count<max_count){
                     count++
                 }
-                if (count>=max_count || canProceed == true){
-                    str=""
-                } else{
+                if (count >= max_count){
+                    str = ""
+                } else {
                     numberInput += str
                 }
                 check_availability();
@@ -155,19 +157,35 @@ Rectangle{
     function open(msg){
         if (msg!=undefined) mainTitle = msg;
         popup_input_number.visible = true;
-        numberInput = '';
+        reset_counter();
     }
 
     function close(){
         popup_input_number.visible = false;
-        canProceed = false;
+        reset_counter();
+    }
+
+    function reset_counter(){
         numberInput = '';
+        max_count = 15;
+        virtual_numpad.count = 0;
     }
 
 
     function check_availability(){
-        if (numberInput.substring(0, 3)==pattern && numberInput.length > min_count) {
-            canProceed = true;
+//        console.log('numberInput', numberInput, canProceed);
+        if (numberInput.substring(0, 2)==pattern && numberInput.length > min_count) {
+            if (calledFrom!=undefined) {
+                switch(calledFrom){
+                case 'general_payment_process':
+                    general_payment_process.framingSignal('PHONE_INPUT_FRAME|'+numberInput)
+                    break;
+                }
+            }
+            if (handleButtonVisibility!=undefined){
+                handleButtonVisibility.visible = true;
+            }
         }
     }
+
 }

@@ -7,7 +7,7 @@ import "config.js" as CONF
 
 Rectangle{
     id:select_payment_popup
-    property var show_text: qsTr("Silakan Pilih Metode Bayar")
+    property var title_text: "Silakan Pilih Metode Bayar"
     property bool withBackground: true
     property bool modeReverse: true
     property var calledFrom: 'prepaid_topup_denom'
@@ -50,7 +50,7 @@ Rectangle{
             anchors.top: parent.top
             anchors.topMargin: 50
             anchors.horizontalCenter: parent.horizontalCenter
-            show_text: show_text
+            show_text: title_text
             size_: 50
             color_: CONF.text_color
         }

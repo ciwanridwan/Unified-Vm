@@ -229,7 +229,7 @@ Base{
         anchors.top: parent.top
         anchors.topMargin: 350
         anchors.horizontalCenter: parent.horizontalCenter
-        show_text: 'Selamat Datang di Mandiri e-Money Terminal'
+        show_text: 'Selamat Datang, Silakan Pilih Menu Berikut : '
         visible: !popup_loading.visible
         size_: 50
         color_: "white"

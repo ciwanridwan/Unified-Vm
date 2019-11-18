@@ -515,7 +515,8 @@ Base{
         horizontalAlignment: Text.AlignLeft
         font.family: "Ubuntu"
         font.pixelSize: 50
-        color: CONF.text_color
+        // Use Frame Color
+        color: CONF.frame_color
         clip: true
         visible: true
         focus: true

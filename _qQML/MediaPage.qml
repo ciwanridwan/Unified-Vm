@@ -194,7 +194,7 @@ Rectangle{
             id: moving_text
             x: parent.width
             anchors.fill: running_text_box
-            color: CONF.text_color
+            color: CONF.running_text_color
             text: CONF.running_text
             anchors.verticalCenter: parent.verticalCenter
             font.pixelSize: 50

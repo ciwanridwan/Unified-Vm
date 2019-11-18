@@ -7,7 +7,7 @@ import "config.js" as CONF
 
 
 Base{
-    id: base_page
+    id: general_payment_process
     width: parseInt(SCREEN.size.width)
     height: parseInt(SCREEN.size.height)
     property int timer_value: 300
@@ -34,6 +34,8 @@ Base{
     property var preloadNotif: 'refundWhatsapp'
     property var customerPhone: ''
     property bool printOutRefund: true
+
+    signal framingSignal(string str)
 
     idx_bg: 0
     imgPanel: 'source/cash black.png'
@@ -90,6 +92,7 @@ Base{
         base.result_trx_ppob.connect(ppob_trx_result);
         base.result_pay_qr.connect(qr_check_result);
         base.result_diva_transfer_balance.connect(transfer_balance_result)
+        framingSignal.connect(get_signal_frame)
     }
 
     Component.onDestruction:{
@@ -113,6 +116,7 @@ Base{
         base.result_trx_ppob.disconnect(ppob_trx_result);
         base.result_pay_qr.disconnect(qr_check_result);
         base.result_diva_transfer_balance.disconnect(transfer_balance_result)
+        framingSignal.disconnect(get_signal_frame)
 
     }
 
@@ -154,6 +158,7 @@ Base{
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('ppob_trx_result', now, p);
         var result = p.split('|')[1]
+        if (['ovo', 'gopay', 'dana', 'linkaja'].indexOf(details.payment) > -1) qr_payment_frame.close();
         if (['MISSING_MSISDN', 'MISSING_PRODUCT_ID','MISSING_AMOUNT','MISSING_OPERATOR', 'MISSING_PAYMENT_TYPE', 'MISSING_PRODUCT_CATEGORY', 'MISSING_REFF_NO', 'ERROR'].indexOf(result) > -1){
             details.process_error = 1
             if (customerPhone!='') {
@@ -184,7 +189,7 @@ Base{
             var info = JSON.parse(r.split('|')[3]);
             now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
             console.log('qr_check_result', now, mode, result, info);
-            qr_payment_frame.success()
+            qr_payment_frame.success(15)
             details.payment_details = info;
             details.payment_received = details.value.toString();
             payment_complete(details.shop_type);
@@ -222,6 +227,7 @@ Base{
         console.log('topup_result', now, t);
         global_frame.close();
         popup_loading.close();
+        if (['ovo', 'gopay', 'dana', 'linkaja'].indexOf(details.payment) > -1) qr_payment_frame.close();
         abc.counter = 30;
         my_timer.restart();
         if (t.indexOf('TOPUP_SAM_REQUIRED')> -1){
@@ -331,6 +337,7 @@ Base{
         console.log('card_eject_result', now, r);
         global_frame.close();
         popup_loading.close();
+        if (['ovo', 'gopay', 'dana', 'linkaja'].indexOf(details.payment) > -1) qr_payment_frame.close();
         abc.counter = 30;
         my_timer.restart();
         if (r=='EJECT|PARTIAL'){
@@ -748,7 +755,7 @@ Base{
         button_text: 'BATAL'
         modeReverse: true
         z: 10
-        visible: !popup_loading.visible && !global_frame.visible
+        visible: !popup_loading.visible && !global_frame.visible && !qr_payment_frame.visible
 
         MouseArea{
             anchors.fill: parent
@@ -1342,8 +1349,27 @@ Base{
         id: qr_payment_frame
     }
 
+    function get_signal_frame(s){
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('get_signal_frame', s, now);
+        var res = s.split('|')[1];
+        set_refund_number(res);
+        next_button_input_number.visible = true;
+    }
+
+
+   function set_refund_number(n){
+       var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+       customerPhone = n;
+       details.refund_number = customerPhone;
+       console.log('customerPhone as refund_number', customerPhone, now);
+   }
+
+
     PopupInputNumber{
         id: popup_input_number
+//        calledFrom: 'general_payment_process'
+        handleButtonVisibility: next_button_input_number
 
         CircleButton{
             id: cancel_button_input_number
@@ -1365,23 +1391,22 @@ Base{
 
         CircleButton{
             id: next_button_input_number
-            anchors.left: parent.left
-            anchors.leftMargin: 100
+            anchors.right: parent.right
+            anchors.rightMargin: 100
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 50
             button_text: 'LANJUT'
             modeReverse: true
-            visible: parent.canProceed
+            visible: false
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
                     if (press != '0') return;
                     press = '1';
                     _SLOT.user_action_log('Press "LANJUT" Input Whatsapp Number ' + customerPhone);
-                    var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-                    customerPhone = popup_input_number.numberInput;
-                    details.refund_number = customerPhone;
-                    console.log('customerPhone', customerPhone, now);
+                    if (popup_input_number.handleButtonVisibility!=undefined){
+                        set_refund_number(popup_input_number.numberInput);
+                    }
                     popup_input_number.close();
                     define_first_notif();
                 }

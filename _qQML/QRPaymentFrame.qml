@@ -2,6 +2,7 @@ import QtQuick 2.4
 import QtQuick.Controls 1.2
 import QtGraphicalEffects 1.0
 import "screen.js" as SCREEN
+import "config.js" as CONF
 
 
 Base{
@@ -18,6 +19,7 @@ Base{
     property bool withTimer: true
     property int textSize: 40
     property int timerDuration: 90
+    property int waitAfterSuccess: 10
     property int showDuration: timerDuration
     property var closeMode: 'backToMain' // 'closeWindow', 'backToMain', 'backToPrev'
     visible: false
@@ -51,7 +53,7 @@ Base{
             font.pixelSize: textSize
             anchors.horizontalCenter: parent.horizontalCenter
             font.bold: false
-            color: 'white'
+            color: CONF.text_color
             verticalAlignment: Text.AlignVCenter
             font.family:"Ubuntu"
         }
@@ -63,7 +65,7 @@ Base{
             font.pixelSize: (smallerSlaveSize) ? textSize-5: textSize
             anchors.horizontalCenter: parent.horizontalCenter
             font.bold: false
-            color: 'white'
+            color: CONF.text_color
             verticalAlignment: Text.AlignVCenter
             font.family:"Ubuntu"
         }
@@ -100,9 +102,9 @@ Base{
         anchors.topMargin: 200
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        color: "black"
+        color: CONF.frame_color
         opacity: 1
-        visible: successPayment
+//        visible: successPayment
         AnimatedImage  {
             width: 200
             height: 200
@@ -126,6 +128,21 @@ Base{
             verticalAlignment: Text.AlignVCenter
             font.family:"Ubuntu"
         }
+        Text{
+            text: 'Mohon Tunggu, Memproses Transaksi Anda...'
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 50
+            anchors.horizontalCenterOffset: 0
+            wrapMode: Text.WordWrap
+            horizontalAlignment: Text.AlignHCenter
+            width: parent.width
+            font.pixelSize: 50
+            anchors.horizontalCenter: parent.horizontalCenter
+            font.bold: true
+            color: 'white'
+            verticalAlignment: Text.AlignVCenter
+            font.family:"Ubuntu"
+        }
     }
 
 
@@ -137,8 +154,7 @@ Base{
         onTriggered: {
             showDuration -= 1;
             if (showDuration < 15){
-                textSlave = 'Menunggu pembayaran atau Transaksi akan dibatalkan dalam...';
-                textSlave.font.pixelSize = 30;
+                textSlave = 'Masih Menunggu Pembayaran dalam...';
             }
             if (showDuration==0) {
                 show_timer.stop();
@@ -170,9 +186,10 @@ Base{
         show_timer.stop();
     }
 
-    function success(){
+    function success(waitTime){
+        if (waitTime==undefined) waitTime = waitAfterSuccess;
         successPayment = true;
-        delay(3000, function(){
+        delay(waitTime*1000, function(){
             close();
         });
     }
