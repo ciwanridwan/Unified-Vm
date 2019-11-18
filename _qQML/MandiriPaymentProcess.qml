@@ -531,18 +531,19 @@ Base{
     }
 
     function edc_payment_result(r){
-        //TODO: adjust Signal Handler Recipient
-        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
         console.log("edc_payment_result : ", now, r)
-        if (r==undefined||r==""||r.indexOf("ERROR") > -1){
-            false_notif();
-            return;
-        }
         var edcFunction = r.split('|')[0]
         var edcResult = r.split('|')[1]
-        if (edcFunction.indexOf('SUCCESS') > -1) {
+        global_frame.close();
+        popup_loading.close();
+        if (['ERROR'].indexOf(edcResult) > -1){
+            switch_frame_with_button('source/insert_money.png', 'Pembayaran Debit Gagal', 'Mohon Ulangi Transaksi Dalam Beberapa Saat', 'backToMain', true );
+            return;
+        }
+        if (edcResult=='SUCCESS') {
             receivedCash = totalPrice;
-            details.payment_details = JSON.parse(r.replace('SUCCESS|', ''));
+            details.payment_details = JSON.parse(r.split('|')[2]);
             details.payment_received = totalPrice;
             payment_complete();
             popup_loading.open();
@@ -667,6 +668,7 @@ Base{
         adminFee = parseInt(details.admin_fee);
         var epoch_string = details.epoch.toString();
         uniqueCode = epoch_string.substring(epoch_string.length-6);
+        _SLOT.start_set_payment(details.payment);
         if (['ovo', 'gopay', 'dana', 'linkaja'].indexOf(details.payment) > -1){
             console.log('generating_qr', now, details.payment);
             var msg = 'Persiapkan Aplikasi ' + details.payment.toUpperCase() + ' Pada Gawai Anda!';
@@ -685,24 +687,26 @@ Base{
 //            if (details.payment=='dana') _SLOT.start_get_qr_dana(JSON.stringify(qrPayload));
             popup_loading.open();
             return;
-        } else {
+        }
+        if (details.payment == 'cash') {
             open_preload_notif();
-            _SLOT.start_set_payment(details.payment);
-            if (details.payment == 'cash') {
-                totalPrice = parseInt(details.value) * parseInt(details.qty);
-                getDenom = totalPrice - adminFee;
-                notif_text = 'Masukan Uang Tunai Anda Pada Bill Acceptor Di Bawah';
-                _SLOT.start_set_direct_price(totalPrice.toString());
-    //            _SLOT.start_accept_mei();
-                _SLOT.start_grg_receive_note()
-            }
-            if (details.payment == 'debit') {
-                getDenom = parseInt(details.value);
-                totalPrice = getDenom + adminFee;
-                var structId = details.shop_type + details.epoch.toString();
-                _SLOT.create_sale_edc_with_struct_id(totalPrice.toString(), structId);
-                notif_text = 'Masukan Kartu Debit dan Kode PIN Pada EDC Di Bawah';
-            }
+            totalPrice = parseInt(details.value) * parseInt(details.qty);
+            getDenom = totalPrice - adminFee;
+//            notif_text = 'Masukan Uang Tunai Anda Pada Bill Acceptor Di Bawah';
+            _SLOT.start_set_direct_price(totalPrice.toString());
+//            _SLOT.start_accept_mei();
+            _SLOT.start_grg_receive_note();
+            return;
+        }
+        if (details.payment == 'debit') {
+//            open_preload_notif('Masukkan Kartu Debit dan PIN Anda Pada EDC', 'source/insert_card_new.png');
+            switch_frame('source/insert_card_new.png', 'Masukkan Kartu Debit dan PIN Anda Pada EDC', '', 'closeWindow|90', false )
+            getDenom = parseInt(details.value);
+            totalPrice = getDenom + adminFee;
+            var structId = details.shop_type + details.epoch.toString();
+            _SLOT.create_sale_edc_with_struct_id(totalPrice.toString(), structId);
+//            notif_text = 'Masukan Kartu Debit dan Kode PIN Pada EDC Di Bawah';
+            return;
         }
 
     }
@@ -766,7 +770,6 @@ Base{
                 if (details.payment=='cash' && !isPaid) {
                     _SLOT.stop_grg_receive_note();
                     if (receivedCash > 0){
-                        //TODO Print Failed Receipt
                         print_failed_transaction('cash');
 //                        _SLOT.start_return_es_mei();
                     }
@@ -783,7 +786,7 @@ Base{
 
     function open_preload_notif(msg, img){
         press = '0';
-        if (msg==undefined) msg = 'Masukkan Uang Anda';
+        if (msg==undefined) msg = 'Masukkan Uang Anda Pada Bill Acceptor';
         if (img==undefined) img = 'source/insert_money.png';
         switch_frame(img, msg, '', 'closeWindow', false )
         return;

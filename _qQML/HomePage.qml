@@ -556,12 +556,12 @@ Base{
         id: machine_status_rec
         color: "#ffffff"
         anchors.right: parent.right
-        anchors.rightMargin: 250
+        anchors.rightMargin: 300
         opacity: 0.75
         border.width: 0
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 0
-        width: 265
+        width: 300
         height: 30
         Row{
             anchors.horizontalCenter: parent.horizontalCenter

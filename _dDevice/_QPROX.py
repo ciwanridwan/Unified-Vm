@@ -54,6 +54,7 @@ QPROX = {
     "PURSE_DATA_BNI": "015", #Get Card Info For Topup Modal
     "SEND_CRYPTO": "016", #Send Cryptogram For Topup Modal
     "REFILL_ZERO": "018", #Refill Zero To Fix Error Update Balance Failure
+    "UPDATE_BALANCE_ONLINE": "019",
 }
 
 
@@ -74,6 +75,7 @@ class QSignalHandler(QObject):
     SIGNAL_STOP_QPROX = pyqtSignal(str)
     SIGNAL_GET_TOPUP_READINESS = pyqtSignal(str)
     SIGNAL_REFILL_ZERO = pyqtSignal(str)
+    SIGNAL_UPDATE_BALANCE_ONLINE = pyqtSignal(str)
 
 
 QP_SIGNDLER = QSignalHandler()
@@ -850,3 +852,25 @@ def get_topup_readiness(mode='full'):
         ___['bni'] = 'TEST_MODE'
     LOGGER.info((str(___), str(mode)))
     QP_SIGNDLER.SIGNAL_GET_TOPUP_READINESS.emit(json.dumps(___))
+
+
+def start_update_balance_online(bank):
+    _Helper.get_pool().apply_async(update_balance_online, (bank,))
+
+
+def update_balance_online(bank):
+    if bank is None or bank not in FW_BANK.values():
+         QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|UNKNOWN_BANK')
+         return
+    if bank == 'MANDIRI':
+        try:            
+            param = QPROX['UPDATE_BALANCE_ONLINE'] + '|' + _Global.TID + '|' + _Global.QR_MID + '|' + _Global.QR_TOKEN
+            response, result = _Command.send_request(param=param, output=None)
+            LOGGER.debug((result, response))
+            if response == 0 and result is not None:
+                QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|SUCCESS|'+result)
+            else:
+                QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
+        except Exception as e:
+            LOGGER.warning(str(e))
+

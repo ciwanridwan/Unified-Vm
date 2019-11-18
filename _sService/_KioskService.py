@@ -155,7 +155,7 @@ def define_theme(d):
         content_js += 'var background_color = "' +  _Global.COLOR_BACK + '";' + os.linesep
     # Receipt Custom Text
     if not _Global.empty(d['receipt_custom_text']):
-        _Global.CUSTOM_RECEIPT_TEXT = d['receipt_custom_text']
+        _Global.CUSTOM_RECEIPT_TEXT = d['receipt_custom_text'].replace(os.linesep, '|')
         _Global.log_to_temp_config('receipt^custom^text', d['receipt_custom_text'])
     # Receipt Logo
     store, receipt_logo = _NetworkAccess.item_download(d['receipt_logo'], os.getcwd() + '/_rReceipts')

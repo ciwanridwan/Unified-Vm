@@ -72,10 +72,10 @@ INIT_AMOUNT = '0'
 
 
 def sale_edc(amount, trxid=None):
-    global OPEN_STATUS, INIT_AMOUNT
+    global OPEN_STATUS, INIT_AMOUNT, EDC_PAYMENT_RESULT
     try:
         # _Command.clear_content_of(_Command.MI_GUI, 'PRE_SALE|'+str(amount))
-        _Command.clear_content_of(_Command.MO_REPORT, 'PRE_SALE|'+str(amount))
+        # _Command.clear_content_of(_Command.MO_REPORT, 'PRE_SALE|'+str(amount))
         if OPEN_STATUS is False:
             OPEN_STATUS = init_edc_with_handle()
         if OPEN_STATUS is True:
@@ -88,8 +88,52 @@ def sale_edc(amount, trxid=None):
                                                      output=_Command.MO_REPORT,
                                                      flushing=_Command.MO_REPORT)
             LOGGER.debug((response, result))
-            if response == 0:
-                handling_card(amount, trxid)
+            if response == 0 and ('|00|' + amount) in result:
+                '''
+                1. Transaction Type 		            0x11 
+                2. Pinpad 					            0x12 
+                3. Response Code 			            0x13 
+                4. Amount 					            0x14 
+                5. Other Amount 			            0x15 
+                6. Invoice No 					        0x16 
+                7. Card No (PAN) – Masking with “*”     0x17 
+                8. Expire Date (YYMM) 				    0x18 
+                9. Transaction Date Time (YYMMDDhhmmss) 0x19 
+                10. Approval Code 				        0x20 
+                11. TID 						        0x21 
+                12. MID 						        0x22 
+                13. Reference Number 				    0x23 
+                14. Batch Number 					    0x24
+                02||00|75000||000001|6011********9999|2612|20161003125804|123456|12345678|123456789012345|111111|000001
+                '''
+                param = result.split('|')
+                EDC_PAYMENT_RESULT['raw'] = result
+                EDC_PAYMENT_RESULT['card_type'] = _EDCTool.get_type(param[6])
+                if trxid is None:
+                    EDC_PAYMENT_RESULT['struck_id'] = _Helper.get_uuid()[:12]
+                else:
+                    EDC_PAYMENT_RESULT['struck_id'] = trxid.upper()
+                EDC_PAYMENT_RESULT['amount'] = param[3]
+                if IS_PIR is True:
+                    EDC_PAYMENT_RESULT['amount'] = INIT_AMOUNT
+                EDC_PAYMENT_RESULT['res_code'] = param[2]
+                EDC_PAYMENT_RESULT['inv_no'] = param[5]
+                EDC_PAYMENT_RESULT['card_no'] = param[6]
+                _KioskService.CARD_NO = param[6]
+                EDC_PAYMENT_RESULT['exp_date'] = param[7]
+                EDC_PAYMENT_RESULT['trans_date'] = param[8]
+                EDC_PAYMENT_RESULT['app_code'] = param[9]
+                EDC_PAYMENT_RESULT['tid'] = param[10]
+                EDC_PAYMENT_RESULT['mid'] = param[11]
+                EDC_PAYMENT_RESULT['ref_no'] = param[12]
+                EDC_PAYMENT_RESULT['batch_no'] = param[13].strip().replace('#', '')
+                E_SIGNDLER.SIGNAL_SALE_EDC.emit('SALE|SUCCESS|'+json.dumps(EDC_PAYMENT_RESULT))
+                # LOGGER.info(('DEBIT/CREDIT payment status', json.dumps(EDC_PAYMENT_RESULT)))
+                _KioskService.python_dump(EDC_PAYMENT_RESULT)
+                # edc_settlement()
+                _EDCTool.generate_edc_receipt(EDC_PAYMENT_RESULT)
+                store_settlement()
+                send_edc_server(EDC_PAYMENT_RESULT)
             else:
                 _Global.EDC_ERROR = 'SALE_ERROR'
                 E_SIGNDLER.SIGNAL_SALE_EDC.emit('SALE|ERROR')

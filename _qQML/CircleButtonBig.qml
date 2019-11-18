@@ -1,25 +1,27 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.2
+import "config.js" as CONF
+
 
 Rectangle{
-    width:120
-    height:120
+    width:200
+    height:200
     color:"transparent"
     property bool modeReverse: false
-    property string button_text: 'ISI SALDO\nOFFLINE'
-    property real globalOpacity: .50
-    property int fontSize: 30
+    property string button_text: 'ISI SALDO\nONLINE'
+    property real globalOpacity: .95
+    property int fontSize: 35
 
     Rectangle{
         anchors.fill: parent
-        color: 'white'
+        color: CONF.frame_color
         opacity: globalOpacity
         radius: width/2
     }
 
     Text {
         anchors.fill: parent
-        color: (modeReverse) ? 'white' : 'black'
+        color: CONF.text_color
         text: button_text.toUpperCase()
         style: Text.Sunken
         wrapMode: Text.WordWrap
@@ -27,7 +29,7 @@ Rectangle{
         horizontalAlignment: Text.AlignHCenter
         font.family:"Ubuntu"
         anchors.horizontalCenter: parent.horizontalCenter
-        font.pixelSize: (button_text.length > 5 ) ? 23 : fontSize
+        font.pixelSize: fontSize
         font.bold: true
     }
 

@@ -575,6 +575,10 @@ class SlotHandler(QObject):
         _PPOBService.start_transfer_balance(payload)
     start_transfer_balance = pyqtSlot(str)(start_transfer_balance)
 
+    def start_update_balance_online(self, bank):
+        _QPROX.start_update_balance_online(bank)
+    start_update_balance_online = pyqtSlot(str)(start_update_balance_online)
+
 
 def s_handler():
     _KioskService.K_SIGNDLER.SIGNAL_GET_FILE_LIST.connect(view.rootObject().result_get_file_list)
@@ -670,6 +674,7 @@ def s_handler():
     _ProductService.PR_SIGNDLER.SIGNAL_USE_VOUCHER.connect(view.rootObject().result_use_voucher)
     _PPOBService.PPOB_SIGNDLER.SIGNAL_CHECK_BALANCE.connect(view.rootObject().result_diva_balance_check)
     _PPOBService.PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.connect(view.rootObject().result_diva_transfer_balance)
+    _QPROX.QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.connect(view.rootObject().result_update_balance_online)
 
 
 LOGGER = None

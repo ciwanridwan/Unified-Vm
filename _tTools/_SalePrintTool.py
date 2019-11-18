@@ -78,7 +78,7 @@ class PDF(FPDF):
         # self.cell(MARGIN_LEFT, FOOTER_FONT_SIZE, '-APP VER: ' + _KioskService.VERSION+'-', 0, 0, 'C')
         if len(_Global.CUSTOM_RECEIPT_TEXT) > 5:
             self.set_y(-30)
-            for custom_text in _Global.CUSTOM_RECEIPT_TEXT.split('\r\n'):
+            for custom_text in _Global.CUSTOM_RECEIPT_TEXT.split('|'):
                 self.ln(SPACING-1)
                 self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE-1, custom_text, 0, 0, 'C')
         else:

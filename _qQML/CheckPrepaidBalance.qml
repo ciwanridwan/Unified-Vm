@@ -15,6 +15,8 @@ Base{
     property var ableTopupCode: undefined
     property var imageSource: undefined
     property bool mandiriAvailable: false
+    property var actionMode: 'check_balance'
+
     imgPanel: 'source/cek_saldo.png'
     textPanel: 'Cek Saldo Kartu Prabayar'
 
@@ -30,6 +32,7 @@ Base{
             bankName = undefined;
             imageSource = undefined;
             ableTopupCode = undefined;
+            actionMode = 'check_balance';
         }
         if(Stack.status==Stack.Deactivating){
             my_timer.stop()
@@ -40,27 +43,51 @@ Base{
         base.result_balance_qprox.connect(get_balance);
         base.result_topup_readiness.connect(topup_readiness);
         base.result_topup_amount.connect(get_topup_amount);
+        base.result_update_balance_online.connect(update_balance_online_result);
     }
 
     Component.onDestruction:{
         base.result_balance_qprox.disconnect(get_balance);
         base.result_topup_readiness.disconnect(topup_readiness);
         base.result_topup_amount.disconnect(get_topup_amount);
+        base.result_update_balance_online.disconnect(update_balance_online_result);
+    }
+
+
+    function update_balance_online_result(u){
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
+        console.log("update_balance_online_result : ", now, u);
+        var func = u.split('|')[0]
+        var result = u.split('|')[1]
+        popup_loading.close();
+        if (['ERROR', 'UNKNOWN_BANK'].indexOf(result) > -1){
+            switch_frame('source/smiley_down.png', 'Terjadi Kesalahan Saat Update Balance', '', 'closeWindow', false )
+            press = '0';
+            return;
+        }
+        if (result == 'SUCCESS'){
+            var info = u.split('|')[2]
+            switch_frame('source/success.png', 'Update Balance Berhasil', 'Silakan Cek Kembali Saldo Kartu Anda', 'backToMain', true );
+            return;
+        }
     }
 
     function get_topup_amount(r){
-        console.log('get_topup_amount', r);
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
+        console.log('get_topup_amount', now, r);
         topupData = JSON.parse(r);
     }
 
     function topup_readiness(r){
-        console.log('topup_readiness', r);
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
+        console.log('topup_readiness', now, r);
         popup_loading.close();
 //        var ready = JSON.parse(r)
     }
 
     function get_balance(text){
-        console.log('get_balance', text);
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
+        console.log('get_balance', now, text);
         press = '0';
         popup_loading.close();
         standard_notif_view.buttonEnabled = true;
@@ -152,19 +179,37 @@ Base{
         }
     }
 
+    CircleButtonBig{
+        id: update_online_button
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 50
+        anchors.horizontalCenter: parent.horizontalCenter
+        button_text: 'ISI SALDO\nONLINE'
+        modeReverse: true
+        visible: !popup_loading.visible && !preload_check_card.visible
+        MouseArea{
+            anchors.fill: parent
+            onClicked: {
+                _SLOT.user_action_log('Press "ISI SALDO ONLINE"');
+                actionMode = 'update_balance_online';
+                preload_check_card.open();
+            }
+        }
+    }
+
     CircleButton{
         id: next_button
         anchors.right: parent.right
         anchors.rightMargin: 50
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 30
-        button_text: 'ISI SALDO'
+        button_text: 'ISI SALDO\nOFFLINE'
         modeReverse: true
         visible: !popup_loading.visible && !preload_check_card.visible
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                _SLOT.user_action_log('Press "ISI SALDO"');
+                _SLOT.user_action_log('Press "ISI SALDO OFFLINE"');
                 preload_check_card.close();
                 if (!mandiriAvailable) {
                     press = '0';
@@ -213,9 +258,11 @@ Base{
     //PUT MAIN COMPONENT HERE
 
 
-    function false_notif(param){
+    function false_notif(img, msg){
+        if (img==undefined) img = 'source/smiley_down.png';
+        if (msg==undefined) msg = 'Maaf Sementara Mesin Tidak Dapat Digunakan';
         press = '0';
-        switch_frame('source/smiley_down.png', 'Maaf Sementara Mesin Tidak Dapat Digunakan', '', 'backToMain', false )
+        switch_frame(img, msg, '', 'backToMain', false )
         return;
     }
 
@@ -233,7 +280,7 @@ Base{
         color: "white"
         text: "Nomor kartu Anda"
         anchors.top: parent.top
-        anchors.topMargin: 325
+        anchors.topMargin: 375
         anchors.left: parent.left
         anchors.leftMargin: 350
         wrapMode: Text.WordWrap
@@ -248,11 +295,11 @@ Base{
         id: content_card_no
         width: 600
         color: "white"
-        text: cardNo
+        text: (cardNo==undefined) ? '' : cardNo
         anchors.right: parent.right
         anchors.rightMargin: 350
         anchors.top: parent.top
-        anchors.topMargin: 325
+        anchors.topMargin: 375
         wrapMode: Text.WordWrap
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignRight
@@ -266,7 +313,7 @@ Base{
         color: "white"
         text: "Saldo kartu Anda"
         anchors.top: parent.top
-        anchors.topMargin: 450
+        anchors.topMargin: 500
         anchors.left: parent.left
         anchors.leftMargin: 350
         wrapMode: Text.WordWrap
@@ -285,7 +332,40 @@ Base{
         anchors.right: parent.right
         anchors.rightMargin: 350
         anchors.top: parent.top
-        anchors.topMargin: 450
+        anchors.topMargin: 500
+        wrapMode: Text.WordWrap
+        verticalAlignment: Text.AlignVCenter
+        horizontalAlignment: Text.AlignRight
+        font.family:"Ubuntu"
+        font.pixelSize: 50
+        visible: !popup_loading.visible && !preload_check_card.visible
+    }
+
+    Text {
+        id: label_card_type
+        color: "white"
+        text: "Penerbit kartu"
+        anchors.top: parent.top
+        anchors.topMargin: 250
+        anchors.left: parent.left
+        anchors.leftMargin: 350
+        wrapMode: Text.WordWrap
+        verticalAlignment: Text.AlignVCenter
+        horizontalAlignment: Text.AlignHCenter
+        font.family:"Ubuntu"
+        font.pixelSize: 50
+        visible: !popup_loading.visible && !preload_check_card.visible
+    }
+
+    Text {
+        id: content_card_type
+        width: 600
+        color: "white"
+        text: (bankName==undefined) ? '' : bankName
+        anchors.right: parent.right
+        anchors.rightMargin: 350
+        anchors.top: parent.top
+        anchors.topMargin: 250
         wrapMode: Text.WordWrap
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignRight
@@ -480,11 +560,18 @@ Base{
                 anchors.fill: parent
                 onClicked: {
                     _SLOT.user_action_log('Press "LANJUT"');
-                    preload_check_card.close();
                     if (press!='0') return;
                     press = '1'
                     popup_loading.open();
-                    _SLOT.start_check_balance();
+                    switch(actionMode){
+                    case 'check_balance':
+                        _SLOT.start_check_balance();
+                        break;
+                    case 'update_balance_online':
+                        _SLOT.start_update_balance_online(bankName);
+                        break;
+                    }
+                    preload_check_card.close();
                 }
             }
         }
