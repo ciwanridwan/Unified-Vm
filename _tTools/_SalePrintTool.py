@@ -67,21 +67,24 @@ class PDF(FPDF):
         # self.ln(SPACING)
         # self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE, HEADER_TEXT2, 0, 0, 'C')
         self.ln(SPACING)
-        self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE, 'TERMINAL : '+_KioskService.TID, 0, 0, 'C')
+        self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE, 'TERMINAL : '+_Global.TID, 0, 0, 'C')
         self.ln(SPACING)
-        self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE, 'LOKASI : '+_KioskService.KIOSK_NAME, 0, 1, 'C')
+        self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE, 'LOKASI : '+_Global.KIOSK_NAME, 0, 1, 'C')
 
     def footer(self):
         self.set_font(USED_FONT, '', GLOBAL_FONT_SIZE-1)
-        self.set_y(-20)
-        self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE-1, 'TERIMA KASIH', 0, 0, 'C')
         # self.ln(SPACING)
         # self.cell(MARGIN_LEFT, HEADER_FONT_SIZE, 'Layanan Pelanggan Hubungi 0812-XXXX-XXXX', 0, 0, 'C')
         # self.cell(MARGIN_LEFT, FOOTER_FONT_SIZE, '-APP VER: ' + _KioskService.VERSION+'-', 0, 0, 'C')
-        self.ln(SPACING)
-        self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE-1, 'PENANGANAN KELUHAN DAPAT', 0, 0, 'C')
+        if len(_Global.CUSTOM_RECEIPT_TEXT) > 5:
+            self.set_y(-30)
+            for custom_text in _Global.CUSTOM_RECEIPT_TEXT.split('\r\n'):
+                self.ln(SPACING-1)
+                self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE-1, custom_text, 0, 0, 'C')
+        else:
+            self.set_y(-20)
         self.ln(SPACING-1)
-        self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE-1, 'MENGHUBUNGI 081XXXXXXXXX', 0, 0, 'C')
+        self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE-1, 'TERIMA KASIH', 0, 0, 'C')
 
 
 class GeneralPDF(FPDF):
@@ -90,9 +93,9 @@ class GeneralPDF(FPDF):
         self.ln(3)
         self.cell(MARGIN_LEFT, 7, 'COLLECTION REPORT', 0, 0, 'C')
         self.ln(3)
-        self.cell(MARGIN_LEFT, 7, 'VM ID : '+_KioskService.TID, 0, 0, 'C')
+        self.cell(MARGIN_LEFT, 7, 'VM ID : '+_Global.TID, 0, 0, 'C')
         self.ln(3)
-        self.cell(MARGIN_LEFT, 7, 'VM Name : '+_KioskService.KIOSK_NAME, 0, 1, 'C')
+        self.cell(MARGIN_LEFT, 7, 'VM Name : '+_Global.KIOSK_NAME, 0, 1, 'C')
 
     def footer(self):
         self.set_font(USED_FONT, '', 7)
