@@ -285,6 +285,9 @@ def print_topup_trx(p, t, ext='.pdf'):
                 if 'refund_status' in p.keys() and p['refund_status'] == 1:
                     pdf.ln(small_space)
                     pdf.set_font(USED_FONT, '', regular_space)
+                    pdf.cell(padding_left, 0, 'AKUN WHATSAPP   : ' + p['refund_number'], 0, 0, 'L')
+                    pdf.ln(small_space)
+                    pdf.set_font(USED_FONT, '', regular_space)
                     pdf.cell(padding_left, 0, 'SALDO DIALIHKAN : Rp. ' + clean_number(str(p['payment_received'])), 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space-1)
@@ -307,6 +310,9 @@ def print_topup_trx(p, t, ext='.pdf'):
             pdf.set_font(USED_FONT, '', regular_space)
             pdf.cell(padding_left, 0, 'UANG DITERIMA : Rp. ' + clean_number(str(p['payment_received'])), 0, 0, 'L')
             if 'refund_status' in p.keys() and p['refund_status'] == 1:
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'AKUN WHATSAPP   : ' + p['refund_number'], 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
                 pdf.cell(padding_left, 0, 'SALDO DIALIHKAN : Rp. ' + clean_number(str(p['payment_received'])), 0, 0, 'L')
@@ -432,6 +438,9 @@ def print_shop_trx(p, t, ext='.pdf'):
             pdf.set_font(USED_FONT, '', regular_space)
             pdf.cell(padding_left, 0, 'UANG DITERIMA : Rp. ' + clean_number(str(p['payment_received'])), 0, 0, 'L')
             if 'refund_status' in p.keys() and p['refund_status'] == 1:
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'AKUN WHATSAPP   : ' + p['refund_number'], 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
                 pdf.cell(padding_left, 0, 'SALDO DIALIHKAN : Rp. ' + clean_number(str(p['payment_received'])), 0, 0, 'L')
@@ -562,6 +571,9 @@ def print_ppob_trx(p, t, ext='.pdf'):
             pdf.set_font(USED_FONT, '', regular_space)
             pdf.cell(padding_left, 0, 'UANG DITERIMA : Rp. ' + clean_number(str(p['payment_received'])), 0, 0, 'L')
             if 'refund_status' in p.keys() and p['refund_status'] == 1:
+                pdf.ln(small_space)
+                pdf.set_font(USED_FONT, '', regular_space)
+                pdf.cell(padding_left, 0, 'AKUN WHATSAPP   : ' + p['refund_number'], 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
                 pdf.cell(padding_left, 0, 'SALDO DIALIHKAN : Rp. ' + clean_number(str(p['payment_received'])), 0, 0, 'L')

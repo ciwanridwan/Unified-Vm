@@ -33,7 +33,7 @@ Base{
     property var qrPayload
     property var preloadNotif: 'refundWhatsapp'
     property var customerPhone: ''
-    property var printOutRefund: true
+    property bool printOutRefund: true
 
     idx_bg: 0
     imgPanel: 'source/cash black.png'
@@ -1221,12 +1221,12 @@ Base{
         height: 100
         visible: !isPaid && (details.payment=='cash')
         radius: 50
-        fontSize: 40
+        fontSize: 35
         border.width: 0
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 200
         anchors.horizontalCenter: parent.horizontalCenter
-        title_text: 'JIKA TERJADI GAGAL/BATAL TRANSAKSI\nPENGEMBALIAN DANA DIALIHKAN KE SALDO TJ ANDA ' + customerPhone+ ' (Powered By DUWIT)'
+        title_text: 'JIKA TERJADI GAGAL/BATAL TRANSAKSI\nPENGEMBALIAN DANA DIALIHKAN KE AKUN ANDA ' + customerPhone+ ' (Powered By DUWIT)'
 //        modeReverse: (abc.counter %2 == 0) ? true : false
         boxColor: CONF.text_color
 
@@ -1377,7 +1377,7 @@ Base{
                 onClicked: {
                     if (press != '0') return;
                     press = '1';
-                    _SLOT.user_action_log('Press "LANJUT" in Input Whatsapp Number');
+                    _SLOT.user_action_log('Press "LANJUT" Input Whatsapp Number ' + customerPhone);
                     var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
                     customerPhone = popup_input_number.numberInput;
                     details.refund_number = customerPhone;

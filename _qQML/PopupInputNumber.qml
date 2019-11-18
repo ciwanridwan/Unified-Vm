@@ -19,12 +19,13 @@ Rectangle{
     property var titleImage: "source/whatsapp_transparent_white.png"
     property bool canProceed: false
     property bool withBackground: true
+    property int min_count: 9
+    property var pattern: '081'
     visible: false
     scale: visible ? 1.0 : 0.1
     Behavior on scale {
         NumberAnimation  { duration: 500 ; easing.type: Easing.InOutBounce  }
     }
-
 
     Rectangle{
         id: base_overlay
@@ -51,6 +52,21 @@ Rectangle{
             color_: CONF.text_color
         }
 
+        Text {
+            color: CONF.text_color
+            text: "*Untuk Pengembalian Pembayaran Anda\nJika Terjadi Kegagalan Transaksi"
+            anchors.verticalCenterOffset: 200
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.right: parent.right
+            anchors.rightMargin: 50
+            font.bold: true
+            font.italic: true
+            verticalAlignment: Text.AlignVCenter
+            horizontalAlignment: Text.AlignRight
+            font.family:"Ubuntu"
+            font.pixelSize: 30
+        }
+
         TextRectangle{
             id: textRectangle
             width: 650
@@ -64,14 +80,13 @@ Rectangle{
         Image{
             width: 150
             height: 150
+            anchors.leftMargin: 200
+            anchors.verticalCenter: parent.verticalCenter
             opacity: 0.6
-            anchors.top: parent.top
-            anchors.topMargin: 150
             scale: 4
             anchors.left: parent.left
-            anchors.leftMargin: 150
             source: titleImage
-            fillMode: Image.PreserveAspectCrop
+            fillMode: Image.PreserveAspectFit
         }
 
         TextInput {
@@ -151,7 +166,7 @@ Rectangle{
 
 
     function check_availability(){
-        if (numberInput.substring(0, 3)=='081' && numberInput.length > 10) {
+        if (numberInput.substring(0, 3)==pattern && numberInput.length > min_count) {
             canProceed = true;
         }
     }
