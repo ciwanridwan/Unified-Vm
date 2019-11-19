@@ -155,9 +155,9 @@ Base{
     function release_print(title, msg){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         popup_loading.close();
-        console.log('release_print', now);
         if (title==undefined) title = 'Terima Kasih';
         if (msg==undefined) msg = 'Silakan Ambil Struk Transaksi Anda';
+        console.log('release_print', now, title, msg);
         _SLOT.start_direct_store_transaction_data(JSON.stringify(details));
         _SLOT.python_dump(JSON.stringify(details))
         _SLOT.start_sale_print_global();
