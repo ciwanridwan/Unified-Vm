@@ -74,9 +74,9 @@ def do_get_qr(payload, mode, serialize=True):
         return
     if serialize is True:
         param = serialize_payload(payload)
-    if _Global.TEST_MODE is True:
-        amount = int(int(param['amount']) / 1000)
-        param['amount'] = str(amount)
+    # if _Global.TEST_MODE is True:
+    #     amount = int(int(param['amount']) / 1000)
+    #     param['amount'] = str(amount)
     try:
         url = _Global.QR_HOST+mode.lower()+'/get-qr'
         s, r = _NetworkAccess.post_to_url(url=url, param=param)
