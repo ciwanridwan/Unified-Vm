@@ -783,7 +783,7 @@ Base{
             onClicked: {
                 _SLOT.user_action_log('Press Cancel Button "Payment Process"');
                 if (press != '0') return;
-                press = '1';ß
+                press = '1';
                 if (details.payment=='cash' && !isPaid) {
                     _SLOT.stop_grg_receive_note();
                     if (receivedCash > 0){
