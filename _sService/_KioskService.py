@@ -108,9 +108,9 @@ def update_kiosk_status(r):
             _DAO.update_kiosk_data(_Global.KIOSK_SETTING)
     except Exception as e:
         LOGGER.warning(("update_kiosk_status : ", str(e)))
-    finally:
-        # kiosk_status()
-        pprint(_Global.KIOSK_SETTING)
+    # finally:
+    #     # kiosk_status()
+    #     pprint(_Global.KIOSK_SETTING)
 
 
 def define_theme(d):
