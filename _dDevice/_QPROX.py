@@ -873,7 +873,12 @@ def update_balance_online(bank):
             # if _Global.TEST_MODE is True and _Global.empty(result):
             #   result = '6032111122223333|20000|198000'
             if response == 0 and result is not None:
-                QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|SUCCESS|'+result)
+                output = {
+                    'card_no': result.split('|')[0],
+                    'topup_amount': result.split('|')[1],
+                    'last_balance': result.split('|')[2],
+                }
+                QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|SUCCESS|'+json.dumps(output))
             else:
                 if MANDIRI_GENERAL_ERROR in result:
                     QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|MANDIRI_GENERAL_ERROR')
