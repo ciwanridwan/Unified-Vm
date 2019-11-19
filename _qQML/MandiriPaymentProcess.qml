@@ -393,7 +393,7 @@ Base{
         }
         console.log('payment_complete', now, JSON.stringify(details))
         if (details.provider==undefined) details.provider = 'e-Money Mandiri';
-        if (mode!='ppob') _SLOT.start_store_transaction_global(JSON.stringify(details))
+        if (details.shop_type!='ppob') _SLOT.start_store_transaction_global(JSON.stringify(details))
         isPaid = true;
         abc.counter = timer_value;
         my_timer.restart();

@@ -358,6 +358,7 @@ Base{
 //        }
         _SLOT.start_get_device_status();
         var category = selectedProduct.category.toLowerCase()
+        var operator = selectedProduct.operator.toLowerCase()
         switch(category){
             case 'listrik': case 'tagihan': case 'tagihan air':
                 wording_text = 'Masukkan Nomor Meter/ID Pelanggan Anda';
@@ -369,7 +370,11 @@ Base{
                 min_count = 10;
             break;
             case 'uang elektronik':
-                wording_text = 'Masukkan Nomor Kartu Prabayar Anda';
+                if (operator=='TCASH LINKAJA'){
+                    wording_text = 'Masukkan User Token LinkAja (99XXXXXXXX)'
+                } else {
+                    wording_text = 'Masukkan Nomor Kartu Prabayar Anda';
+                }
                 min_count = 15;
             break;
             default:
