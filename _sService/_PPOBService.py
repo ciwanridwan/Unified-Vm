@@ -246,11 +246,19 @@ def start_transfer_balance(payload):
     _Helper.get_pool().apply_async(diva_transfer_balance, (payload,))
 
 
+LAST_TRANSFER_REFF_NO = ''
+
+
 def diva_transfer_balance(payload):
+    global LAST_TRANSFER_REFF_NO
     payload = json.loads(payload)
     if _Global.empty(payload['reff_no']):
         LOGGER.warning((str(payload), 'MISSING_REFF_NO'))
         PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|MISSING_REFF_NO')
+        return
+    if LAST_TRANSFER_REFF_NO == _Global.empty(payload['reff_no']):
+        LOGGER.warning((str(payload), LAST_TRANSFER_REFF_NO, 'DUPLICATE_REFF_NO'))
+        PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|ERROR')
         return
     if _Global.empty(payload['customer']):
         LOGGER.warning((str(payload), 'MISSING_CUSTOMER'))
@@ -265,6 +273,7 @@ def diva_transfer_balance(payload):
         url = _Global.BACKEND_URL+'diva/transfer'
         s, r = _NetworkAccess.post_to_url(url=url, param=payload)
         if s == 200 and r['result'] == 'OK' and r['data'] is not None:
+            LAST_TRANSFER_REFF_NO = _Global.empty(payload['reff_no'])
             PPOB_SIGNDLER.SIGNAL_CHECK_BALANCE.emit('BALANCE_CHECK|' + json.dumps(r['data']))
         else:
             PPOB_SIGNDLER.SIGNAL_CHECK_BALANCE.emit('BALANCE_CHECK|ERROR')
@@ -272,3 +281,4 @@ def diva_transfer_balance(payload):
     except Exception as e:
         LOGGER.warning((str(payload), str(e)))
         PPOB_SIGNDLER.SIGNAL_CHECK_BALANCE.emit('BALANCE_CHECK|ERROR')
+
