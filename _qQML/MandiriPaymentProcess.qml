@@ -127,6 +127,7 @@ Base{
             console.log('do_refund_balance', now, 'MISSING_REFUND_AMOUNT');
             return;
         }
+        details.refund_amount = refund_amount;
         var refundPayload = {
             amount: refund_amount.toString(),
             customer: customerPhone,
