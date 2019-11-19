@@ -179,6 +179,12 @@ Base{
                 return;
             }
         }
+        if (details.payment=='cash' && receivedCash > totalPrice){
+            var exceed = receivedCash - totalPrice;
+            printOutRefund = false;
+            do_refund_balance(exceed.toString());
+//                popup_loading.textSlave = 'Memproses Pengembalian Kelebihan Bayar Anda';
+        }
         var info = JSON.parse(result);
         details.ppob_details = info;
         release_print();
@@ -284,6 +290,12 @@ Base{
 //            } else if (topupResponse=='FFFE'){
 //                slave_title.text = 'Terjadi Kegagalan Pada Proses Isi Ulang Karena Kartu Tidak Terdeteksi.\nSilakan Ambil Struk Anda Di Bawah dan Hubungi Layanan Pelanggan.';
 //                slave_title.visible = true;
+                if (details.payment=='cash' && receivedCash > totalPrice){
+                    var exceed = receivedCash - totalPrice;
+                    printOutRefund = false;
+                    do_refund_balance(exceed.toString());
+    //                popup_loading.textSlave = 'Memproses Pengembalian Kelebihan Bayar Anda';
+                }
                 release_print();
             } else {
                 details.process_error = 1
@@ -379,6 +391,12 @@ Base{
         if (r == 'EJECT|SUCCESS') {
 //            var qty = details.qty.toString()
 //            slave_title.text = 'Silakan Ambil Struk dan ' + unit + ' pcs Kartu Prabayar Baru Anda Di Bawah.';
+            if (details.payment=='cash' && receivedCash > totalPrice){
+                var exceed = receivedCash - totalPrice;
+                printOutRefund = false;
+                do_refund_balance(exceed.toString());
+//                popup_loading.textSlave = 'Memproses Pengembalian Kelebihan Bayar Anda';
+            }
             release_print();
             switch_frame('source/thumb_ok.png', 'Silakan Ambil Kartu dan Struk Transaksi Anda', 'Terima Kasih', 'backToMain', false )
         }
@@ -458,14 +476,7 @@ Base{
 //                _SLOT.start_dis_accept_mei();
 //                _SLOT.start_store_es_mei();
                 popup_loading.textMain = 'Harap Tunggu Sebentar';
-                if (receivedCash > totalPrice){
-                    var exceed = receivedCash - totalPrice;
-                    printOutRefund = false;
-                    do_refund_balance(exceed.toString());
-                    popup_loading.textSlave = 'Memproses Pengembalian Kelebihan Bayar Anda';
-                } else {
-                    popup_loading.textSlave = 'Memproses Penyimpanan Uang Anda';
-                }
+                popup_loading.textSlave = 'Memproses Penyimpanan Uang Anda';
                 _SLOT.stop_grg_receive_note();
                 back_button.visible = false;
                 popup_loading.smallerSlaveSize = true;
