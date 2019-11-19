@@ -174,26 +174,6 @@ Rectangle{
         visible: false
     }
 
-        //Rectangle{
-        //    id: root
-        //    width:250
-        //    height:250
-        //    color: "#333333"
-
-        //    Text{
-        //        id:moving_text
-        //        x:parent.width
-        //        text:"Moving text"
-        //        color: "white"
-
-        //        NumberAnimation on x{
-        //            from: root.width
-        //            to: -1*moving_text.width
-        //            loops: Animation.Infinite
-        //            duration: 3000
-        //        }
-        //    }
-        //}
 
     Rectangle{
         id: running_text_box
@@ -224,10 +204,11 @@ Rectangle{
             font.family:"Ubuntu"
 
             NumberAnimation on x{
+                duration: 5000
+                easing.type: Easing.Linear
                 from: running_text_box.width
-                to: -1 * moving_text.width
+                to: -1*moving_text.width
                 loops: Animation.Infinite
-                duration: (moving_text.width/50) * 500
             }
         }
     }
