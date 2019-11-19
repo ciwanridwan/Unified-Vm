@@ -64,7 +64,8 @@ Base{
     }
 
 
-    function open(){
+    function open(msg){
+        if (msg!=undefined) textMain = msg;
         popup_loading.visible = true
     }
 

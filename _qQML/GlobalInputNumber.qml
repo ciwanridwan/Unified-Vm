@@ -144,15 +144,14 @@ Base{
 //            return;
 //        }
         if (r == 'EJECT|ERROR') {
-            switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Ambil Struk Transaksi Anda Hubungi Layanan Pelanggan', 'backToMain', true )
+            switch_frame('source/smiley_down.png', 'Mohon Maaf Terjadi Kesalahan', 'Transaksi Pengambilan Kartu Digagalkan', 'backToMain', true )
+            return;
         }
         if (r == 'EJECT|SUCCESS') {
-//            abc.counter = 7;
-//            my_timer.restart();
             switch_frame('source/thumb_ok.png', 'Silakan Ambil Kartu dan Struk Transaksi Anda', 'Terima Kasih', 'backToMain', false )
             var reff_no_voucher = new Date().getTime().toString() + '-' + vCollectionData.product.toString() + '-' + vCollectionData.slot.toString()
             _SLOT.start_use_voucher(textInput, reff_no_voucher);
-            //TODO: Printout Redeem Voucher with SLOT Function
+            return;
         }
     }
 
@@ -180,6 +179,10 @@ Base{
         var i = JSON.parse(res)
         vCollectionData = i;
         vCollectionMode = i.mode;
+        if (i.qty==0){
+            false_notif('Kode Voucher Anda Sudah Digunakan', 'backToMain', res);
+            return;
+        }
         var rows = [
             {label: 'Tanggal', content: now},
             {label: 'No Voucher', content: i.product},
@@ -446,7 +449,6 @@ Base{
         my_layer.push(mandiri_payment_process, {details: details});
     }
 
-
     function get_device_status(s){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('get_device_status', now, s);
@@ -591,9 +593,9 @@ Base{
                     var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
                     press = "1"
 //                    console.log('number input', now, textInput);
-                    popup_loading.open()
                     switch(mode){
                     case 'PPOB':
+                        popup_loading.open()
                         if (checkMode){
                             var msisdn = textInput;
                             var product_id = selectedProduct.product_id;
@@ -616,10 +618,12 @@ Base{
                         }
                     case 'SEARCH_TRX':
                         console.log('Checking Transaction Number : ', now, textInput);
+                        popup_loading.open('Memeriksa Transaksi Anda...')
                         _SLOT.start_check_trx_online(textInput);
                         return
                     case 'WA_VOUCHER':
                         console.log('Checking WA Invoice Number : ', now, textInput);
+                        popup_loading.open('Memeriksa Kode Voucher Anda Anda...')
                         _SLOT.start_check_voucher(textInput);
                         return;
                     default:
