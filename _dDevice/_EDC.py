@@ -88,6 +88,8 @@ def sale_edc(amount, trxid=None):
                                                      output=_Command.MO_REPORT,
                                                      flushing=_Command.MO_REPORT)
             LOGGER.debug((response, result))
+            if _Global.TEST_MODE is True and _Global.empty(result):
+                result = '02||00|'+str(amount)+'||000001|6011********9999|2612|20161003125804|123456|12345678|123456789012345|111111|000001'
             if response == 0 and ('|00|' + amount) in result:
                 '''
                 1. Transaction Type 		            0x11 
