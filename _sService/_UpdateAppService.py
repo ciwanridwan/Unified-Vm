@@ -4,6 +4,7 @@ import logging
 from PyQt5.QtCore import QObject, pyqtSignal
 from _cConfig import _Global
 from _tTools import _Helper
+import os
 
 
 class UpdateAppSignalHandler(QObject):
@@ -45,23 +46,24 @@ def start_do_update():
 
 
 def do_update():
-    if not check_init():
-        UPDATEAPP_SIGNDLER.SIGNAL_UPDATE_APP.emit('APP_UPDATE|FAILED_CHECK_INIT')
-        LOGGER.warning(('step-1', 'APP_UPDATE|FAILED_CHECK_INIT'))
-        return 'APP_UPDATE|FAILED_CHECK_INIT'
-    LOGGER.info(('step-1', 'APP_UPDATE|SUCCESS_CHECK_INIT'))
-    if not check_origin():
-        if not add_origin():
-            UPDATEAPP_SIGNDLER.SIGNAL_UPDATE_APP.emit('APP_UPDATE|FAILED_ADD_ORIGIN')
-            LOGGER.warning(('step-2', 'APP_UPDATE|FAILED_ADD_ORIGIN'))
-            return 'APP_UPDATE|FAILED_ADD_ORIGIN'
-        # set_credential()
-    LOGGER.info(('step-2', 'APP_UPDATE|SUCCESS_CHECK_ORIGIN'))
-    if not pull():
-        UPDATEAPP_SIGNDLER.SIGNAL_UPDATE_APP.emit('APP_UPDATE|FAILED_PULLING')
-        LOGGER.warning(('step-3', 'APP_UPDATE|FAILED_PULLING'))
-        return 'APP_UPDATE|FAILED_PULLING'
-    LOGGER.info(('step-3', 'APP_UPDATE|SUCCESS_PULLING'))
+    # if not check_init():
+    #     UPDATEAPP_SIGNDLER.SIGNAL_UPDATE_APP.emit('APP_UPDATE|FAILED_CHECK_INIT')
+    #     LOGGER.warning(('step-1', 'APP_UPDATE|FAILED_CHECK_INIT'))
+    #     return 'APP_UPDATE|FAILED_CHECK_INIT'
+    # LOGGER.info(('step-1', 'APP_UPDATE|SUCCESS_CHECK_INIT'))
+    # if not check_origin():
+    #     if not add_origin():
+    #         UPDATEAPP_SIGNDLER.SIGNAL_UPDATE_APP.emit('APP_UPDATE|FAILED_ADD_ORIGIN')
+    #         LOGGER.warning(('step-2', 'APP_UPDATE|FAILED_ADD_ORIGIN'))
+    #         return 'APP_UPDATE|FAILED_ADD_ORIGIN'
+    #     # set_credential()
+    # LOGGER.info(('step-2', 'APP_UPDATE|SUCCESS_CHECK_ORIGIN'))
+    # if not pull():
+    #     UPDATEAPP_SIGNDLER.SIGNAL_UPDATE_APP.emit('APP_UPDATE|FAILED_PULLING')
+    #     LOGGER.warning(('step-3', 'APP_UPDATE|FAILED_PULLING'))
+    #     return 'APP_UPDATE|FAILED_PULLING'
+    os.system("git pull")
+    # LOGGER.info(('step-3', 'APP_UPDATE|SUCCESS_PULLING'))
     UPDATEAPP_SIGNDLER.SIGNAL_UPDATE_APP.emit('APP_UPDATE|SUCCESS')
     LOGGER.info(('step-4', 'APP_UPDATE|SUCCESS'))
     return 'APP_UPDATE|SUCCESS'

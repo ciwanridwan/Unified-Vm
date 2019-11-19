@@ -130,6 +130,8 @@ def define_device_port_setting(data):
             _ConfigParser.set_value('GRG', 'port', c['config'])
         if c['name'] == 'card':
             _ConfigParser.set_value('EDC', 'port', c['config'])
+        if c['name'] == 'prepaid':
+            _ConfigParser.set_value('QPROX', 'port', c['config'])
 
 
 def define_theme(d):
