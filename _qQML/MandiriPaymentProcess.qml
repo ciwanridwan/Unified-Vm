@@ -317,11 +317,12 @@ Base{
         }
     }
 
-    function print_failed_transaction(channel){
+    function print_failed_transaction(channel, issue){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-        console.log('print_failed_transaction', now, channel, JSON.stringify(details));
+        console.log('print_failed_transaction', now, channel, issue, receivedCash, customerPhone, JSON.stringify(details));
+        if (issue==undefined) issue = 'GRG_ERROR';
         if (channel=='cash'){
-            details.payment_error = 'GRG_ERROR';
+            details.payment_error = issue;
             details.payment_received = receivedCash.toString();
             if (customerPhone!=''){
                 switch_frame('source/smiley_down.png', 'Terjadi Kesalahan/Pembatalan', 'Memproses Pengembalian Dana Anda', 'closeWindow', true );
@@ -435,7 +436,7 @@ Base{
             if (grgResult == "ERROR" || grgResult == 'TIMEOUT' || grgResult == 'JAMMED'){
                 false_notif('closeWindow', 'Terjadi Kegagalan Pada Bill Acceptor');
                 if (receivedCash > 0){                    
-                    print_failed_transaction('cash');
+                    print_failed_transaction('cash', 'GRG_ERROR');
                 }
                 return;
             } else if (grgResult == 'COMPLETE'){
@@ -738,7 +739,7 @@ Base{
                     if (details.payment=='cash' && !isPaid) {
                         _SLOT.stop_grg_receive_note();
                         if (receivedCash > 0){
-                            print_failed_transaction('cash');
+                            print_failed_transaction('cash', 'PAYMENT_TIMEOUT');
     //                        _SLOT.start_return_es_mei();
                         }
     //                    _SLOT.start_dis_accept_mei();
@@ -766,11 +767,11 @@ Base{
             onClicked: {
                 _SLOT.user_action_log('Press Cancel Button "Payment Process"');
                 if (press != '0') return;
-                press = '1';
+                press = '1';ß
                 if (details.payment=='cash' && !isPaid) {
                     _SLOT.stop_grg_receive_note();
                     if (receivedCash > 0){
-                        print_failed_transaction('cash');
+                        print_failed_transaction('cash', 'USER_CANCELLATION');
 //                        _SLOT.start_return_es_mei();
                     }
 //                    _SLOT.start_dis_accept_mei();

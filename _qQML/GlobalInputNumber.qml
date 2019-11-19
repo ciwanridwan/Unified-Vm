@@ -180,7 +180,7 @@ Base{
         vCollectionData = i;
         vCollectionMode = i.mode;
         if (i.qty==0){
-            false_notif('Kode Voucher Anda Sudah Digunakan', 'backToMain', res);
+            false_notif('Kode Voucher Tersebut Sudah Pernah Digunakan', 'backToMain', '');
             return;
         }
         var rows = [
