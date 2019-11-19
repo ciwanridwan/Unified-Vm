@@ -152,9 +152,10 @@ def start_receive_note():
             attempt += 1
             param = GRG["RECEIVE"] + '|'
             _response, _result = _Command.send_request(param=param, output=None)
+            _Helper.dump([_response, _result])
             if _response == 0 and KEY_RECEIVED in _result:
                 cash_in = _result.split('|')[1].split('=')[1]
-                if cash_in in SMALL_NOTES_NOT_ALLOWED and _Global.TID != '110322':
+                if cash_in in SMALL_NOTES_NOT_ALLOWED:
                     sleep(.25)
                     param = GRG["REJECT"] + '|'
                     _Command.send_request(param=param, output=None)
@@ -175,6 +176,7 @@ def start_receive_note():
                 # Call Store Function Here
                 CASH_HISTORY.append(str(cash_in))
                 COLLECTED_CASH += int(cash_in)
+                _Helper.dump([str(CASH_HISTORY), COLLECTED_CASH])
                 GRG_SIGNDLER.SIGNAL_GRG_RECEIVE.emit('RECEIVE_GRG|'+str(COLLECTED_CASH))
                 if COLLECTED_CASH < _MEI.DIRECT_PRICE_AMOUNT:
                     param = GRG["STORE"] + '|'
