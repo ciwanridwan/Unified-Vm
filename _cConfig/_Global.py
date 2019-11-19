@@ -165,6 +165,16 @@ LAST_AUTH = int(_ConfigParser.get_set_value('TEMPORARY', 'last^auth', '0'))
 LAST_UPDATE = int(_ConfigParser.get_set_value('TEMPORARY', 'last^update', '0'))
 LAST_GET_PPOB = int(_ConfigParser.get_set_value('TEMPORARY', 'last^get^ppob', '0'))
 
+
+def get_config_value(option='', section='TEMPORARY', digit=False):
+    if len(option) == 0:
+        return
+    if digit is True:
+        return int(_ConfigParser.get_value(section, option))
+    else:
+        return str(_ConfigParser.get_value(section, option))
+
+
 BANKS = [{
     "BANK": "MANDIRI",
     "STATUS": True if ('---' not in MID_MAN and len(MID_MAN) > 3) else False,
