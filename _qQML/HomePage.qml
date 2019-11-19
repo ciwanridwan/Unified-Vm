@@ -449,6 +449,7 @@ Base{
                 console.log('Admin Button is Pressed..!');
                 _SLOT.set_tvc_player("STOP");
                 _SLOT.stop_idle_mode();
+                resetMediaTimer();
                 my_layer.push(admin_login);
             }
         }
@@ -498,6 +499,7 @@ Base{
                 console.log('Search Trx Button is Pressed..!');
                 _SLOT.set_tvc_player("STOP");
                 _SLOT.stop_idle_mode();
+                resetMediaTimer();
                 my_layer.push(global_input_number, {mode: 'SEARCH_TRX'});
             }
         }
@@ -546,6 +548,7 @@ Base{
                 console.log('WA Voucher Button is Pressed..!');
                 _SLOT.set_tvc_player("STOP");
                 _SLOT.stop_idle_mode();
+                resetMediaTimer();
                 preload_whatasapp_voucher.open()
             }
         }

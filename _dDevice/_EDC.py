@@ -434,6 +434,7 @@ FORCE_SETTLEMENT = True if _ConfigParser.get_set_value('TERMINAL', 'force^settle
 LOOP_DELAY = 5
 
 
+# TODO: Settlement Handler Enhancement
 def handling_settlement(mode):
     global SETTLE_CODE, TIMEOUT_CODE, NOT_FOUND, NEED_RETRY, SETTLEMENT_PARAM
     if mode == 'CREDIT':

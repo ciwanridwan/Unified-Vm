@@ -184,13 +184,13 @@ Base{
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 50
         anchors.horizontalCenter: parent.horizontalCenter
-        button_text: 'ISI SALDO\nONLINE'
+        button_text: 'UPDATE SALDO'
         modeReverse: true
-        visible: !popup_loading.visible && !preload_check_card.visible
+        visible: !popup_loading.visible && !preload_check_card.visible && (['MANDIRI'].indexOf(bankName) > -1)
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                _SLOT.user_action_log('Press "ISI SALDO ONLINE"');
+                _SLOT.user_action_log('Press "UPDATE SALDO"');
                 actionMode = 'update_balance_online';
                 preload_check_card.open();
             }
@@ -203,13 +203,13 @@ Base{
         anchors.rightMargin: 50
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 30
-        button_text: 'ISI SALDO\nOFFLINE'
+        button_text: 'ISI SALDO'
         modeReverse: true
         visible: !popup_loading.visible && !preload_check_card.visible
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                _SLOT.user_action_log('Press "ISI SALDO OFFLINE"');
+                _SLOT.user_action_log('Press "ISI SALDO"');
                 preload_check_card.close();
                 if (!mandiriAvailable) {
                     press = '0';
