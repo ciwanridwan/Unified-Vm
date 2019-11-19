@@ -151,12 +151,16 @@ Base{
         if (printOutRefund) release_print();
     }
 
-    function release_print(){
+    function release_print(title, msg){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        popup_loading.close();
         console.log('release_print', now);
+        if (title==undefined) title = 'Terima Kasih';
+        if (msg==undefined) msg = 'Silakan Ambil Struk Transaksi Anda';
         _SLOT.start_direct_store_transaction_data(JSON.stringify(details));
         _SLOT.python_dump(JSON.stringify(details))
         _SLOT.start_sale_print_global();
+        switch_frame('source/take_receipt.png', title, msg, 'backToMain', true );
     }
 
     function ppob_trx_result(p){
@@ -174,8 +178,8 @@ Base{
                 do_refund_balance(refund_amount);
                 return;
             } else {
-                switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Ambil Struk Sebagai Bukti', 'backToMain', true )
-                release_print();
+//                switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Ambil Struk Sebagai Bukti', 'backToMain', true )
+                release_print('Terjadi Kesalahan', 'Silakan Ambil Struk Sebagai Bukti');
                 return;
             }
         }
@@ -188,7 +192,6 @@ Base{
         var info = JSON.parse(result);
         details.ppob_details = info;
         release_print();
-        switch_frame('source/take_receipt.png', 'Terima Kasih', 'Silakan Ambil Struk Transaksi Anda', 'backToMain', true );
     }
 
     function qr_check_result(r){
@@ -269,7 +272,7 @@ Base{
                 cardNo = result.card_no;
                 lastBalance = result.last_balance;
                 _SLOT.start_store_topup_transaction(JSON.stringify(details));
-                switch_frame('source/take_receipt.png', 'Terima Kasih', 'Silakan Ambil Struk Transaksi Anda', 'backToMain', true );
+//                switch_frame('source/take_receipt.png', 'Terima Kasih', 'Silakan Ambil Struk Transaksi Anda', 'backToMain', true );
                 _SLOT.start_do_mandiri_topup_settlement();
 //                card_no_prepaid.text = FUNC.insert_space_four(cardNo);
 //                image_prepaid_card.source = "source/tapcash-card.png";
@@ -306,10 +309,8 @@ Base{
                     do_refund_balance(refund_amount)
                     return
                 }
-                switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Ambil Struk Transaksi Anda Hubungi Layanan Pelanggan', 'backToMain', true );
-                release_print();
-//                slave_title.text = 'Silakan Ambil Struk Anda Di Bawah.\nJika Saldo Kartu Prabayar Anda Gagal Terisi, Silakan Hubungi Layanan Pelanggan.';
-//                slave_title.visible = true;
+//                switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Ambil Struk Transaksi Anda Hubungi Layanan Pelanggan', 'backToMain', true );
+                release_print('Terjadi Kesalahan', 'Silakan Ambil Struk Transaksi Anda Hubungi Layanan Pelanggan');
             }
         }
 //        _SLOT.start_sale_print_global();
@@ -384,8 +385,8 @@ Base{
                 do_refund_balance(refund_amount);
                 return;
             } else {
-                switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Ambil Struk Transaksi Anda Hubungi Layanan Pelanggan', 'backToMain', true )
-                release_print();
+//                switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Ambil Struk Transaksi Anda Hubungi Layanan Pelanggan', 'backToMain', true )
+                release_print('Terjadi Kesalahan', 'Silakan Ambil Struk Sebagai Bukti');
             }
         }
         if (r == 'EJECT|SUCCESS') {
@@ -398,7 +399,7 @@ Base{
 //                popup_loading.textSlave = 'Memproses Pengembalian Kelebihan Bayar Anda';
             }
             release_print();
-            switch_frame('source/thumb_ok.png', 'Silakan Ambil Kartu dan Struk Transaksi Anda', 'Terima Kasih', 'backToMain', false )
+//            switch_frame('source/thumb_ok.png', 'Silakan Ambil Kartu dan Struk Transaksi Anda', 'Terima Kasih', 'backToMain', false )
         }
     }
 
