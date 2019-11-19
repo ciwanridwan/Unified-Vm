@@ -486,6 +486,7 @@ Base{
                 modeButtonPopup = 'retrigger_grg';
 //                proceedText = 'COBA LAGI';
                 switch_frame_with_button('source/insert_money.png', 'Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)', 'closeWindow|30', true );
+                press = '0'
                 return;
             } else {
                 receivedCash = parseInt(grgResult);
@@ -834,12 +835,18 @@ Base{
 
     function switch_frame_with_button(imageSource, textMain, textSlave, closeMode, smallerText){
         frameWithButton = true;
+        global_frame.withTimer = false;
+        if (closeMode.indexOf('|') > -1){
+            closeMode = closeMode.split('|')[0];
+            var timer = closeMode.split('|')[1];
+            global_frame.timerDuration = parseInt(timer);
+            global_frame.withTimer = true;
+        }
         global_frame.imageSource = imageSource;
         global_frame.textMain = textMain;
         global_frame.textSlave = textSlave;
         global_frame.closeMode = closeMode;
         global_frame.smallerSlaveSize = smallerText;
-        global_frame.withTimer = false;
         global_frame.open();
     }
 
