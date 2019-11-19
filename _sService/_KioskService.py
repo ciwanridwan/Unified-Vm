@@ -125,7 +125,7 @@ def define_device_port_setting(data):
     if _Global.empty(data):
         LOGGER.warning(('EMPTY_DATA_PAYMENT'))
         return
-    for c in data:
+    for c in data: # QR No Need To Store in setting file
         if c['name'] == 'cash':
             _ConfigParser.set_value('GRG', 'port', c['config'])
         if c['name'] == 'card':
