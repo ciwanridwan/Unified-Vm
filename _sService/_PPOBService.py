@@ -258,7 +258,7 @@ def diva_transfer_balance(payload):
         return
     if LAST_TRANSFER_REFF_NO == payload['reff_no']:
         LOGGER.warning((str(payload), LAST_TRANSFER_REFF_NO, 'DUPLICATE_REFF_NO'))
-        # PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|ERROR')
+        # PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|DUPLICATE_REFF_NO')
         return
     if _Global.empty(payload['customer']):
         LOGGER.warning((str(payload), 'MISSING_CUSTOMER'))
@@ -274,11 +274,11 @@ def diva_transfer_balance(payload):
         s, r = _NetworkAccess.post_to_url(url=url, param=payload)
         if s == 200 and r['result'] == 'OK' and r['data'] is not None:
             LAST_TRANSFER_REFF_NO = _Global.empty(payload['reff_no'])
-            PPOB_SIGNDLER.SIGNAL_CHECK_BALANCE.emit('BALANCE_CHECK|' + json.dumps(r['data']))
+            PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|' + json.dumps(r['data']))
         else:
-            PPOB_SIGNDLER.SIGNAL_CHECK_BALANCE.emit('BALANCE_CHECK|ERROR')
+            PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|ERROR')
         LOGGER.debug((str(payload), str(r)))
     except Exception as e:
         LOGGER.warning((str(payload), str(e)))
-        PPOB_SIGNDLER.SIGNAL_CHECK_BALANCE.emit('BALANCE_CHECK|ERROR')
+        PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|ERROR')
 
