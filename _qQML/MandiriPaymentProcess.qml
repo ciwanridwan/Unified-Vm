@@ -171,11 +171,12 @@ Base{
                 var refund_amount = details.value.toString();
                 if (details.payment=='cash') refund_amount = receivedCash.toString();
                 do_refund_balance(refund_amount);
+                return;
             } else {
                 switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Ambil Struk Sebagai Bukti', 'backToMain', true )
                 release_print();
+                return;
             }
-            return;
         }
         var info = JSON.parse(result);
         details.ppob_details = info;

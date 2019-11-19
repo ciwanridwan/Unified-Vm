@@ -258,7 +258,7 @@ def diva_transfer_balance(payload):
         return
     if LAST_TRANSFER_REFF_NO == payload['reff_no']:
         LOGGER.warning((str(payload), LAST_TRANSFER_REFF_NO, 'DUPLICATE_REFF_NO'))
-        PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|ERROR')
+        # PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|ERROR')
         return
     if _Global.empty(payload['customer']):
         LOGGER.warning((str(payload), 'MISSING_CUSTOMER'))
