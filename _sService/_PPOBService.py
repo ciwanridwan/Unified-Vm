@@ -30,7 +30,8 @@ def start_get_ppob_product():
 
 def get_ppob_product():
     _check_prev_ppob = _Global.load_from_temp_data(temp='ppob-product', mode='json')
-    if (_Global.get_config_value('last^get^ppob') + (60 * 60 * 1000)) > _Helper.now() and not _Global.empty(_check_prev_ppob):
+    _last_get_product = _Global.get_config_value('last^get^ppob', digit=True)
+    if ( _last_get_product + (60 * 60 * 1000)) > _Helper.now() and not _Global.empty(_check_prev_ppob):
         products = _check_prev_ppob
     else:
         s, r = _NetworkAccess.get_from_url(url=_Global.BACKEND_URL+'get/product')
