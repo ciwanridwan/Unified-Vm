@@ -21,6 +21,7 @@ Base{
 //        color: "gray"
 //        opacity: 0.5
 //    }
+    property int forceCloseLoading: 0
 
     Column{
         width: 600
@@ -34,6 +35,15 @@ Base{
             anchors.horizontalCenter: parent.horizontalCenter
             source: imageSource
             fillMode: Image.PreserveAspectFit
+            MouseArea{
+                onClicked: {
+                    forceCloseLoading += 1;
+                    if (forceCloseLoading==10){
+                        close();
+                        forceCloseLoading = 0;
+                    }
+                }
+            }
         }
         Text{
             text: textMain
@@ -67,6 +77,7 @@ Base{
     function open(msg){
         if (msg!=undefined) textMain = msg;
         popup_loading.visible = true
+        forceCloseLoading = 0;
     }
 
     function close(){
