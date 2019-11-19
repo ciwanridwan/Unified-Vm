@@ -104,7 +104,7 @@ Base{
         anchors.verticalCenter: parent.verticalCenter
         color: CONF.frame_color
         opacity: 1
-//        visible: successPayment
+        visible: successPayment
         AnimatedImage  {
             width: 200
             height: 200
