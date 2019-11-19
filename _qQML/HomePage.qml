@@ -38,6 +38,7 @@ Base{
             productCount1 = 0;
             productCount2 = 0;
             productCount3 = 0;
+            popup_loading.close();
         }
         if(Stack.status==Stack.Deactivating){
             show_tvc_loading.stop();
@@ -398,7 +399,7 @@ Base{
             onTriggered:{
                 tvc_loading.counter -= 1
                 if (tvc_loading.counter%2==0){
-                    search_trx_buttom.color = 'yellow';
+                    search_trx_buttom.color = 'silver';
                     wa_voucher_button.color = '#4FCE5D';
                 } else {
                     search_trx_buttom.color = 'white';
