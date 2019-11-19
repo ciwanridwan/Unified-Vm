@@ -12,12 +12,23 @@ import json
 
 
 LOGGER = logging.getLogger()
+
+
+def get_config_value(option='', section='TEMPORARY', digit=False):
+    if len(option) == 0:
+        return
+    if digit is True:
+        return int(_ConfigParser.get_value(section, option))
+    else:
+        return str(_ConfigParser.get_value(section, option))
+
+
 BACKEND_URL = _ConfigParser.get_set_value('TERMINAL', 'backend^server', '---')
 QPROX_PORT = _ConfigParser.get_set_value('QPROX', 'port', 'COM')
-EDC_PORT = _ConfigParser.get_set_value('EDC', 'port', 'COM')
+EDC_PORT = get_config_value('port', 'EDC')
 EDC_TYPE = _ConfigParser.get_set_value('EDC', 'type', 'UPT-IUR')
-MEI_PORT = _ConfigParser.get_set_value('MEI', 'port', 'COM')
-GRG_PORT = _ConfigParser.get_set_value('GRG', 'port', 'COM')
+MEI_PORT = get_config_value('port', 'MEI')
+GRG_PORT = get_config_value('port', 'GRG')
 CD_PORT1 = _ConfigParser.get_set_value('CD', 'port1', 'COM')
 CD_PORT2 = _ConfigParser.get_set_value('CD', 'port2', 'COM')
 CD_PORT3 = _ConfigParser.get_set_value('CD', 'port3', 'COM')
@@ -165,15 +176,6 @@ TOPUP_AMOUNT = int(_ConfigParser.get_set_value('QPROX', 'amount^topup', '500000'
 LAST_AUTH = int(_ConfigParser.get_set_value('TEMPORARY', 'last^auth', '0'))
 LAST_UPDATE = int(_ConfigParser.get_set_value('TEMPORARY', 'last^update', '0'))
 LAST_GET_PPOB = int(_ConfigParser.get_set_value('TEMPORARY', 'last^get^ppob', '0'))
-
-
-def get_config_value(option='', section='TEMPORARY', digit=False):
-    if len(option) == 0:
-        return
-    if digit is True:
-        return int(_ConfigParser.get_value(section, option))
-    else:
-        return str(_ConfigParser.get_value(section, option))
 
 
 BANKS = [{

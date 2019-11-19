@@ -92,6 +92,7 @@ def update_kiosk_status(r):
             _Global.KIOSK_MARGIN = int(_Global.KIOSK_SETTING['defaultMargin'])
             _Global.KIOSK_ADMIN = int(_Global.KIOSK_SETTING['defaultAdmin'])
             _Global.PAYMENT_SETTING = r['data']['payment']
+            define_device_port_setting(_Global.PAYMENT_SETTING)
             _Global.store_to_temp_data('payment-setting', json.dumps(r['data']['payment']))
             _Global.THEME_SETTING = r['data']['theme']
             _Global.store_to_temp_data('theme-setting', json.dumps(r['data']['theme']))
@@ -111,6 +112,24 @@ def update_kiosk_status(r):
     # finally:
     #     # kiosk_status()
     #     pprint(_Global.KIOSK_SETTING)
+
+def define_device_port_setting(data):
+    '''
+    [
+        {"description": "CASH", "config": "COM2", "payment_method_id": 1, "status": "1", "name": "cash", "tid": "110322"}, 
+        {"description": "CARD", "config": "COM3", "payment_method_id": 2, "status": "1", "name": "card", "tid": "110322"}, 
+        {"description": "QR OVO", "config": "COM4", "payment_method_id": 4, "status": "1", "name": "ovo", "tid": "110322"}, 
+        {"description": "QR LINKAJA", "config": "COM5", "payment_method_id": 7, "status": "1", "name": "linkaja", "tid": "110322"}
+        ]
+    ''' 
+    if _Global.empty(data):
+        LOGGER.warning(('EMPTY_DATA_PAYMENT'))
+        return
+    for c in data:
+        if c['name'] == 'cash':
+            _ConfigParser.set_value('GRG', 'port', c['config'])
+        if c['name'] == 'card':
+            _ConfigParser.set_value('EDC', 'port', c['config'])
 
 
 def define_theme(d):
