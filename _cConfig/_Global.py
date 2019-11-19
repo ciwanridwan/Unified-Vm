@@ -12,16 +12,17 @@ import json
 
 
 LOGGER = logging.getLogger()
-BACKEND_URL = _ConfigParser.get_value('TERMINAL', 'backend^server')
-QPROX_PORT = _ConfigParser.get_value('QPROX', 'port')
-EDC_PORT = _ConfigParser.get_value('EDC', 'port')
-MEI_PORT = _ConfigParser.get_value('MEI', 'port')
-GRG_PORT = _ConfigParser.get_value('GRG', 'port')
-CD_PORT1 = _ConfigParser.get_value('CD', 'port1')
-CD_PORT2 = _ConfigParser.get_value('CD', 'port2')
-CD_PORT3 = _ConfigParser.get_value('CD', 'port3')
-PRINTER_PORT = _ConfigParser.get_value('PRINTER', 'port')
-PRINTER_BAUDRATE = _ConfigParser.get_value('PRINTER', 'baudrate')
+BACKEND_URL = _ConfigParser.get_set_value('TERMINAL', 'backend^server', '---')
+QPROX_PORT = _ConfigParser.get_set_value('QPROX', 'port', 'COM')
+EDC_PORT = _ConfigParser.get_set_value('EDC', 'port', 'COM')
+EDC_TYPE = _ConfigParser.get_set_value('EDC', 'type', 'UPT-IUR')
+MEI_PORT = _ConfigParser.get_set_value('MEI', 'port', 'COM')
+GRG_PORT = _ConfigParser.get_set_value('GRG', 'port', 'COM')
+CD_PORT1 = _ConfigParser.get_set_value('CD', 'port1', 'COM')
+CD_PORT2 = _ConfigParser.get_set_value('CD', 'port2', 'COM')
+CD_PORT3 = _ConfigParser.get_set_value('CD', 'port3', 'COM')
+PRINTER_PORT = _ConfigParser.get_set_value('PRINTER', 'port', 'COM')
+PRINTER_BAUDRATE = _ConfigParser.get_set_value('PRINTER', 'baudrate', '15200')
 LIVE_MODE = True if _ConfigParser.get_set_value('TERMINAL', 'mode', 'live') == 'live' else False
 TEST_MODE = not LIVE_MODE
 RELOAD_SERVICE = True if _ConfigParser.get_set_value('TERMINAL', 'reload^service', '0') == '1' else False
@@ -79,7 +80,7 @@ FEATURE_SETTING = load_from_temp_data('feature-setting', 'json')
 PAYMENT_SETTING = load_from_temp_data('payment-setting', 'json')
 THEME_SETTING = load_from_temp_data('theme-setting', 'json')
 ADS_SETTING = load_from_temp_data('ads-setting', 'json')
-THEME_NAME = _ConfigParser.get_value('TEMPORARY', 'theme^name')
+THEME_NAME = _ConfigParser.get_set_value('TEMPORARY', 'theme^name', '---')
 KIOSK_REAL_STATUS = 'ONLINE'
 RECEIPT_LOGO = _ConfigParser.get_set_value('TEMPORARY', 'receipt^logo', 'mandiri_logo.gif')
 REPO_USERNAME = _ConfigParser.get_set_value('REPOSITORY', 'username', 'developer')
