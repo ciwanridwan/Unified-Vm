@@ -121,9 +121,12 @@ Base{
     }
 
     function do_refund_balance(refund_amount){
-        popup_loading.open();
-        if (refund_amount==undefined) refund_amount = details.value;
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        popup_loading.open();
+        if (refund_amount==undefined) {
+            console.log('do_refund_balance', now, 'MISSING_REFUND_AMOUNT');
+            return;
+        }
         var refundPayload = {
             amount: refund_amount.toString(),
             customer: customerPhone,
@@ -162,8 +165,10 @@ Base{
         if (['MISSING_MSISDN', 'MISSING_PRODUCT_ID','MISSING_AMOUNT','MISSING_OPERATOR', 'MISSING_PAYMENT_TYPE', 'MISSING_PRODUCT_CATEGORY', 'MISSING_REFF_NO', 'ERROR'].indexOf(result) > -1){
             details.process_error = 1
             if (customerPhone!='') {
-                switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Memproses Pengembalian Dana Anda', 'closeWindow', true )
-                do_refund_balance();
+                switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Memproses Pengembalian Dana Anda', 'closeWindow', true );
+                var refund_amount = details.value.toString();
+                if (details.payment=='cash') refund_amount = receivedCash.toString();
+                do_refund_balance(refund_amount);
             } else {
                 switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Ambil Struk Sebagai Bukti', 'backToMain', true )
                 release_print();
@@ -279,7 +284,9 @@ Base{
                 details.process_error = 1
                 if (customerPhone!='') {
                     switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Memproses Pengembalian Dana Anda', 'closeWindow', true );
-                    do_refund_balance();
+                    var refund_amount = details.value.toString();
+                    if (details.payment=='cash') refund_amount = receivedCash.toString();
+                    do_refund_balance(refund_amount)
                     return
                 }
                 switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Ambil Struk Transaksi Anda Hubungi Layanan Pelanggan', 'backToMain', true );
@@ -326,7 +333,8 @@ Base{
             details.payment_received = receivedCash.toString();
             if (customerPhone!=''){
                 switch_frame('source/smiley_down.png', 'Terjadi Kesalahan/Pembatalan', 'Memproses Pengembalian Dana Anda', 'closeWindow', true );
-                do_refund_balance();
+                var refund_amount = receivedCash.toString();
+                do_refund_balance(refund_amount)
                 return;
             }
             release_print();
@@ -354,7 +362,9 @@ Base{
 //            slave_title.text = 'Silakan Ambil Struk Anda Di Bawah.\nJika Kartu Tidak Keluar, Silakan Hubungi Layanan Pelanggan.';
             if (customerPhone!='') {
                 switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Memproses Pengembalian Dana Anda', 'closeWindow', true );
-                do_refund_balance();
+                var refund_amount = details.value.toString();
+                if (details.payment=='cash') refund_amount = receivedCash.toString();
+                do_refund_balance(refund_amount);
                 return;
             } else {
                 switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Ambil Struk Transaksi Anda Hubungi Layanan Pelanggan', 'backToMain', true )
@@ -446,7 +456,7 @@ Base{
                 if (receivedCash > totalPrice){
                     var exceed = receivedCash - totalPrice;
                     printOutRefund = false;
-                    do_refund_balance(exceed);
+                    do_refund_balance(exceed.toString());
                     popup_loading.textSlave = 'Memproses Pengembalian Kelebihan Bayar Anda';
                 } else {
                     popup_loading.textSlave = 'Memproses Penyimpanan Uang Anda';
@@ -1228,18 +1238,18 @@ Base{
 
     BoxTitle{
         id: notice_no_change
-        width: 1000
-        height: 100
+        width: 1200
+        height: 120
         visible: !isPaid && (details.payment=='cash')
         radius: 50
-        fontSize: 35
+        fontSize: 30
         border.width: 0
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 200
         anchors.horizontalCenter: parent.horizontalCenter
         title_text: 'JIKA TERJADI GAGAL/BATAL TRANSAKSI\nPENGEMBALIAN DANA DIALIHKAN KE AKUN ANDA ' + customerPhone+ ' (Powered By DUWIT)'
 //        modeReverse: (abc.counter %2 == 0) ? true : false
-        boxColor: CONF.text_color
+        boxColor: CONF.frame_color
 
     }
 
