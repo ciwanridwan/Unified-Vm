@@ -122,6 +122,7 @@ Base{
 
     function do_refund_balance(refund_amount){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        set_refund_number(customerPhone);
         popup_loading.open();
         if (refund_amount==undefined) {
             console.log('do_refund_balance', now, 'MISSING_REFUND_AMOUNT');
