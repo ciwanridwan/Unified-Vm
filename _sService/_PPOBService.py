@@ -28,7 +28,12 @@ def start_get_ppob_product():
     _Helper.get_pool().apply_async(get_ppob_product)
 
 
-def get_ppob_product():
+def start_init_ppob_product():
+    signal = False
+    _Helper.get_pool().apply_async(get_ppob_product, (signal,))
+
+
+def get_ppob_product(signal=True):
     _check_prev_ppob = _Global.load_from_temp_data(temp='ppob-product', mode='json')
     _last_get_product = _Global.get_config_value('last^get^ppob', digit=True)
     if ( _last_get_product + (60 * 60 * 1000)) > _Helper.now() and not _Global.empty(_check_prev_ppob):
@@ -43,7 +48,8 @@ def get_ppob_product():
         else:
             products = _Global.load_from_temp_data(temp='ppob-product', mode='json')
     # products = store_image_item(products)
-    PPOB_SIGNDLER.SIGNAL_GET_PRODUCTS.emit(json.dumps(products))
+    if signal is True:
+        PPOB_SIGNDLER.SIGNAL_GET_PRODUCTS.emit(json.dumps(products))
 
 
 def store_image_item(products):

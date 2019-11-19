@@ -977,7 +977,7 @@ if __name__ == '__main__':
     _Sync.start_sync_product_data()
     sleep(1)
     print("pyt: Syncing PPOB Product...")
-    _PPOBService.start_get_ppob_product()
+    _PPOBService.start_init_ppob_product()
     sleep(.5)
     print("pyt: Syncing Transaction...")
     _Sync.start_sync_data_transaction()
