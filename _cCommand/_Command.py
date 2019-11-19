@@ -255,7 +255,7 @@ def send_request(param=None, output=None, responding=True, flushing=MO_STATUS, w
     ___stat, ___resp = _NetworkAccess.get_local(LOCAL_URL + ___cmd + '&param=' + ___param)
     if ___stat == 200:
         # {"Result":"0","Command":"000","Parameter":"com4","Response":null,"ErrorDesc":"Sukses"}
-        if ___resp.get('Command') == ___cmd and ___resp.get('Parameter') == ___param:
+        if ___resp.get('Command') == ___cmd and ___resp.get('Parameter') == ___param and ___resp.get('Result') == '1':
             ___output = ___resp.get('Response') if ___resp.get('Response') is not None else ___resp.get('Result')
             # if output is None:
             #     ___output = ___resp.get('Result')
