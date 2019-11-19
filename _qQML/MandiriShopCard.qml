@@ -108,7 +108,8 @@ Base{
 
 
     function get_device_status(s){
-        console.log('get_device_status', s);
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('get_device_status', s, now);
         var device = JSON.parse(s);
         if (device.MEI == 'AVAILABLE' || device.GRG == 'AVAILABLE'){
             cashEnable = true;
@@ -303,8 +304,10 @@ Base{
                 _SLOT.user_action_log('Press "LANJUT"');
                 if (press!='0') return;
                 press = '1';
-                var globalDetails = get_cart_details('cash');
-                my_layer.push(mandiri_payment_process, {details: globalDetails});
+                popup_loading.close();
+                isConfirm = true;
+//                var globalDetails = get_cart_details('cash');
+//                my_layer.push(mandiri_payment_process, {details: globalDetails});
             }
         }
     }

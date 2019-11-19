@@ -33,7 +33,6 @@ Base{
     property var qrPayload
     property var preloadNotif: 'refundWhatsapp'
     property var customerPhone: ''
-    property bool printOutRefund: true
 
     signal framingSignal(string str)
 
@@ -64,7 +63,6 @@ Base{
             attemptCD = 0;
             frameWithButton = false;
             centerOnlyButton = false;
-            printOutRefund = true;
         }
         if(Stack.status==Stack.Deactivating){
             my_timer.stop()
@@ -147,9 +145,8 @@ Base{
         details.refund_status = 1
         if (['MISSING_REFF_NO','MISSING_AMOUNT','MISSING_CUSTOMER', 'ERROR'].indexOf(result) > -1){
             details.refund_status = 0
-//            if (printOutRefund) release_print();
         }
-        if (printOutRefund) release_print();
+        release_print();
     }
 
     function release_print(title, msg){
@@ -176,24 +173,21 @@ Base{
                 switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Memproses Pengembalian Dana Anda', 'closeWindow', true );
                 var refund_amount = details.value.toString();
                 if (details.payment=='cash') refund_amount = receivedCash.toString();
-                printOutRefund = true;
                 do_refund_balance(refund_amount);
-                return;
             } else {
 //                switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Ambil Struk Sebagai Bukti', 'backToMain', true )
                 release_print('Terjadi Kesalahan', 'Silakan Ambil Struk Sebagai Bukti');
-                return;
             }
         }
         if (details.payment=='cash' && receivedCash > totalPrice){
             var exceed = receivedCash - totalPrice;
-            printOutRefund = false;
             do_refund_balance(exceed.toString());
 //                popup_loading.textSlave = 'Memproses Pengembalian Kelebihan Bayar Anda';
+        } else {
+            var info = JSON.parse(result);
+            details.ppob_details = info;
+            release_print();
         }
-        var info = JSON.parse(result);
-        details.ppob_details = info;
-        release_print();
     }
 
     function qr_check_result(r){
@@ -297,23 +291,21 @@ Base{
 //                slave_title.visible = true;
                 if (details.payment=='cash' && receivedCash > totalPrice){
                     var exceed = receivedCash - totalPrice;
-                    printOutRefund = false;
                     do_refund_balance(exceed.toString());
     //                popup_loading.textSlave = 'Memproses Pengembalian Kelebihan Bayar Anda';
+                } else {
+                    release_print();
                 }
-                release_print();
             } else {
                 details.process_error = 1
                 if (customerPhone!='') {
                     switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Memproses Pengembalian Dana Anda', 'closeWindow', true );
                     var refund_amount = details.value.toString();
                     if (details.payment=='cash') refund_amount = receivedCash.toString();
-                    printOutRefund = true;
                     do_refund_balance(refund_amount)
-                    return
+                } else {
+                    release_print('Terjadi Kesalahan', 'Silakan Ambil Struk Transaksi Anda Hubungi Layanan Pelanggan');
                 }
-//                switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Ambil Struk Transaksi Anda Hubungi Layanan Pelanggan', 'backToMain', true );
-                release_print('Terjadi Kesalahan', 'Silakan Ambil Struk Transaksi Anda Hubungi Layanan Pelanggan');
             }
         }
 //        _SLOT.start_sale_print_global();
@@ -355,11 +347,10 @@ Base{
             if (customerPhone!=''){
                 switch_frame('source/smiley_down.png', 'Terjadi Kesalahan/Pembatalan', 'Memproses Pengembalian Dana Anda', 'closeWindow', true );
                 var refund_amount = receivedCash.toString();
-                printOutRefund = true;
                 do_refund_balance(refund_amount)
-                return;
+            } else {
+                release_print();
             }
-            release_print();
         }
     }
 
@@ -386,7 +377,6 @@ Base{
                 switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Memproses Pengembalian Dana Anda', 'closeWindow', true );
                 var refund_amount = details.value.toString();
                 if (details.payment=='cash') refund_amount = receivedCash.toString();
-                printOutRefund = true;
                 do_refund_balance(refund_amount);
                 return;
             } else {
@@ -399,11 +389,11 @@ Base{
 //            slave_title.text = 'Silakan Ambil Struk dan ' + unit + ' pcs Kartu Prabayar Baru Anda Di Bawah.';
             if (details.payment=='cash' && receivedCash > totalPrice){
                 var exceed = receivedCash - totalPrice;
-                printOutRefund = false;
                 do_refund_balance(exceed.toString());
 //                popup_loading.textSlave = 'Memproses Pengembalian Kelebihan Bayar Anda';
+            } else {
+                release_print();
             }
-            release_print();
 //            switch_frame('source/thumb_ok.png', 'Silakan Ambil Kartu dan Struk Transaksi Anda', 'Terima Kasih', 'backToMain', false )
         }
     }
@@ -516,7 +506,6 @@ Base{
                 var cashResponse = JSON.parse(r.replace('STOP_GRG|SUCCESS-', ''))
                 details.payment_details = cashResponse;
                 details.payment_received = cashResponse.total;
-                printOutRefund = true;
                 payment_complete();
             }
         } else if (grgFunction == 'STATUS_GRG'){
