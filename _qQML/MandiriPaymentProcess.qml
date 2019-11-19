@@ -473,7 +473,7 @@ Base{
 //                standard_notif_view.buttonEnabled = false;
 //                standard_notif_view._button_text = 'coba lagi';
                 modeButtonPopup = 'retrigger_grg';
-                proceedText = 'COBA LAGI';
+//                proceedText = 'COBA LAGI';
                 switch_frame_with_button('source/insert_money.png', 'Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)', 'closeWindow|30', true );
                 return;
             } else if (grgResult == 'BAD_NOTES'){
@@ -481,7 +481,7 @@ Base{
 //                standard_notif_view.buttonEnabled = false;
 //                standard_notif_view._button_text = 'coba lagi';
                 modeButtonPopup = 'retrigger_grg';
-                proceedText = 'COBA LAGI';
+//                proceedText = 'COBA LAGI';
                 switch_frame_with_button('source/insert_money.png', 'Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)', 'closeWindow|30', true );
                 return;
             } else {
