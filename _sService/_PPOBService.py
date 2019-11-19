@@ -256,7 +256,7 @@ def diva_transfer_balance(payload):
         LOGGER.warning((str(payload), 'MISSING_REFF_NO'))
         PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|MISSING_REFF_NO')
         return
-    if LAST_TRANSFER_REFF_NO == _Global.empty(payload['reff_no']):
+    if LAST_TRANSFER_REFF_NO == payload['reff_no']:
         LOGGER.warning((str(payload), LAST_TRANSFER_REFF_NO, 'DUPLICATE_REFF_NO'))
         PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|ERROR')
         return
