@@ -174,6 +174,27 @@ Rectangle{
         visible: false
     }
 
+        //Rectangle{
+        //    id: root
+        //    width:250
+        //    height:250
+        //    color: "#333333"
+
+        //    Text{
+        //        id:moving_text
+        //        x:parent.width
+        //        text:"Moving text"
+        //        color: "white"
+
+        //        NumberAnimation on x{
+        //            from: root.width
+        //            to: -1*moving_text.width
+        //            loops: Animation.Infinite
+        //            duration: 3000
+        //        }
+        //    }
+        //}
+
     Rectangle{
         id: running_text_box
         width: parent.width
@@ -206,7 +227,7 @@ Rectangle{
                 from: running_text_box.width
                 to: -1 * moving_text.width
                 loops: Animation.Infinite
-                duration: (parent.width/60) * 500
+                duration: (moving_text.width/50) * 500
             }
         }
     }
