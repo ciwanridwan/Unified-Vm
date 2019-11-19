@@ -7,14 +7,14 @@ import os
 from datetime import datetime
 from _dDevice import _Printer
 from _sService import _KioskService
-from _cConfig import _ConfigParser
+from _cConfig import _ConfigParser, _Global
 import re
 
 LOGGER = logging.getLogger()
 PDF_PATH = os.path.join(sys.path[0], '_pPDF')
 LOGO_PATH = os.path.join(sys.path[0], '_rReceipts', 'bni_logo.gif')
-VERSION = open(os.path.join(os.getcwd(), 'kiosk.ver'), 'r').read().strip()
-KIOSK_ID = _ConfigParser.get_value('TERMINAL', 'tid')
+VERSION = _Global.VERSION
+KIOSK_ID = _Global.TID
 FONT_PATH = os.path.join(os.getcwd(), '_fFonts')
 
 CARD_TYPE = {
@@ -160,11 +160,11 @@ class PDF(FPDF):
         # self.ln(SPACING)
         self.cell(MARGIN_LEFT, HEADER_FONT_SIZE, 'ACQUIRED BY BNI', 0, 0, 'C')
         self.ln(SPACING)
-        self.cell(MARGIN_LEFT, HEADER_FONT_SIZE, _KioskService.KIOSK_NAME, 0, 0, 'C')
+        self.cell(MARGIN_LEFT, HEADER_FONT_SIZE, _Global.KIOSK_NAME, 0, 0, 'C')
         self.ln(SPACING)
         self.cell(MARGIN_LEFT, HEADER_FONT_SIZE, 'KIOSK ID : '+KIOSK_ID, 0, 0, 'C')
         self.ln(SPACING)
-        self.cell(MARGIN_LEFT, HEADER_FONT_SIZE, 'MALANG', 0, 0, 'C')
+        self.cell(MARGIN_LEFT, HEADER_FONT_SIZE, 'JAKARTA', 0, 0, 'C')
         self.ln(SPACING*2)
 
     def footer(self):
