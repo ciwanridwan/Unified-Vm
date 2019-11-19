@@ -370,10 +370,13 @@ Base{
                 min_count = 10;
             break;
             case 'uang elektronik':
-                if (operator=='TCASH LINKAJA'){
+                if (['TCASH LINKAJA'].indexOf(operator) > -1){
                     wording_text = 'Masukkan 10 Digit User Token LinkAja (99XXXXXXXX)';
                     min_count = 10;
-                } else {
+                } else if (['OVO', 'DANA', 'BUKADANA', 'TIXID'].indexOf(operator) > -1) {
+                    wording_text = 'Masukkan Nomor Terdaftar Pada Aplikasi';
+                    min_count = 15;
+                }  else {
                     wording_text = 'Masukkan Nomor Kartu Prabayar Anda';
                     min_count = 15;
                 }
