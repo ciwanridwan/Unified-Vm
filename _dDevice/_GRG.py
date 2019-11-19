@@ -169,16 +169,14 @@ def start_receive_note():
                                                                           'COLLECTED': COLLECTED_CASH,
                                                                           'TARGET': _MEI.DIRECT_PRICE_AMOUNT})))
                     break
-
                 # if COLLECTED_CASH >= _MEI.DIRECT_PRICE_AMOUNT:
                 #     GRG_SIGNDLER.SIGNAL_GRG_RECEIVE.emit('RECEIVE_GRG|COMPLETE')
                 #     break
+                # Call Store Function Here
+                CASH_HISTORY.append(str(cash_in))
+                COLLECTED_CASH += int(cash_in)
+                GRG_SIGNDLER.SIGNAL_GRG_RECEIVE.emit('RECEIVE_GRG|'+str(COLLECTED_CASH))
                 if COLLECTED_CASH < _MEI.DIRECT_PRICE_AMOUNT:
-                    # Call Store Function Here
-                    CASH_HISTORY.append(str(cash_in))
-                    COLLECTED_CASH += int(cash_in)
-                    GRG_SIGNDLER.SIGNAL_GRG_RECEIVE.emit('RECEIVE_GRG|'+str(COLLECTED_CASH))
-                    sleep(.25)
                     param = GRG["STORE"] + '|'
                     _Command.send_request(param=param, output=None)
                     LOGGER.info(('Cash Status:', json.dumps({'ADD': cash_in,
