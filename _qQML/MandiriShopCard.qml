@@ -302,8 +302,8 @@ Base{
             anchors.fill: parent
             onClicked: {
                 _SLOT.user_action_log('Press "LANJUT"');
-                if (press!='0') return;
-                press = '1';
+//                if (press!='0') return;
+//                press = '1';
                 popup_loading.close();
                 isConfirm = true;
 //                var globalDetails = get_cart_details('cash');
