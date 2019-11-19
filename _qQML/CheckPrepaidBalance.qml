@@ -76,8 +76,11 @@ Base{
             return;
         }
         if (result == 'SUCCESS'){
-            var info = u.split('|')[2]
-            switch_frame('source/success.png', 'Update Balance Berhasil', 'Silakan Cek Kembali Saldo Kartu Anda', 'backToMain', true );
+            var info = u.split('|')[2];
+            var topup_amount = info.split('|')[1].toString();
+            cardNo = info.split('|')[0];
+            balance = info.split('|')[2];
+            switch_frame('source/success.png', 'Penambahan Saldo '+FUNC.insert_dot(topup_amount)+' Berhasil', 'Saldo Akhir Kartu Anda ' + FUNC.insert_dot(balance), 'backToMain', true );
             return;
         }
     }

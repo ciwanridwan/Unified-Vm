@@ -870,8 +870,8 @@ def update_balance_online(bank):
         try:            
             param = QPROX['UPDATE_BALANCE_ONLINE'] + '|' + _Global.TID + '|' + _Global.QR_MID + '|' + _Global.QR_TOKEN
             response, result = _Command.send_request(param=param, output=None)
-            if _Global.TEST_MODE is True and _Global.empty(result):
-                result = '6032111122223333|20000|198000'
+            # if _Global.TEST_MODE is True and _Global.empty(result):
+            #   result = '6032111122223333|20000|198000'
             if response == 0 and result is not None:
                 QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|SUCCESS|'+result)
             else:
