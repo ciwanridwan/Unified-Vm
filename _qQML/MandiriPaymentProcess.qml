@@ -142,12 +142,13 @@ Base{
     function transfer_balance_result(t){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('transfer_balance_result', now, t);
+        popup_loading.close();
         var result = t.split('|')[1]
         details.refund_status = 1
         if (['MISSING_REFF_NO','MISSING_AMOUNT','MISSING_CUSTOMER', 'ERROR'].indexOf(result) > -1){
             details.refund_status = 0
+//            if (printOutRefund) release_print();
         }
-        popup_loading.close();
         if (printOutRefund) release_print();
     }
 
@@ -175,6 +176,7 @@ Base{
                 switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Memproses Pengembalian Dana Anda', 'closeWindow', true );
                 var refund_amount = details.value.toString();
                 if (details.payment=='cash') refund_amount = receivedCash.toString();
+                printOutRefund = true;
                 do_refund_balance(refund_amount);
                 return;
             } else {
@@ -306,6 +308,7 @@ Base{
                     switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Memproses Pengembalian Dana Anda', 'closeWindow', true );
                     var refund_amount = details.value.toString();
                     if (details.payment=='cash') refund_amount = receivedCash.toString();
+                    printOutRefund = true;
                     do_refund_balance(refund_amount)
                     return
                 }
@@ -352,6 +355,7 @@ Base{
             if (customerPhone!=''){
                 switch_frame('source/smiley_down.png', 'Terjadi Kesalahan/Pembatalan', 'Memproses Pengembalian Dana Anda', 'closeWindow', true );
                 var refund_amount = receivedCash.toString();
+                printOutRefund = true;
                 do_refund_balance(refund_amount)
                 return;
             }
@@ -382,6 +386,7 @@ Base{
                 switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Memproses Pengembalian Dana Anda', 'closeWindow', true );
                 var refund_amount = details.value.toString();
                 if (details.payment=='cash') refund_amount = receivedCash.toString();
+                printOutRefund = true;
                 do_refund_balance(refund_amount);
                 return;
             } else {
