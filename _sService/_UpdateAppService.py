@@ -14,8 +14,7 @@ class UpdateAppSignalHandler(QObject):
 UPDATEAPP_SIGNDLER = UpdateAppSignalHandler()
 LOGGER = logging.getLogger()
 
-PORT = '' if _Global.LIVE_MODE is False else ':44195'
-HOST = 'git.mdd.co.id{}'.format(PORT)
+HOST = 'git.mdd.co.id:44195'
 REPO = 'https://{}:{}@{}/mdd_dev/mandiri-kiosk.git'.format(_Global.REPO_USERNAME, _Global.REPO_PASSWORD, HOST)
 
 
@@ -37,7 +36,7 @@ def set_credential():
 
 
 def pull(origin='master'):
-    command = 'git pull -f origin {}'.format(origin)
+    command = 'git pull -f "{}" {}'.format(REPO, origin)
     return _Helper.os_command(command=command, key='error', reverse=True)
 
 

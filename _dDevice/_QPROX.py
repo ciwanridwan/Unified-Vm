@@ -858,6 +858,10 @@ def start_update_balance_online(bank):
     _Helper.get_pool().apply_async(update_balance_online, (bank,))
 
 
+MANDIRI_GENERAL_ERROR = '51000'
+MANDIRI_NO_PENDING = '51003'
+
+
 def update_balance_online(bank):
     if bank is None or bank not in FW_BANK.values():
          QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|UNKNOWN_BANK')
@@ -866,13 +870,18 @@ def update_balance_online(bank):
         try:            
             param = QPROX['UPDATE_BALANCE_ONLINE'] + '|' + _Global.TID + '|' + _Global.QR_MID + '|' + _Global.QR_TOKEN
             response, result = _Command.send_request(param=param, output=None)
-            LOGGER.debug((result, response))
             if _Global.TEST_MODE is True and _Global.empty(result):
                 result = '6032111122223333|20000|198000'
             if response == 0 and result is not None:
                 QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|SUCCESS|'+result)
             else:
-                QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
+                if MANDIRI_GENERAL_ERROR in result:
+                    QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|MANDIRI_GENERAL_ERROR')
+                elif MANDIRI_NO_PENDING in result:
+                    QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|MANDIRI_NO_PENDING')
+                else:
+                    QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
+            LOGGER.debug((result, response))
         except Exception as e:
             LOGGER.warning(str(e))
 

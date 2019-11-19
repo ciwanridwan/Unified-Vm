@@ -26,7 +26,7 @@ PRINTER_BAUDRATE = _ConfigParser.get_set_value('PRINTER', 'baudrate', '15200')
 LIVE_MODE = True if _ConfigParser.get_set_value('TERMINAL', 'mode', 'live') == 'live' else False
 TEST_MODE = not LIVE_MODE
 RELOAD_SERVICE = True if _ConfigParser.get_set_value('TERMINAL', 'reload^service', '0') == '1' else False
-TID = _ConfigParser.get_value('TERMINAL', 'tid')
+TID = _ConfigParser.get_set_value('TERMINAL', 'tid', '[TERMINAL_ID]')
 
 VERSION = open(os.path.join(os.getcwd(), 'kiosk.ver'), 'r').read().strip()
 KIOSK_NAME = "---"
