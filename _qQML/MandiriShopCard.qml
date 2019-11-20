@@ -318,7 +318,7 @@ Base{
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 30
         button_text: 'LANJUT'
-        visible: !popup_loading.visible && !global_frame.visible
+        visible: !popup_loading.visible && !global_frame.visible && itemCount > 0 && productIdx > -1
         modeReverse: true
         MouseArea{
             anchors.fill: parent
@@ -391,6 +391,7 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
+                    if (parent.itemStock < 1) return;
                     var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
                     productIdx = 0;
                     console.log('select_product_1', productIdx, now);
@@ -404,6 +405,7 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
+                    if (parent.itemStock < 1) return;
                     var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
                     productIdx = 1;
                     console.log('select_product_2', productIdx, now);
@@ -417,6 +419,7 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
+                    if (parent.itemStock < 1) return;
                     var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
                     productIdx = 2;
                     console.log('select_product_3', productIdx, now);
