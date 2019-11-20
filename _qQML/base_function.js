@@ -265,4 +265,8 @@ function convert_obj(obj){
     return newObj;
 }
 
+function empty(s){
+    return (s.length == 0 || parseInt(s) == 0);
+}
+
 

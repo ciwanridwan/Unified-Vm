@@ -42,9 +42,9 @@ Base{
     property string proceedText: 'LANJUT'
     property bool frameWithButton: false
 
-    property var smallDenomMandiri: '25000'
-    property var midDenomMandiri: '50000'
-    property var highDenomMandiri: '100000'
+    property var smallDenomTopup: ''
+    property var midDenomTopup: ''
+    property var highDenomTopup: ''
 
     // By Default Only Can Show 3 Denoms, Adjusted with below properties
     property int miniDenomValue: 10000
@@ -201,17 +201,17 @@ Base{
         if (ready.mandiri=='AVAILABLE') {
             if (mandiriTopupWallet > 0) {
                 emoneyAvailable = true;
-                if (mandiriTopupWallet > parseInt(smallDenomMandiri)) {
+                if (mandiriTopupWallet > parseInt(smallDenomTopup)) {
                     small_denom.buttonActive = true;
                 } else {
                     small_denom.buttonActive = false;
                 }
-                if (mandiriTopupWallet > parseInt(midDenomMandiri)) {
+                if (mandiriTopupWallet > parseInt(midDenomTopup)) {
                     mid_denom.buttonActive = true;
                 } else {
                     mid_denom.buttonActive = false;
                 }
-                if (mandiriTopupWallet > parseInt(highDenomMandiri)) {
+                if (mandiriTopupWallet > parseInt(highDenomTopup)) {
                     high_denom.buttonActive = true;
                 } else {
                     high_denom.buttonActive = false;
@@ -219,23 +219,23 @@ Base{
             }
         }
         if (ready.mandiri=='TEST_MODE') {
-            smallDenomMandiri = '2';
-            midDenomMandiri = '4';
-            highDenomMandiri = '9';
+            smallDenomTopup = '2';
+            midDenomTopup = '4';
+            highDenomTopup = '9';
             adminFee = 1;
             if (mandiriTopupWallet > 0) {
                 emoneyAvailable = true;
-                if (mandiriTopupWallet > parseInt(smallDenomMandiri)) {
+                if (mandiriTopupWallet > parseInt(smallDenomTopup)) {
                     small_denom.buttonActive = true;
                 } else {
                     small_denom.buttonActive = false;
                 }
-                if (mandiriTopupWallet > parseInt(midDenomMandiri)) {
+                if (mandiriTopupWallet > parseInt(midDenomTopup)) {
                     mid_denom.buttonActive = true;
                 } else {
                     mid_denom.buttonActive = false;
                 }
-                if (mandiriTopupWallet > parseInt(highDenomMandiri)) {
+                if (mandiriTopupWallet > parseInt(highDenomTopup)) {
                     high_denom.buttonActive = true;
                 } else {
                     high_denom.buttonActive = false;
@@ -247,37 +247,48 @@ Base{
         }
         switch(cardData.bank_name){
         case 'MANDIRI':
-            highDenomMandiri = ready.emoney[0]
-            midDenomMandiri = ready.emoney[1]
-            smallDenomMandiri = ready.emoney[2]
+            highDenomTopup = ready.emoney[0]
+            midDenomTopup = ready.emoney[1]
+            smallDenomTopup = ready.emoney[2]
             break;
         case 'BNI':
-            highDenomMandiri = ready.tapcash[0]
-            midDenomMandiri = ready.tapcash[1]
-            smallDenomMandiri = ready.tapcash[2]
+            highDenomTopup = ready.tapcash[0]
+            midDenomTopup = ready.tapcash[1]
+            smallDenomTopup = ready.tapcash[2]
             break;
         case 'DKI':
-            highDenomMandiri = ready.jakcard[0]
-            midDenomMandiri = ready.jakcard[1]
-            smallDenomMandiri = ready.jakcard[2]
+            highDenomTopup = ready.jakcard[0]
+            midDenomTopup = ready.jakcard[1]
+            smallDenomTopup = ready.jakcard[2]
             break;
         case 'BCA':
-            highDenomMandiri = ready.flazz[0]
-            midDenomMandiri = ready.flazz[1]
-            smallDenomMandiri = ready.flazz[2]
+            highDenomTopup = ready.flazz[0]
+            midDenomTopup = ready.flazz[1]
+            smallDenomTopup = ready.flazz[2]
             break;
         case 'BRI':
-            highDenomMandiri = ready.brizzi[0]
-            midDenomMandiri = ready.brizzi[1]
-            smallDenomMandiri = ready.brizzi[2]
+            highDenomTopup = ready.brizzi[0]
+            midDenomTopup = ready.brizzi[1]
+            smallDenomTopup = ready.brizzi[2]
             break;
         }
 //        bniWallet1 = ready.bni_wallet_1;
 //        bniWallet2 = ready.bni_wallet_2;
-//        console.log('small_denom', small_denom.buttonActive);
-//        console.log('mid_denom', mid_denom.buttonActive);
-//        console.log('high_denom', high_denom.buttonActive);
+
+        if (!check_denom_topup()){
+            false_notif();
+            return;
+        }
         popup_loading.close();
+    }
+
+
+    function check_denom_topup(){
+        if (FUNC.empty(highDenomTopup) && FUNC.empty(midDenomTopup) && FUNC.empty(smallDenomTopup)){
+            return false;
+        }
+        return true;
+
     }
 
     function init_topup_denom(p){
@@ -817,18 +828,18 @@ Base{
         MandiriDenomButton{
             id: small_denom
             width: parent.width
-            button_text: 'Rp ' + FUNC.insert_dot(smallDenomMandiri)
+            button_text: 'Rp ' + FUNC.insert_dot(smallDenomTopup)
             buttonActive: false
             MouseArea{
                 anchors.fill: parent
                 enabled: parent.buttonActive
                 onClicked: {
-                    if (exceed_balance(smallDenomMandiri)) return
-                    _SLOT.user_action_log('Press smallDenom "'+smallDenomMandiri+'"');
+                    if (exceed_balance(smallDenomTopup)) return
+                    _SLOT.user_action_log('Press smallDenom "'+smallDenomTopup+'"');
                     if (press!='0') return;
                     press = '1';
                     var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
-                    selectedDenom = smallDenomMandiri;
+                    selectedDenom = smallDenomTopup;
                     var rows = [
                         {label: 'Tanggal', content: now},
                         {label: 'Produk', content: 'Isi Ulang Prabayar'},
@@ -838,25 +849,25 @@ Base{
                         {label: 'Total', content: FUNC.insert_dot(selectedDenom.toString())},
                     ]
                     generateConfirm(rows, true);
-//                    set_selected_payment(smallDenomMandiri, 'cash');
+//                    set_selected_payment(smallDenomTopup, 'cash');
                 }
             }
         }
         MandiriDenomButton{
             id: mid_denom
             width: parent.width
-            button_text: 'Rp ' + FUNC.insert_dot(midDenomMandiri)
+            button_text: 'Rp ' + FUNC.insert_dot(midDenomTopup)
             buttonActive: false
             MouseArea{
                 anchors.fill: parent
                 enabled: parent.buttonActive
                 onClicked: {
-                    if (exceed_balance(midDenomMandiri)) return
-                    _SLOT.user_action_log('Press midDenom "'+midDenomMandiri+'"');
+                    if (exceed_balance(midDenomTopup)) return
+                    _SLOT.user_action_log('Press midDenom "'+midDenomTopup+'"');
                     if (press!='0') return;
                     press = '1';
                     var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
-                    selectedDenom = midDenomMandiri;
+                    selectedDenom = midDenomTopup;
                     var rows = [
                         {label: 'Tanggal', content: now},
                         {label: 'Produk', content: 'Isi Ulang Prabayar'},
@@ -866,25 +877,25 @@ Base{
                         {label: 'Total', content: FUNC.insert_dot(selectedDenom.toString())},
                     ]
                     generateConfirm(rows, true);
-//                    set_selected_payment(midDenomMandiri, 'cash');
+//                    set_selected_payment(midDenomTopup, 'cash');
                 }
             }
         }
         MandiriDenomButton{
             id: high_denom
             width: parent.width
-            button_text: 'Rp ' + FUNC.insert_dot(highDenomMandiri)
+            button_text: 'Rp ' + FUNC.insert_dot(highDenomTopup)
             buttonActive: false
             MouseArea{
                 anchors.fill: parent
                 enabled: parent.buttonActive
                 onClicked: {
-                    if (exceed_balance(highDenomMandiri)) return
-                    _SLOT.user_action_log('Press highDenom "'+highDenomMandiri+'"');
+                    if (exceed_balance(highDenomTopup)) return
+                    _SLOT.user_action_log('Press highDenom "'+highDenomTopup+'"');
                     if (press!='0') return;
                     press = '1';
                     var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
-                    selectedDenom = highDenomMandiri;
+                    selectedDenom = highDenomTopup;
                     var rows = [
                         {label: 'Tanggal', content: now},
                         {label: 'Produk', content: 'Isi Ulang Prabayar'},
@@ -894,7 +905,7 @@ Base{
                         {label: 'Total', content: FUNC.insert_dot(selectedDenom.toString())},
                     ]
                     generateConfirm(rows, true);
-//                    set_selected_payment(highDenomMandiri, 'cash');
+//                    set_selected_payment(highDenomTopup, 'cash');
                 }
             }
         }
