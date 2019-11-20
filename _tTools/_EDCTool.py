@@ -154,7 +154,7 @@ GLOBAL_RECEIPT_FILE = None
 
 class PDF(FPDF):
     def header(self):
-        self.set_font('UniSpace', '', HEADER_FONT_SIZE)
+        self.set_font('Courier', '', HEADER_FONT_SIZE)
         # Logo
         # self.image(LOGO_PATH, 25, 5, 30)
         # self.ln(SPACING)
@@ -168,7 +168,7 @@ class PDF(FPDF):
         self.ln(SPACING*2)
 
     def footer(self):
-        self.set_font('UniSpace', '', DEFAULT_FONT_SIZE)
+        self.set_font('Courier', '', DEFAULT_FONT_SIZE)
         self.set_y(-25)
         self.cell(MARGIN_LEFT, DEFAULT_FONT_SIZE, '***PIN VERIFICATION SUCCESS***', 0, 0, 'C')
         self.ln(SPACING)
@@ -199,7 +199,7 @@ def generate_edc_receipt_old(trx):
         date_now = datetime.strftime(datetime.now(), '%Y%m%d%H%M%S')
         file_name = date_now+'_'+trx['card_no'].replace('*', 'X')+'_'+trx['app_code']+'_'+trx['inv_no']
 
-        pdf = PDF('P', 'mm', (80, 160))
+        pdf = PDF('P', 'mm', (80, 140))
         pdf.add_page()
 
         # Layouting
@@ -250,8 +250,8 @@ def generate_edc_receipt_old(trx):
 
         # Rendering
         pdf_file = get_path(file_name+'.pdf')
-        GLOBAL_RECEIPT_FILE = pdf_file
         pdf.output(pdf_file, 'F')
+        GLOBAL_RECEIPT_FILE = pdf_file
         LOGGER.debug(('pdf generate_edc_receipt : ', file_name))
     except Exception as e:
         LOGGER.warning(str(e))
@@ -281,7 +281,7 @@ def generate_edc_receipt(trx):
         date_now = datetime.strftime(datetime.now(), '%Y%m%d%H%M%S')
         file_name = date_now+'_'+trx['card_no'].replace('*', 'X')+'_'+trx['app_code']+'_'+trx['inv_no']
 
-        pdf = PDF('P', 'mm', (80, 120))
+        pdf = PDF('P', 'mm', (80, 140))
         # LOGGER.info(('Registering New Font', font_path('UnispaceBold.ttf')))
         # pdf.add_font('UniSpace', '', font_path('UnispaceBold.ttf'), uni=True)
         pdf.add_page()
@@ -327,8 +327,8 @@ def generate_edc_receipt(trx):
 
         # Rendering
         pdf_file = get_path(file_name+'.pdf')
-        GLOBAL_RECEIPT_FILE = pdf_file
         pdf.output(pdf_file, 'F')
+        GLOBAL_RECEIPT_FILE = pdf_file
         LOGGER.debug(('pdf generate_edc_receipt : ', file_name))
     except Exception as e:
         LOGGER.warning(str(e))
