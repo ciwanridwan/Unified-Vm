@@ -35,7 +35,6 @@ CD = {
 
 CD_PORT_LIST = _Global.CD_PORT_LIST
 
-
 class CDSignalHandler(QObject):
     __qualname__ = 'CDSignalHandler'
     SIGNAL_CD_MOVE = pyqtSignal(str)

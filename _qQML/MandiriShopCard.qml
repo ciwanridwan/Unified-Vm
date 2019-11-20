@@ -17,7 +17,7 @@ Base{
     property var totalFee: 0
     property var adminFee: 1500
     property bool isConfirm: false
-    property bool multipleEject: false
+    property bool multipleEject: true
     property int productIdx: -1
     property bool cashEnable: false
     property bool cardEnable: false
@@ -54,7 +54,7 @@ Base{
             cdReadiness = undefined;
             _SLOT.kiosk_get_cd_readiness();
             _SLOT.start_get_device_status();
-            _SLOT.start_get_multiple_eject_status();
+//            _SLOT.start_get_multiple_eject_status();
             if (cart != undefined) {
                 console.log('cart', JSON.stringify(cart));
                 adminFee = cart.admin_fee;
@@ -584,7 +584,7 @@ Base{
                 onClicked: {
                     itemCount = 1;
                     reset_button_color();
-                    parent.modeReverse = false;
+                    count1.modeReverse = false;
                 }
             }
         }
@@ -604,7 +604,7 @@ Base{
                 onClicked: {
                     itemCount = 2;
                     reset_button_color();
-                    parent.modeReverse = false;
+                    count2.modeReverse = false;
                 }
             }
         }
@@ -624,7 +624,7 @@ Base{
                 onClicked: {
                     itemCount = 3;
                     reset_button_color();
-                    parent.modeReverse = false;
+                    count3.modeReverse = false;
                 }
             }
         }
@@ -644,7 +644,7 @@ Base{
                 onClicked: {
                     itemCount = 4;
                     reset_button_color();
-                    parent.modeReverse = false;
+                    count4.modeReverse = false;
                 }
             }
         }
