@@ -14,7 +14,7 @@ Rectangle {
     Rectangle {
         anchors.fill: parent
         color: (modeReverse) ? "white" : "black"
-        opacity: .5
+        opacity: .2
     }
 
     Image{
