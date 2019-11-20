@@ -138,7 +138,7 @@ Base{
             if (productData[2].status==102 && parseInt(productData[2].stock) > 0) productCount2 = parseInt(productData[2].stock);
             if (productData[2].status==103 && parseInt(productData[2].stock) > 0) productCount3 = parseInt(productData[2].stock);
         }
-        productCountAll = productCount1 + productCount2 + productCount3
+        productCountAll = productCount1 + productCount2 + productCount3;
 //        console.log('product stock count : ', productCount1, productCount2, productCount3, productCountAll);
     }
 
