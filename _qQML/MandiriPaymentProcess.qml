@@ -702,6 +702,8 @@ Base{
     function define_first_notif(){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         adminFee = parseInt(details.admin_fee);
+        getDenom = parseInt(details.value) * parseInt(details.qty);
+        totalPrice = getDenom + adminFee;
         var epoch_string = details.epoch.toString();
         uniqueCode = epoch_string.substring(epoch_string.length-6);
         _SLOT.start_set_payment(details.payment);
@@ -709,7 +711,8 @@ Base{
             console.log('generating_qr', now, details.payment);
             var msg = 'Persiapkan Aplikasi ' + details.payment.toUpperCase() + ' Pada Gawai Anda!';
             open_preload_notif(msg, 'source/phone_qr.png');
-            totalPrice = parseInt(details.value) * parseInt(details.qty);
+//            getDenom = parseInt(details.value) * parseInt(details.qty);
+//            totalPrice = getDenom + adminFee;
             qrPayload = {
                 trx_id: details.shop_type + details.epoch.toString(),
                 amount: totalPrice.toString(),
@@ -717,18 +720,13 @@ Base{
             }
             _SLOT.start_get_qr_global(JSON.stringify(qrPayload));
             _SLOT.python_dump(JSON.stringify(qrPayload));
-//            if (details.payment=='linkaja') _SLOT.start_get_qr_linkaja(JSON.stringify(qrPayload));
-//            if (details.payment=='ovo') _SLOT.start_get_qr_ovo(JSON.stringify(qrPayload));
-//            if (details.payment=='gopay') _SLOT.start_get_qr_gopay(JSON.stringify(qrPayload));
-//            if (details.payment=='dana') _SLOT.start_get_qr_dana(JSON.stringify(qrPayload));
             popup_loading.open();
             return;
         }
         if (details.payment == 'cash') {
             open_preload_notif();
-            totalPrice = parseInt(details.value) * parseInt(details.qty);
-            getDenom = totalPrice - adminFee;
-//            notif_text = 'Masukan Uang Tunai Anda Pada Bill Acceptor Di Bawah';
+//            totalPrice = parseInt(details.value) * parseInt(details.qty);
+//            getDenom = totalPrice - adminFee;
             _SLOT.start_set_direct_price(totalPrice.toString());
 //            _SLOT.start_accept_mei();
             _SLOT.start_grg_receive_note();
@@ -737,11 +735,10 @@ Base{
         if (details.payment == 'debit') {
 //            open_preload_notif('Masukkan Kartu Debit dan PIN Anda Pada EDC', 'source/insert_card_new.png');
             switch_frame('source/insert_card_new.png', 'Masukkan Kartu Debit dan PIN Anda Pada EDC', '', 'closeWindow|90', false )
-            getDenom = parseInt(details.value);
-            totalPrice = getDenom + adminFee;
+//            getDenom = parseInt(details.value) * parseInt(details.qty);
+//            totalPrice = getDenom + adminFee;
             var structId = details.shop_type + details.epoch.toString();
             _SLOT.create_sale_edc_with_struct_id(totalPrice.toString(), structId);
-//            notif_text = 'Masukan Kartu Debit dan Kode PIN Pada EDC Di Bawah';
             return;
         }
 

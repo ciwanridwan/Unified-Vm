@@ -38,6 +38,8 @@ Base{
     property var bniWallet1: 0
     property var bniWallet2: 0
 
+    property int totalPay: 0
+
     property string cancelText: 'BATAL'
     property string proceedText: 'LANJUT'
     property bool frameWithButton: false
@@ -70,6 +72,7 @@ Base{
             my_timer.start();
             press = '0';
             cardBalance = 0;
+            totalPay = 0;
             denomTopup = undefined;
             provider = undefined;
             globalDetails = undefined;
@@ -143,11 +146,11 @@ Base{
 
     function process_selected_payment(method){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-        console.log('process_selected_payment', now, denom, method);
+        console.log('process_selected_payment', now, method);
         selectedPayment = method;
         var details = {
             payment: selectedPayment,
-            shop_type: (shopType==undefined) ? 'topup' : shopType,
+            shop_type: 'topup',
             time: new Date().toLocaleTimeString(Qt.locale("id_ID"), "hh:mm:ss"),
             date: new Date().toLocaleDateString(Qt.locale("id_ID"), Locale.ShortFormat),
             epoch: new Date().getTime()
@@ -162,24 +165,13 @@ Base{
             bank_name: cardData.bank_name,
         }
         details.qty = 1;
-        details.value = selectedDenom.toString();
+        details.value = totalPay.toString();
         details.provider = provider;
         if (details.provider==undefined) details.provider = 'e-Money Mandiri';
         details.admin_fee = adminFee;
         details.raw = globalCart;
         details.status = '1';
-        switch(selectedPayment){
-            case 'cash':
-                var get_denom = parseInt(details.value) - parseInt(adminFee);
-                details.denom = get_denom.toString();
-                details.final_balance = parseInt(details.denom) + parseInt(cardData.balance);
-                break;
-            default:
-                var total_pay = parseInt(details.value) + parseInt(adminFee);
-                details.denom = details.value;
-                details.final_balance = parseInt(details.denom) + parseInt(cardData.balance);
-                break;
-        }
+        details.denom = selectedDenom.toString();
         globalDetails = details;
         my_layer.push(mandiri_payment_process, {details: globalDetails, cardNo: cardData.card_no});
     }
@@ -306,34 +298,20 @@ Base{
         }
     }
 
-    function selected_denom(d){
+    function set_selected_denom(d){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-        console.log('selected_denom', d, now);
-        globalCart = JSON.parse(d);
-        globalCart.card_no = cardData.card_no;
-        globalCart.prev_balance = cardData.balance;
-        globalCart.bank_type = cardData.bank_type;
-        globalCart.bank_name = cardData.bank_name;
-        press = '0';
-        if (provider=='TapCash BNI' && parseInt(globalCart.value) > bniTopupWallet){
-            false_notif('Mohon Maaf|Silakan Pilih Nilai Denom Lainnya.');
-            return;
-        }
-        if (provider=='e-Money Mandiri' && parseInt(globalCart.value) > mandiriTopupWallet){
-            false_notif('Mohon Maaf|Silakan Pilih Nilai Denom Lainnya.');
-            return;
-        }
-        if (totalPaymentEnable > 2){
-            stepMode = 2;
-//            _nominal.labelContent = 'Rp. ' +  FUNC.insert_dot(globalCart.value.toString()) + ',-';
-        } else if (cashEnable && !debitEnable){
-            set_selected_payment('cash');
-        } else if (!cashEnable && debitEnable){
-            set_selected_payment('debit');
-        } else if (!cashEnable && !debitEnable){
-            false_notif('Mohon Maaf|Tidak Terdapat Metode Pembayaran Yang Aktif.');
-            return;
-        }
+        console.log('set_selected_denom', d, now);
+        selectedDenom = d;
+        totalPay = selectedDenom + adminFee;
+        var rows = [
+            {label: 'Tanggal', content: now},
+            {label: 'Produk', content: 'Isi Ulang Prabayar'},
+            {label: 'Provider', content: provider},
+            {label: 'Nilai Topup', content: FUNC.insert_dot(selectedDenom.toString())},
+            {label: 'Biaya Admin', content: FUNC.insert_dot(adminFee.toString())},
+            {label: 'Total', content: FUNC.insert_dot(totalPay.toString())},
+        ]
+        generateConfirm(rows, true);
     }
 
     function get_topup_amount(r){
@@ -526,15 +504,15 @@ Base{
         }
     }
 
-    function generateConfirm(rows, isConfirm, closeMode, timer){
+    function generateConfirm(rows, confirmation, closeMode, timer){
         if (rows==undefined || rows.length == 0) return;
-        if (isConfirm==undefined) isConfirm = false;
+        if (confirmation==undefined) confirmation = false;
         if (closeMode==undefined) closeMode = 'closeWindow';
         if (timer!==undefined){
             global_confirmation_frame.withTimer = true;
             global_confirmation_frame.timerDuration = parseInt(timer);
         }
-        global_confirmation_frame.modeConfirm = isConfirm;
+        global_confirmation_frame.modeConfirm = confirmation;
         global_confirmation_frame.closeMode = closeMode;
         for (var i=0;i<rows.length;i++){
             if (i==0){
@@ -838,18 +816,7 @@ Base{
                     _SLOT.user_action_log('Press smallDenom "'+smallDenomTopup+'"');
                     if (press!='0') return;
                     press = '1';
-                    var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
-                    selectedDenom = smallDenomTopup;
-                    var rows = [
-                        {label: 'Tanggal', content: now},
-                        {label: 'Produk', content: 'Isi Ulang Prabayar'},
-                        {label: 'Provider', content: provider},
-                        {label: 'Jumlah', content: '1'},
-                        {label: 'Biaya Admin', content: FUNC.insert_dot(adminFee.toString())},
-                        {label: 'Total', content: FUNC.insert_dot(selectedDenom.toString())},
-                    ]
-                    generateConfirm(rows, true);
-//                    set_selected_payment(smallDenomTopup, 'cash');
+                    set_selected_denom(smallDenomTopup);
                 }
             }
         }
@@ -866,18 +833,7 @@ Base{
                     _SLOT.user_action_log('Press midDenom "'+midDenomTopup+'"');
                     if (press!='0') return;
                     press = '1';
-                    var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
-                    selectedDenom = midDenomTopup;
-                    var rows = [
-                        {label: 'Tanggal', content: now},
-                        {label: 'Produk', content: 'Isi Ulang Prabayar'},
-                        {label: 'Provider', content: provider},
-                        {label: 'Jumlah', content: '1'},
-                        {label: 'Biaya Admin', content: FUNC.insert_dot(adminFee.toString())},
-                        {label: 'Total', content: FUNC.insert_dot(selectedDenom.toString())},
-                    ]
-                    generateConfirm(rows, true);
-//                    set_selected_payment(midDenomTopup, 'cash');
+                    set_selected_denom(midDenomTopup);
                 }
             }
         }
@@ -894,23 +850,11 @@ Base{
                     _SLOT.user_action_log('Press highDenom "'+highDenomTopup+'"');
                     if (press!='0') return;
                     press = '1';
-                    var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
-                    selectedDenom = highDenomTopup;
-                    var rows = [
-                        {label: 'Tanggal', content: now},
-                        {label: 'Produk', content: 'Isi Ulang Prabayar'},
-                        {label: 'Provider', content: provider},
-                        {label: 'Jumlah', content: '1'},
-                        {label: 'Biaya Admin', content: FUNC.insert_dot(adminFee.toString())},
-                        {label: 'Total', content: FUNC.insert_dot(selectedDenom.toString())},
-                    ]
-                    generateConfirm(rows, true);
-//                    set_selected_payment(highDenomTopup, 'cash');
+                    set_selected_denom(highDenomTopup);
                 }
             }
         }
     }
-
 
 
     //==============================================================
