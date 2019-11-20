@@ -23,7 +23,6 @@ Base{
     property var bniTopupWallet: 0
     property bool kalogButton: false
     property bool withSlider: true
-    property bool mandiriAvailable: false
     property bool first_run: true
     isPanelActive: false
 
@@ -32,7 +31,7 @@ Base{
             _SLOT.start_idle_mode();
             _SLOT.kiosk_get_product_stock();
             if (first_run) _SLOT.get_kiosk_status();
-//            _SLOT.start_get_topup_readiness();
+            _SLOT.start_get_topup_readiness();
             press = "0";
             resetMediaTimer();
             kalogButton = false;
@@ -113,10 +112,11 @@ Base{
         mandiriTopupWallet = parseInt(tr.balance_mandiri);
         bniTopupWallet = parseInt(tr.balance_bni);
         if (tr.mandiri == 'AVAILABLE' || tr.mandiri == 'TEST_MODE') {
-            mandiriTopupActive = true;
-            if (mandiriTopupWallet > 0) mandiriAvailable = true;
+            if (mandiriTopupWallet > 0) mandiriTopupActive = true;
         }
-        if (tr.bni == 'AVAILABLE') bniTopupActive = true;
+        if (tr.bni == 'AVAILABLE') {
+            if (bniTopupWallet > 0) bniTopupActive = true;
+        }
     }
 
     function get_product_stock(p){
@@ -265,7 +265,7 @@ Base{
                     if (press!="0") return;
                     press = "1";
                     _SLOT.set_tvc_player("STOP");
-                    my_layer.push(check_balance, {mandiriAvailable: mandiriAvailable});
+                    my_layer.push(check_balance, {mandiriAvailable: mandiriTopupActive});
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
                 }
@@ -286,7 +286,7 @@ Base{
                 onClicked: {
                     _SLOT.user_action_log('Press "TopUp Saldo"');
                     resetMediaTimer();
-                    if (!mandiriAvailable) {
+                    if (!mandiriTopupActive) {
                         kalog_notif();
                         return;
                     }

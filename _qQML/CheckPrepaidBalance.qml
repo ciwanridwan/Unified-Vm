@@ -15,6 +15,7 @@ Base{
     property var ableTopupCode: undefined
     property var imageSource: undefined
     property bool mandiriAvailable: false
+    property bool bniAvailable: false
     property var actionMode: 'check_balance'
 
     imgPanel: 'source/cek_saldo.png'
