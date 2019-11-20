@@ -383,7 +383,7 @@ Base{
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                _SLOT.user_action_log('Admin Page "Settlement"');
+                _SLOT.user_action_log('Admin Page "Settlement Manual Mandiri"');
                 if (press != '0') return;
                 press = '1';
                 console.log('mandiri_settlement_button is pressed..!');
@@ -416,33 +416,33 @@ Base{
 //        }
 //    }
 
-//    AdminPanelButton{
-//        id: activation_bni_button
-//        anchors.leftMargin: 15
-//        anchors.left: mandiri_settlement_button.right
-//        anchors.top: parent.top
-//        anchors.topMargin: 15
-//        z: 10
-//        button_text: 'activate\nbni'
-//        visible: !popup_loading.visible
-//        modeReverse: true
-//        MouseArea{
-//            anchors.fill: parent
-//            onClicked: {
-//                _SLOT.user_action_log('Admin Page "Activate BNI"');
-//                if (press != '0') return;
-//                press = '1';
-//                console.log('activation_bni_button is pressed..!');
-//                popup_loading.open();
-//                _SLOT.start_master_activation_bni();
-//            }
-//        }
-//    }
+    AdminPanelButton{
+        id: activation_bni_button
+        anchors.leftMargin: 15
+        anchors.left: mandiri_settlement_button.right
+        anchors.top: parent.top
+        anchors.topMargin: 15
+        z: 10
+        button_text: 'activate\nbni'
+        visible: !popup_loading.visible
+        modeReverse: true
+        MouseArea{
+            anchors.fill: parent
+            onClicked: {
+                _SLOT.user_action_log('Admin Page "Activate BNI"');
+                if (press != '0') return;
+                press = '1';
+                console.log('activation_bni_button is pressed..!');
+                popup_loading.open();
+                _SLOT.start_master_activation_bni();
+            }
+        }
+    }
 
     AdminPanelButton{
         id: test_update_app
         anchors.leftMargin: 15
-        anchors.left: mandiri_settlement_button.right
+        anchors.left: activation_bni_button.right
         anchors.top: parent.top
         anchors.topMargin: 15
         z: 10
