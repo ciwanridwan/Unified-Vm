@@ -372,7 +372,7 @@ def handle_tasks(tasks):
         if task['taskName'] == 'RESET_STOCK_PRODUCT':
             _DAO.clear_stock_product()
             update_task(task, 'RESET_STOCK_PRODUCT_SUCCESS')
-        if task['taskName'] == 'UPDATE_STOCK_PRODUCT':
+        if task['taskName'] in ['UPDATE_STOCK_PRODUCT', 'REMOTE_UPDATE_STOCK']:
             result = start_get_product_stock()
             update_task(task, result)
         if task['taskName'] == 'UPDATE_KIOSK':
@@ -425,8 +425,10 @@ def start_get_product_stock():
                     if download is True:
                         product['remarks'] = product['remarks'] + '|' + 'source/card/' + image
                 _DAO.insert_product_stock(product)
-            _KioskService.get_product_stock()
-            return 'UPDATE_STOCK_SUCCESS'
+            if _KioskService.get_product_stock() is True:
+                return 'UPDATE_STOCK_SUCCESS'
+            else:
+                return 'UPDATE_STOCK_PENDING'
         else:
             return 'UPDATE_STOCK_FAILED_UNKNOWN_ERROR'
     else:

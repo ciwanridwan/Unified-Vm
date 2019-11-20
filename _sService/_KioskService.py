@@ -840,9 +840,11 @@ def get_product_stock():
                     s['remarks'] = s['remarks'].split('|')[0]
         LOGGER.debug((str(stock)))
         K_SIGNDLER.SIGNAL_GET_PRODUCT_STOCK.emit(json.dumps(stock))
+        return True
     except Exception as e:
         LOGGER.warning((e))
         K_SIGNDLER.SIGNAL_GET_PRODUCT_STOCK.emit(json.dumps(stock))
+        return False
 
 
 def start_store_transaction_global(param):
