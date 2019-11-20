@@ -585,7 +585,7 @@ Base{
         }
         if (edcResult=='SUCCESS') {
             receivedCash = totalPrice;
-            details.payment_details = JSON.parse(r.split('|')[2]);
+            details.payment_details = JSON.parse(r.replace('SALE|SUCCESS|', ''));
             details.payment_received = totalPrice;
             payment_complete();
             popup_loading.open();
