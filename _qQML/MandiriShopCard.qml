@@ -17,7 +17,7 @@ Base{
     property var totalFee: 0
     property var adminFee: 1500
     property bool isConfirm: false
-    property bool multipleEject: true
+    property bool multipleEject: false
     property int productIdx: -1
     property bool cashEnable: false
     property bool cardEnable: false
@@ -54,7 +54,7 @@ Base{
             cdReadiness = undefined;
             _SLOT.kiosk_get_cd_readiness();
             _SLOT.start_get_device_status();
-//            _SLOT.start_get_multiple_eject_status();
+            _SLOT.start_get_multiple_eject_status();
             if (cart != undefined) {
                 console.log('cart', JSON.stringify(cart));
                 adminFee = cart.admin_fee;
@@ -165,6 +165,7 @@ Base{
             multipleEject = true;
 //            small_notif.text = "*Silakan Tentukan Jumlah Kartu Yang Akan Dibeli.";
         } else {
+            itemCount = 1;
 //            small_notif.text = "*Saat Ini Anda Hanya Dapat Membeli 1 (satu) Kartu Tiap Sesi.";
         }
 //        small_notif.visible = true;
@@ -380,7 +381,7 @@ Base{
         id: rec_card_images
 //        width: (availItems.length * 420)
         height: 450
-        anchors.verticalCenterOffset: -50
+        anchors.verticalCenterOffset: (multipleEject) ? 0 : -50
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
         spacing: 20
@@ -567,7 +568,7 @@ Base{
         anchors.left: parent.left
         anchors.leftMargin: 250
         spacing: 20
-        visible: !global_frame.visible && !popup_loading.visible && mainVisible
+        visible: label_choose_qty.visible
 
         BoxTitle{
             id: count1
@@ -664,7 +665,7 @@ Base{
         horizontalAlignment: Text.AlignLeft
         font.family:"Ubuntu"
         font.pixelSize: 45
-        visible: !global_frame.visible && !popup_loading.visible && mainVisible
+        visible: label_choose_qty.visible
     }
 
 //    Text {
@@ -697,7 +698,7 @@ Base{
         title_text: itemCount
         fontBold: true
         fontSize: 40
-        visible: !global_frame.visible && !popup_loading.visible && mainVisible
+        visible: label_choose_qty.visible
 
     }
 
@@ -712,7 +713,7 @@ Base{
         anchors.topMargin: 775
         button_text: 'RESET'
         modeReverse: true
-        visible: !global_frame.visible && !popup_loading.visible && mainVisible
+        visible: label_choose_qty.visible
         MouseArea{
             anchors.fill: parent
             onClicked: {

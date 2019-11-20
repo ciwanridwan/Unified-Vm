@@ -2,13 +2,14 @@ import QtQuick 2.4
 import QtQuick.Controls 1.2
 import QtGraphicalEffects 1.0
 import "screen.js" as SCREEN
+import "config.js" as CONF
 
 Base{
     id: base_page
     width: parseInt(SCREEN.size.width)
     height: parseInt(SCREEN.size.height)
     property var press: "0"
-    property int tvc_timeout: 60
+    property int tvc_timeout: parseInt(CONF.tvc_waiting_time)
     property bool isMedia: true
     property bool kioskStatus: false
     property var productData: undefined
@@ -158,6 +159,8 @@ Base{
         topup_saldo_button.visible = (kiosk.feature.top_up_balance == 1)
         buy_card_button.visible = (kiosk.feature.buy_card == 1)
         ppob_button.visible = (kiosk.feature.ppob == 1)
+        search_trx_button.visible = (kiosk.feature.search_trx == 1)
+        wa_voucher_button.visible = (kiosk.feature.whatsapp_voucher == 1)
 
         if (kiosk.status == "ONLINE" || kiosk.status == "AVAILABLE") {
             kioskStatus = true;
@@ -399,10 +402,10 @@ Base{
             onTriggered:{
                 tvc_loading.counter -= 1
                 if (tvc_loading.counter%2==0){
-                    search_trx_buttom.color = 'silver';
+                    search_trx_button.color = 'silver';
                     wa_voucher_button.color = '#4FCE5D';
                 } else {
-                    search_trx_buttom.color = 'white';
+                    search_trx_button.color = 'white';
                     wa_voucher_button.color = 'white';
                 }
 //                _SLOT.post_tvc_log('Integrasi Transportasi.mp4');
@@ -457,7 +460,7 @@ Base{
     }
 
     Rectangle{
-        id: search_trx_buttom
+        id: search_trx_button
         color: 'white'
         radius: 20
         anchors.right: parent.right
@@ -466,6 +469,7 @@ Base{
         anchors.topMargin: 200
         width: 100
         height: 300
+        visible: false
         Text{
             text: 'CEK\nTRANSAKSI'
             font.pixelSize: 30
@@ -516,6 +520,7 @@ Base{
         anchors.rightMargin: -15
         width: 100
         height: 300
+        visible: false
         Text{
             text: "WHATSAPP\nVOUCHER"
             font.pixelSize: 28

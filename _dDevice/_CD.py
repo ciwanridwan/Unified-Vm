@@ -89,18 +89,20 @@ def start_move_card_disp():
     _Helper.get_pool().apply_async(move_card_disp, (attempt,))
 
 
-MULTIPLE_EJECT = True if _ConfigParser.get_set_value('CD', 'multiple^eject', '0') == '1' else False
-
-
 def start_get_multiple_eject_status():
     _Helper.get_pool().apply_async(get_multiple_eject_status, )
 
 
+MULTIPLE_EJECT  = True if (_ConfigParser.get_set_value('CD', 'multiple^eject', '0') == '1') else False
+
+
 def get_multiple_eject_status():
-    eject_status = 'AVAILABLE' if MULTIPLE_EJECT is True else 'N/A'
-    print('pyt: MULTIPLE_EJECT_STATUS -> ' + eject_status)
-    LOGGER.debug(('get_multiple_eject_status', eject_status))
-    CD_SIGNDLER.SIGNAL_MULTIPLE_EJECT.emit(eject_status)
+    global MULTIPLE_EJECT
+    check_multiple_eject = _ConfigParser.get_set_value('CD', 'multiple^eject', '0')
+    MULTIPLE_EJECT = 'AVAILABLE' if check_multiple_eject == '1' else 'N/A'
+    # print('pyt: MULTIPLE_EJECT_STATUS -> ' + eject_status)
+    LOGGER.debug(('get_multiple_eject_status', MULTIPLE_EJECT))
+    CD_SIGNDLER.SIGNAL_MULTIPLE_EJECT.emit(MULTIPLE_EJECT)
 
 
 def start_multiple_eject(attempt, multiply):

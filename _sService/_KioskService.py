@@ -95,10 +95,9 @@ def update_kiosk_status(r):
             define_device_port_setting(_Global.PAYMENT_SETTING)
             _Global.store_to_temp_data('payment-setting', json.dumps(r['data']['payment']))
             _Global.THEME_SETTING = r['data']['theme']
-            _Global.store_to_temp_data('theme-setting', json.dumps(r['data']['theme']))
-            _Global.FEATURE_SETTING = r['data']['feature']
-            _Global.store_to_temp_data('feature-setting', json.dumps(r['data']['feature']))
             define_theme(_Global.THEME_SETTING)
+            _Global.FEATURE_SETTING = r['data']['feature']
+            define_feature(_Global.FEATURE_SETTING)
             _Global.ADS_SETTING = r['data']['ads']
             _Global.store_to_temp_data('ads-setting', json.dumps(r['data']['ads']))
             # define_ads(_Global.ADS_SETTING)
@@ -112,6 +111,17 @@ def update_kiosk_status(r):
     # finally:
     #     # kiosk_status()
     #     pprint(_Global.KIOSK_SETTING)
+
+
+def define_feature(d):
+    _Global.store_to_temp_data('feature-setting', json.dumps(d))
+    if 'multiple_card_shop' in d.keys():
+        _ConfigParser.set_value('CD', 'multiple^eject', str(d['multiple_card_shop']))
+    if 'search_trx' in d.keys():
+        _Global.log_to_temp_config('search^trx', str(d['search_trx']))
+    if 'whatsapp_voucher' in d.keys():
+        _Global.log_to_temp_config('wa^voucher', str(d['whatsapp_voucher']))
+
 
 def define_device_port_setting(data):
     '''
@@ -135,6 +145,7 @@ def define_device_port_setting(data):
 
 
 def define_theme(d):
+    _Global.store_to_temp_data('theme-setting', json.dumps(d))
     _Global.THEME_NAME = d['name']
     _Global.log_to_temp_config('theme^name', d['name'])
     config_js = sys.path[0] + '/_qQml/config.js'
@@ -174,11 +185,14 @@ def define_theme(d):
         content_js += 'var text_color = "' + _Global.COLOR_TEXT + '";' + os.linesep
         content_js += 'var frame_color = "' + d['frame_color'] + '";' + os.linesep
         content_js += 'var background_color = "' +  _Global.COLOR_BACK + '";' + os.linesep
-    # Receipt Custom Text
+    # Receipt tvc_waiting_time
+    if not _Global.empty(d['tvc_waiting_time']):
+        _Global.log_to_temp_config('tvc^waiting^time', str(d['tvc_waiting_time']))
+        content_js += 'var tvc_waiting_time = ' +  str(d['tvc_waiting_time']) + ';' + os.linesep
+    # Receipt Logo
     if not _Global.empty(d['receipt_custom_text']):
         _Global.CUSTOM_RECEIPT_TEXT = d['receipt_custom_text'].replace(os.linesep, '|')
         _Global.log_to_temp_config('receipt^custom^text', d['receipt_custom_text'])
-    # Receipt Logo
     store, receipt_logo = _NetworkAccess.item_download(d['receipt_logo'], os.getcwd() + '/_rReceipts')
     if store is True:
         _Global.RECEIPT_LOGO = receipt_logo
