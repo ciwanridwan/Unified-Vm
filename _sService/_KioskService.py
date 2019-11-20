@@ -835,6 +835,8 @@ def get_product_stock():
                 s['image'] = ''
                 if '|' in s['remarks']:
                     s['image'] = s['remarks'].split('|')[1]
+                    if 'source/card/' not in s['remarks'].split('|')[1]:
+                        s['image'] = 'source/card/' + s['remarks'].split('|')[1]
                     s['remarks'] = s['remarks'].split('|')[0]
         LOGGER.debug((str(stock)))
         K_SIGNDLER.SIGNAL_GET_PRODUCT_STOCK.emit(json.dumps(stock))
