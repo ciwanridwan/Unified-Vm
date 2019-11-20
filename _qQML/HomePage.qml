@@ -29,9 +29,8 @@ Base{
     Stack.onStatusChanged:{
         if(Stack.status == Stack.Activating){
             _SLOT.start_idle_mode();
-            _SLOT.kiosk_get_product_stock();
             if (first_run) _SLOT.get_kiosk_status();
-            _SLOT.start_get_topup_readiness();
+            _SLOT.kiosk_get_product_stock();
             press = "0";
             resetMediaTimer();
             kalogButton = false;
@@ -172,7 +171,7 @@ Base{
             box_connection.color = 'red';
             kioskStatus = false;
         }
-//        _SLOT.start_get_topup_readiness();
+        _SLOT.start_get_topup_readiness();
     }
 
     function not_authorized(){
