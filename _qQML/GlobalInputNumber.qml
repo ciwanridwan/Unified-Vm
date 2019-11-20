@@ -176,7 +176,7 @@ Base{
             return;
         }
         console.log('get_check_voucher', now, res);
-        var i = JSON.parse(res)
+        var i = JSON.parse(v.replace('CHECK_VOUCHER|', ''));
         vCollectionData = i;
         vCollectionMode = i.mode;
         if (i.qty==0){

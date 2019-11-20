@@ -146,7 +146,7 @@ def justifying(left, right):
 
 
 MARGIN_LEFT = 0
-HEADER_FONT_SIZE = 6
+HEADER_FONT_SIZE = 8
 SPACING = 3
 DEFAULT_FONT_SIZE = 6
 GLOBAL_RECEIPT_FILE = None
@@ -156,8 +156,8 @@ class PDF(FPDF):
     def header(self):
         self.set_font('Courier', '', HEADER_FONT_SIZE)
         # Logo
-        # self.image(LOGO_PATH, 25, 5, 30)
-        # self.ln(SPACING)
+        self.image(LOGO_PATH, 25, 5, 30)
+        self.ln(SPACING)
         self.cell(MARGIN_LEFT, HEADER_FONT_SIZE, 'ACQUIRED BY BNI', 0, 0, 'C')
         self.ln(SPACING)
         self.cell(MARGIN_LEFT, HEADER_FONT_SIZE, _Global.KIOSK_NAME, 0, 0, 'C')
