@@ -30,8 +30,6 @@ Base{
 
     property variant availItems: []
 
-    property string cancelText: 'BATAL'
-    property string proceedText: 'LANJUT'
     property bool frameWithButton: false
     property var modeButtonPopup: 'check_balance';
 
@@ -43,12 +41,16 @@ Base{
     idx_bg: 0
     imgPanel: 'source/beli_kartu.png'
     textPanel: 'Pembelian Kartu Prabayar'
+
     signal get_payment_method_signal(string str)
+    signal set_confirmation(string str)
+
 
     Stack.onStatusChanged:{
         if(Stack.status==Stack.Activating){
             console.log('shop_type', shop_type);
-            preload_shop_card.open();
+//            preload_shop_card.open();
+            mainVisible = true;
             cdReadiness = undefined;
             _SLOT.kiosk_get_cd_readiness();
             _SLOT.start_get_device_status();
@@ -62,10 +64,10 @@ Base{
 //                small_notif.text = '*Biaya Admin sebesar Rp. 1.500,- Dikenakan Untuk Tiap Transaksi Isi Ulang.';
 //                small_notif.visible = true;
             }
-//            if (productData != undefined) {
-//                console.log('productData', JSON.stringify(productData));
-//                parseDataProduct(productData);
-//            }
+            if (productData != undefined) {
+                console.log('productData', JSON.stringify(productData));
+                parseDataProduct(productData);
+            }
             abc.counter = timer_value;
             my_timer.start();
             press = '0';
@@ -80,6 +82,7 @@ Base{
     }
 
     Component.onCompleted:{
+        set_confirmation.connect(do_set_confirm);
         get_payment_method_signal.connect(process_selected_payment);
         base.result_get_device.connect(get_device_status);
         base.result_balance_qprox.connect(get_balance);
@@ -88,6 +91,7 @@ Base{
     }
 
     Component.onDestruction:{
+        set_confirmation.disconnect(do_set_confirm);
         get_payment_method_signal.disconnect(process_selected_payment);
         base.result_get_device.disconnect(get_device_status);
         base.result_balance_qprox.disconnect(get_balance);
@@ -96,16 +100,25 @@ Base{
     }
 
 
+    function do_set_confirm(_mode){
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('Confirmation Flagged By', _mode, now)
+        global_confirmation_frame.no_button();
+        popup_loading.close();
+        press = '0';
+        isConfirm = true;
+    }
+
     function get_cd_readiness(c){
-        console.log('get_cd_readiness', c);
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('get_cd_readiness', c, now);
         cdReadiness = JSON.parse(c);
         if (productData != undefined) {
             console.log('productData', JSON.stringify(productData));
 //            parseDataProduct(productData);
-            defineProductIndex(productData);
+//            defineProductIndex(productData);
         }
     }
-
 
     function get_device_status(s){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
@@ -139,13 +152,15 @@ Base{
     }
 
     function process_selected_payment(p){
-        console.log('process_selected_payment', p);
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('process_selected_payment', p, now);
         var get_details = get_cart_details(p);
         my_layer.push(mandiri_payment_process, {details: get_details});
     }
 
     function get_status_multiple(m){
-        console.log('get_status_multiple', m);
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('get_status_multiple', m, now);
         if (m == 'AVAILABLE'){
             multipleEject = true;
 //            small_notif.text = "*Silakan Tentukan Jumlah Kartu Yang Akan Dibeli.";
@@ -156,7 +171,8 @@ Base{
     }
 
     function get_balance(text){
-        console.log('get_balance', text);
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('get_balance', text, now);
     }
 
     function get_wording(i){
@@ -178,38 +194,46 @@ Base{
     }
 
     function parseDataProduct(products){
-        //Undefined the gridview model
-        gridview.model = undefined;
         var items = products;
-        if(!groceryItem_listModel.count){
-            for(var x in items) {
-                var item_name = items[x].name;
-                var item_price = items[x].sell_price;
-                var item_stock = items[x].stock;
-                var item_desc = items[x].remarks;
-                var item_status = items[x].status;
-                var item_image = items[x].image;
-                var item_id = items[x].pid;
-                if (cdReadiness != undefined){
-                    if (item_status==101 && cdReadiness.port1 == 'N/A') item_stock = '0';
-                    if (item_status==102 && cdReadiness.port2 == 'N/A') item_stock = '0';
-                    if (item_status==103 && cdReadiness.port3 == 'N/A') item_stock = '0';
-                }
-                if (item_image=='') item_image = 'source/bni_tapcash_card.png';
-                groceryItem_listModel.append({
-                                                 _item_index: x,
-                                                 _item_name: item_name,
-                                                 _item_price: item_price.toString(),
-                                                 _item_stock: parseInt(item_stock),
-                                                 _item_desc: item_desc,
-                                                 _item_status: item_status,
-                                                 _item_image: item_image,
-                                                 _item_id: item_id,
-                                             });
+        for(var x in items) {
+            var item_name = items[x].name;
+            var item_price = items[x].sell_price;
+            var item_stock = items[x].stock;
+            var item_desc = items[x].remarks;
+            var item_status = items[x].status;
+            var item_image = items[x].image;
+            var item_id = items[x].pid;
+            if (cdReadiness != undefined){
+                if (item_status==101 && cdReadiness.port1 == 'N/A') item_stock = '0';
+                if (item_status==102 && cdReadiness.port2 == 'N/A') item_stock = '0';
+                if (item_status==103 && cdReadiness.port3 == 'N/A') item_stock = '0';
             }
-            gridview.model = groceryItem_listModel;
-            popup_loading.close();
+            if (item_image=='') item_image = 'source/card/bni_tapcash_card.png';
+            if (item_status==101){
+                card_show_1.visible = true;
+                card_show_1.itemName = item_name;
+                card_show_1.itemImage = item_image;
+                card_show_1.itemPrice = item_price.toString();
+                card_show_1.itemStock = parseInt(item_stock);
+            }
+            if (item_status==102){
+                card_show_2.visible = true;
+                card_show_2.itemName = item_name;
+                card_show_2.itemImage = item_image;
+                card_show_2.itemPrice = item_price.toString();
+                card_show_2.itemStock = parseInt(item_stock);
+            }
+            if (item_status==103){
+                card_show_3.visible = true;
+                card_show_3.itemName = item_name;
+                card_show_3.itemImage = item_image;
+                card_show_3.itemPrice = item_price.toString();
+                card_show_3.itemStock = parseInt(item_stock);
+            }
+            if (item_stock!='0') availItems.push(item_id);
         }
+//        console.log('avaialable_items', availItems.length);
+        popup_loading.close();
     }
 
     function defineProductIndex(products){
@@ -239,7 +263,6 @@ Base{
         defaultItemPrice = availItems[productIdx].price;
         console.log('defined_index', JSON.stringify(max), productIdx, defaultItemPrice);
     }
-
 
     Rectangle{
         id: rec_timer
@@ -271,7 +294,6 @@ Base{
         }
     }
 
-
     CircleButton{
         id:back_button
         anchors.left: parent.left
@@ -302,20 +324,108 @@ Base{
             anchors.fill: parent
             onClicked: {
                 _SLOT.user_action_log('Press "LANJUT"');
-//                if (press!='0') return;
-//                press = '1';
                 popup_loading.close();
-                isConfirm = true;
-//                var globalDetails = get_cart_details('cash');
-//                my_layer.push(mandiri_payment_process, {details: globalDetails});
+                var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
+                var unit_price = parseInt(productData[productIdx].sell_price);
+                var total_price = itemCount * unit_price;
+                var rows = [
+                    {label: 'Tanggal', content: now},
+                    {label: 'Produk', content: productData[productIdx].name},
+                    {label: 'Deskripsi', content: productData[productIdx].remarks},
+                    {label: 'Jumlah', content: itemCount.toString()},
+                    {label: 'Harga', content: FUNC.insert_dot(unit_price.toString())},
+                    {label: 'Total', content: FUNC.insert_dot(total_price.toString())},
+                ]
+                generateConfirm(rows, true);
             }
         }
     }
 
-
+    function define_card(idx){
+        defaultItemPrice = parseInt(productData[idx].sell_price);
+        switch(idx){
+        case 0:
+            card_show_1.set_select();
+            card_show_2.release_select();
+            card_show_3.release_select();
+            break;
+        case 1:
+            card_show_1.release_select();
+            card_show_2.set_select();
+            card_show_3.release_select();
+            break;
+        case 2:
+            card_show_1.release_select();
+            card_show_2.release_select();
+            card_show_3.set_select();
+            break;
+        }
+    }
 
     //==============================================================
     //PUT MAIN COMPONENT HERE
+
+    MainTitle{
+        anchors.top: parent.top
+        anchors.topMargin: 180
+        anchors.horizontalCenter: parent.horizontalCenter
+        show_text: 'Pilih Jenis Dan Jumlah Kartu Tersedia'
+        size_: 50
+        color_: "white"
+        visible: !global_frame.visible && !popup_loading.visible && mainVisible
+
+    }
+
+    Row{
+        id: rec_card_images
+//        width: (availItems.length * 420)
+        height: 450
+        anchors.verticalCenterOffset: -50
+        anchors.verticalCenter: parent.verticalCenter
+        anchors.horizontalCenter: parent.horizontalCenter
+        spacing: 20
+        visible: !global_frame.visible && !popup_loading.visible && mainVisible
+        PrepaidProductItemLite{
+            id: card_show_1
+//            visible: true
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
+                    productIdx = 0;
+                    console.log('select_product_1', productIdx, now);
+                    define_card(productIdx);
+                }
+            }
+        }
+        PrepaidProductItemLite{
+            id: card_show_2
+//            visible: true
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
+                    productIdx = 1;
+                    console.log('select_product_2', productIdx, now);
+                    define_card(productIdx);
+                }
+            }
+        }
+        PrepaidProductItemLite{
+            id: card_show_3
+//            visible: true
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
+                    productIdx = 2;
+                    console.log('select_product_3', productIdx, now);
+                    define_card(productIdx);
+                }
+            }
+        }
+
+   }
 
     function open_preload_notif(){
         press = '0';
@@ -366,8 +476,10 @@ Base{
             date: new Date().toLocaleDateString(Qt.locale("id_ID"), Locale.ShortFormat),
             epoch: new Date().getTime()
         }
+        var unit_price = parseInt(productData[productIdx].sell_price);
+        var total_price = itemCount * unit_price;
         details.qty = itemCount;
-        details.value = productData[productIdx].sell_price.toString();
+        details.value = total_price.toString();
         details.provider = productData[productIdx].name;
         details.admin_fee = '0';
         details.status = productData[productIdx].status;
@@ -382,198 +494,57 @@ Base{
         count4.modeReverse = true;
     }
 
-
-/*
-
-    Text {
-        id: main_title
-        height: 100
-        visible: !standard_notif_view.visible && !popup_loading.visible
-        anchors.top: parent.top
-        anchors.topMargin: 150
-        anchors.horizontalCenterOffset: 150
-        anchors.horizontalCenter: parent.horizontalCenter
-        verticalAlignment: Text.AlignVCenter
-        horizontalAlignment: Text.AlignHCenter
-        color: "white"
-        wrapMode: Text.WordWrap
-        text: "Pilih Kartu Prabayar";
-        font.bold: false
-        font.family: "Ubuntu"
-        font.pixelSize: 45
-    }
-
-    Item{
-        id: prod_item_view
-        visible: (shop_type=='shop') ? true : false
-        width: 1100
-        height: 450
-        anchors.verticalCenterOffset: -100
-        anchors.verticalCenter: parent.verticalCenter
-        anchors.horizontalCenterOffset: 150
-        anchors.horizontalCenter: parent.horizontalCenter
-        focus: true
-
-        ListView{
-            id: gridview
-            spacing: 0
-            orientation: ListView.Horizontal
-            flickableDirection: Flickable.HorizontalFlick
-            focus: true
-            clip: true
-            anchors.bottomMargin: 0
-            anchors.topMargin: 0
-            flickDeceleration: 750
-            maximumFlickVelocity: 1500
-            anchors.centerIn: parent
-            layoutDirection: Qt.LeftToRight
-            boundsBehavior: Flickable.StopAtBounds
-            snapMode: GridView.SnapToRow
-            anchors.fill: parent
-            anchors.margins: 20
-            delegate: delegate_item_view
-            add: Transition {
-                    NumberAnimation { property: "opacity"; from: 0; to: 1.0; duration: 500 }
-                    NumberAnimation { property: "scale"; from: 0; to: 1.0; duration: 500 }
-                }
-            //model: groceryItem_listModel -> Defined on function below
+    function generateConfirm(rows, isConfirm, closeMode, timer){
+        if (rows==undefined || rows.length == 0) return;
+        if (isConfirm==undefined) isConfirm = false;
+        if (closeMode==undefined) closeMode = 'closeWindow';
+        if (timer!==undefined){
+            global_confirmation_frame.withTimer = true;
+            global_confirmation_frame.timerDuration = parseInt(timer);
         }
-
-        ListModel {
-            id: groceryItem_listModel
-            dynamicRoles: true
-        }
-
-        Component{
-            id: delegate_item_view
-            PrepaidProductItemLite{
-                id: item_product_view
-                itemName: _item_name
-                itemImage: _item_image
-                itemPrice: _item_price
-                itemStock: _item_stock
-                itemDesc: _item_desc
-                MouseArea{
-                    anchors.fill: parent
-                    enabled: (_item_stock > 0) ? true : false
-                    onClicked: {
-                        productIdx = _item_index;
-                        _prod_name.labelContent = _item_name;
-                        _prod_desc.labelContent = _item_desc;
-                        _prod_price.labelContent = 'Rp. ' + FUNC.insert_dot(_item_price) + ',-';
-                    }
-                }
+        global_confirmation_frame.modeConfirm = isConfirm;
+        global_confirmation_frame.closeMode = closeMode;
+        for (var i=0;i<rows.length;i++){
+            if (i==0){
+                global_confirmation_frame.label1 = rows[i].label;
+                global_confirmation_frame.data1 = rows[i].content;
+            }
+            if (i==1){
+                global_confirmation_frame.label2 = rows[i].label;
+                global_confirmation_frame.data2 = rows[i].content;
+            }
+            if (i==2){
+                global_confirmation_frame.label3 = rows[i].label;
+                global_confirmation_frame.data3 = rows[i].content;
+            }
+            if (i==3){
+                global_confirmation_frame.label4 = rows[i].label;
+                global_confirmation_frame.data4 = rows[i].content;
+            }
+            if (i==4){
+                global_confirmation_frame.label5 = rows[i].label;
+                global_confirmation_frame.data5 = rows[i].content;
+            }
+            if (i==5){
+                global_confirmation_frame.label6 = rows[i].label;
+                global_confirmation_frame.data6 = rows[i].content;
+            }
+            if (i==6){
+                global_confirmation_frame.label7 = rows[i].label;
+                global_confirmation_frame.data7 = rows[i].content;
             }
         }
+        press = '0';
+        global_confirmation_frame.open();
     }
 
-    Rectangle{
-        id: base_selected_product
-        width: 920
-        height: 180
-        visible: (productIdx>-1) ? true : false;
-        color: 'white'
-        anchors.horizontalCenterOffset: 150
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 225
-        opacity: .8
-        radius: 30
-        Column{
-            id: row_texts;
-            anchors.topMargin: 10
-            anchors.fill: parent
-            spacing: 25;
-            TextDetailRow{
-                id: _prod_name
-                labelName: qsTr('Nama Produk')
-                contentSize: 25
-                labelSize: 25
-                theme: '#1D294D'
-            }
-            TextDetailRow{
-                id: _prod_desc
-                labelName: qsTr('Deskripsi')
-                contentSize: 25
-                labelSize: 25
-                theme: '#1D294D'
-            }
-            TextDetailRow{
-                id: _prod_price
-                labelName: qsTr('Harga Produk')
-                contentSize: 25
-                labelSize: 25
-                theme: '#1D294D'
-            }
-        }
-    }
-
-
-    NextButton{
-        id: confirm_button
-        anchors.horizontalCenterOffset: 150
-        visible: !standard_notif_view.visible && !popup_loading.visible
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 100
-        anchors.horizontalCenter: parent.horizontalCenter
-        button_text: 'lanjut'
-        modeReverse: true
-        MouseArea{
-            anchors.fill: parent
-            onClicked: {
-                if (productIdx == -1) return;
-                if (cashEnable && debitEnable){
-                    isConfirm = true;
-                } else if (cashEnable && !debitEnable){
-                    process_selected_payment('cash');
-                } else if (!cashEnable && debitEnable){
-                    process_selected_payment('debit');
-                } else if (!cashEnable && !debitEnable){
-                    false_notif('Mohon Maaf|Tidak Terdapat Metode Pembayaran Yang Aktif.');
-                    return;
-                }
-            }
-        }
-    }
-
-
-    Text {
-        id: small_notif
-        x: 0
-        color: "white"
-        visible: false;
-        anchors.bottom: parent.bottom
-        anchors.bottomMargin: 50
-        anchors.horizontalCenter: parent.horizontalCenter
-        wrapMode: Text.WordWrap
-        font.italic: true
-        verticalAlignment: Text.AlignVCenter
-        horizontalAlignment: Text.AlignHCenter
-        anchors.horizontalCenterOffset: 150
-        font.family:"Ubuntu"
-        font.pixelSize: 20
-    }
-
-*/
-
-
-    MainTitle{
-        anchors.top: parent.top
-        anchors.topMargin: 250
-        anchors.horizontalCenter: parent.horizontalCenter
-        show_text: 'Pilih Jumlah Pembelian Kartu'
-        size_: 50
-        color_: "white"
-        visible: !global_frame.visible && !popup_loading.visible && mainVisible
-
-    }
 
     Text {
         id: label_choose_qty
         color: "white"
         text: "Pilih jumlah kartu"
         anchors.top: parent.top
-        anchors.topMargin: 400
+        anchors.topMargin: 700
         anchors.left: parent.left
         anchors.leftMargin: 250
         wrapMode: Text.WordWrap
@@ -589,7 +560,7 @@ Base{
         width: 500
         height: 100
         anchors.top: parent.top
-        anchors.topMargin: 475
+        anchors.topMargin: 775
         anchors.left: parent.left
         anchors.leftMargin: 250
         spacing: 20
@@ -684,7 +655,7 @@ Base{
         anchors.right: parent.right
         anchors.rightMargin: 350
         anchors.top: parent.top
-        anchors.topMargin: 400
+        anchors.topMargin: 700
         wrapMode: Text.WordWrap
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignLeft
@@ -693,28 +664,28 @@ Base{
         visible: !global_frame.visible && !popup_loading.visible && mainVisible
     }
 
-    Text {
-        id: label_total_pay
-        color: "white"
-        text: "Total Bayar"
-        anchors.right: parent.right
-        anchors.rightMargin: 350
-        anchors.top: parent.top
-        anchors.topMargin: 575
-        wrapMode: Text.WordWrap
-        verticalAlignment: Text.AlignVCenter
-        horizontalAlignment: Text.AlignLeft
-        font.family:"Ubuntu"
-        font.pixelSize: 45
-        visible: !global_frame.visible && !popup_loading.visible && mainVisible
-    }
+//    Text {
+//        id: label_total_pay
+//        color: "white"
+//        text: "Total Bayar"
+//        anchors.right: parent.right
+//        anchors.rightMargin: 350
+//        anchors.top: parent.top
+//        anchors.topMargin: 875
+//        wrapMode: Text.WordWrap
+//        verticalAlignment: Text.AlignVCenter
+//        horizontalAlignment: Text.AlignLeft
+//        font.family:"Ubuntu"
+//        font.pixelSize: 45
+//        visible: !global_frame.visible && !popup_loading.visible && mainVisible
+//    }
 
     BoxTitle{
         id: content_item_count
         boxColor: '#1D294D'
         modeReverse: true
         anchors.top: parent.top
-        anchors.topMargin: 475
+        anchors.topMargin: 775
         anchors.right: parent.right
         anchors.rightMargin: 500
         radius: boxSize/2
@@ -735,7 +706,7 @@ Base{
         anchors.right: parent.right
         anchors.rightMargin: 300
         anchors.top: parent.top
-        anchors.topMargin: 475
+        anchors.topMargin: 775
         button_text: 'RESET'
         modeReverse: true
         visible: !global_frame.visible && !popup_loading.visible && mainVisible
@@ -749,21 +720,21 @@ Base{
         }
     }
 
-    Text {
-        id: content_total_pay
-        color: "white"
-        text: 'Rp ' + FUNC.insert_dot((itemCount * defaultItemPrice).toString())
-        anchors.right: parent.right
-        anchors.rightMargin: 350
-        anchors.top: parent.top
-        anchors.topMargin: 650
-        wrapMode: Text.WordWrap
-        verticalAlignment: Text.AlignVCenter
-        horizontalAlignment: Text.AlignLeft
-        font.family:"Ubuntu"
-        font.pixelSize: 50
-        visible: !global_frame.visible && !popup_loading.visible && mainVisible
-    }
+//    Text {
+//        id: content_total_pay
+//        color: "white"
+//        text: 'Rp ' + FUNC.insert_dot((itemCount * defaultItemPrice).toString())
+//        anchors.right: parent.right
+//        anchors.rightMargin: 350
+//        anchors.top: parent.top
+//        anchors.topMargin: 850
+//        wrapMode: Text.WordWrap
+//        verticalAlignment: Text.AlignVCenter
+//        horizontalAlignment: Text.AlignLeft
+//        font.family:"Ubuntu"
+//        font.pixelSize: 50
+//        visible: !global_frame.visible && !popup_loading.visible && mainVisible
+//    }
 
     //==============================================================
 
@@ -780,7 +751,7 @@ Base{
     SelectPaymentPopupNotif{
         id: select_payment
         visible: isConfirm
-        calledFrom: 'shop_prepaid_card'
+        calledFrom: 'mandiri_shop_card'
         _cashEnable: cashEnable
         _cardEnable: cardEnable
         _qrOvoEnable: qrOvoEnable
@@ -788,6 +759,7 @@ Base{
         _qrGopayEnable: qrGopayEnable
         _qrLinkAjaEnable: qrLinkajaEnable
         totalEnable: totalPaymentEnable
+        z: 99
     }
 
     PopupLoading{
@@ -802,7 +774,7 @@ Base{
             anchors.leftMargin: 100
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 50
-            button_text: cancelText
+            button_text: 'BATAL'
             modeReverse: true
             visible: frameWithButton
             MouseArea{
@@ -820,7 +792,7 @@ Base{
             anchors.rightMargin: 100
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 50
-            button_text: proceedText
+            button_text: 'LANJUT'
             modeReverse: true
             visible: frameWithButton
             MouseArea{
@@ -875,6 +847,12 @@ Base{
                 }
             }
         }
+    }
+
+    GlobalConfirmationFrame{
+        id: global_confirmation_frame
+        calledFrom: 'mandiri_shop_card'
+
     }
 
 

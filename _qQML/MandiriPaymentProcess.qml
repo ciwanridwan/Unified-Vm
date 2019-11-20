@@ -34,6 +34,9 @@ Base{
     property var preloadNotif: 'refundWhatsapp'
     property var customerPhone: ''
 
+    property var notifTitle: ''
+    property var notifMessage: ''
+
     signal framingSignal(string str)
 
     idx_bg: 0
@@ -52,17 +55,7 @@ Base{
             modeButtonPopup = 'check_balance';
             abc.counter = timer_value;
             my_timer.start();
-            press = '0';
-            uniqueCode = ''
-            customerPhone = ''
-            receivedCash = 0;
-            isPaid = false;
-            topupSuccess = false;
-            reprintAttempt = 0;
-            qrPayload = undefined;
-            attemptCD = 0;
-            frameWithButton = false;
-            centerOnlyButton = false;
+            reset_default();
         }
         if(Stack.status==Stack.Deactivating){
             my_timer.stop()
@@ -118,6 +111,23 @@ Base{
 
     }
 
+
+    function reset_default(){
+        press = '0';
+        uniqueCode = '';
+        customerPhone = '';
+        notifTitle = '';
+        notifMessage = ''
+        receivedCash = 0;
+        isPaid = false;
+        topupSuccess = false;
+        reprintAttempt = 0;
+        qrPayload = undefined;
+        attemptCD = 0;
+        frameWithButton = false;
+        centerOnlyButton = false;
+    }
+
     function release_print_with_refund(refund_amount, title, message){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         set_refund_number(customerPhone);
@@ -132,8 +142,8 @@ Base{
             customer: customerPhone,
             reff_no: details.shop_type + details.epoch.toString(),
         }
-        if (title!=undefined) refundPayload.notif_title = title;
-        if (message!=undefined) refundPayload.notif_message = message;
+        if (title!=undefined) notifTitle = title;
+        if (message!=undefined) notifMessage = message;
         console.log('release_print_with_refund', now, JSON.stringify(refundPayload));
         _SLOT.start_transfer_balance(JSON.stringify(refundPayload))
     }
@@ -144,27 +154,26 @@ Base{
         console.log('transfer_balance_result', now, transfer);
         popup_loading.close();
         var result = transfer.split('|')[1];
-        var title = transfer.split('|')[2];
-        var message = transfer.split('|')[3];
         if (['MISSING_REFF_NO','MISSING_AMOUNT','MISSING_CUSTOMER', 'ERROR'].indexOf(result) > -1){
             details.refund_status = 'PENDING';
         }
         if (result=='SUCCESS'){
             details.refund_status = 'SUKSES';
         }
-        release_print_only(title, message);
+        release_print_only(notifTitle, notifMessage);
     }
 
     function release_print_only(title, msg){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         popup_loading.close();
-        if (title==undefined) title = 'Terima Kasih';
-        if (msg==undefined) msg = 'Silakan Ambil Struk Transaksi Anda';
+        if (title==undefined || title.length == 0) title = 'Terima Kasih';
+        if (msg==undefined || msg.length == 0) msg = 'Silakan Ambil Struk Transaksi Anda';
         console.log('release_print_only', now, title, msg);
         switch_frame('source/take_receipt.png', title, msg, 'backToMain', true );
         _SLOT.start_direct_store_transaction_data(JSON.stringify(details));
         _SLOT.python_dump(JSON.stringify(details))
         _SLOT.start_sale_print_global();
+        reset_default();
     }
 
     function ppob_trx_result(p){
@@ -185,7 +194,7 @@ Base{
                 release_print_only('Terjadi Kesalahan', 'Silakan Ambil Struk Sebagai Bukti');
             }
         }
-        if (details.payment=='cash' && receivedCash > totalPrice){
+        if (validate_cash_refundable()){
             var exceed = receivedCash - totalPrice;
             release_print_with_refund(exceed.toString());
 //                popup_loading.textSlave = 'Memproses Pengembalian Kelebihan Bayar Anda';
@@ -194,6 +203,10 @@ Base{
             details.ppob_details = info;
             release_print_only();
         }
+    }
+
+    function validate_cash_refundable(){
+        return (details.payment == 'cash' && receivedCash > totalPrice)
     }
 
     function qr_check_result(r){
@@ -295,7 +308,7 @@ Base{
 //            } else if (topupResponse=='FFFE'){
 //                slave_title.text = 'Terjadi Kegagalan Pada Proses Isi Ulang Karena Kartu Tidak Terdeteksi.\nSilakan Ambil Struk Anda Di Bawah dan Hubungi Layanan Pelanggan.';
 //                slave_title.visible = true;
-                if (details.payment=='cash' && receivedCash > totalPrice){
+                if (validate_cash_refundable()){
                     var exceed = receivedCash - totalPrice;
                     release_print_with_refund(exceed.toString());
     //                popup_loading.textSlave = 'Memproses Pengembalian Kelebihan Bayar Anda';
@@ -393,7 +406,7 @@ Base{
         if (r == 'EJECT|SUCCESS') {
 //            var qty = details.qty.toString()
 //            slave_title.text = 'Silakan Ambil Struk dan ' + unit + ' pcs Kartu Prabayar Baru Anda Di Bawah.';
-            if (details.payment=='cash' && receivedCash > totalPrice){
+            if (validate_cash_refundable()){
                 var exceed = receivedCash - totalPrice;
                 release_print_with_refund(exceed.toString());
 //                popup_loading.textSlave = 'Memproses Pengembalian Kelebihan Bayar Anda';

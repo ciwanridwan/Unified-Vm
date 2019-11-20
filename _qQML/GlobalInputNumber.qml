@@ -681,6 +681,7 @@ Base{
         _qrGopayEnable: qrGopayEnable
         _qrLinkAjaEnable: qrLinkajaEnable
         totalEnable: totalPaymentEnable
+        z: 99
     }
 
 

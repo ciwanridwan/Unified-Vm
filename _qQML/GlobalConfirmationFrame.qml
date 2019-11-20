@@ -99,6 +99,9 @@ Base{
                     case 'global_input_number':
                         global_input_number.set_confirmation('global_confirmation_frame');
                         return;
+                    case 'mandiri_shop_card':
+                        mandiri_shop_card.set_confirmation('global_confirmation_frame');
+                        return;
                     default:
                         return;
                     }

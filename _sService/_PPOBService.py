@@ -252,11 +252,9 @@ LAST_TRANSFER_REFF_NO = ''
 def diva_transfer_balance(payload):
     global LAST_TRANSFER_REFF_NO
     payload = json.loads(payload)
-    notif_title = payload['notif_title']
-    notif_message = payload['notif_message']
     if _Global.empty(payload['reff_no']):
         LOGGER.warning((str(payload), 'MISSING_REFF_NO'))
-        PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|MISSING_REFF_NO|'+notif_title+'|'+notif_message)
+        PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|MISSING_REFF_NO')
         return
     if LAST_TRANSFER_REFF_NO == payload['reff_no']:
         LOGGER.warning((str(payload), LAST_TRANSFER_REFF_NO, 'DUPLICATE_REFF_NO'))
@@ -264,11 +262,11 @@ def diva_transfer_balance(payload):
         return
     if _Global.empty(payload['customer']):
         LOGGER.warning((str(payload), 'MISSING_CUSTOMER'))
-        PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|MISSING_CUSTOMER|'+notif_title+'|'+notif_message)
+        PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|MISSING_CUSTOMER')
         return
     if _Global.empty(payload['amount']):
         LOGGER.warning((str(payload), 'MISSING_AMOUNT'))
-        PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|MISSING_AMOUNT|'+notif_title+'|'+notif_message)
+        PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|MISSING_AMOUNT')
         return
     payload['customer_login'] = payload['customer']
     try:
@@ -276,11 +274,11 @@ def diva_transfer_balance(payload):
         s, r = _NetworkAccess.post_to_url(url=url, param=payload)
         if s == 200 and r['result'] == 'OK' and r['data'] is not None:
             LAST_TRANSFER_REFF_NO = _Global.empty(payload['reff_no'])
-            PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|SUCCESS|'+notif_title+'|'+notif_message)
+            PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|SUCCESS')
         else:
-            PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|ERROR|'+notif_title+'|'+notif_message)
+            PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|ERROR')
         LOGGER.debug((str(payload), str(r)))
     except Exception as e:
         LOGGER.warning((str(payload), str(e)))
-        PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|ERROR|'+notif_title+'|'+notif_message)
+        PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|ERROR')
 

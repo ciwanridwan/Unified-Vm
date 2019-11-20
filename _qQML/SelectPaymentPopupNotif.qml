@@ -98,10 +98,10 @@ Rectangle{
                         prepaid_topup_denom.press = '1';
                         prepaid_topup_denom.select_payment_signal(payment);
                     }
-                    if (calledFrom=='shop_prepaid_card'){
-                        if (shop_prepaid_card.press != '0') return;
-                        shop_prepaid_card.press = '1';
-                        shop_prepaid_card.get_payment_method_signal(payment);
+                    if (calledFrom=='mandiri_shop_card'){
+                        if (mandiri_shop_card.press != '0') return;
+                        mandiri_shop_card.press = '1';
+                        mandiri_shop_card.get_payment_method_signal(payment);
                     }
                     if (calledFrom=='global_input_number'){
                         if (global_input_number.press != '0') return;
@@ -130,10 +130,10 @@ Rectangle{
                         prepaid_topup_denom.press = '1';
                         prepaid_topup_denom.select_payment_signal(payment);
                     }
-                    if (calledFrom=='shop_prepaid_card'){
-                        if (shop_prepaid_card.press != '0') return;
-                        shop_prepaid_card.press = '1';
-                        shop_prepaid_card.get_payment_method_signal(payment);
+                    if (calledFrom=='mandiri_shop_card'){
+                        if (mandiri_shop_card.press != '0') return;
+                        mandiri_shop_card.press = '1';
+                        mandiri_shop_card.get_payment_method_signal(payment);
                     }
                     if (calledFrom=='global_input_number'){
                         if (global_input_number.press != '0') return;
@@ -163,10 +163,10 @@ Rectangle{
                         prepaid_topup_denom.press = '1';
                         prepaid_topup_denom.select_payment_signal(payment);
                     }
-                    if (calledFrom=='shop_prepaid_card'){
-                        if (shop_prepaid_card.press != '0') return;
-                        shop_prepaid_card.press = '1';
-                        shop_prepaid_card.get_payment_method_signal(payment);
+                    if (calledFrom=='mandiri_shop_card'){
+                        if (mandiri_shop_card.press != '0') return;
+                        mandiri_shop_card.press = '1';
+                        mandiri_shop_card.get_payment_method_signal(payment);
                     }
                     if (calledFrom=='global_input_number'){
                         if (global_input_number.press != '0') return;
@@ -196,10 +196,10 @@ Rectangle{
                         prepaid_topup_denom.press = '1';
                         prepaid_topup_denom.select_payment_signal(payment);
                     }
-                    if (calledFrom=='shop_prepaid_card'){
-                        if (shop_prepaid_card.press != '0') return;
-                        shop_prepaid_card.press = '1';
-                        shop_prepaid_card.get_payment_method_signal(payment);
+                    if (calledFrom=='mandiri_shop_card'){
+                        if (mandiri_shop_card.press != '0') return;
+                        mandiri_shop_card.press = '1';
+                        mandiri_shop_card.get_payment_method_signal(payment);
                     }
                     if (calledFrom=='global_input_number'){
                         if (global_input_number.press != '0') return;
@@ -229,10 +229,10 @@ Rectangle{
                         prepaid_topup_denom.press = '1';
                         prepaid_topup_denom.select_payment_signal(payment);
                     }
-                    if (calledFrom=='shop_prepaid_card'){
-                        if (shop_prepaid_card.press != '0') return;
-                        shop_prepaid_card.press = '1';
-                        shop_prepaid_card.get_payment_method_signal(payment);
+                    if (calledFrom=='mandiri_shop_card'){
+                        if (mandiri_shop_card.press != '0') return;
+                        mandiri_shop_card.press = '1';
+                        mandiri_shop_card.get_payment_method_signal(payment);
                     }
                     if (calledFrom=='global_input_number'){
                         if (global_input_number.press != '0') return;
@@ -262,10 +262,10 @@ Rectangle{
                         prepaid_topup_denom.press = '1';
                         prepaid_topup_denom.select_payment_signal(payment);
                     }
-                    if (calledFrom=='shop_prepaid_card'){
-                        if (shop_prepaid_card.press != '0') return;
-                        shop_prepaid_card.press = '1';
-                        shop_prepaid_card.get_payment_method_signal(payment);
+                    if (calledFrom=='mandiri_shop_card'){
+                        if (mandiri_shop_card.press != '0') return;
+                        mandiri_shop_card.press = '1';
+                        mandiri_shop_card.get_payment_method_signal(payment);
                     }
                     if (calledFrom=='global_input_number'){
                         if (global_input_number.press != '0') return;
@@ -276,7 +276,7 @@ Rectangle{
                 }
             }
         }
-
     }
+
 
 }
