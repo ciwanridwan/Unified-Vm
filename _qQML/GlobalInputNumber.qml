@@ -188,8 +188,9 @@ Base{
             {label: 'No Voucher', content: i.product},
         ]
         if (i.mode=='card_collection'){
+            var desc = i.card.remarks.split('|')[0];
             rows.push({label: 'Produk', content: i.card.name});
-            rows.push({label: 'Deskripsi', content: i.card.remarks});
+            rows.push({label: 'Deskripsi', content: desc});
             rows.push({label: 'Jumlah', content: i.qty.toString()});
             var unit_price = parseInt(i.card.sell_price);
             rows.push({label: 'Harga', content: FUNC.insert_dot(unit_price.toString())});
