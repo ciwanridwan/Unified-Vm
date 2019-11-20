@@ -367,6 +367,7 @@ Base{
     //PUT MAIN COMPONENT HERE
 
     MainTitle{
+        id: main_title
         anchors.top: parent.top
         anchors.topMargin: 180
         anchors.horizontalCenter: parent.horizontalCenter
@@ -381,11 +382,11 @@ Base{
         id: rec_card_images
 //        width: (availItems.length * 420)
         height: 450
-        anchors.verticalCenterOffset: (multipleEject) ? 0 : -50
+        anchors.verticalCenterOffset: (multipleEject) ? -10 : -50
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
         spacing: 20
-        visible: !global_frame.visible && !popup_loading.visible && mainVisible
+        visible: main_title.visible
         PrepaidProductItemLite{
             id: card_show_1
 //            visible: true
