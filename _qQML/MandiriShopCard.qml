@@ -556,7 +556,7 @@ Base{
         horizontalAlignment: Text.AlignLeft
         font.family:"Ubuntu"
         font.pixelSize: 45
-        visible: !global_frame.visible && !popup_loading.visible && mainVisible
+        visible: !global_frame.visible && !popup_loading.visible && mainVisible && multipleEject
     }
 
     Row{
