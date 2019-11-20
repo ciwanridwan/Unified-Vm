@@ -133,7 +133,10 @@ def sale_edc(amount, trxid=None):
                 # LOGGER.info(('DEBIT/CREDIT payment status', json.dumps(EDC_PAYMENT_RESULT)))
                 _KioskService.python_dump(EDC_PAYMENT_RESULT)
                 # edc_settlement()
-                _EDCTool.generate_edc_receipt(EDC_PAYMENT_RESULT)
+                try:
+                    _EDCTool.generate_edc_receipt(EDC_PAYMENT_RESULT)
+                except Exception as e:
+                    LOGGER.warning(str(e))
                 store_settlement()
                 send_edc_server(EDC_PAYMENT_RESULT)
             else:
