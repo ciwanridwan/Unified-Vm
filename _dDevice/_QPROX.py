@@ -820,7 +820,7 @@ def do_update_limit_mandiri(rsp):
             if PREV_RQ1_DATA == __content_rq1:
                 __content_rsp = _res['content'].split('#')[1]
                 init_online(__content_rsp, PREV_RQ1_SLOT)
-                LOGGER.warning(('RQ1 MATCH', PREV_RQ1_SLOT, PREV_RQ1_DATA, __content_rq1, __content_rsp))
+                LOGGER.info(('RQ1 MATCH', PREV_RQ1_SLOT, PREV_RQ1_DATA, __content_rq1, __content_rsp))
             else:
                 LOGGER.warning(('[DETECTED] RQ1 NOT MATCH', PREV_RQ1_DATA, __content_rq1))
             if not _Global.mandiri_single_sam():
