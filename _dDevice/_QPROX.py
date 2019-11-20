@@ -847,6 +847,11 @@ def get_topup_readiness(mode='full'):
     ___['bni_wallet_2'] = str(_Global.BNI_SAM_2_WALLET)
     ___['mandiri'] = 'AVAILABLE' if (INIT_MANDIRI is True and _Global.MANDIRI_ACTIVE_WALLET > 0) else 'N/A'
     ___['bni'] = 'AVAILABLE' if INIT_BNI is True else 'N/A'
+    ___['emoney'] = _Global.TOPUP_AMOUNT_SETTING['emoney']
+    ___['tapcash'] = _Global.TOPUP_AMOUNT_SETTING['tapcash']
+    ___['brizzi'] = _Global.TOPUP_AMOUNT_SETTING['brizzi']
+    ___['flazz'] = _Global.TOPUP_AMOUNT_SETTING['flazz']
+    ___['jakcard'] = _Global.TOPUP_AMOUNT_SETTING['jakcard']
     if _Global.TEST_MODE is True:
         ___['mandiri'] = 'TEST_MODE'
         ___['bni'] = 'TEST_MODE'

@@ -102,6 +102,9 @@ Base{
                     case 'mandiri_shop_card':
                         mandiri_shop_card.set_confirmation('global_confirmation_frame');
                         return;
+                    case 'prepaid_topup_denom':
+                        prepaid_topup_denom.set_confirmation('global_confirmation_frame');
+                        return;
                     default:
                         return;
                     }

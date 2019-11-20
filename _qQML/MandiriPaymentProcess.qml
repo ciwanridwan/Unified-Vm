@@ -264,19 +264,16 @@ Base{
         if (['ovo', 'gopay', 'dana', 'linkaja'].indexOf(details.payment) > -1) qr_payment_frame.close();
         abc.counter = 30;
         my_timer.restart();
-        if (t.indexOf('TOPUP_SAM_REQUIRED')> -1){
-            var slot_topup = t.split('|')[1]
-            _SLOT.start_do_topup_bni(slot_topup);
-            console.log('do topup action for slot : ', slot_topup)
-        } else if (t==undefined||t.indexOf('ERROR') > -1||t=='TOPUP_ERROR'||t=='TOPUP_FAILED_BALANCE_EXPIRED'){
-//            slave_title.text = 'Silakan Ambil Struk Anda Di Bawah.\nJika Saldo Kartu Prabayar Anda Gagal Terisi, Silakan Hubungi Layanan Pelanggan.';
-//            slave_title.visible = true;
+        if (t==undefined||t.indexOf('ERROR') > -1||t=='TOPUP_ERROR'||t=='TOPUP_FAILED_BALANCE_EXPIRED'||t.indexOf('TOPUP_SAM_REQUIRED')> -1){
             if (t=='TOPUP_FAILED_BALANCE_EXPIRED') _SLOT.start_reset_mandiri_settlement();
-            switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Ambil Struk Transaksi Anda Hubungi Layanan Pelanggan', 'backToMain', true )
+            if (t.indexOf('TOPUP_SAM_REQUIRED')> -1) {
+                var slot_topup = t.split('|')[1]
+                _SLOT.start_do_topup_bni(slot_topup);
+                console.log('do topup action for slot : ', now, slot_topup)
+            }
+            switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Pada Proses Isi Ulang Saldo Prabayar Anda', 'closeWindow|3', true )
         } else if (t=='TOPUP_FAILED_CARD_NOT_MATCH'){
-            switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Terdeteksi Perbedaan Kartu Saat Isi Ulang', 'backToMain', true )
-            // Sementara Digagalkan dan Tidak Bisa Diulang
-            // return;
+            switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Terdeteksi Perbedaan Kartu Saat Isi Ulang', 'closeWindow|3', true )
         } else {
             var output = t.split('|')
             var topupResponse = output[0]
@@ -315,21 +312,18 @@ Base{
                 } else {
                     release_print_only();
                 }
-            } else {
-                details.process_error = 1
-                if (customerPhone!='') {
-//                    switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Memproses Pengembalian Dana Anda', 'closeWindow', true );
-                    var refund_amount = details.value.toString();
-                    if (details.payment=='cash') refund_amount = receivedCash.toString();
-                    release_print_with_refund(refund_amount, 'Terjadi Kesalahan', 'Silakan Ambil Struk Sebagai Bukti')
-                } else {
-                    release_print_only('Terjadi Kesalahan', 'Silakan Ambil Struk Sebagai Bukti');
-                }
+                return;
             }
         }
-//        _SLOT.start_sale_print_global();
-//        abc.counter = 7;
-//        my_timer.restart();
+        details.process_error = 1;
+        if (customerPhone!='') {
+//            switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Memproses Pengembalian Dana Anda', 'closeWindow', true );
+            var refund_amount = details.value.toString();
+            if (details.payment=='cash') refund_amount = receivedCash.toString();
+            release_print_with_refund(refund_amount, 'Terjadi Kesalahan', 'Silakan Ambil Struk Sebagai Bukti')
+        } else {
+            release_print_only('Terjadi Kesalahan', 'Silakan Ambil Struk Sebagai Bukti');
+        }
         // Check Manual Update SAM Saldo Here
         // if (topupSuccess) _SLOT.start_manual_topup_bni();
     }

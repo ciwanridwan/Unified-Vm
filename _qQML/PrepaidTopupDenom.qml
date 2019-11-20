@@ -20,7 +20,7 @@ Base{
     property var cardData: undefined
     property int stepMode: 0
     property int cardBalance: 0
-    property var totalPrice: 0
+    property var selectedDenom: 0
     property var globalCart
     property var selectedPayment: undefined
     property var globalDetails
@@ -33,6 +33,7 @@ Base{
     property bool qrLinkajaEnable: false
     property bool mainVisible: false
     property var totalPaymentEnable: 0
+    property bool isConfirm: false
 
     property var bniWallet1: 0
     property var bniWallet2: 0
@@ -52,7 +53,8 @@ Base{
     property int maxBalance: 1000000
 
     signal topup_denom_signal(string str)
-    signal select_payment_signal(string str)
+    signal get_payment_method_signal(string str)
+    signal set_confirmation(string str)
     imgPanel: 'source/topup_kartu.png'
     textPanel: 'Isi Ulang Saldo Kartu Prabayar'
 
@@ -63,7 +65,6 @@ Base{
 //            _SLOT.start_get_topup_status_instant();
             _SLOT.start_get_device_status();
             _SLOT.get_kiosk_price_setting();
-            _SLOT.start_get_topup_readiness();
             mainVisible = false;
             abc.counter = timer_value;
             my_timer.start();
@@ -73,6 +74,7 @@ Base{
             provider = undefined;
             globalDetails = undefined;
             frameWithButton = false;
+            isConfirm = false;
             if (cardData==undefined){
                 open_preload_notif();
             } else {
@@ -86,8 +88,9 @@ Base{
     }
 
     Component.onCompleted:{
+        set_confirmation.connect(do_set_confirm);
+        get_payment_method_signal.connect(process_selected_payment);
         topup_denom_signal.connect(selected_denom);
-        select_payment_signal.connect(set_selected_payment);
         base.result_get_device.connect(get_device_status);
         base.result_balance_qprox.connect(get_balance);
         base.result_topup_readiness.connect(topup_readiness);
@@ -96,8 +99,9 @@ Base{
     }
 
     Component.onDestruction:{
+        set_confirmation.disconnect(do_set_confirm);
+        get_payment_method_signal.disconnect(process_selected_payment);
         topup_denom_signal.disconnect(selected_denom);
-        select_payment_signal.disconnect(set_selected_payment);
         base.result_get_device.disconnect(get_device_status);
         base.result_balance_qprox.disconnect(get_balance);
         base.result_topup_readiness.disconnect(topup_readiness);
@@ -107,7 +111,8 @@ Base{
     }
 
     function get_device_status(s){
-        console.log('get_device_status', s);
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('get_device_status', s, now);
         var device = JSON.parse(s);
         if (device.MEI == 'AVAILABLE' || device.GRG == 'AVAILABLE'){
             cashEnable = true;
@@ -136,8 +141,9 @@ Base{
 
     }
 
-    function set_selected_payment(denom, method){
-        console.log('set_selected_payment', denom, method);
+    function process_selected_payment(method){
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('process_selected_payment', now, denom, method);
         selectedPayment = method;
         var details = {
             payment: selectedPayment,
@@ -147,7 +153,7 @@ Base{
             epoch: new Date().getTime()
         }
         globalCart = {
-            value: denom,
+            value: selectedDenom.toString(),
             provider: provider,
             admin_fee: adminFee,
             card_no: cardData.card_no,
@@ -156,7 +162,7 @@ Base{
             bank_name: cardData.bank_name,
         }
         details.qty = 1;
-        details.value = denom;
+        details.value = selectedDenom.toString();
         details.provider = provider;
         if (details.provider==undefined) details.provider = 'e-Money Mandiri';
         details.admin_fee = adminFee;
@@ -168,27 +174,27 @@ Base{
                 details.denom = get_denom.toString();
                 details.final_balance = parseInt(details.denom) + parseInt(cardData.balance);
                 break;
-            case 'debit':
+            default:
                 var total_pay = parseInt(details.value) + parseInt(adminFee);
                 details.denom = details.value;
                 details.final_balance = parseInt(details.denom) + parseInt(cardData.balance);
                 break;
-            // TODO: Add Another Payment Method
         }
         globalDetails = details;
-        my_layer.push(mandiri_payment_process, {details: globalDetails});
-
+        my_layer.push(mandiri_payment_process, {details: globalDetails, cardNo: cardData.card_no});
     }
 
     function define_price(p){
-        console.log('define_price', p);
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('define_price', p, now);
         var price = JSON.parse(p);
         adminFee = parseInt(price.adminFee);
         console.log('adminFee', adminFee);
     }
 
     function topup_readiness(r){
-        console.log('topup_readiness', r);
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('topup_readiness', r, now);
         var ready = JSON.parse(r)
         mandiriTopupWallet = parseInt(ready.balance_mandiri);
         bniTopupWallet = parseInt(ready.balance_bni);
@@ -239,17 +245,44 @@ Base{
         if (ready.bni=='AVAILABLE') {
             if (bniTopupWallet > 0) tapcashAvailable = true;
         }
+        switch(cardData.bank_name){
+        case 'MANDIRI':
+            highDenomMandiri = ready.emoney[0]
+            midDenomMandiri = ready.emoney[1]
+            smallDenomMandiri = ready.emoney[2]
+            break;
+        case 'BNI':
+            highDenomMandiri = ready.tapcash[0]
+            midDenomMandiri = ready.tapcash[1]
+            smallDenomMandiri = ready.tapcash[2]
+            break;
+        case 'DKI':
+            highDenomMandiri = ready.jakcard[0]
+            midDenomMandiri = ready.jakcard[1]
+            smallDenomMandiri = ready.jakcard[2]
+            break;
+        case 'BCA':
+            highDenomMandiri = ready.flazz[0]
+            midDenomMandiri = ready.flazz[1]
+            smallDenomMandiri = ready.flazz[2]
+            break;
+        case 'BRI':
+            highDenomMandiri = ready.brizzi[0]
+            midDenomMandiri = ready.brizzi[1]
+            smallDenomMandiri = ready.brizzi[2]
+            break;
+        }
 //        bniWallet1 = ready.bni_wallet_1;
 //        bniWallet2 = ready.bni_wallet_2;
-        console.log('small_denom', small_denom.buttonActive);
-        console.log('mid_denom', mid_denom.buttonActive);
-        console.log('high_denom', high_denom.buttonActive);
+//        console.log('small_denom', small_denom.buttonActive);
+//        console.log('mid_denom', mid_denom.buttonActive);
+//        console.log('high_denom', high_denom.buttonActive);
         popup_loading.close();
     }
 
-
     function init_topup_denom(p){
-        console.log('init_topup_denom', p);
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('init_topup_denom', p, now);
         //[{'name': 'MANDIRI', 'smallDenom': 50, 'bigDenom': 100, 'tinyDenom': 25}, {'name': 'BNI', 'smallDenom': 50, 'bigDenom': 100}]
         for (var i=0; i < topupData.length; i++){
             if (topupData[i].name==p){
@@ -263,7 +296,8 @@ Base{
     }
 
     function selected_denom(d){
-        console.log('selected_denom', d);
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('selected_denom', d, now);
         globalCart = JSON.parse(d);
         globalCart.card_no = cardData.card_no;
         globalCart.prev_balance = cardData.balance;
@@ -292,7 +326,8 @@ Base{
     }
 
     function get_topup_amount(r){
-        console.log('get_topup_amount', r);
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('get_topup_amount', r, now);
         topupData = JSON.parse(r)
         if (cardData != undefined){
             parse_cardData(cardData);
@@ -302,7 +337,8 @@ Base{
     }
 
     function get_balance(text){
-        console.log('get_balance', text);
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('get_balance', text, now);
         press = '0';
 //        standard_notif_view.buttonEnabled = true;
         popup_loading.close();
@@ -316,7 +352,7 @@ Base{
             var bankName = info.bank_name;
             var ableTopupCode = info.able_topup;
             cardBalance = parseInt(info.balance);
-            if (bankName=='MANDIRI'){
+            if (['MANDIRI', 'BNI'].indexOf(bankName) > -1){
                 cardData = {
                     balance: info.balance,
                     card_no: info.card_no,
@@ -342,10 +378,12 @@ Base{
                 return;
             }
         }
+        _SLOT.start_get_topup_readiness();
     }
 
     function parse_cardData(o){
-        console.log('parse_cardData', JSON.stringify(o));
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('parse_cardData', now, JSON.stringify(o));
         var card_no = o.card_no;
         var last_balance = o.balance;
         var bank_name = o.bank_name;
@@ -353,7 +391,8 @@ Base{
         press = '0';
         shopType = 'topup';
         //TODO Reset Provider To Default Item
-        provider = 'e-Money Mandiri';
+        if (bank_name=='MANDIRI') provider = 'e-Money Mandiri';
+        if (bank_name=='BNI') provider = 'Tapcash BNI';
         mainVisible = true;
 //        init_topup_denom(bank_name);
 //        stepMode = 1;
@@ -362,6 +401,7 @@ Base{
 //        _provider.labelContent = provider;
 //        _card_no.labelContent = card_no;
 //        _last_balance.labelContent = 'Rp. ' +  FUNC.insert_dot(last_balance.toString()) + ',-';;
+        _SLOT.start_get_topup_readiness();
         popup_loading.close();
     }
 
@@ -395,7 +435,6 @@ Base{
         }
     }
 
-
     CircleButton{
         id:back_button
         anchors.left: parent.left
@@ -417,6 +456,15 @@ Base{
 
     //==============================================================
     //PUT MAIN COMPONENT HERE
+
+    function do_set_confirm(_mode){
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('Confirmation Flagged By', _mode, now)
+        global_confirmation_frame.no_button();
+        popup_loading.close();
+        press = '0';
+        isConfirm = true;
+    }
 
     function open_preload_notif(){
         preload_check_card.open();
@@ -465,6 +513,50 @@ Base{
         } else {
             return false;
         }
+    }
+
+    function generateConfirm(rows, isConfirm, closeMode, timer){
+        if (rows==undefined || rows.length == 0) return;
+        if (isConfirm==undefined) isConfirm = false;
+        if (closeMode==undefined) closeMode = 'closeWindow';
+        if (timer!==undefined){
+            global_confirmation_frame.withTimer = true;
+            global_confirmation_frame.timerDuration = parseInt(timer);
+        }
+        global_confirmation_frame.modeConfirm = isConfirm;
+        global_confirmation_frame.closeMode = closeMode;
+        for (var i=0;i<rows.length;i++){
+            if (i==0){
+                global_confirmation_frame.label1 = rows[i].label;
+                global_confirmation_frame.data1 = rows[i].content;
+            }
+            if (i==1){
+                global_confirmation_frame.label2 = rows[i].label;
+                global_confirmation_frame.data2 = rows[i].content;
+            }
+            if (i==2){
+                global_confirmation_frame.label3 = rows[i].label;
+                global_confirmation_frame.data3 = rows[i].content;
+            }
+            if (i==3){
+                global_confirmation_frame.label4 = rows[i].label;
+                global_confirmation_frame.data4 = rows[i].content;
+            }
+            if (i==4){
+                global_confirmation_frame.label5 = rows[i].label;
+                global_confirmation_frame.data5 = rows[i].content;
+            }
+            if (i==5){
+                global_confirmation_frame.label6 = rows[i].label;
+                global_confirmation_frame.data6 = rows[i].content;
+            }
+            if (i==6){
+                global_confirmation_frame.label7 = rows[i].label;
+                global_confirmation_frame.data7 = rows[i].content;
+            }
+        }
+        press = '0';
+        global_confirmation_frame.open();
     }
 
     /*
@@ -735,7 +827,18 @@ Base{
                     _SLOT.user_action_log('Press smallDenom "'+smallDenomMandiri+'"');
                     if (press!='0') return;
                     press = '1';
-                    set_selected_payment(smallDenomMandiri, 'cash');
+                    var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
+                    selectedDenom = smallDenomMandiri;
+                    var rows = [
+                        {label: 'Tanggal', content: now},
+                        {label: 'Produk', content: 'Isi Ulang Prabayar'},
+                        {label: 'Provider', content: provider},
+                        {label: 'Jumlah', content: '1'},
+                        {label: 'Biaya Admin', content: FUNC.insert_dot(adminFee.toString())},
+                        {label: 'Total', content: FUNC.insert_dot(selectedDenom.toString())},
+                    ]
+                    generateConfirm(rows, true);
+//                    set_selected_payment(smallDenomMandiri, 'cash');
                 }
             }
         }
@@ -752,7 +855,18 @@ Base{
                     _SLOT.user_action_log('Press midDenom "'+midDenomMandiri+'"');
                     if (press!='0') return;
                     press = '1';
-                    set_selected_payment(midDenomMandiri, 'cash');
+                    var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
+                    selectedDenom = midDenomMandiri;
+                    var rows = [
+                        {label: 'Tanggal', content: now},
+                        {label: 'Produk', content: 'Isi Ulang Prabayar'},
+                        {label: 'Provider', content: provider},
+                        {label: 'Jumlah', content: '1'},
+                        {label: 'Biaya Admin', content: FUNC.insert_dot(adminFee.toString())},
+                        {label: 'Total', content: FUNC.insert_dot(selectedDenom.toString())},
+                    ]
+                    generateConfirm(rows, true);
+//                    set_selected_payment(midDenomMandiri, 'cash');
                 }
             }
         }
@@ -769,7 +883,18 @@ Base{
                     _SLOT.user_action_log('Press highDenom "'+highDenomMandiri+'"');
                     if (press!='0') return;
                     press = '1';
-                    set_selected_payment(highDenomMandiri, 'cash');
+                    var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
+                    selectedDenom = highDenomMandiri;
+                    var rows = [
+                        {label: 'Tanggal', content: now},
+                        {label: 'Produk', content: 'Isi Ulang Prabayar'},
+                        {label: 'Provider', content: provider},
+                        {label: 'Jumlah', content: '1'},
+                        {label: 'Biaya Admin', content: FUNC.insert_dot(adminFee.toString())},
+                        {label: 'Total', content: FUNC.insert_dot(selectedDenom.toString())},
+                    ]
+                    generateConfirm(rows, true);
+//                    set_selected_payment(highDenomMandiri, 'cash');
                 }
             }
         }
@@ -820,8 +945,8 @@ Base{
 
     SelectPaymentPopupNotif{
         id: select_payment
-        visible: (stepMode==2) ? true : false
-        withBackground: false
+        visible: isConfirm
+        calledFrom: 'prepaid_topup_denom'
         _cashEnable: cashEnable
         _cardEnable: cardEnable
         _qrOvoEnable: qrOvoEnable
@@ -929,6 +1054,12 @@ Base{
                 }
             }
         }
+    }
+
+    GlobalConfirmationFrame{
+        id: global_confirmation_frame
+        calledFrom: 'prepaid_topup_denom'
+
     }
 
 
