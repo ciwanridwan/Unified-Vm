@@ -289,8 +289,8 @@ Base{
                 cardNo = result.card_no;
                 lastBalance = result.last_balance;
                 _SLOT.start_store_topup_transaction(JSON.stringify(details));
-//                switch_frame('source/take_receipt.png', 'Terima Kasih', 'Silakan Ambil Struk Transaksi Anda', 'backToMain', true );
                 _SLOT.start_do_mandiri_topup_settlement();
+//                switch_frame('source/take_receipt.png', 'Terima Kasih', 'Silakan Ambil Struk Transaksi Anda', 'backToMain', true );
 //                card_no_prepaid.text = FUNC.insert_space_four(cardNo);
 //                image_prepaid_card.source = "source/tapcash-card.png";
 //                notif_saldo.text = "Isi Ulang Berhasil.\nSaldo Kartu TapCash Anda\nRp. "+FUNC.insert_dot(lastBalance)+",-\nAmbil Struk Anda di Bawah."
