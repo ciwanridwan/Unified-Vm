@@ -39,22 +39,22 @@ QPROX = {
     "OPEN": "000",
     "INIT": "001",
     "AUTH": "002",
-    "BALANCE": "003",
-    "TOPUP": "004",
+    "BALANCE": "003", #With Detail Card Attribute
+    "TOPUP": "004", #Transfer Balance Offline MANDIRI
     "KA_INFO": "005",
     "CREATE_ONLINE_INFO": "006",
     "INIT_ONLINE": "007",
     "DEBIT": "008",
-    "UNKNOWN": "009",
+    "GENERAL_BALANCE": "009",
     "STOP": "010",
     "UPDATE_TID_BNI": "011",
     "INIT_BNI": "012",
-    "TOPUP_BNI": "013",
+    "TOPUP_BNI": "013", #Transfer Balance Offline BNI
     "KA_INFO_BNI": "014",
     "PURSE_DATA_BNI": "015", #Get Card Info For Topup Modal
     "SEND_CRYPTO": "016", #Send Cryptogram For Topup Modal
     "REFILL_ZERO": "018", #Refill Zero To Fix Error Update Balance Failure
-    "UPDATE_BALANCE_ONLINE": "019",
+    "UPDATE_BALANCE_ONLINE": "019", #Update Balance Online Mandiri
 }
 
 

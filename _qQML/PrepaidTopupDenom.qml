@@ -93,7 +93,7 @@ Base{
     Component.onCompleted:{
         set_confirmation.connect(do_set_confirm);
         get_payment_method_signal.connect(process_selected_payment);
-        topup_denom_signal.connect(selected_denom);
+        topup_denom_signal.connect(set_selected_denom);
         base.result_get_device.connect(get_device_status);
         base.result_balance_qprox.connect(get_balance);
         base.result_topup_readiness.connect(topup_readiness);
@@ -104,7 +104,7 @@ Base{
     Component.onDestruction:{
         set_confirmation.disconnect(do_set_confirm);
         get_payment_method_signal.disconnect(process_selected_payment);
-        topup_denom_signal.disconnect(selected_denom);
+        topup_denom_signal.disconnect(set_selected_denom);
         base.result_get_device.disconnect(get_device_status);
         base.result_balance_qprox.disconnect(get_balance);
         base.result_topup_readiness.disconnect(topup_readiness);
