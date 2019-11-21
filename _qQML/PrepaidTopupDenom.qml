@@ -304,7 +304,7 @@ Base{
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('set_selected_denom', d, now);
         selectedDenom = d;
-        totalPay = selectedDenom + adminFee;
+        totalPay = parseInt(selectedDenom) + parseInt(adminFee);
         var rows = [
             {label: 'Tanggal', content: now},
             {label: 'Produk', content: 'Isi Ulang Prabayar'},
