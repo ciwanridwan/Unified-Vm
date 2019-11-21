@@ -166,7 +166,7 @@ Base{
         }
         var final_balance = parseInt(cardData.balance) + parseInt(selectedDenom)
         details.qty = 1;
-        details.value = totalPay.toString();
+        details.value = selectedDenom.toString();
         details.provider = provider;
         if (details.provider==undefined) details.provider = 'e-Money Mandiri';
         details.admin_fee = adminFee;

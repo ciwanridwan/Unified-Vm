@@ -718,6 +718,8 @@ Base{
         adminFee = parseInt(details.admin_fee);
         getDenom = parseInt(details.value) * parseInt(details.qty);
         totalPrice = getDenom + adminFee;
+        // Below to serialize totap pay for topup prepaid trx
+        if (details.shop_type=='topup') totalPrice = getDenom;
         var epoch_string = details.epoch.toString();
         uniqueCode = epoch_string.substring(epoch_string.length-6);
         _SLOT.start_set_payment(details.payment);

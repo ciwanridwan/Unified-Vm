@@ -159,7 +159,7 @@ def start_reprint_global():
 LAST_TRX = None
 SMALL_SPACE = 3.5
 REGULAR_SPACE = 8.5
-PADDING_LEFT = 0
+PADDING_LEFT = -2
 
 
 def sale_print_global(ext='.pdf', use_last=False):
