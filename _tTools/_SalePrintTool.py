@@ -574,7 +574,12 @@ def print_ppob_trx(p, t, ext='.pdf'):
                     label_sn = 'S/N '
                     if p['category'].lower() == 'listrik':
                         label_sn = 'TOKEN '
-                    pdf.cell(padding_left, 0, label_sn + str(p['ppob_details']['sn'][:24]), 0, 0, 'L')
+                        if str(p['ppob_details']['sn']) == '[]':
+                            pdf.cell(padding_left, 0, 'TOKEN DALAM PROSES, HUBUNGI LAYANAN PELANGGAN', 0, 0, 'L')
+                        else:    
+                            pdf.cell(padding_left, 0, label_sn + str(p['ppob_details']['sn'][:24]), 0, 0, 'L')
+                    else:
+                        pdf.cell(padding_left, 0, label_sn + str(p['ppob_details']['sn'][:24]), 0, 0, 'L')
             if 'refund_status' in p.keys():
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
