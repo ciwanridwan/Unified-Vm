@@ -696,7 +696,7 @@ Base{
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         var provider = details.provider;
         if (provider==undefined) provider = 'e-Money Mandiri';
-        var amount = getDenom.toString();
+        var amount = details.denom;
         var structId = details.shop_type + details.epoch.toString();
         if (provider.indexOf('Mandiri') > -1 || cardNo.substring(0, 4) == '6032'){
             _SLOT.start_top_up_mandiri(amount, structId);
@@ -718,8 +718,6 @@ Base{
         adminFee = parseInt(details.admin_fee);
         getDenom = parseInt(details.value) * parseInt(details.qty);
         totalPrice = getDenom + adminFee;
-        // Below to serialize totap pay for topup prepaid trx
-        if (details.shop_type=='topup') totalPrice = getDenom;
         var epoch_string = details.epoch.toString();
         uniqueCode = epoch_string.substring(epoch_string.length-6);
         _SLOT.start_set_payment(details.payment);
