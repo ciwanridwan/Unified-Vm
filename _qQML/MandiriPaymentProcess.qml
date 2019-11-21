@@ -28,6 +28,7 @@ Base{
 
     property bool frameWithButton: false
     property bool centerOnlyButton: false
+    property bool proceedAble: false
     property int attemptCD: 0
 
     property var qrPayload
@@ -46,16 +47,17 @@ Base{
 
     Stack.onStatusChanged:{
         if(Stack.status==Stack.Activating){
+            reset_default();
             if (details != undefined) console.log('product details', JSON.stringify(details));
             if (preloadNotif==undefined){
                 define_first_notif();
+                proceedAble == true;
             } else {
                 popup_input_number.open('Silakan Masukkan No WhatsApp Anda')
             }
             modeButtonPopup = 'check_balance';
             abc.counter = timer_value;
             my_timer.start();
-            reset_default();
         }
         if(Stack.status==Stack.Deactivating){
             my_timer.stop()
@@ -113,6 +115,7 @@ Base{
 
 
     function reset_default(){
+        proceedAble = false;
         press = '0';
         uniqueCode = '';
         customerPhone = '';
@@ -521,6 +524,12 @@ Base{
             }
         } else if (grgFunction == 'STOP_GRG'){
             if(grgResult.indexOf('SUCCESS') > -1 && receivedCash >= totalPrice) {
+                if (!proceedAble){
+                    details.process_error = 1;
+                    details.special_case = 'non-proceedAble cancel detected';
+                    _SLOT.python_dump(JSON.stringify(details))
+                    return;
+                }
                 var cashResponse = JSON.parse(r.replace('STOP_GRG|SUCCESS-', ''))
                 details.payment_details = cashResponse;
                 details.payment_received = cashResponse.total;
@@ -797,7 +806,7 @@ Base{
         button_text: 'BATAL'
         modeReverse: true
         z: 10
-        visible: !popup_loading.visible && !global_frame.visible && !qr_payment_frame.visible
+        visible: !popup_loading.visible && !global_frame.visible && !qr_payment_frame.visible && !popup_input_number.visible
 
         MouseArea{
             anchors.fill: parent
@@ -1417,6 +1426,7 @@ Base{
         id: popup_input_number
 //        calledFrom: 'general_payment_process'
         handleButtonVisibility: next_button_input_number
+        z: 99
 
         CircleButton{
             id: cancel_button_input_number
@@ -1450,10 +1460,11 @@ Base{
                 onClicked: {
                     if (press != '0') return;
                     press = '1';
-                    _SLOT.user_action_log('Press "LANJUT" Input Whatsapp Number ' + customerPhone);
                     if (popup_input_number.handleButtonVisibility!=undefined){
                         set_refund_number(popup_input_number.numberInput);
                     }
+                    _SLOT.user_action_log('Press "LANJUT" Input Whatsapp Number ' + customerPhone);
+                    proceedAble = true;
                     popup_input_number.close();
                     define_first_notif();
                 }
