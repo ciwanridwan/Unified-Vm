@@ -164,6 +164,7 @@ Base{
             bank_type: cardData.bank_type,
             bank_name: cardData.bank_name,
         }
+        var final_balance = parseInt(cardData.balance) + parseInt(selectedDenom)
         details.qty = 1;
         details.value = totalPay.toString();
         details.provider = provider;
@@ -171,6 +172,7 @@ Base{
         details.admin_fee = adminFee;
         details.raw = globalCart;
         details.status = '1';
+        details.final_balance = final_balance.toString();
         details.denom = selectedDenom.toString();
         globalDetails = details;
         my_layer.push(mandiri_payment_process, {details: globalDetails, cardNo: cardData.card_no});
