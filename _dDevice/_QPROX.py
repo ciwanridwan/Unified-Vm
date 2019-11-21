@@ -386,7 +386,8 @@ def check_balance():
             'card_no': result.split('|')[1].replace('#', ''),
             'bank_type': result.split('|')[2].replace('#', ''),
             'bank_name': get_fw_bank(result.split('|')[2]),
-            'able_topup': result.split('|')[3].replace('#', ''),
+            # 'able_topup': result.split('|')[3].replace('#', ''),
+            'able_topup': '0000', #Force Allowed Topup
         }
         LAST_BALANCE_CHECK = output
         _Global.NFC_ERROR = ''
