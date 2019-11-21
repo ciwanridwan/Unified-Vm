@@ -193,6 +193,8 @@ Base{
 //                switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Ambil Struk Sebagai Bukti', 'backToMain', true )
                 release_print_only('Terjadi Kesalahan', 'Silakan Ambil Struk Sebagai Bukti');
             }
+            // Must return here to avoid double refund
+            return;
         }
         if (validate_cash_refundable()){
             var exceed = receivedCash - totalPrice;
@@ -314,6 +316,7 @@ Base{
                 }
                 return;
             }
+            // Do not return here to handle refund for failed topup response
         }
         details.process_error = 1;
         if (customerPhone!='') {
@@ -396,6 +399,7 @@ Base{
 //                switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Ambil Struk Transaksi Anda Hubungi Layanan Pelanggan', 'backToMain', true )
                 release_print_only('Terjadi Kesalahan', 'Silakan Ambil Struk Sebagai Bukti');
             }
+            return;
         }
         if (r == 'EJECT|SUCCESS') {
 //            var qty = details.qty.toString()
@@ -407,6 +411,7 @@ Base{
             } else {
                 release_print_only();
             }
+            return;
 //            switch_frame('source/thumb_ok.png', 'Silakan Ambil Kartu dan Struk Transaksi Anda', 'Terima Kasih', 'backToMain', false )
         }
     }
