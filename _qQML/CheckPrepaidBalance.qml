@@ -3,6 +3,7 @@ import QtQuick.Controls 1.3
 import QtGraphicalEffects 1.0
 import "base_function.js" as FUNC
 
+
 Base{
     id: check_prepaid_balance
     property int timer_value: 300
@@ -233,7 +234,7 @@ Base{
 //                }
                 if (press!='0') return;
                 press = '1'
-                if (['MANDIRI', 'BNI', 'DKI'].indexOf(bankName)){
+                if (['MANDIRI', 'BNI', 'DKI'].indexOf(bankName) > -1){
                     var _cardData = {
                         'balance': balance,
                         'card_no': cardNo,

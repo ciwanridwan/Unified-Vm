@@ -158,7 +158,7 @@ def start_reprint_global():
 
 LAST_TRX = None
 SMALL_SPACE = 3.5
-REGULAR_SPACE = 8.5
+REGULAR_SPACE = 8
 PADDING_LEFT = 0
 
 
@@ -252,8 +252,8 @@ def print_topup_trx(p, t, ext='.pdf'):
                 pdf.cell(padding_left, 0, 'NO. KARTU  : ' + p['topup_details']['card_no'], 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
-                saldo_awal = int(p['topup_details']['last_balance']) - (int(p['value']) - int(p['admin_fee']))
-                pdf.cell(padding_left, 0, 'SALDO AWAL : Rp. ' + clean_number(str(saldo_awal)), 0, 0, 'L')
+                # saldo_awal = int(p['topup_details']['last_balance']) - (int(p['value']) - int(p['admin_fee']))
+                pdf.cell(padding_left, 0, 'SALDO AWAL : Rp. ' + clean_number(p['raw']['prev_balance']), 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
                 pdf.cell(padding_left, 0, 'SALDO AKHIR: Rp. ' + clean_number(str(p['final_balance'])), 0, 0, 'L')
@@ -263,7 +263,7 @@ def print_topup_trx(p, t, ext='.pdf'):
                     pdf.cell(padding_left, 0, 'UANG DITERIMA: Rp. ' + clean_number(str(p['payment_received'])), 0, 0, 'L')
                     pdf.ln(small_space)
                     pdf.set_font(USED_FONT, '', regular_space)
-                    pdf.cell(padding_left, 0, 'STATUS REFUND: ' + p['refund_number'] + ' - ' + p['refund_status'], 0, 0, 'L')
+                    pdf.cell(padding_left, 0, 'STATUS REFUND: ' + p['refund_number'] + ' ' + p['refund_status'], 0, 0, 'L')
                     pdf.ln(small_space)
                     pdf.set_font(USED_FONT, '', regular_space)
                     pdf.cell(padding_left, 0, 'NILAI REFUND : Rp. ' + clean_number(str(p['refund_amount'])), 0, 0, 'L')
@@ -298,7 +298,7 @@ def print_topup_trx(p, t, ext='.pdf'):
                 if 'refund_status' in p.keys():
                     pdf.ln(small_space)
                     pdf.set_font(USED_FONT, '', regular_space)
-                    pdf.cell(padding_left, 0, 'STATUS REFUND: ' + p['refund_number'] + ' - ' + p['refund_status'], 0, 0, 'L')
+                    pdf.cell(padding_left, 0, 'STATUS REFUND: ' + p['refund_number'] + ' ' + p['refund_status'], 0, 0, 'L')
                     pdf.ln(small_space)
                     pdf.set_font(USED_FONT, '', regular_space)
                     pdf.cell(padding_left, 0, 'NILAI REFUND : Rp. ' + clean_number(str(p['refund_amount'])), 0, 0, 'L')
@@ -325,7 +325,7 @@ def print_topup_trx(p, t, ext='.pdf'):
             if 'refund_status' in p.keys():
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
-                pdf.cell(padding_left, 0, 'STATUS REFUND: ' + p['refund_number'] + ' - ' + p['refund_status'], 0, 0, 'L')
+                pdf.cell(padding_left, 0, 'STATUS REFUND: ' + p['refund_number'] + ' ' + p['refund_status'], 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
                 pdf.cell(padding_left, 0, 'NILAI REFUND : Rp. ' + clean_number(str(p['refund_amount'])), 0, 0, 'L')
@@ -428,7 +428,7 @@ def print_shop_trx(p, t, ext='.pdf'):
                 pdf.cell(padding_left, 0, 'UANG DITERIMA: Rp. ' + clean_number(str(p['payment_received'])), 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
-                pdf.cell(padding_left, 0, 'STATUS REFUND: ' + p['refund_number'] + ' - ' + p['refund_status'], 0, 0, 'L')
+                pdf.cell(padding_left, 0, 'STATUS REFUND: ' + p['refund_number'] + ' ' + p['refund_status'], 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
                 pdf.cell(padding_left, 0, 'NILAI REFUND : Rp. ' + clean_number(str(p['refund_amount'])), 0, 0, 'L')
@@ -463,7 +463,7 @@ def print_shop_trx(p, t, ext='.pdf'):
             if 'refund_status' in p.keys():
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
-                pdf.cell(padding_left, 0, 'STATUS REFUND: ' + p['refund_number'] + ' - ' + p['refund_status'], 0, 0, 'L')
+                pdf.cell(padding_left, 0, 'STATUS REFUND: ' + p['refund_number'] + ' ' + p['refund_status'], 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
                 pdf.cell(padding_left, 0, 'NILAI REFUND : Rp. ' + clean_number(str(p['refund_amount'])), 0, 0, 'L')
@@ -592,7 +592,7 @@ def print_ppob_trx(p, t, ext='.pdf'):
                 pdf.cell(padding_left, 0, 'UANG DITERIMA: Rp. ' + clean_number(str(p['payment_received'])), 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
-                pdf.cell(padding_left, 0, 'STATUS REFUND: ' + p['refund_number'] + ' - ' + p['refund_status'], 0, 0, 'L')
+                pdf.cell(padding_left, 0, 'STATUS REFUND: ' + p['refund_number'] + ' ' + p['refund_status'], 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
                 pdf.cell(padding_left, 0, 'NILAI REFUND : Rp. ' + clean_number(str(p['refund_amount'])), 0, 0, 'L')
@@ -614,7 +614,7 @@ def print_ppob_trx(p, t, ext='.pdf'):
             if 'refund_status' in p.keys():
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
-                pdf.cell(padding_left, 0, 'STATUS REFUND: ' + p['refund_number'] + ' - ' + p['refund_status'], 0, 0, 'L')
+                pdf.cell(padding_left, 0, 'STATUS REFUND: ' + p['refund_number'] + ' ' + p['refund_status'], 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
                 pdf.cell(padding_left, 0, 'NILAI REFUND : Rp. ' + clean_number(str(p['refund_amount'])), 0, 0, 'L')
