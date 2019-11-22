@@ -591,7 +591,7 @@ def fake_update_balance(bank, card_no, amount):
         last_balance = int(prev_balance) + int(amount)
         output = {
             'last_balance': str(last_balance),
-            'report_sam': 'DUMMY|'+card_no+'|'+amount+'|'+str(_Helper.now()),
+            'report_sam': 'DUMMY-'+card_no+'-'+amount+'-'+str(_Helper.now()),
             'card_no': card_no,
             'report_ka': 'N/A',
             'bank_id': '4',
