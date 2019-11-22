@@ -702,6 +702,8 @@ Base{
             _SLOT.start_top_up_mandiri(amount, structId);
         } else if (provider.indexOf('BNI') > -1 || cardNo.substring(0, 4) == '7546'){
             _SLOT.start_top_up_bni(amount, structId);
+        } else if (provider.indexOf('DKI') > -1){
+            _SLOT.start_fake_update_dki(cardNo, amount);
         }
     }
 

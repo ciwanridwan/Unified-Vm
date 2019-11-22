@@ -579,6 +579,10 @@ class SlotHandler(QObject):
         _QPROX.start_update_balance_online(bank)
     start_update_balance_online = pyqtSlot(str)(start_update_balance_online)
 
+    def start_fake_update_dki(self, card_no, amount):
+        _QPROX.start_fake_update_dki(card_no, amount)
+    start_fake_update_dki = (str, str)(start_fake_update_dki)
+
 
 def s_handler():
     _KioskService.K_SIGNDLER.SIGNAL_GET_FILE_LIST.connect(view.rootObject().result_get_file_list)
@@ -1021,9 +1025,9 @@ if __name__ == '__main__':
     if _Global.CD['status'] is True:
         print("pyt: [INFO] Re-Init CD V2 Configuration...")
         _CD.reinit_v2_config()
-    # sleep(.5)
-    # print("pyt: Triggering Mandiri Balance Validation...")
-    # _SettlementService.start_validate_update_balance()
+    sleep(.5)
+    print("pyt: Triggering Mandiri Balance Validation...")
+    _SettlementService.start_validate_update_balance()
     view.show()
     app.exec_()
     del view

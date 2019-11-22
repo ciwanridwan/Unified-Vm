@@ -380,16 +380,21 @@ def check_balance():
         return
     param = QPROX['BALANCE'] + '|'
     response, result = _Command.send_request(param=param, output=_Command.MO_REPORT, wait_for=1.5)
-    LOGGER.debug(("check_balance : ", 'native', result))
-    if response == 0 and len(result) > 4:
+    LOGGER.debug(("check_balance : ", 'non-native', 'force_allowed_topup', result))
+    if response == 0:
+        bank_name = get_fw_bank(result.split('|')[2])
+        card_no = result.split('|')[1].replace('#', '')
+        balance = result.split('|')[0]
         output = {
-            'balance': result.split('|')[0],
-            'card_no': result.split('|')[1].replace('#', ''),
+            'balance': balance,
+            'card_no': card_no,
             'bank_type': result.split('|')[2].replace('#', ''),
-            'bank_name': get_fw_bank(result.split('|')[2]),
+            'bank_name': bank_name,
             # 'able_topup': result.split('|')[3].replace('#', ''),
             'able_topup': '0000', #Force Allowed Topup
         }
+        if bank_name == 'DKI':
+            _Global.log_to_temp_config(card_no, balance)
         LAST_BALANCE_CHECK = output
         _Global.NFC_ERROR = ''
         QP_SIGNDLER.SIGNAL_BALANCE_QPROX.emit('BALANCE|' + json.dumps(output))
@@ -570,6 +575,30 @@ ERROR_TOPUP = {
     'FFFD': 'PROCESS_NOT_FINISHED',
     '6969': 'CARD_NOT_MATCH'
 }
+
+def start_fake_update_dki(card_no, amount):
+    bank = 'DKI'
+    _Helper.get_pool().apply_async(fake_update_balance, (bank, card_no, amount,))
+
+
+def fake_update_balance(bank, card_no, amount):
+    if bank == 'DKI':
+        sleep(2)
+        prev_balance = _ConfigParser.get_value('TEMPORARY', card_no)
+        last_balance = int(prev_balance) + int(amount)
+        output = {
+            'last_balance': str(last_balance),
+            'report_sam': 'DUMMY|'+card_no+'|'+amount+'|'+str(_Helper.now()),
+            'card_no': card_no,
+            'report_ka': 'N/A',
+            'bank_id': '4',
+            'bank_name': 'DKI',
+            }
+        _Global.log_to_temp_config(card_no, last_balance)
+        QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('0000|'+json.dumps(output))
+    else:
+        return
+
 
 
 def start_topup_up_bni_with_attempt(amount, trxid, attempt):
