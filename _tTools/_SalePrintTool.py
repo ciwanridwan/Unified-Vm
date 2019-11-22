@@ -249,7 +249,7 @@ def print_topup_trx(p, t, ext='.pdf'):
                 # pdf.cell(padding_left, 0, 'UANG KEMBALI: Rp. ' + clean_number('0'), 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
-                pdf.cell(padding_left, 0, 'NO. KARTU  : Rp. ' + p['topup_details']['card_no'], 0, 0, 'L')
+                pdf.cell(padding_left, 0, 'NO. KARTU  : ' + p['topup_details']['card_no'], 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
                 saldo_awal = int(p['topup_details']['last_balance']) - (int(p['value']) - int(p['admin_fee']))
