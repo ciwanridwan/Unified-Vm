@@ -65,7 +65,7 @@ Base{
         if(Stack.status==Stack.Activating){
 //            if (topupData==undefined) _SLOT.start_kiosk_get_topup_amount();
 //            _SLOT.start_get_topup_status_instant();
-            _SLOT.start_get_topup_readiness();
+//            _SLOT.start_get_topup_readiness();
             _SLOT.start_get_device_status();
             _SLOT.get_kiosk_price_setting();
             mainVisible = false;
@@ -81,6 +81,7 @@ Base{
             isConfirm = false;
             if (cardData==undefined){
                 open_preload_notif();
+                _SLOT.start_get_topup_readiness();
             } else {
                 parse_cardData(cardData);
             }

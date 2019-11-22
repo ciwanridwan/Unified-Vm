@@ -237,6 +237,7 @@ Base{
                         'balance': balance,
                         'card_no': cardNo,
                         'bank_type': bankType,
+                        'bank_name': bankName,
                         'imageSource': imageSource,
                         'notifSaldo': ''
                     }
