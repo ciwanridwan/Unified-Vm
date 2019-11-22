@@ -226,11 +226,11 @@ Base{
             onClicked: {
                 _SLOT.user_action_log('Press "ISI SALDO"');
                 preload_check_card.close();
-                if (!mandiriAvailable) {
-                    press = '0';
-                    switch_frame('source/smiley_down.png', 'Maaf Sementara Mesin Tidak Dapat Untuk', 'Melakukan Pengisian Kartu', 'closeWindow', false )
-                    return;
-                }
+//                if (!mandiriAvailable) {
+//                    press = '0';
+//                    switch_frame('source/smiley_down.png', 'Maaf Sementara Mesin Tidak Dapat Untuk', 'Melakukan Pengisian Kartu', 'closeWindow', false )
+//                    return;
+//                }
                 if (press!='0') return;
                 press = '1'
                 if (['MANDIRI', 'BNI', 'DKI'].indexOf(bankName)){
