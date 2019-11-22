@@ -394,7 +394,7 @@ Base{
 //        _provider.labelContent = provider;
 //        _card_no.labelContent = card_no;
 //        _last_balance.labelContent = 'Rp. ' +  FUNC.insert_dot(last_balance.toString()) + ',-';;
-//        _SLOT.start_get_topup_readiness();
+        _SLOT.start_get_topup_readiness();
         popup_loading.close();
     }
 
