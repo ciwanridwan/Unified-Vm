@@ -581,7 +581,7 @@ class SlotHandler(QObject):
 
     def start_fake_update_dki(self, card_no, amount):
         _QPROX.start_fake_update_dki(card_no, amount)
-    start_fake_update_dki = (str, str)(start_fake_update_dki)
+    start_fake_update_dki = pyqtSlot(str, str)(start_fake_update_dki)
 
 
 def s_handler():
