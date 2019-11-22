@@ -453,47 +453,8 @@ Base{
     }
 
     function generateConfirm(rows, confirmation, closeMode, timer){
-        if (rows==undefined || rows.length == 0) return;
-        if (confirmation==undefined) confirmation = false;
-        if (closeMode==undefined) closeMode = 'closeWindow';
-        if (timer!==undefined){
-            global_confirmation_frame.withTimer = true;
-            global_confirmation_frame.timerDuration = parseInt(timer);
-        }
-        global_confirmation_frame.modeConfirm = confirmation;
-        global_confirmation_frame.closeMode = closeMode;
-        for (var i=0;i<rows.length;i++){
-            if (i==0){
-                global_confirmation_frame.label1 = rows[i].label;
-                global_confirmation_frame.data1 = rows[i].content;
-            }
-            if (i==1){
-                global_confirmation_frame.label2 = rows[i].label;
-                global_confirmation_frame.data2 = rows[i].content;
-            }
-            if (i==2){
-                global_confirmation_frame.label3 = rows[i].label;
-                global_confirmation_frame.data3 = rows[i].content;
-            }
-            if (i==3){
-                global_confirmation_frame.label4 = rows[i].label;
-                global_confirmation_frame.data4 = rows[i].content;
-            }
-            if (i==4){
-                global_confirmation_frame.label5 = rows[i].label;
-                global_confirmation_frame.data5 = rows[i].content;
-            }
-            if (i==5){
-                global_confirmation_frame.label6 = rows[i].label;
-                global_confirmation_frame.data6 = rows[i].content;
-            }
-            if (i==6){
-                global_confirmation_frame.label7 = rows[i].label;
-                global_confirmation_frame.data7 = rows[i].content;
-            }
-        }
         press = '0';
-        global_confirmation_frame.open();
+        global_confirmation_frame.open(rows, confirmation, closeMode, timer);
     }
 
     /*

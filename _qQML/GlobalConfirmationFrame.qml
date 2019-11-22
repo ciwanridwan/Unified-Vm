@@ -190,7 +190,46 @@ Base{
 //    }
 
 
-    function open(){
+    function open(rows, confirmation, closeMode__, timer__){
+        if (rows==undefined || rows.length == 0) return;
+        if (confirmation==undefined) confirmation = false;
+        if (closeMode__==undefined) closeMode__ = 'closeWindow';
+        if (timer__!==undefined){
+            withTimer = true;
+            timerDuration = parseInt(timer__);
+        }
+        modeConfirm = confirmation;
+        closeMode = closeMode__;
+        for (var i=0;i<rows.length;i++){
+            if (i==0){
+                label1 = rows[i].label;
+                data1 = rows[i].content;
+            }
+            if (i==1){
+                label2 = rows[i].label;
+                data2 = rows[i].content;
+            }
+            if (i==2){
+                label3 = rows[i].label;
+                data3 = rows[i].content;
+            }
+            if (i==3){
+                label4 = rows[i].label;
+                data4 = rows[i].content;
+            }
+            if (i==4){
+                label5 = rows[i].label;
+                data5 = rows[i].content;
+            }
+            if (i==5){
+                label6 = rows[i].label;
+                data6 = rows[i].content;
+            }
+            if (i==6){
+                label7 = rows[i].label;
+                data7 = rows[i].content;
+            }
+        }
         globalConfirmationFrame.visible = true;
         if (withTimer){
             showDuration = timerDuration;
