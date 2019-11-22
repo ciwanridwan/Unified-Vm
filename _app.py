@@ -1021,9 +1021,9 @@ if __name__ == '__main__':
     if _Global.CD['status'] is True:
         print("pyt: [INFO] Re-Init CD V2 Configuration...")
         _CD.reinit_v2_config()
-    sleep(.5)
-    print("pyt: Triggering Mandiri Balance Validation...")
-    _SettlementService.start_validate_update_balance()
+    # sleep(.5)
+    # print("pyt: Triggering Mandiri Balance Validation...")
+    # _SettlementService.start_validate_update_balance()
     view.show()
     app.exec_()
     del view

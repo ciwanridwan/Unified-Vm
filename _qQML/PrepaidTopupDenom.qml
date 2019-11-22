@@ -196,21 +196,21 @@ Base{
         if (ready.mandiri=='AVAILABLE') {
             if (mandiriTopupWallet > 0) {
                 emoneyAvailable = true;
-                if (mandiriTopupWallet > parseInt(smallDenomTopup)) {
-                    small_denom.buttonActive = true;
-                } else {
-                    small_denom.buttonActive = false;
-                }
-                if (mandiriTopupWallet > parseInt(midDenomTopup)) {
-                    mid_denom.buttonActive = true;
-                } else {
-                    mid_denom.buttonActive = false;
-                }
-                if (mandiriTopupWallet > parseInt(highDenomTopup)) {
-                    high_denom.buttonActive = true;
-                } else {
-                    high_denom.buttonActive = false;
-                }
+//                if (mandiriTopupWallet > parseInt(smallDenomTopup)) {
+//                    small_denom.buttonActive = true;
+//                } else {
+//                    small_denom.buttonActive = false;
+//                }
+//                if (mandiriTopupWallet > parseInt(midDenomTopup)) {
+//                    mid_denom.buttonActive = true;
+//                } else {
+//                    mid_denom.buttonActive = false;
+//                }
+//                if (mandiriTopupWallet > parseInt(highDenomTopup)) {
+//                    high_denom.buttonActive = true;
+//                } else {
+//                    high_denom.buttonActive = false;
+//                }
             }
         }
         if (ready.mandiri=='TEST_MODE') {
@@ -270,10 +270,10 @@ Base{
 //        bniWallet1 = ready.bni_wallet_1;
 //        bniWallet2 = ready.bni_wallet_2;
 
-        if (!check_denom_topup()){
-            false_notif();
-            return;
-        }
+//        if (!check_denom_topup()){
+//            false_notif();
+//            return;
+//        }
         popup_loading.close();
     }
 
