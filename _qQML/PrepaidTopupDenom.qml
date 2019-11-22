@@ -12,7 +12,6 @@ Base{
     property var provider: 'e-Money Mandiri'
     property bool emoneyAvailable: false
     property bool tapcashAvailable: false
-    property var topupData: undefined
     property var adminFee: 1500
     property var mandiriTopupWallet: 0
     property var bniTopupWallet: 0
@@ -41,6 +40,7 @@ Base{
     property int totalPay: 0
 
     property bool frameWithButton: false
+    property var modeButtonPopup
 
     property var smallDenomTopup: ''
     property var midDenomTopup: ''
@@ -61,7 +61,6 @@ Base{
 
     Stack.onStatusChanged:{
         if(Stack.status==Stack.Activating){
-//            if (topupData==undefined) _SLOT.start_kiosk_get_topup_amount();
 //            _SLOT.start_get_topup_status_instant();
 //            _SLOT.start_get_topup_readiness();
             _SLOT.start_get_device_status();
@@ -97,7 +96,6 @@ Base{
         base.result_get_device.connect(get_device_status);
         base.result_balance_qprox.connect(get_balance);
         base.result_topup_readiness.connect(topup_readiness);
-        base.result_topup_amount.connect(get_topup_amount);
         base.result_price_setting.connect(define_price);
     }
 
@@ -108,7 +106,6 @@ Base{
         base.result_get_device.disconnect(get_device_status);
         base.result_balance_qprox.disconnect(get_balance);
         base.result_topup_readiness.disconnect(topup_readiness);
-        base.result_topup_amount.disconnect(get_topup_amount);
         base.result_price_setting.disconnect(define_price);
 
     }
@@ -197,30 +194,30 @@ Base{
                 emoneyAvailable = true;
             }
         }
-        if (ready.mandiri=='TEST_MODE') {
-            smallDenomTopup = '2';
-            midDenomTopup = '4';
-            highDenomTopup = '9';
-            adminFee = 1;
-            if (mandiriTopupWallet > 0) {
-                emoneyAvailable = true;
-                if (mandiriTopupWallet > parseInt(smallDenomTopup)) {
-                    small_denom.buttonActive = true;
-                } else {
-                    small_denom.buttonActive = false;
-                }
-                if (mandiriTopupWallet > parseInt(midDenomTopup)) {
-                    mid_denom.buttonActive = true;
-                } else {
-                    mid_denom.buttonActive = false;
-                }
-                if (mandiriTopupWallet > parseInt(highDenomTopup)) {
-                    high_denom.buttonActive = true;
-                } else {
-                    high_denom.buttonActive = false;
-                }
-            }
-        }
+//        if (ready.mandiri=='TEST_MODE') {
+//            smallDenomTopup = '2';
+//            midDenomTopup = '4';
+//            highDenomTopup = '9';
+//            adminFee = 1;
+//            if (mandiriTopupWallet > 0) {
+//                emoneyAvailable = true;
+//                if (mandiriTopupWallet > parseInt(smallDenomTopup)) {
+//                    small_denom.buttonActive = true;
+//                } else {
+//                    small_denom.buttonActive = false;
+//                }
+//                if (mandiriTopupWallet > parseInt(midDenomTopup)) {
+//                    mid_denom.buttonActive = true;
+//                } else {
+//                    mid_denom.buttonActive = false;
+//                }
+//                if (mandiriTopupWallet > parseInt(highDenomTopup)) {
+//                    high_denom.buttonActive = true;
+//                } else {
+//                    high_denom.buttonActive = false;
+//                }
+//            }
+//        }
         if (ready.bni=='AVAILABLE') {
             if (bniTopupWallet > 0) tapcashAvailable = true;
         }
@@ -255,13 +252,6 @@ Base{
         small_denom.buttonActive = true;
         mid_denom.buttonActive = true;
         high_denom.buttonActive = true;
-//        bniWallet1 = ready.bni_wallet_1;
-//        bniWallet2 = ready.bni_wallet_2;
-
-//        if (!check_denom_topup()){
-//            false_notif();
-//            return;
-//        }
         popup_loading.close();
     }
 
@@ -273,21 +263,6 @@ Base{
         return true;
 
     }
-
-//    function init_topup_denom(p){
-//        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-//        console.log('init_topup_denom', p, now);
-//        //[{'name': 'MANDIRI', 'smallDenom': 50, 'bigDenom': 100, 'tinyDenom': 25}, {'name': 'BNI', 'smallDenom': 50, 'bigDenom': 100}]
-//        for (var i=0; i < topupData.length; i++){
-//            if (topupData[i].name==p){
-//                select_denom.bigDenomAmount = topupData[i].bigDenom;
-//                select_denom.smallDenomAmount = topupData[i].smallDenom;
-//                var tinyDenom = 0;
-//                if (topupData[i].tinyDenom != undefined) tinyDenom = topupData[i].tinyDenom;
-//                select_denom.tinyDenomAmount = tinyDenom;
-//            }
-//        }
-//    }
 
     function set_selected_denom(d){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
@@ -305,16 +280,6 @@ Base{
         generateConfirm(rows, true);
     }
 
-    function get_topup_amount(r){
-        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-        console.log('get_topup_amount', r, now);
-        topupData = JSON.parse(r)
-        if (cardData != undefined){
-            parse_cardData(cardData);
-        } else {
-            open_preload_notif();
-        }
-    }
 
     function get_balance(text){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
@@ -324,7 +289,6 @@ Base{
         popup_loading.close();
         var result = text.split('|')[1];
         if (result == 'ERROR'){
-            back_button.z = 999
             switch_frame('source/insert_card_new.png', 'Anda tidak meletakkan kartu', 'atau kartu Anda tidak dapat digunakan', 'backToMain', false );
             return;
         } else {
@@ -353,7 +317,6 @@ Base{
 //                    return;
 //                }
             } else {
-//                back_button.z = 999
                 switch_frame('source/insert_card_new.png', 'Anda tidak meletakkan kartu', 'ataupun kartu Anda tidak dapat digunakan', 'closeWindow', false );
                 return;
             }
@@ -370,7 +333,7 @@ Base{
         cardBalance = parseInt(last_balance);
         press = '0';
         shopType = 'topup';
-        //TODO Reset Provider To Default Item
+        //Set Provider Based On Bank Name
         if (bank_name=='MANDIRI') provider = 'e-Money Mandiri';
         if (bank_name=='BNI') provider = 'Tapcash BNI';
         if (bank_name=='DKI') provider = 'JakCard DKI';
