@@ -610,7 +610,7 @@ def start_topup_up_bni_with_attempt(amount, trxid, attempt):
 
 
 def top_up_bni(amount, trxid, slot=None, attempt=None):
-    _slot = 0
+    _slot = 1
     if slot is None:
         slot = _Global.BNI_ACTIVE
         _slot = _Global.BNI_ACTIVE - 1

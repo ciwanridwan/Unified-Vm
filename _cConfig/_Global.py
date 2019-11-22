@@ -253,8 +253,8 @@ MANDIRI_ACTIVE = int(_ConfigParser.get_set_value('QPROX', 'mandiri^active^slot',
 BNI_SAM_1_WALLET = 0
 BNI_SAM_2_WALLET = 0
 BNI_SINGLE_SAM = True if _ConfigParser.get_set_value('QPROX', 'bni^single^sam', '1') == '1' else False
-if BNI_SINGLE_SAM is True:
-    _ConfigParser.set_value('QPROX', 'bni^active^slot', '1')
+# if BNI_SINGLE_SAM is True:
+#     _ConfigParser.set_value('QPROX', 'bni^active^slot', '2')
 BNI_ACTIVE = int(_ConfigParser.get_set_value('QPROX', 'bni^active^slot', '1'))
 BRI_WALLET = 0
 BCA_WALLET = 0

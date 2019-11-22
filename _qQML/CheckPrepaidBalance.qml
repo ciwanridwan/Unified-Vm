@@ -116,15 +116,8 @@ Base{
 //            image_prepaid_card.source = "source/card_tj_original.png";
 //            imageSource = "source/card_tj_original.png";
 //            notif_saldo.text = "Saldo Kartu Prabayar Anda\nRp. 0, -";
-        } else {
-            var info = JSON.parse(result);
-            balance = info.balance.toString();
-            cardNo = info.card_no;
-            bankType = info.bank_type;
-            bankName = info.bank_name;
-            ableTopupCode = info.able_topup;
-            var cardNo__ = FUNC.insert_space_four(cardNo)
-            content_card_no.text = cardNo__.substring(0, cardNo__.length-3);
+        }
+//        else {
 //            if (bankName == 'MANDIRI'){
 //                image_prepaid_card.source = "source/mandiri_emoney_card.png";
 //                imageSource = "source/mandiri_emoney_card.png";
@@ -142,7 +135,15 @@ Base{
 //                imageSource = "source/card_tj_original.png";
 //                notif_saldo.text = "Saldo Kartu Prabayar Anda\nRp. " + FUNC.insert_dot(balance) + ",-";
 //            }
-        }
+//        }
+        var info = JSON.parse(result);
+        balance = info.balance.toString();
+        cardNo = info.card_no;
+        bankType = info.bank_type;
+        bankName = info.bank_name;
+        ableTopupCode = info.able_topup;
+        var cardNo__ = FUNC.insert_space_four(cardNo)
+        content_card_no.text = cardNo__.substring(0, cardNo__.length-3);
     }
 
     Rectangle{
