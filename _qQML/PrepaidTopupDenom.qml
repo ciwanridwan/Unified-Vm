@@ -267,6 +267,10 @@ Base{
             smallDenomTopup = ready.brizzi[2]
             break;
         }
+
+        small_denom.buttonActive = true;
+        mid_denom.buttonActive = true;
+        high_denom.buttonActive = true;
 //        bniWallet1 = ready.bni_wallet_1;
 //        bniWallet2 = ready.bni_wallet_2;
 
