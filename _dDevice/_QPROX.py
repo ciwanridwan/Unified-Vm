@@ -368,16 +368,16 @@ def get_fw_bank(key):
 
 def check_balance():
     global LAST_BALANCE_CHECK
-    if TEST_MODE is True and not _Global.LIVE_MODE:
-        output = {
-            'balance': '99000',
-            'card_no': '6032123443211234',
-            'bank_type': '0',
-            'bank_name': 'MANDIRI',
-            'able_topup': '0000'
-        }
-        QP_SIGNDLER.SIGNAL_BALANCE_QPROX.emit('BALANCE|' + json.dumps(output))
-        return
+    # if TEST_MODE is True and not _Global.LIVE_MODE:
+    #     output = {
+    #         'balance': '99000',
+    #         'card_no': '6032123443211234',
+    #         'bank_type': '0',
+    #         'bank_name': 'MANDIRI',
+    #         'able_topup': '0000'
+    #     }
+    #     QP_SIGNDLER.SIGNAL_BALANCE_QPROX.emit('BALANCE|' + json.dumps(output))
+    #     return
     param = QPROX['BALANCE'] + '|'
     response, result = _Command.send_request(param=param, output=_Command.MO_REPORT, wait_for=1.5)
     LOGGER.debug(("check_balance : ", 'non-native', 'force_allowed_topup', result))

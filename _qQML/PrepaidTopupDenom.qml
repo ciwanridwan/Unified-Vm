@@ -40,8 +40,6 @@ Base{
 
     property int totalPay: 0
 
-    property string cancelText: 'BATAL'
-    property string proceedText: 'LANJUT'
     property bool frameWithButton: false
 
     property var smallDenomTopup: ''
@@ -81,7 +79,7 @@ Base{
             isConfirm = false;
             if (cardData==undefined){
                 open_preload_notif();
-                _SLOT.start_get_topup_readiness();
+//                _SLOT.start_get_topup_readiness();
             } else {
                 parse_cardData(cardData);
             }
@@ -197,21 +195,6 @@ Base{
         if (ready.mandiri=='AVAILABLE') {
             if (mandiriTopupWallet > 0) {
                 emoneyAvailable = true;
-//                if (mandiriTopupWallet > parseInt(smallDenomTopup)) {
-//                    small_denom.buttonActive = true;
-//                } else {
-//                    small_denom.buttonActive = false;
-//                }
-//                if (mandiriTopupWallet > parseInt(midDenomTopup)) {
-//                    mid_denom.buttonActive = true;
-//                } else {
-//                    mid_denom.buttonActive = false;
-//                }
-//                if (mandiriTopupWallet > parseInt(highDenomTopup)) {
-//                    high_denom.buttonActive = true;
-//                } else {
-//                    high_denom.buttonActive = false;
-//                }
             }
         }
         if (ready.mandiri=='TEST_MODE') {
@@ -291,20 +274,20 @@ Base{
 
     }
 
-    function init_topup_denom(p){
-        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-        console.log('init_topup_denom', p, now);
-        //[{'name': 'MANDIRI', 'smallDenom': 50, 'bigDenom': 100, 'tinyDenom': 25}, {'name': 'BNI', 'smallDenom': 50, 'bigDenom': 100}]
-        for (var i=0; i < topupData.length; i++){
-            if (topupData[i].name==p){
-                select_denom.bigDenomAmount = topupData[i].bigDenom;
-                select_denom.smallDenomAmount = topupData[i].smallDenom;
-                var tinyDenom = 0;
-                if (topupData[i].tinyDenom != undefined) tinyDenom = topupData[i].tinyDenom;
-                select_denom.tinyDenomAmount = tinyDenom;
-            }
-        }
-    }
+//    function init_topup_denom(p){
+//        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+//        console.log('init_topup_denom', p, now);
+//        //[{'name': 'MANDIRI', 'smallDenom': 50, 'bigDenom': 100, 'tinyDenom': 25}, {'name': 'BNI', 'smallDenom': 50, 'bigDenom': 100}]
+//        for (var i=0; i < topupData.length; i++){
+//            if (topupData[i].name==p){
+//                select_denom.bigDenomAmount = topupData[i].bigDenom;
+//                select_denom.smallDenomAmount = topupData[i].smallDenom;
+//                var tinyDenom = 0;
+//                if (topupData[i].tinyDenom != undefined) tinyDenom = topupData[i].tinyDenom;
+//                select_denom.tinyDenomAmount = tinyDenom;
+//            }
+//        }
+//    }
 
     function set_selected_denom(d){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
@@ -392,13 +375,6 @@ Base{
         if (bank_name=='BNI') provider = 'Tapcash BNI';
         if (bank_name=='DKI') provider = 'JakCard DKI';
         mainVisible = true;
-//        init_topup_denom(bank_name);
-//        stepMode = 1;
-        // Assigning Wording Into Text Column
-//        _shop_type.labelContent = 'Isi Ulang';
-//        _provider.labelContent = provider;
-//        _card_no.labelContent = card_no;
-//        _last_balance.labelContent = 'Rp. ' +  FUNC.insert_dot(last_balance.toString()) + ',-';;
         _SLOT.start_get_topup_readiness();
         popup_loading.close();
     }
@@ -933,7 +909,7 @@ Base{
             anchors.leftMargin: 100
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 50
-            button_text: cancelText
+            button_text: 'BATAL'
             modeReverse: true
             visible: frameWithButton
             MouseArea{
@@ -951,7 +927,7 @@ Base{
             anchors.rightMargin: 100
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 50
-            button_text: proceedText
+            button_text: 'LANJUT'
             modeReverse: true
             visible: frameWithButton
             MouseArea{
@@ -964,9 +940,9 @@ Base{
                     case 'retrigger_grg':
                         _SLOT.start_grg_receive_note();
                         break;
-                    case 'do_topup':
-                        perform_do_topup();
-                        break;
+//                    case 'do_topup':
+//                        perform_do_topup();
+//                        break;
                     case 'reprint':
                         _SLOT.start_reprint_global();
                         break;
