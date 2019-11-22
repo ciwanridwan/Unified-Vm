@@ -171,7 +171,7 @@ Base{
             box_connection.color = 'red';
             kioskStatus = false;
         }
-        _SLOT.start_get_topup_readiness();
+//        _SLOT.start_get_topup_readiness();
     }
 
     function not_authorized(){
@@ -285,10 +285,10 @@ Base{
                 onClicked: {
                     _SLOT.user_action_log('Press "TopUp Saldo"');
                     resetMediaTimer();
-                    if (!mandiriTopupActive) {
-                        kalog_notif();
-                        return;
-                    }
+//                    if (!mandiriTopupActive) {
+//                        kalog_notif();
+//                        return;
+//                    }
                     if (press!="0") return;
                     press = "1";
                     _SLOT.set_tvc_player("STOP");
