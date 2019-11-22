@@ -65,6 +65,7 @@ Base{
         if(Stack.status==Stack.Activating){
 //            if (topupData==undefined) _SLOT.start_kiosk_get_topup_amount();
 //            _SLOT.start_get_topup_status_instant();
+            _SLOT.start_get_topup_readiness();
             _SLOT.start_get_device_status();
             _SLOT.get_kiosk_price_setting();
             mainVisible = false;
@@ -343,7 +344,7 @@ Base{
             var bankName = info.bank_name;
             var ableTopupCode = info.able_topup;
             cardBalance = parseInt(info.balance);
-            if (['MANDIRI', 'BNI'].indexOf(bankName) > -1){
+            if (['MANDIRI', 'BNI', 'DKI'].indexOf(bankName) > -1){
                 cardData = {
                     balance: info.balance,
                     card_no: info.card_no,
@@ -369,7 +370,7 @@ Base{
                 return;
             }
         }
-        _SLOT.start_get_topup_readiness();
+//        _SLOT.start_get_topup_readiness();
     }
 
     function parse_cardData(o){
@@ -384,6 +385,7 @@ Base{
         //TODO Reset Provider To Default Item
         if (bank_name=='MANDIRI') provider = 'e-Money Mandiri';
         if (bank_name=='BNI') provider = 'Tapcash BNI';
+        if (bank_name=='DKI') provider = 'JakCard DKI';
         mainVisible = true;
 //        init_topup_denom(bank_name);
 //        stepMode = 1;
@@ -392,7 +394,7 @@ Base{
 //        _provider.labelContent = provider;
 //        _card_no.labelContent = card_no;
 //        _last_balance.labelContent = 'Rp. ' +  FUNC.insert_dot(last_balance.toString()) + ',-';;
-        _SLOT.start_get_topup_readiness();
+//        _SLOT.start_get_topup_readiness();
         popup_loading.close();
     }
 

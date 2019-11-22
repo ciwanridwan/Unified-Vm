@@ -232,7 +232,7 @@ Base{
                 }
                 if (press!='0') return;
                 press = '1'
-                if (['MANDIRI', 'BNI'].indexOf(bankName)){
+                if (['MANDIRI', 'BNI', 'DKI'].indexOf(bankName)){
                     var _cardData = {
                         'balance': balance,
                         'card_no': cardNo,
