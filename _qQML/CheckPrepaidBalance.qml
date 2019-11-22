@@ -110,7 +110,7 @@ Base{
             cardNo = '';
             balance = 0;
             bankType = undefined;
-            switch_frame('source/insert_card_new.png', 'Anda tidak meletakkan kartu', 'ataupun kartu Anda tidak dapat digunakan', 'closeWindow', false );
+            switch_frame('source/insert_card_new.png', 'Anda tidak meletakkan kartu', 'atau kartu Anda tidak dapat digunakan', 'backToMain', false );
             return;
 //            false_notif('Mohon Maaf|Gagal Mendapatkan Saldo, Pastikan Kartu Prabayar Anda Sudah Ditempelkan Pada Reader');
 //            image_prepaid_card.source = "source/card_tj_original.png";

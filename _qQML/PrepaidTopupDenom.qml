@@ -342,7 +342,7 @@ Base{
         var result = text.split('|')[1];
         if (result == 'ERROR'){
             back_button.z = 999
-            switch_frame('source/insert_card_new.png', 'Anda tidak meletakkan kartu', 'ataupun kartu Anda tidak dapat digunakan', 'closeWindow', false );
+            switch_frame('source/insert_card_new.png', 'Anda tidak meletakkan kartu', 'atau kartu Anda tidak dapat digunakan', 'backToMain', false );
             return;
         } else {
             var info = JSON.parse(result);
