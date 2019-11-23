@@ -264,7 +264,7 @@ Base{
                     if (press!="0") return;
                     press = "1";
                     _SLOT.set_tvc_player("STOP");
-                    my_layer.push(check_balance, {mandiriAvailable: mandiriTopupActive});
+                    my_layer.push(check_balance);
                     _SLOT.stop_idle_mode();
                     show_tvc_loading.stop();
                 }
@@ -558,7 +558,6 @@ Base{
             }
         }
     }
-
 
     Rectangle{
         id: machine_status_rec

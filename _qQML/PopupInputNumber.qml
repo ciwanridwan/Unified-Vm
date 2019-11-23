@@ -67,6 +67,7 @@ Rectangle{
             horizontalAlignment: Text.AlignRight
             font.family:"Ubuntu"
             font.pixelSize: 30
+            visible: false
         }
 
         TextRectangle{

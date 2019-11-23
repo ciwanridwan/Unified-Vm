@@ -15,9 +15,13 @@ Base{
     property var bankName: undefined
     property var ableTopupCode: undefined
     property var imageSource: undefined
-    property bool mandiriAvailable: false
-    property bool bniAvailable: false
+    property bool emoneyAvailable: false
+    property bool tapcashAvailable: false
+    property bool brizziAvailable: false
+    property bool flazzAvailable: false
+    property bool jakcardAvailable: false
     property var actionMode: 'check_balance'
+    property variant allowedBank: ['MANDIRI', 'BNI', 'DKI']
 
     imgPanel: 'source/cek_saldo.png'
     textPanel: 'Cek Saldo Kartu Prabayar'
@@ -27,6 +31,7 @@ Base{
             abc.counter = timer_value;
             my_timer.start();
             preload_check_card.open();
+            _SLOT.start_get_topup_readiness();
             press = '0';
             cardNo = '';
             balance = 0;
@@ -44,17 +49,16 @@ Base{
     Component.onCompleted:{
         base.result_balance_qprox.connect(get_balance);
         base.result_topup_readiness.connect(topup_readiness);
-        base.result_topup_amount.connect(get_topup_amount);
+//        base.result_topup_amount.connect(get_topup_amount);
         base.result_update_balance_online.connect(update_balance_online_result);
     }
 
     Component.onDestruction:{
         base.result_balance_qprox.disconnect(get_balance);
         base.result_topup_readiness.disconnect(topup_readiness);
-        base.result_topup_amount.disconnect(get_topup_amount);
+//        base.result_topup_amount.disconnect(get_topup_amount);
         base.result_update_balance_online.disconnect(update_balance_online_result);
     }
-
 
     function update_balance_online_result(u){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
@@ -87,17 +91,23 @@ Base{
         }
     }
 
-    function get_topup_amount(r){
-        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
-        console.log('get_topup_amount', now, r);
-        topupData = JSON.parse(r);
-    }
+//    function get_topup_amount(r){
+//        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
+//        console.log('get_topup_amount', now, r);
+//        topupData = JSON.parse(r);
+//    }
 
     function topup_readiness(r){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
         console.log('topup_readiness', now, r);
         popup_loading.close();
-//        var ready = JSON.parse(r)
+        var ready = JSON.parse(r);
+        topupData = r;
+        if (ready.mandiri=='AVAILABLE') emoneyAvailable = true;
+        if (ready.bni=='AVAILABLE') tapcashAvailable = true;
+        if (ready.bri=='AVAILABLE') brizziAvailable = true;
+        if (ready.dki=='AVAILABLE') jakcardAvailable = true;
+        if (ready.bca=='AVAILABLE') flazzAvailable = true;
     }
 
     function get_balance(text){
@@ -227,14 +237,17 @@ Base{
             onClicked: {
                 _SLOT.user_action_log('Press "ISI SALDO"');
                 preload_check_card.close();
-//                if (!mandiriAvailable) {
-//                    press = '0';
-//                    switch_frame('source/smiley_down.png', 'Maaf Sementara Mesin Tidak Dapat Untuk', 'Melakukan Pengisian Kartu', 'closeWindow', false )
-//                    return;
-//                }
                 if (press!='0') return;
                 press = '1'
-                if (['MANDIRI', 'BNI', 'DKI'].indexOf(bankName) > -1){
+                if (allowedBank.indexOf(bankName) > -1){
+                    if ((bankName=='MANDIRI' && !emoneyAvailable) ||
+                            (bankName=='BNI' && !tapcashAvailable) ||
+                            (bankName=='BRI' && !brizziAvailable) ||
+                            (bankName=='DKI' && !jakcardAvailable) ||
+                            (bankName=='BCA' && !flazzAvailable)){
+                        switch_frame('source/smiley_down.png', 'Mohon Maaf, fitur topup bank '+bankName, 'sedang tidak dapat digunakan saat ini', 'backToMain', false );
+                        return;
+                    }
                     var _cardData = {
                         'balance': balance,
                         'card_no': cardNo,
@@ -243,7 +256,7 @@ Base{
                         'imageSource': imageSource,
                         'notifSaldo': ''
                     }
-                    my_layer.push(topup_prepaid_denom, {cardData: _cardData, shopType: 'topup'});
+                    my_layer.push(topup_prepaid_denom, {cardData: _cardData, shopType: 'topup', topupData: topupData});
 //                    if (ableTopupCode=='0000'){
 ////                    } else if (ableTopupCode=='1008'){
 ////                        press = 0;
@@ -262,9 +275,7 @@ Base{
 //                        return;
 //                    }
                 } else {
-                    press = 0;
-//                    false_notif('Mohon Maaf|Kartu Prabayar Anda Diterbitkan Oleh Bank Lain ('+bankName+')\nUntuk Sementara Kartu Anda Belum Dapat Digunakan Pada Mesin Ini')
-                    switch_frame('source/insert_card_new.png', 'Anda tidak meletakkan kartu', 'ataupun kartu Anda tidak dapat digunakan', 'closeWindow', false );
+                    switch_frame('source/smiley_down.png', 'Mohon Maaf, fitur topup bank '+bankName, 'tidak tersedia saat ini', 'backToMain', false );
                     return;
                 }
             }
