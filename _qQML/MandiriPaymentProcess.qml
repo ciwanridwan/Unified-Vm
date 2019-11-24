@@ -482,13 +482,8 @@ Base{
 //                _SLOT.start_grg_receive_note();
             }
         } else if (grgFunction == 'STOP_GRG'){
-            if(grgResult.indexOf('SUCCESS') > -1 && receivedCash >= totalPrice) {
-                if (!proceedAble){
-                    details.process_error = 1;
-                    details.special_case = 'non-proceedAble cancel detected';
-                    _SLOT.python_dump(JSON.stringify(details))
-                    return;
-                }
+            if(grgResult.indexOf('SUCCESS') > -1 && receivedCash >= totalPrice && proceedAble){
+                console.log("grg_payment_result STOP_SUCCESS : ", now, receivedCash, totalPrice, proceedAble);
                 var cashResponse = JSON.parse(r.replace('STOP_GRG|SUCCESS-', ''))
                 details.payment_details = cashResponse;
                 details.payment_received = cashResponse.total;
@@ -742,6 +737,7 @@ Base{
                 notice_no_change.modeReverse = (abc.counter % 2 == 0) ? true : false;
                 if(abc.counter < 0){
                     if (details.payment=='cash' && !isPaid) {
+                        proceedAble = false;
                         _SLOT.stop_grg_receive_note();
                         if (receivedCash > 0){
                             //IF Timeout, Will The Customer Input WA Number?
@@ -776,6 +772,7 @@ Base{
                 if (press != '0') return;
                 press = '1';
                 if (details.payment=='cash' && !isPaid) {
+                    proceedAble = false;
                     _SLOT.stop_grg_receive_note();
                     if (receivedCash > 0){
                         validate_release_refund('user_cancellation');
