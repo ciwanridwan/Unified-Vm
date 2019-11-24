@@ -15,7 +15,7 @@ Rectangle{
     property int max_count: 15
     property var press: "0"
     property var numberInput: ""
-    property string mainTitle: "Masukkan Nomor WhatsApp Anda"
+    property string mainTitle: "Terjadi Kegagalan Transaksi, Masukkan No WhatsApp Anda Untuk Pengembalian Dana"
     property var titleImage: "source/whatsapp_transparent_white.png"
     property bool withBackground: true
     property int min_count: 9
@@ -46,8 +46,9 @@ Rectangle{
         anchors.verticalCenter: parent.verticalCenter
 
         MainTitle{
+            width: 1200
             anchors.top: parent.top
-            anchors.topMargin: 40
+            anchors.topMargin: 45
             anchors.horizontalCenter: parent.horizontalCenter
             show_text: mainTitle
             size_: 50
@@ -73,9 +74,9 @@ Rectangle{
         TextRectangle{
             id: textRectangle
             width: 650
-            height: 110
+            height: 100
             anchors.top: parent.top
-            anchors.topMargin: 125
+            anchors.topMargin: 160
             anchors.horizontalCenter: parent.horizontalCenter
             borderColor: CONF.text_color
         }
@@ -111,7 +112,7 @@ Rectangle{
             id:virtual_numpad
             width:320
             height:420
-            anchors.verticalCenterOffset: 100
+            anchors.verticalCenterOffset: 125
             anchors.verticalCenter: parent.verticalCenter
             anchors.horizontalCenter: parent.horizontalCenter
             visible: true

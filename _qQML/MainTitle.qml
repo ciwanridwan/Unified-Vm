@@ -12,6 +12,7 @@ Rectangle{
         id: text_notif
         anchors.fill: parent
         text: show_text
+        wrapMode: Text.WordWrap
         font.pixelSize: size_
         font.family:"Ubuntu"
         color: color_
