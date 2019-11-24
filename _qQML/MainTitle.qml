@@ -6,7 +6,7 @@ Rectangle{
     property int size_: 30
     property string color_: "darkred"
     height: 50
-    width: 932
+    width: 1000
 
     Text {
         id: text_notif
