@@ -57,7 +57,7 @@ Rectangle{
 
         Text {
             color: CONF.text_color
-            text: "*Untuk Pengembalian Pembayaran Anda\nJika Terjadi Kegagalan Transaksi"
+            text: "*Dompet Digital Didukung Oleh DUWIT"
             anchors.verticalCenterOffset: 200
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
@@ -68,7 +68,6 @@ Rectangle{
             horizontalAlignment: Text.AlignRight
             font.family:"Ubuntu"
             font.pixelSize: 30
-            visible: false
         }
 
         TextRectangle{

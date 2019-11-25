@@ -1090,7 +1090,7 @@ Base{
             anchors.rightMargin: 100
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 50
-            button_text: 'LANJUT'
+            button_text: 'SETUJU'
             modeReverse: true
             visible: false
             MouseArea{
