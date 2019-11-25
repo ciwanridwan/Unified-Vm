@@ -308,5 +308,22 @@ Rectangle{
         }
     }
 
+    CircleButton{
+        id:back_button
+        anchors.left: parent.left
+        anchors.leftMargin: 100
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 50
+        button_text: 'BATAL'
+        modeReverse: true
+        MouseArea{
+            anchors.fill: parent
+            onClicked: {
+                _SLOT.user_action_log('press "BATAL" In Select Payment Frame');
+                my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
+            }
+        }
+    }
+
 
 }

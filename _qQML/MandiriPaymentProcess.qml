@@ -138,6 +138,8 @@ Base{
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         var message_input_phone = 'Terjadi Kegagalan Transaksi, Masukkan No WhatsApp Anda Untuk Pengembalian Dana';
         refundMode = error;
+        abc.counter = timer_value/2;
+        my_timer.restart();
         if (error==undefined){
             // Success Transaction
             var exceed = validate_cash_refundable();
