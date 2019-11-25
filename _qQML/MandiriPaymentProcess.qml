@@ -53,7 +53,6 @@ Base{
             if (details != undefined) console.log('product details', JSON.stringify(details));
             if (preloadNotif==undefined){
                 define_first_process();
-                proceedAble == true;
             } else {
                 popup_input_number.open('Silakan Masukkan No WhatsApp Anda')
             }
@@ -668,7 +667,8 @@ Base{
     }
 
     function define_first_process(){
-        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
+        proceedAble = true;
         adminFee = parseInt(details.admin_fee);
         getDenom = parseInt(details.value) * parseInt(details.qty);
         totalPrice = parseInt(getDenom) + parseInt(adminFee);
