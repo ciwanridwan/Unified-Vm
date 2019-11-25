@@ -151,7 +151,7 @@ Base{
             // If Cash Exceed Payment Detected
             refundMode = 'payment_cash_exceed';
             refundAmount = exceed;
-            message_input_phone = 'Terjadi Lebih Bayar, Masukkan No WhatsApp Anda Untuk Pengembalian Dana';
+            message_input_phone = 'Terjadi Lebih Bayar [Rp. '+FUNC.insert_dot(exceed.toString())+'], Masukkan No WhatsApp Anda Untuk Pengembalian Dana';
         }
         switch(error){
         case 'user_payment_timeout':
