@@ -76,13 +76,11 @@ class PDF(FPDF):
         # self.ln(SPACING)
         # self.cell(MARGIN_LEFT, HEADER_FONT_SIZE, 'Layanan Pelanggan Hubungi 0812-XXXX-XXXX', 0, 0, 'C')
         # self.cell(MARGIN_LEFT, FOOTER_FONT_SIZE, '-APP VER: ' + _KioskService.VERSION+'-', 0, 0, 'C')
+        self.set_y(-20)
         if len(_Global.CUSTOM_RECEIPT_TEXT) > 5:
-            self.set_y(-30)
             for custom_text in _Global.CUSTOM_RECEIPT_TEXT.split('|'):
                 self.ln(SPACING-1)
                 self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE-1, custom_text, 0, 0, 'C')
-        else:
-            self.set_y(-20)
         self.ln(SPACING-1)
         self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE-1, 'TERIMA KASIH', 0, 0, 'C')
 

@@ -137,6 +137,7 @@ Base{
     function validate_release_refund(error){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         var message_input_phone = 'Terjadi Kegagalan Transaksi, Masukkan No WhatsApp Anda Untuk Pengembalian Dana';
+        refundMode = error;
         if (error==undefined){
             // Success Transaction
             var exceed = validate_cash_refundable();
@@ -150,7 +151,6 @@ Base{
             refundAmount = exceed;
             message_input_phone = 'Terjadi Lebih Bayar, Masukkan No WhatsApp Anda Untuk Pengembalian Dana';
         }
-        refundMode = error;
         switch(error){
         case 'user_payment_timeout':
         case 'user_cancellation':
