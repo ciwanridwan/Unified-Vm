@@ -1,6 +1,6 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.3
-import QtGraphicalEffects 1.0
+//import QtGraphicalEffects 1.0
 import "base_function.js" as FUNC
 import "screen.js" as SCREEN
 import "config.js" as CONF
@@ -649,7 +649,7 @@ Base{
     function perform_do_topup(){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         var provider = details.provider;
-        var amount = details.denom;
+        var amount = getDenom.toString();
         var structId = details.shop_type + details.epoch.toString();
         if (provider.indexOf('Mandiri') > -1 || cardNo.substring(0, 4) == '6032'){
             _SLOT.start_top_up_mandiri(amount, structId);
@@ -673,6 +673,12 @@ Base{
         proceedAble = true;
         adminFee = parseInt(details.admin_fee);
         getDenom = parseInt(details.value) * parseInt(details.qty);
+        // Row 2 Confirmation Content
+        row2.labelContent = details.provider
+        if (details.shop_type=='topup') {
+            getDenom = parseInt(details.denom);
+            row2.labelContent = details.provider + ' - ' + details.value
+        }
         totalPrice = parseInt(getDenom) + parseInt(adminFee);
         var epoch_string = details.epoch.toString();
         uniqueCode = epoch_string.substring(epoch_string.length-6);
@@ -713,6 +719,7 @@ Base{
         }
 
     }
+
 
     Rectangle{
         id: rec_timer
@@ -844,84 +851,122 @@ Base{
 
     MainTitle{
         anchors.top: parent.top
-        anchors.topMargin: 250
+        anchors.topMargin: 200
         anchors.horizontalCenter: parent.horizontalCenter
-        show_text: 'Silakan Masukkan Uang Anda'
+        show_text: 'Ringkasan Transaksi'
         size_: 50
         color_: "white"
         visible: !global_frame.visible && !popup_loading.visible && !qr_payment_frame.visible
 
     }
 
-    Text {
-        id: label_money_in
-        color: "white"
-        text: "Uang Masuk                       :"
-        anchors.top: parent.top
-        anchors.topMargin: 400
-        anchors.left: parent.left
-        anchors.leftMargin: 200
-        wrapMode: Text.WordWrap
-        verticalAlignment: Text.AlignVCenter
-        horizontalAlignment: Text.AlignHCenter
-        font.family:"Ubuntu"
-        font.pixelSize: 50
-        visible: !global_frame.visible && !popup_loading.visible && !qr_payment_frame.visible
-    }
+//    Text {
+//        id: label_money_in
+//        color: "white"
+//        text: "Uang Masuk                       :"
+//        anchors.top: parent.top
+//        anchors.topMargin: 400
+//        anchors.left: parent.left
+//        anchors.leftMargin: 200
+//        wrapMode: Text.WordWrap
+//        verticalAlignment: Text.AlignVCenter
+//        horizontalAlignment: Text.AlignHCenter
+//        font.family:"Ubuntu"
+//        font.pixelSize: 50
+//        visible: !global_frame.visible && !popup_loading.visible && !qr_payment_frame.visible
+//    }
 
-    Text {
-        id: content_money_in
-        color: "white"
-        text: (receivedCash==0) ? 'Rp 0' : 'Rp ' + FUNC.insert_dot(receivedCash.toString())
-        anchors.right: parent.right
-        anchors.rightMargin: 350
-        anchors.top: parent.top
-        anchors.topMargin: 400
-        wrapMode: Text.WordWrap
-        verticalAlignment: Text.AlignVCenter
-        horizontalAlignment: Text.AlignRight
-        font.family:"Ubuntu"
-        font.pixelSize: 50
-        visible: !global_frame.visible && !popup_loading.visible && !qr_payment_frame.visible
-    }
+//    Text {
+//        id: content_money_in
+//        color: "white"
+//        text: (receivedCash==0) ? 'Rp 0' : 'Rp ' + FUNC.insert_dot(receivedCash.toString())
+//        anchors.right: parent.right
+//        anchors.rightMargin: 350
+//        anchors.top: parent.top
+//        anchors.topMargin: 400
+//        wrapMode: Text.WordWrap
+//        verticalAlignment: Text.AlignVCenter
+//        horizontalAlignment: Text.AlignRight
+//        font.family:"Ubuntu"
+//        font.pixelSize: 50
+//        visible: !global_frame.visible && !popup_loading.visible && !qr_payment_frame.visible
+//    }
 
-    Text {
-        id: label_target_money
-        color: "white"
-        text: "Total Pembayaran             :"
-        anchors.top: parent.top
-        anchors.topMargin: 550
-        anchors.left: parent.left
-        anchors.leftMargin: 200
-        wrapMode: Text.WordWrap
-        verticalAlignment: Text.AlignVCenter
-        horizontalAlignment: Text.AlignHCenter
-        font.family:"Ubuntu"
-        font.pixelSize: 50
-        visible: !global_frame.visible && !popup_loading.visible && !qr_payment_frame.visible
-    }
+//    Text {
+//        id: label_target_money
+//        color: "white"
+//        text: "Total Pembayaran             :"
+//        anchors.top: parent.top
+//        anchors.topMargin: 550
+//        anchors.left: parent.left
+//        anchors.leftMargin: 200
+//        wrapMode: Text.WordWrap
+//        verticalAlignment: Text.AlignVCenter
+//        horizontalAlignment: Text.AlignHCenter
+//        font.family:"Ubuntu"
+//        font.pixelSize: 50
+//        visible: !global_frame.visible && !popup_loading.visible && !qr_payment_frame.visible
+//    }
 
-    Text {
-        id: content_balance
-        color: "white"
-        text: 'Rp ' + FUNC.insert_dot(totalPrice.toString())
-        anchors.right: parent.right
-        anchors.rightMargin: 350
-        anchors.top: parent.top
-        anchors.topMargin: 550
-        wrapMode: Text.WordWrap
-        verticalAlignment: Text.AlignVCenter
-        horizontalAlignment: Text.AlignRight
-        font.family:"Ubuntu"
-        font.pixelSize: 50
-        visible: !global_frame.visible && !popup_loading.visible && !qr_payment_frame.visible
+//    Text {
+//        id: content_balance
+//        color: "white"
+//        text: 'Rp ' + FUNC.insert_dot(totalPrice.toString())
+//        anchors.right: parent.right
+//        anchors.rightMargin: 350
+//        anchors.top: parent.top
+//        anchors.topMargin: 550
+//        wrapMode: Text.WordWrap
+//        verticalAlignment: Text.AlignVCenter
+//        horizontalAlignment: Text.AlignRight
+//        font.family:"Ubuntu"
+//        font.pixelSize: 50
+//        visible: !global_frame.visible && !popup_loading.visible && !qr_payment_frame.visible
+//    }
+
+    Column{
+        width: 900
+        height: 500
+        anchors.horizontalCenterOffset: 50
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.verticalCenter: parent.verticalCenter
+        spacing: 20
+
+        TextDetailRow{
+            id: row1
+            labelName: 'Tanggal'
+            labelContent: Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        }
+
+        TextDetailRow{
+            id: row2
+            labelName: (details.shop_type=='topup') ? 'Isi Ulang' : 'Pembelian'
+        }
+
+        TextDetailRow{
+            id: row3
+            labelName: (details.shop_type=='topup') ? 'Biaya Admin' : 'Harga Satuan'
+            labelContent: (details.shop_type=='topup') ? 'Rp ' + FUNC.insert_dot(adminFee.toString()) :  'Rp ' + FUNC.insert_dot(details.value)
+        }
+
+        TextDetailRow{
+            id: row4
+            labelName: (details.payment=='cash') ? 'Uang Masuk' : 'Jumlah'
+            labelContent: (details.payment=='cash') ? 'Rp ' + FUNC.insert_dot(receivedCash.toString()) : details.qty
+        }
+
+        TextDetailRow{
+            id: row5
+            labelName: 'Total Bayar'
+            labelContent: 'Rp ' + FUNC.insert_dot(totalPrice.toString())
+        }
+
     }
 
     BoxTitle{
         id: notice_no_change
         width: 1200
         height: 120
-        visible: !isPaid && (details.payment=='cash')
         radius: 50
         fontSize: 30
         border.width: 0

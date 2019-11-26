@@ -32,6 +32,12 @@ Base{
     property alias data6: row6.labelContent
     property alias label7: row7.labelName
     property alias data7: row7.labelContent
+    property alias label8: row8.labelName
+    property alias data8: row8.labelContent
+    property alias label9: row9.labelName
+    property alias data9: row9.labelContent
+    property alias label10: row10.labelName
+    property alias data10: row10.labelContent
     visible: false
     opacity: visible ? 1.0 : 0.0
     Behavior on opacity {
@@ -93,7 +99,7 @@ Base{
                         break;
                     }
                     return;
-                } else {
+                } else {                   
                     console.log('Press "LANJUT" in Confirmation Page')
                     switch(calledFrom){
                     case 'global_input_number':
@@ -103,6 +109,8 @@ Base{
                         mandiri_shop_card.set_confirmation('global_confirmation_frame');
                         return;
                     case 'prepaid_topup_denom':
+                        if (prepaid_topup_denom.press != '0') return;
+                        prepaid_topup_denom.press = '1';
                         prepaid_topup_denom.set_confirmation('global_confirmation_frame');
                         return;
                     default:
@@ -147,6 +155,18 @@ Base{
 
         TextDetailRow{
             id: row7
+        }
+
+        TextDetailRow{
+            id: row8
+        }
+
+        TextDetailRow{
+            id: row9
+        }
+
+        TextDetailRow{
+            id: row10
         }
 
     }

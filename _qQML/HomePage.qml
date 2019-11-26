@@ -120,14 +120,13 @@ Base{
 
     function get_product_stock(p){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-        console.log('product_stock', now, p);
+        console.log('get_product_stock', now, p);
         productData = JSON.parse(p);
         if (productData.length > 0) {
             if (productData[0].status==101 && parseInt(productData[0].stock) > 0) productCount1 = parseInt(productData[0].stock);
             if (productData[0].status==102 && parseInt(productData[0].stock) > 0) productCount2 = parseInt(productData[0].stock);
             if (productData[0].status==103 && parseInt(productData[0].stock) > 0) productCount3 = parseInt(productData[0].stock);
         }
-
         if (productData.length > 1) {
             if (productData[1].status==101 && parseInt(productData[1].stock) > 0) productCount1 = parseInt(productData[1].stock);
             if (productData[1].status==102 && parseInt(productData[1].stock) > 0) productCount2 = parseInt(productData[1].stock);

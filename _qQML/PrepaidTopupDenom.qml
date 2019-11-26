@@ -34,7 +34,6 @@ Base{
     property bool qrLinkajaEnable: false
     property bool mainVisible: false
     property var totalPaymentEnable: 0
-    property bool isConfirm: false
 
     property var bniWallet1: 0
     property var bniWallet2: 0
@@ -48,7 +47,7 @@ Base{
     property var midDenomTopup: ''
     property var highDenomTopup: ''
 
-    property variant allowedBank: ['MANDIRI', 'BNI', 'DKI']
+    property variant allowedBank: []
 
     // By Default Only Can Show 3 Denoms, Adjusted with below properties
     property int miniDenomValue: 10000
@@ -77,7 +76,6 @@ Base{
             provider = undefined;
             globalDetails = undefined;
             frameWithButton = false;
-            isConfirm = false;
             if (cardData==undefined){
                 open_preload_notif();
             } else {
@@ -141,10 +139,9 @@ Base{
 
     }
 
-    function process_selected_payment(method){
+    function do_set_confirm(triggered){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-        console.log('process_selected_payment', now, method);
-        selectedPayment = method;
+        console.log('do_set_confirm', now, triggered);
         var details = {
             payment: selectedPayment,
             shop_type: 'topup',
@@ -162,6 +159,7 @@ Base{
             bank_name: cardData.bank_name,
         }
         var final_balance = parseInt(cardData.balance) + parseInt(selectedDenom)
+        var topup_amount = parseInt(selectedDenom) - parseInt(adminFee);
         details.qty = 1;
         details.value = selectedDenom.toString();
         details.provider = provider;
@@ -169,9 +167,29 @@ Base{
         details.raw = globalCart;
         details.status = '1';
         details.final_balance = final_balance.toString();
-        details.denom = selectedDenom.toString();
+        details.denom = topup_amount.toString();
         globalDetails = details;
         my_layer.push(mandiri_payment_process, {details: globalDetails, cardNo: cardData.card_no});
+
+    }
+
+    function process_selected_payment(method){
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('process_selected_payment', now, method);
+        selectedPayment = method;
+        totalPay = parseInt(selectedDenom) + parseInt(adminFee);
+        press = '0';
+//        do_set_confirm('process_selected_payment');
+//        var rows = [
+//            {label: 'Tanggal', content: now},
+//            {label: 'Produk', content: 'Isi Ulang Prabayar'},
+//            {label: 'Provider', content: provider},
+//            {label: 'Nilai Topup', content: FUNC.insert_dot(selectedDenom.toString())},
+//            {label: 'Biaya Admin', content: FUNC.insert_dot(adminFee.toString())},
+//            {label: 'Total', content: FUNC.insert_dot(totalPay.toString())},
+//            {label: 'Metode Bayar', content: selectedPayment.toUpperCase()},
+//        ]
+//        generateConfirm(rows, true);
     }
 
     function define_price(p){
@@ -189,11 +207,26 @@ Base{
         var ready = JSON.parse(r)
         mandiriTopupWallet = parseInt(ready.balance_mandiri);
         bniTopupWallet = parseInt(ready.balance_bni);
-        if (ready.mandiri=='AVAILABLE' && mandiriTopupWallet > 0) emoneyAvailable = true;
-        if (ready.bni=='AVAILABLE' && bniTopupWallet > 0) tapcashAvailable = true;
-        if (ready.bri=='AVAILABLE') brizziAvailable = true;
-        if (ready.dki=='AVAILABLE') jakcardAvailable = true;
-        if (ready.bca=='AVAILABLE') flazzAvailable = true;
+        if (ready.mandiri=='AVAILABLE' && mandiriTopupWallet > 0) {
+            emoneyAvailable = true;
+            allowedBank.push('MANDIRI');
+        }
+        if (ready.bni=='AVAILABLE' && bniTopupWallet > 0) {
+            tapcashAvailable = true;
+            allowedBank.push('BNI');
+        }
+        if (ready.bri=='AVAILABLE') {
+            brizziAvailable = true;
+            allowedBank.push('BRI');
+        }
+        if (ready.dki=='AVAILABLE') {
+            jakcardAvailable = true;
+            allowedBank.push('DKI');
+        }
+        if (ready.bca=='AVAILABLE') {
+            flazzAvailable = true;
+            allowedBank.push('BCA');
+        }
 
         switch(cardData.bank_name){
         case 'MANDIRI':
@@ -229,7 +262,6 @@ Base{
         popup_loading.close();
     }
 
-
     function check_denom_topup(){
         if (FUNC.empty(highDenomTopup) && FUNC.empty(midDenomTopup) && FUNC.empty(smallDenomTopup)){
             return false;
@@ -242,18 +274,8 @@ Base{
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('set_selected_denom', d, now);
         selectedDenom = d;
-        totalPay = parseInt(selectedDenom) + parseInt(adminFee);
-        var rows = [
-            {label: 'Tanggal', content: now},
-            {label: 'Produk', content: 'Isi Ulang Prabayar'},
-            {label: 'Provider', content: provider},
-            {label: 'Nilai Topup', content: FUNC.insert_dot(selectedDenom.toString())},
-            {label: 'Biaya Admin', content: FUNC.insert_dot(adminFee.toString())},
-            {label: 'Total', content: FUNC.insert_dot(totalPay.toString())},
-        ]
-        generateConfirm(rows, true);
+        press = '0';
     }
-
 
     function get_balance(text){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
@@ -269,15 +291,15 @@ Base{
             var bankName = info.bank_name;
             var ableTopupCode = info.able_topup;
             cardBalance = parseInt(info.balance);
-            if (allowedBank.indexOf(bankName) > -1){
-                cardData = {
-                    balance: info.balance,
-                    card_no: info.card_no,
-                    bank_type: info.bank_type,
-                    bank_name: info.bank_name,
-                }
-                //Define Data Card, Amount Button, Topup Availability
-                parse_cardData(cardData);
+            cardData = {
+                balance: info.balance,
+                card_no: info.card_no,
+                bank_type: info.bank_type,
+                bank_name: info.bank_name,
+            }
+            //Define Data Card, Amount Button, Topup Availability
+            parse_cardData(cardData);
+//            if (allowedBank.indexOf(bankName) > -1){
 //                if (ableTopupCode=='0000'){
 ////                } else if (ableTopupCode=='1008'){
 ////                    back_button.z = 999
@@ -290,10 +312,10 @@ Base{
 //                    switch_frame('source/insert_card_new.png', 'Maaf terjadi kesalahan pada kartu Anda', 'gunakan kartu lainnya', 'closeWindow', false );
 //                    return;
 //                }
-            } else {
-                switch_frame('source/insert_card_new.png', 'Anda tidak meletakkan kartu', 'ataupun kartu Anda tidak dapat digunakan', 'closeWindow', false );
-                return;
-            }
+//            } else {
+//                switch_frame('source/insert_card_new.png', 'Anda tidak meletakkan kartu', 'ataupun kartu Anda tidak dapat digunakan', 'closeWindow', false );
+//                return;
+//            }
         }
     }
 
@@ -367,17 +389,28 @@ Base{
         }
     }
 
+    CircleButton{
+        id: next_button
+        anchors.right: parent.right
+        anchors.rightMargin: 100
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 50
+        button_text: 'LANJUT'
+        visible: (selectedDenom > 0 && selectedPayment != undefined)
+        modeReverse: true
+        MouseArea{
+            anchors.fill: parent
+            onClicked: {
+                _SLOT.user_action_log('Press "LANJUT"');
+                if (press!='0') return;
+                press = '1';
+                do_set_confirm('button_LANJUT_trigger');
+            }
+        }
+    }
+
     //==============================================================
     //PUT MAIN COMPONENT HERE
-
-    function do_set_confirm(_mode){
-        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-        console.log('Confirmation Flagged By', _mode, now)
-        global_confirmation_frame.no_button();
-        popup_loading.close();
-        press = '0';
-        isConfirm = true;
-    }
 
     function open_preload_notif(){
         preload_check_card.open();
@@ -639,7 +672,7 @@ Base{
 
     MainTitle{
         anchors.top: parent.top
-        anchors.topMargin: 200
+        anchors.topMargin: 175
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: 'Pilih nominal topup'
         size_: 50
@@ -652,7 +685,7 @@ Base{
         color: "white"
         text: "Saldo Anda sekarang"
         anchors.top: parent.top
-        anchors.topMargin: 325
+        anchors.topMargin: 250
         anchors.left: parent.left
         anchors.leftMargin: 350
         wrapMode: Text.WordWrap
@@ -670,7 +703,7 @@ Base{
         anchors.right: parent.right
         anchors.rightMargin: 350
         anchors.top: parent.top
-        anchors.topMargin: 325
+        anchors.topMargin: label_current_balance.anchors.topMargin
         wrapMode: Text.WordWrap
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignRight
@@ -679,66 +712,153 @@ Base{
         visible: mainVisible
     }
 
-    Column{
+//    Column{
+//        id: denom_button
+//        width: 1220
+//        height: 500
+//        anchors.top: parent.top
+//        anchors.topMargin: 450
+//        anchors.horizontalCenter: parent.horizontalCenter
+//        spacing: 60
+//        visible: mainVisible
+//        MandiriDenomButton{
+//            id: small_denom
+//            width: parent.width
+//            button_text: 'Rp ' + FUNC.insert_dot(smallDenomTopup)
+//            buttonActive: false
+//            MouseArea{
+//                anchors.fill: parent
+//                enabled: parent.buttonActive
+//                onClicked: {
+//                    if (exceed_balance(smallDenomTopup)) return
+//                    _SLOT.user_action_log('Press smallDenom "'+smallDenomTopup+'"');
+//                    if (press!='0') return;
+//                    press = '1';
+//                    set_selected_denom(smallDenomTopup);
+//                }
+//            }
+//        }
+//        MandiriDenomButton{
+//            id: mid_denom
+//            width: parent.width
+//            button_text: 'Rp ' + FUNC.insert_dot(midDenomTopup)
+//            buttonActive: false
+//            MouseArea{
+//                anchors.fill: parent
+//                enabled: parent.buttonActive
+//                onClicked: {
+//                    if (exceed_balance(midDenomTopup)) return
+//                    _SLOT.user_action_log('Press midDenom "'+midDenomTopup+'"');
+//                    if (press!='0') return;
+//                    press = '1';
+//                    set_selected_denom(midDenomTopup);
+//                }
+//            }
+//        }
+//        MandiriDenomButton{
+//            id: high_denom
+//            width: parent.width
+//            button_text: 'Rp ' + FUNC.insert_dot(highDenomTopup)
+//            buttonActive: false
+//            MouseArea{
+//                anchors.fill: parent
+//                enabled: parent.buttonActive
+//                onClicked: {
+//                    if (exceed_balance(highDenomTopup)) return
+//                    _SLOT.user_action_log('Press highDenom "'+highDenomTopup+'"');
+//                    if (press!='0') return;
+//                    press = '1';
+//                    set_selected_denom(highDenomTopup);
+//                }
+//            }
+//        }
+//    }
+
+    function release_denom_selection(id){
+        small_denom.do_release();
+        mid_denom.do_release();
+        high_denom.do_release();
+        id.set_active();
+    }
+
+    Row{
         id: denom_button
         width: 1220
-        height: 500
+        height: 200
+        anchors.horizontalCenterOffset: 20
         anchors.top: parent.top
-        anchors.topMargin: 450
+        anchors.topMargin: 350
         anchors.horizontalCenter: parent.horizontalCenter
-        spacing: 60
+        spacing: 50
         visible: mainVisible
-        MandiriDenomButton{
+        SmallSimplyNumber{
             id: small_denom
-            width: parent.width
-            button_text: 'Rp ' + FUNC.insert_dot(smallDenomTopup)
+            itemName: FUNC.insert_dot(FUNC.divide_thousand(smallDenomTopup).toString())
             buttonActive: false
             MouseArea{
                 anchors.fill: parent
                 enabled: parent.buttonActive
                 onClicked: {
                     if (exceed_balance(smallDenomTopup)) return
-                    _SLOT.user_action_log('Press smallDenom "'+smallDenomTopup+'"');
+                    _SLOT.user_action_log('Choose smallDenom "'+smallDenomTopup+'"');
                     if (press!='0') return;
                     press = '1';
+                    release_denom_selection(small_denom);
                     set_selected_denom(smallDenomTopup);
                 }
             }
         }
-        MandiriDenomButton{
+        SmallSimplyNumber{
             id: mid_denom
-            width: parent.width
-            button_text: 'Rp ' + FUNC.insert_dot(midDenomTopup)
+            itemName: FUNC.insert_dot(FUNC.divide_thousand(midDenomTopup).toString())
             buttonActive: false
             MouseArea{
                 anchors.fill: parent
                 enabled: parent.buttonActive
                 onClicked: {
                     if (exceed_balance(midDenomTopup)) return
-                    _SLOT.user_action_log('Press midDenom "'+midDenomTopup+'"');
+                    _SLOT.user_action_log('Choose midDenom "'+midDenomTopup+'"');
                     if (press!='0') return;
                     press = '1';
+                    release_denom_selection(mid_denom);
                     set_selected_denom(midDenomTopup);
                 }
             }
         }
-        MandiriDenomButton{
+        SmallSimplyNumber{
             id: high_denom
-            width: parent.width
-            button_text: 'Rp ' + FUNC.insert_dot(highDenomTopup)
+            itemName: FUNC.insert_dot(FUNC.divide_thousand(highDenomTopup).toString())
             buttonActive: false
             MouseArea{
                 anchors.fill: parent
                 enabled: parent.buttonActive
                 onClicked: {
                     if (exceed_balance(highDenomTopup)) return
-                    _SLOT.user_action_log('Press highDenom "'+highDenomTopup+'"');
+                    _SLOT.user_action_log('Choose highDenom "'+highDenomTopup+'"');
                     if (press!='0') return;
                     press = '1';
+                    release_denom_selection(high_denom);
                     set_selected_denom(highDenomTopup);
                 }
             }
         }
+    }
+
+    SelectPaymentInline{
+        id: select_payment
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 125
+        anchors.horizontalCenter: parent.horizontalCenter
+        visible: (selectedDenom > 0)
+//        visible: true
+        calledFrom: 'prepaid_topup_denom'
+        _cashEnable: cashEnable
+        _cardEnable: cardEnable
+        _qrOvoEnable: qrOvoEnable
+        _qrDanaEnable: qrDanaEnable
+        _qrGopayEnable: qrGopayEnable
+        _qrLinkAjaEnable: qrLinkajaEnable
+        totalEnable: totalPaymentEnable
     }
 
 
@@ -784,19 +904,19 @@ Base{
 //    }
 
 
-    SelectPaymentPopupNotif{
-        id: select_payment
-        visible: isConfirm
-        calledFrom: 'prepaid_topup_denom'
-        _cashEnable: cashEnable
-        _cardEnable: cardEnable
-        _qrOvoEnable: qrOvoEnable
-        _qrDanaEnable: qrDanaEnable
-        _qrGopayEnable: qrGopayEnable
-        _qrLinkAjaEnable: qrLinkajaEnable
-        totalEnable: totalPaymentEnable
-        z: 99
-    }
+//    SelectPaymentPopupNotif{
+//        id: select_payment
+//        visible: isConfirm
+//        calledFrom: 'prepaid_topup_denom'
+//        _cashEnable: cashEnable
+//        _cardEnable: cardEnable
+//        _qrOvoEnable: qrOvoEnable
+//        _qrDanaEnable: qrDanaEnable
+//        _qrGopayEnable: qrGopayEnable
+//        _qrLinkAjaEnable: qrLinkajaEnable
+//        totalEnable: totalPaymentEnable
+//        z: 99
+//    }
 
     PopupLoading{
         id: popup_loading

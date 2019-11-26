@@ -7,7 +7,7 @@ Base{
     isBoxNameActive: false
     property var textMain: 'Letakkan kartu prabayar Anda di alat pembaca kartu yang bertanda '
     property var textSlave: 'Pastikan kartu Anda tetap berada di alat pembaca kartu sampai transaksi selesai'
-    property var imageSource: "source/tap_card.png"
+    property var imageSource: "source/reader_sign.png"
     property bool smallerSlaveSize: true
     property int textSize: 45
     visible: false
@@ -40,8 +40,8 @@ Base{
             verticalAlignment: Text.AlignVCenter
         }
         AnimatedImage  {
-            width: 300
-            height: 300
+            width: 400
+            height: 400
             anchors.horizontalCenter: parent.horizontalCenter
             source: imageSource
             fillMode: Image.PreserveAspectFit

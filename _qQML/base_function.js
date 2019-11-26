@@ -269,4 +269,8 @@ function empty(s){
     return (s.length == 0 || parseInt(s) == 0);
 }
 
+function divide_thousand(n){
+    return parseInt(n)/1000;
+}
+
 

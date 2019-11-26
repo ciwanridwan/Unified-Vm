@@ -3,11 +3,11 @@ import QtGraphicalEffects 1.0
 
 Rectangle {
     property bool modeReverse: false
-    property var color_: (modeReverse) ? "white" : "#1D294D"
+    property var color_: (modeReverse) ? "white" : "black"
     property var img_:"source/qr_dana.png"
     property var text_:"Tiket Pesawat"
     property var text2_:"Flight Ticket"
-    property var text_color: (modeReverse) ? "#1D294D" : "white"
+    property var text_color: (modeReverse) ? "black" : "white"
     width: 350
     height: 350
     color: 'transparent'

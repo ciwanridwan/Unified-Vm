@@ -12,8 +12,8 @@ Rectangle{
 
     Rectangle{
         anchors.fill: parent
-        color: 'white'
-        opacity: globalOpacity
+        color: (button_text=='BATAL') ? 'red' : 'white'
+        opacity: (button_text=='BATAL') ? 1 : globalOpacity
         radius: width/2
     }
 

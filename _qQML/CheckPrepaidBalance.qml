@@ -21,17 +21,17 @@ Base{
     property bool flazzAvailable: false
     property bool jakcardAvailable: false
     property var actionMode: 'check_balance'
-    property variant allowedBank: ['MANDIRI', 'BNI', 'DKI']
+    property variant allowedBank: []
 
     imgPanel: 'source/cek_saldo.png'
     textPanel: 'Cek Saldo Kartu Prabayar'
 
     Stack.onStatusChanged:{
         if(Stack.status==Stack.Activating){
+            _SLOT.start_get_topup_readiness();
+            preload_check_card.open();
             abc.counter = timer_value;
             my_timer.start();
-            preload_check_card.open();
-            _SLOT.start_get_topup_readiness();
             press = '0';
             cardNo = '';
             balance = 0;
@@ -103,11 +103,26 @@ Base{
         popup_loading.close();
         var ready = JSON.parse(r);
         topupData = r;
-        if (ready.mandiri=='AVAILABLE') emoneyAvailable = true;
-        if (ready.bni=='AVAILABLE') tapcashAvailable = true;
-        if (ready.bri=='AVAILABLE') brizziAvailable = true;
-        if (ready.dki=='AVAILABLE') jakcardAvailable = true;
-        if (ready.bca=='AVAILABLE') flazzAvailable = true;
+        if (ready.mandiri=='AVAILABLE') {
+            emoneyAvailable = true;
+            allowedBank.push('MANDIRI');
+        }
+        if (ready.bni=='AVAILABLE') {
+            tapcashAvailable = true;
+            allowedBank.push('BNI');
+        }
+        if (ready.bri=='AVAILABLE') {
+            brizziAvailable = true;
+            allowedBank.push('BRI');
+        }
+        if (ready.dki=='AVAILABLE') {
+            jakcardAvailable = true;
+            allowedBank.push('DKI');
+        }
+        if (ready.bca=='AVAILABLE') {
+            flazzAvailable = true;
+            allowedBank.push('BCA');
+        }
     }
 
     function get_balance(text){
@@ -256,7 +271,7 @@ Base{
                         'imageSource': imageSource,
                         'notifSaldo': ''
                     }
-                    my_layer.push(topup_prepaid_denom, {cardData: _cardData, shopType: 'topup', topupData: topupData});
+                    my_layer.push(topup_prepaid_denom, {cardData: _cardData, shopType: 'topup', topupData: topupData, allowedBank: allowedBank});
 //                    if (ableTopupCode=='0000'){
 ////                    } else if (ableTopupCode=='1008'){
 ////                        press = 0;

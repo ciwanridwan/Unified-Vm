@@ -35,6 +35,7 @@ Base{
 
     property var defaultItemPrice: 50000
     property int boxSize: 80
+    property var selectedPayment: undefined
 
     property bool mainVisible: false
 
@@ -49,12 +50,11 @@ Base{
     Stack.onStatusChanged:{
         if(Stack.status==Stack.Activating){
             console.log('shop_type', shop_type);
-//            preload_shop_card.open();
             mainVisible = true;
             cdReadiness = undefined;
             _SLOT.kiosk_get_cd_readiness();
             _SLOT.start_get_device_status();
-            _SLOT.start_get_multiple_eject_status();
+//            _SLOT.start_get_multiple_eject_status();
             if (cart != undefined) {
                 console.log('cart', JSON.stringify(cart));
                 adminFee = cart.admin_fee;
@@ -72,6 +72,7 @@ Base{
             my_timer.start();
             press = '0';
             productIdx = -1;
+            selectedPayment = undefined;
             isConfirm = false;
             availItems = [];
         }
@@ -154,8 +155,10 @@ Base{
     function process_selected_payment(p){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('process_selected_payment', p, now);
-        var get_details = get_cart_details(p);
-        my_layer.push(mandiri_payment_process, {details: get_details});
+        selectedPayment = p;
+        press = '0';
+//        var get_details = get_cart_details(p);
+//        my_layer.push(mandiri_payment_process, {details: get_details});
     }
 
     function get_status_multiple(m){
@@ -319,31 +322,39 @@ Base{
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 30
         button_text: 'LANJUT'
-        visible: !popup_loading.visible && !global_frame.visible && itemCount > 0 && productIdx > -1
+        visible: !popup_loading.visible && !global_frame.visible && itemCount > 0 && selectedPayment != undefined
         modeReverse: true
         MouseArea{
             anchors.fill: parent
             onClicked: {
                 _SLOT.user_action_log('Press "LANJUT"');
-                popup_loading.close();
-                var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
-                var unit_price = parseInt(productData[productIdx].sell_price);
-                var total_price = itemCount * unit_price;
-                var rows = [
-                    {label: 'Tanggal', content: now},
-                    {label: 'Produk', content: productData[productIdx].name},
-                    {label: 'Deskripsi', content: productData[productIdx].remarks},
-                    {label: 'Jumlah', content: itemCount.toString()},
-                    {label: 'Harga', content: FUNC.insert_dot(unit_price.toString())},
-                    {label: 'Total', content: FUNC.insert_dot(total_price.toString())},
-                ]
-                generateConfirm(rows, true);
+                if (press!='0') return;
+                press = '1';
+                var get_details = get_cart_details(selectedPayment);
+                my_layer.push(mandiri_payment_process, {details: get_details});
+//                popup_loading.close();
+//                var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
+//                var unit_price = parseInt(productData[productIdx].sell_price);
+//                var total_price = itemCount * unit_price;
+//                var rows = [
+//                    {label: 'Tanggal', content: now},
+//                    {label: 'Produk', content: productData[productIdx].name},
+//                    {label: 'Deskripsi', content: productData[productIdx].remarks},
+//                    {label: 'Jumlah', content: itemCount.toString()},
+//                    {label: 'Harga', content: FUNC.insert_dot(unit_price.toString())},
+//                    {label: 'Total', content: FUNC.insert_dot(total_price.toString())},
+//                ]
+//                generateConfirm(rows, true);
             }
         }
     }
 
     function define_card(idx){
         defaultItemPrice = parseInt(productData[idx].sell_price);
+        var selected_stock = parseInt(productData[idx].stock);
+//        if (selected_stock < 4) count4.visible = false;
+//        if (selected_stock < 3) count3.visible = false;
+//        if (selected_stock < 2) count2.visible = false;
         switch(idx){
         case 0:
             card_show_1.set_select();
@@ -369,9 +380,9 @@ Base{
     MainTitle{
         id: main_title
         anchors.top: parent.top
-        anchors.topMargin: 180
+        anchors.topMargin: 175
         anchors.horizontalCenter: parent.horizontalCenter
-        show_text: 'Pilih Jenis Dan Jumlah Kartu Tersedia'
+        show_text: 'Pilih Kartu Tersedia'
         size_: 50
         color_: "white"
         visible: !global_frame.visible && !popup_loading.visible && mainVisible
@@ -381,8 +392,8 @@ Base{
     Row{
         id: rec_card_images
 //        width: (availItems.length * 420)
-        height: 450
-        anchors.verticalCenterOffset: (multipleEject) ? -10 : -50
+        height: 400
+        anchors.verticalCenterOffset: -100
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
         spacing: 20
@@ -396,7 +407,8 @@ Base{
                     if (parent.itemStock < 1) return;
                     var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
                     productIdx = 0;
-                    console.log('select_product_1', productIdx, now);
+                    var selected_product = productData[productIdx];
+                    console.log('select_product_1', now, productIdx, selected_product);
                     define_card(productIdx);
                 }
             }
@@ -410,7 +422,8 @@ Base{
                     if (parent.itemStock < 1) return;
                     var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
                     productIdx = 1;
-                    console.log('select_product_2', productIdx, now);
+                    var selected_product = productData[productIdx];
+                    console.log('select_product_2', now, productIdx, selected_product);
                     define_card(productIdx);
                 }
             }
@@ -424,7 +437,8 @@ Base{
                     if (parent.itemStock < 1) return;
                     var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
                     productIdx = 2;
-                    console.log('select_product_3', productIdx, now);
+                    var selected_product = productData[productIdx];
+                    console.log('select_product_3', now, productIdx, selected_product);
                     define_card(productIdx);
                 }
             }
@@ -497,50 +511,36 @@ Base{
         count2.modeReverse = true;
         count3.modeReverse = true;
         count4.modeReverse = true;
+        var selected_stock = parseInt(productData[productIdx].stock);
+        if (selected_stock < 4) count4.visible = false;
+        if (selected_stock < 3) count3.visible = false;
+        if (selected_stock < 2) count2.visible = false;
+        if (selected_stock == 1) {
+            label_choose_qty.visible = false;
+            itemCount = 1;
+        }
     }
 
     function generateConfirm(rows, confirmation, closeMode, timer){
-//        if (rows==undefined || rows.length == 0) return;
-//        if (isConfirm==undefined) isConfirm = false;
-//        if (closeMode==undefined) closeMode = 'closeWindow';
-//        if (timer!==undefined){
-//            global_confirmation_frame.withTimer = true;
-//            global_confirmation_frame.timerDuration = parseInt(timer);
-//        }
-//        global_confirmation_frame.modeConfirm = isConfirm;
-//        global_confirmation_frame.closeMode = closeMode;
-//        for (var i=0;i<rows.length;i++){
-//            if (i==0){
-//                global_confirmation_frame.label1 = rows[i].label;
-//                global_confirmation_frame.data1 = rows[i].content;
-//            }
-//            if (i==1){
-//                global_confirmation_frame.label2 = rows[i].label;
-//                global_confirmation_frame.data2 = rows[i].content;
-//            }
-//            if (i==2){
-//                global_confirmation_frame.label3 = rows[i].label;
-//                global_confirmation_frame.data3 = rows[i].content;
-//            }
-//            if (i==3){
-//                global_confirmation_frame.label4 = rows[i].label;
-//                global_confirmation_frame.data4 = rows[i].content;
-//            }
-//            if (i==4){
-//                global_confirmation_frame.label5 = rows[i].label;
-//                global_confirmation_frame.data5 = rows[i].content;
-//            }
-//            if (i==5){
-//                global_confirmation_frame.label6 = rows[i].label;
-//                global_confirmation_frame.data6 = rows[i].content;
-//            }
-//            if (i==6){
-//                global_confirmation_frame.label7 = rows[i].label;
-//                global_confirmation_frame.data7 = rows[i].content;
-//            }
-//        }
         press = '0';
         global_confirmation_frame.open(rows, confirmation, closeMode, timer);
+    }
+
+    SelectPaymentInline{
+        id: select_payment
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 100
+        anchors.horizontalCenter: parent.horizontalCenter
+        visible: (productIdx > -1)
+//        visible: true
+        calledFrom: 'mandiri_shop_card'
+        _cashEnable: cashEnable
+        _cardEnable: cardEnable
+        _qrOvoEnable: qrOvoEnable
+        _qrDanaEnable: qrDanaEnable
+        _qrGopayEnable: qrGopayEnable
+        _qrLinkAjaEnable: qrLinkajaEnable
+        totalEnable: totalPaymentEnable
     }
 
 
@@ -753,19 +753,19 @@ Base{
         z: 99
     }
 
-    SelectPaymentPopupNotif{
-        id: select_payment
-        visible: isConfirm
-        calledFrom: 'mandiri_shop_card'
-        _cashEnable: cashEnable
-        _cardEnable: cardEnable
-        _qrOvoEnable: qrOvoEnable
-        _qrDanaEnable: qrDanaEnable
-        _qrGopayEnable: qrGopayEnable
-        _qrLinkAjaEnable: qrLinkajaEnable
-        totalEnable: totalPaymentEnable
-        z: 99
-    }
+//    SelectPaymentPopupNotif{
+//        id: select_payment
+//        visible: isConfirm
+//        calledFrom: 'mandiri_shop_card'
+//        _cashEnable: cashEnable
+//        _cardEnable: cardEnable
+//        _qrOvoEnable: qrOvoEnable
+//        _qrDanaEnable: qrDanaEnable
+//        _qrGopayEnable: qrGopayEnable
+//        _qrLinkAjaEnable: qrLinkajaEnable
+//        totalEnable: totalPaymentEnable
+//        z: 99
+//    }
 
     PopupLoading{
         id: popup_loading
