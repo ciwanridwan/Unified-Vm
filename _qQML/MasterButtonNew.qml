@@ -22,7 +22,7 @@ Rectangle {
     Image{
         id: base_3d_button
         anchors.fill: parent
-        source: "source/"+mode3d+"_3d.png"
+        source: "source/3d_button/__"+mode3d+".png"
         fillMode: Image.PreserveAspectFit
         visible: !background_base.visible
     }

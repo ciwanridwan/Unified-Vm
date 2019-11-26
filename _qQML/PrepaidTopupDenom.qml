@@ -158,8 +158,8 @@ Base{
             bank_type: cardData.bank_type,
             bank_name: cardData.bank_name,
         }
-        var final_balance = parseInt(cardData.balance) + parseInt(selectedDenom)
         var topup_amount = parseInt(selectedDenom) - parseInt(adminFee);
+        var final_balance = parseInt(cardData.balance) + topup_amount
         details.qty = 1;
         details.value = selectedDenom.toString();
         details.provider = provider;
