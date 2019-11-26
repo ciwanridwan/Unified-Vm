@@ -1005,6 +1005,7 @@ Base{
             anchors.bottomMargin: 50
             button_text: 'LANJUT'
             modeReverse: true
+            blinkingMode: true
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
