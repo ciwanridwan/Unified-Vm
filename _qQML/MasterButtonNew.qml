@@ -24,6 +24,7 @@ Rectangle {
         anchors.fill: parent
         source: "source/"+mode3d+"_3d.png"
         fillMode: Image.PreserveAspectFit
+        visible: !background_base.visible
     }
     Image{
         id: button_image
