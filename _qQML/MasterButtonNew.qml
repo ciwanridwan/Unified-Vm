@@ -8,6 +8,7 @@ Rectangle {
     property var text_:"Tiket Pesawat"
     property var text2_:"Flight Ticket"
     property var text_color: (modeReverse) ? "black" : "white"
+    property var mode3d: undefined
     width: 350
     height: 350
     color: 'transparent'
@@ -16,6 +17,13 @@ Rectangle {
         anchors.fill: parent
         color: 'white'
         opacity: .2
+        visible: (mode3d==undefined)
+    }
+    Image{
+        id: base_3d_button
+        anchors.fill: parent
+        source: "source/"+mode3d+"_3d.png"
+        fillMode: Image.PreserveAspectFit
     }
     Image{
         id: button_image

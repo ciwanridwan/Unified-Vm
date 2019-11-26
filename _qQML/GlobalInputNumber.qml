@@ -554,6 +554,7 @@ Base{
         button_text: 'LANJUT'
         modeReverse: true
         visible: !global_confirmation_frame.visible && !isConfirm && !popup_loading.visible
+        blinkingMode: true
         MouseArea{
             anchors.fill: parent
             onClicked: {

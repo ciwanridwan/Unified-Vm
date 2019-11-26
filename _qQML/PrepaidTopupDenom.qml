@@ -398,6 +398,7 @@ Base{
         button_text: 'LANJUT'
         visible: (selectedDenom > 0 && selectedPayment != undefined)
         modeReverse: true
+        blinkingMode: true
         MouseArea{
             anchors.fill: parent
             onClicked: {

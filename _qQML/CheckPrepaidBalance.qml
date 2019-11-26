@@ -247,6 +247,7 @@ Base{
         button_text: 'ISI SALDO'
         modeReverse: true
         visible: !popup_loading.visible && !preload_check_card.visible
+        blinkingMode: true
         MouseArea{
             anchors.fill: parent
             onClicked: {
@@ -599,6 +600,7 @@ Base{
             anchors.bottomMargin: 50
             button_text: 'LANJUT'
             modeReverse: true
+            blinkingMode: true
             MouseArea{
                 anchors.fill: parent
                 onClicked: {

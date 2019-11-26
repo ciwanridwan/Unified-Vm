@@ -40,8 +40,8 @@ Base{
             verticalAlignment: Text.AlignVCenter
         }
         AnimatedImage  {
-            width: 400
-            height: 400
+            width: 300
+            height: 300
             anchors.horizontalCenter: parent.horizontalCenter
             source: imageSource
             fillMode: Image.PreserveAspectFit

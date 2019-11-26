@@ -324,6 +324,7 @@ Base{
         button_text: 'LANJUT'
         visible: !popup_loading.visible && !global_frame.visible && itemCount > 0 && selectedPayment != undefined
         modeReverse: true
+        blinkingMode: true
         MouseArea{
             anchors.fill: parent
             onClicked: {

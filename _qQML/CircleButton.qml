@@ -9,11 +9,20 @@ Rectangle{
     property string button_text: 'ISI SALDO\nOFFLINE'
     property real globalOpacity: .50
     property int fontSize: 30
+    property bool blinkingMode: false
 
     Rectangle{
         anchors.fill: parent
         color: (button_text=='BATAL') ? 'red' : 'white'
         opacity: (button_text=='BATAL') ? 1 : globalOpacity
+        radius: width/2
+        visible: !blinkingMode
+    }
+
+    Rectangle{
+        visible: blinkingMode
+        anchors.fill: parent
+        color: (modeReverse) ? 'green' : 'white'
         radius: width/2
     }
 
@@ -30,6 +39,40 @@ Rectangle{
         font.pixelSize: (button_text.length > 5 ) ? 23 : fontSize
         font.bold: true
     }
+
+    QtObject{
+        id:abc
+        property int counter: 0
+        Component.onCompleted:{
+            abc.counter = 1;
+        }
+    }
+
+    Timer{
+        id: button_timer
+        interval:1000
+        repeat:true
+        running:blinkingMode
+        triggeredOnStart:blinkingMode
+        onTriggered:{
+            abc.counter += 1;
+            if (abc.counter%2==0) {
+                modeReverse = true;
+            } else {
+                modeReverse = false;
+            }
+        }
+    }
+
+    Component.onCompleted: {
+        if (blinkingMode) button_timer.start();
+    }
+
+    Component.onDestruction: {
+        button_timer.stop();
+    }
+
+
 
 }
 
