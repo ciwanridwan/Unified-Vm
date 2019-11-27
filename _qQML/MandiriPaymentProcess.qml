@@ -1057,6 +1057,7 @@ Base{
             button_text: 'LANJUT'
             modeReverse: true
             visible: frameWithButton || centerOnlyButton
+            blinkingMode: true
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
