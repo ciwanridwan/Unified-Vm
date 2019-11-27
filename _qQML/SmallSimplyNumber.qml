@@ -5,9 +5,10 @@ import QtGraphicalEffects 1.0
 Rectangle {
     id: main_rectangle
     property bool modeReverse: true
-    property var itemName: '25'
+    property var itemName: '100'
     property bool buttonActive: true
     property bool isSelected: false
+    property variant imageMode: ['10', '25', '50', '100']
 
     width: 359
     height: 183
@@ -45,11 +46,21 @@ Rectangle {
         visible: buttonActive && !isSelected
     }
 
+    Image {
+        id: amount_image
+        scale: 1.3
+        anchors.fill: parent
+        visible: (imageMode.indexOf(itemName) > -1)
+        source: "source/money/"+itemName+"000.png"
+        fillMode: Image.PreserveAspectFit
+    }
+
+
     Text{
         id: master_text
         visible: buttonActive || isSelected
         height: 80
-        color: "white"
+        color: (imageMode.indexOf(itemName) > -1) ? "transparent" : "white"
         text: itemName
         font.italic: true
         anchors.horizontalCenterOffset: -50
@@ -65,7 +76,7 @@ Rectangle {
 
     Text{
         visible: buttonActive || isSelected
-        color: "white"
+        color: (imageMode.indexOf(itemName) > -1) ? "transparent" : "white"
         text: '.000'
         anchors.left: master_text.right
         anchors.leftMargin: 10
@@ -79,6 +90,7 @@ Rectangle {
         horizontalAlignment: Text.AlignLeft
         font.family: "Ubuntu"
     }
+
 
     function set_active(){
         isSelected = true;
