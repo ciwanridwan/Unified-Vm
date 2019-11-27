@@ -27,7 +27,7 @@ Rectangle{
         wrapMode: Text.WordWrap
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
-        font.family:"Ubuntu"
+        font.family:"Gotham"
         anchors.horizontalCenter: parent.horizontalCenter
         font.pixelSize: fontSize
         font.bold: true

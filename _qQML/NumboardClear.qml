@@ -10,7 +10,7 @@ Rectangle{
     Text{
         text:slot_text
         color:"#ffffff"
-        font.family:"Ubuntu"
+        font.family:"Gotham"
         font.pixelSize:20
         anchors.centerIn: parent;
         font.bold: true

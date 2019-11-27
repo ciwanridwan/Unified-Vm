@@ -58,7 +58,7 @@ Rectangle {
         font.pixelSize: 28
         verticalAlignment: Text.AlignBottom
         horizontalAlignment: Text.AlignHCenter
-        font.family: "Ubuntu"
+        font.family: "Gotham"
     }
 
     function set_active(){

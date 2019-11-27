@@ -121,7 +121,7 @@ Base{
             wrapMode: Text.WordWrap
             verticalAlignment: Text.AlignTop
             horizontalAlignment: Text.AlignHCenter
-            font.family:"Ubuntu"
+            font.family:"Gotham"
             font.pixelSize: (styleText==true) ? 30 : 21
             font.bold: (styleText==true) ? true : false
         }
@@ -211,7 +211,7 @@ Base{
             anchors.horizontalCenter: parent.horizontalCenter
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
-            font.family: "Ubuntu"
+            font.family: "Gotham"
             font.pixelSize: 20
             font.bold: false
             color: "darkred"
@@ -225,7 +225,7 @@ Base{
             anchors.verticalCenter: parent.verticalCenter
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
-            font.family: "Ubuntu"
+            font.family: "Gotham"
             font.pixelSize: 60
             font.bold: true
             color: "darkred"
@@ -239,7 +239,7 @@ Base{
             anchors.verticalCenter: parent.verticalCenter
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignLeft
-            font.family: "Ubuntu"
+            font.family: "Gotham"
             font.pixelSize: 20
             font.bold: false
             color: "darkred"
@@ -253,7 +253,7 @@ Base{
             anchors.verticalCenter: parent.verticalCenter
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignLeft
-            font.family: "Ubuntu"
+            font.family: "Gotham"
             font.pixelSize: 25
             font.bold: true
             color: "darkred"
@@ -267,7 +267,7 @@ Base{
             anchors.verticalCenter: parent.verticalCenter
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignLeft
-            font.family: "Ubuntu"
+            font.family: "Gotham"
             font.pixelSize: 20
             font.bold: false
             color: "darkred"
@@ -282,7 +282,7 @@ Base{
             anchors.verticalCenter: parent.verticalCenter
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignLeft
-            font.family: "Ubuntu"
+            font.family: "Gotham"
             font.pixelSize: 25
             font.bold: true
             color: "darkred"
@@ -297,7 +297,7 @@ Base{
             font.italic: true
             font.bold: true
             font.pixelSize: 20
-            font.family: "Ubuntu"
+            font.family: "Gotham"
             color: "darkred"
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
@@ -315,7 +315,7 @@ Base{
             font.italic: true
             font.bold: true
             font.pixelSize: 20
-            font.family: "Ubuntu"
+            font.family: "Gotham"
             color: "darkred"
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
@@ -385,7 +385,7 @@ Base{
             wrapMode: Text.WordWrap
             font.bold: true
             font.pixelSize: 25
-            font.family: "Ubuntu"
+            font.family: "Gotham"
             color: "darkred"
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
@@ -414,7 +414,7 @@ Base{
             wrapMode: Text.WordWrap
             font.bold: true
             font.pixelSize: 25
-            font.family: "Ubuntu"
+            font.family: "Gotham"
             color: "darkred"
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
@@ -429,7 +429,7 @@ Base{
             wrapMode: Text.WordWrap
             font.bold: true
             font.pixelSize: 25
-            font.family: "Ubuntu"
+            font.family: "Gotham"
             color: "darkred"
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
@@ -523,7 +523,7 @@ Base{
             wrapMode: Text.WordWrap
             verticalAlignment: Text.AlignTop
             horizontalAlignment: Text.AlignHCenter
-            font.family:"Ubuntu"
+            font.family:"Gotham"
             font.pixelSize: 25
         }
     }
@@ -555,7 +555,7 @@ Base{
             wrapMode: Text.WordWrap
             verticalAlignment: Text.AlignTop
             horizontalAlignment: Text.AlignHCenter
-            font.family:"Ubuntu"
+            font.family:"Gotham"
             font.pixelSize: 25
         }
     }

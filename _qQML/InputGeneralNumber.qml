@@ -162,7 +162,7 @@ Base{
 //        text: "INPUT NUMBER 1234567890SRDCVBUVTY"
         cursorVisible: true
         horizontalAlignment: Text.AlignLeft
-        font.family: "Ubuntu"
+        font.family: "Gotham"
         font.pixelSize: 40
         color: "darkred"
         clip: true

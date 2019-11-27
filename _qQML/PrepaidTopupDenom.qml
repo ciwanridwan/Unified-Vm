@@ -499,7 +499,7 @@ Base{
         wrapMode: Text.WordWrap
         text: "Konfirmasi Isi Ulang";
         font.bold: false
-        font.family: "Ubuntu"
+        font.family: "Gotham"
         font.pixelSize: 45
         visible: !standard_notif_view.visible && !popup_loading.visible
     }
@@ -647,7 +647,7 @@ Base{
         font.italic: true
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
-        font.family:"Ubuntu"
+        font.family:"Gotham"
         font.pixelSize: 20
     }
 
@@ -665,7 +665,7 @@ Base{
         font.italic: true
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
-        font.family:"Ubuntu"
+        font.family:"Gotham"
         font.pixelSize: 15
     }
 
@@ -692,7 +692,7 @@ Base{
         wrapMode: Text.WordWrap
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
-        font.family:"Ubuntu"
+        font.family:"Gotham"
         font.pixelSize: 50
         visible: mainVisible
     }
@@ -708,7 +708,7 @@ Base{
         wrapMode: Text.WordWrap
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignRight
-        font.family:"Ubuntu"
+        font.family:"Gotham"
         font.pixelSize: 50
         visible: mainVisible
     }

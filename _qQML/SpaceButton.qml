@@ -12,7 +12,7 @@ Rectangle{
         id: text_button
         text:chars
         color:"black"
-        font.family:"Ubuntu"
+        font.family:"Gotham"
         font.pixelSize: 30
         anchors.centerIn: parent
     }

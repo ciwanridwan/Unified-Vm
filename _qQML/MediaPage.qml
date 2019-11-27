@@ -201,7 +201,7 @@ Rectangle{
             font.pixelSize: 50
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
-            font.family:"Ubuntu"
+            font.family:"Gotham"
 
             NumberAnimation on x{
                 duration: 5000

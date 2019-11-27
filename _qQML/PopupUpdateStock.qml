@@ -39,7 +39,7 @@ Rectangle{
             anchors.top: parent.top
             anchors.topMargin: 60
             anchors.horizontalCenterOffset: 5
-            font.family:"Ubuntu"
+            font.family:"Gotham"
             anchors.horizontalCenter: parent.horizontalCenter
             font.pixelSize: 40
         }
@@ -70,7 +70,7 @@ Rectangle{
     //        text: "INPUT NUMBER 1234567890SRDCVBUVTY"
             cursorVisible: true
             horizontalAlignment: Text.AlignLeft
-            font.family: "Ubuntu"
+            font.family: "Gotham"
             font.pixelSize: 40
             color: "darkred"
             clip: true

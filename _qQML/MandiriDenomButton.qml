@@ -26,7 +26,7 @@ Rectangle{
         anchors.verticalCenter: parent.verticalCenter
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignLeft
-        font.family:"Ubuntu"
+        font.family:"Gotham"
         font.pixelSize: fontSize
     }
 
@@ -40,7 +40,7 @@ Rectangle{
         anchors.verticalCenter: parent.verticalCenter
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignRight
-        font.family:"Ubuntu"
+        font.family:"Gotham"
         font.pixelSize: fontSize
     }
 

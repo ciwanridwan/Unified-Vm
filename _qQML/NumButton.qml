@@ -11,7 +11,7 @@ Rectangle{
     Text{
         text:show_text
         color:"black"
-        font.family:"Ubuntu"
+        font.family:"Gotham"
         font.pixelSize:24
         anchors.centerIn: rec;
         font.bold: true

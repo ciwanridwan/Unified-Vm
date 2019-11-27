@@ -55,7 +55,7 @@ Base{
             font.bold: false
             color: CONF.text_color
             verticalAlignment: Text.AlignVCenter
-            font.family:"Ubuntu"
+            font.family:"Gotham"
         }
         Text{
             text: textSlave
@@ -67,7 +67,7 @@ Base{
             font.bold: false
             color: CONF.text_color
             verticalAlignment: Text.AlignVCenter
-            font.family:"Ubuntu"
+            font.family:"Gotham"
         }
 
     }
@@ -90,7 +90,7 @@ Base{
             font.pixelSize: 40
             color: 'yellow'
             verticalAlignment: Text.AlignVCenter
-            font.family:"Ubuntu"
+            font.family:"Gotham"
         }
     }
 
@@ -126,7 +126,7 @@ Base{
             font.bold: true
             color: 'white'
             verticalAlignment: Text.AlignVCenter
-            font.family:"Ubuntu"
+            font.family:"Gotham"
         }
         Text{
             text: 'Mohon Tunggu, Memproses Transaksi Anda...'
@@ -141,7 +141,7 @@ Base{
             font.bold: true
             color: 'white'
             verticalAlignment: Text.AlignVCenter
-            font.family:"Ubuntu"
+            font.family:"Gotham"
         }
     }
 

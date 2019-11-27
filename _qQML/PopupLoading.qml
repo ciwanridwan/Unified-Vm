@@ -55,7 +55,7 @@ Base{
             font.bold: false
             color: 'white'
             verticalAlignment: Text.AlignVCenter
-            font.family:"Ubuntu"
+            font.family:"Gotham"
 
         }
         Text{
@@ -68,7 +68,7 @@ Base{
             color: 'white'
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
-            font.family:"Ubuntu"
+            font.family:"Gotham"
 
         }
     }

@@ -23,7 +23,7 @@ Rectangle{
 
     Text {
         id: text_button
-        font.family:"Ubuntu"
+        font.family:"Gotham"
         color: "gray"
         text: FUNC.get_text_type(mode_, language_)
 //        text: "Adult (Above 12 Years)"

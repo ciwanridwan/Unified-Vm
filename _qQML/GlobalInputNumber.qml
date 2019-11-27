@@ -332,10 +332,10 @@ Base{
                 min_count = 10;
             break;
             case 'uang elektronik':
-                if (['TCASH LINKAJA'].indexOf(operator) > -1){
+                if (['DISABLE>>>TCASH LINKAJA'].indexOf(operator) > -1){
                     wording_text = 'Masukkan 10 Digit User Token LinkAja (99XXXXXXXX)';
                     min_count = 10;
-                } else if (['OVO', 'DANA', 'BUKADANA', 'TIXID'].indexOf(operator) > -1) {
+                } else if (['TCASH LINKAJA', 'OVO', 'DANA', 'BUKADANA', 'TIXID'].indexOf(operator) > -1) {
                     wording_text = 'Masukkan Nomor Terdaftar Pada Aplikasi';
                     min_count = 15;
                 }  else {
@@ -486,7 +486,7 @@ Base{
         text: textInput
         cursorVisible: true
         horizontalAlignment: Text.AlignLeft
-        font.family: "Ubuntu"
+        font.family: "Gotham"
         font.pixelSize: 50
         // Use Frame Color
         color: CONF.frame_color

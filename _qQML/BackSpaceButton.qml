@@ -11,7 +11,7 @@ Rectangle{
 //    Text{
 //        text: chars
 //        color:"white"
-//        font.family:"Ubuntu"
+//        font.family:"Gotham"
 //        font.pixelSize:30
 //        anchors.centerIn: rec;
 //        font.bold: true

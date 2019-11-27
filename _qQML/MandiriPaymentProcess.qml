@@ -873,7 +873,7 @@ Base{
 //        wrapMode: Text.WordWrap
 //        verticalAlignment: Text.AlignVCenter
 //        horizontalAlignment: Text.AlignHCenter
-//        font.family:"Ubuntu"
+//        font.family:"Gotham"
 //        font.pixelSize: 50
 //        visible: !global_frame.visible && !popup_loading.visible && !qr_payment_frame.visible
 //    }
@@ -889,7 +889,7 @@ Base{
 //        wrapMode: Text.WordWrap
 //        verticalAlignment: Text.AlignVCenter
 //        horizontalAlignment: Text.AlignRight
-//        font.family:"Ubuntu"
+//        font.family:"Gotham"
 //        font.pixelSize: 50
 //        visible: !global_frame.visible && !popup_loading.visible && !qr_payment_frame.visible
 //    }
@@ -905,7 +905,7 @@ Base{
 //        wrapMode: Text.WordWrap
 //        verticalAlignment: Text.AlignVCenter
 //        horizontalAlignment: Text.AlignHCenter
-//        font.family:"Ubuntu"
+//        font.family:"Gotham"
 //        font.pixelSize: 50
 //        visible: !global_frame.visible && !popup_loading.visible && !qr_payment_frame.visible
 //    }
@@ -921,7 +921,7 @@ Base{
 //        wrapMode: Text.WordWrap
 //        verticalAlignment: Text.AlignVCenter
 //        horizontalAlignment: Text.AlignRight
-//        font.family:"Ubuntu"
+//        font.family:"Gotham"
 //        font.pixelSize: 50
 //        visible: !global_frame.visible && !popup_loading.visible && !qr_payment_frame.visible
 //    }

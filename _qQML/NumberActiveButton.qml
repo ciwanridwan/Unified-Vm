@@ -11,7 +11,7 @@ Rectangle{
     Text{
         text: chars
         color: (full_keyboard.isHighlighted==true) ? "white" : "red"
-        font.family:"Ubuntu"
+        font.family:"Gotham"
         font.pixelSize:30
         anchors.centerIn: parent;
 //        font.bold: true

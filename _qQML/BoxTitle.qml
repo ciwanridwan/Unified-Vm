@@ -26,7 +26,7 @@ Rectangle{
         style: Text.Sunken
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
-        font.family:"Ubuntu"
+        font.family:"Gotham"
         anchors.horizontalCenter: parent.horizontalCenter
         font.pixelSize: fontSize - 3
     }

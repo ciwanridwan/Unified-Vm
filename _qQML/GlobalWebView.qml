@@ -116,7 +116,7 @@ Base{
         x:10
         y:738
         color:"#FFFF00"
-        font.family:"Ubuntu"
+        font.family:"Gotham"
         font.pixelSize:16
         visible: false
     }
