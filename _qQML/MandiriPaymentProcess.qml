@@ -746,14 +746,18 @@ Base{
             onTriggered:{
                 abc.counter -= 1;
                 notice_no_change.modeReverse = (abc.counter % 2 == 0) ? true : false;
-                if(abc.counter < 0){
+                if(abc.counter == 1){
                     if (details.payment=='cash' && !isPaid) {
                         proceedAble = false;
                         _SLOT.stop_grg_receive_note();
                         if (receivedCash > 0){
-                            //IF Timeout, Will The Customer Input WA Number?
-//                            validate_release_refund('user_payment_timeout');
-                            print_failed_transaction('cash', 'PAYMENT_TIMEOUT');
+                            details.refund_status = 'AVAILABLE';
+                            details.refund_number = '';
+                            details.refund_amount = refundAmount.toString();
+                            switch_frame('source/take_receipt.png', 'Waktu Transaksi Habis', 'Silakan Ambil Struk Transaksi Anda Dan Lapor Petugas', 'backToMain', true );
+                            _SLOT.start_direct_store_transaction_data(JSON.stringify(details));
+                            _SLOT.python_dump(JSON.stringify(details))
+                            _SLOT.start_sale_print_global();
     //                        _SLOT.start_return_es_mei();
                         }
     //                    _SLOT.start_dis_accept_mei();
