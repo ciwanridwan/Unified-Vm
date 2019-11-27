@@ -138,7 +138,7 @@ def sale_edc(amount, trxid=None):
                 except Exception as e:
                     LOGGER.warning(str(e))
                 store_settlement()
-                send_edc_server(EDC_PAYMENT_RESULT)
+                # send_edc_server(EDC_PAYMENT_RESULT)
             else:
                 _Global.EDC_ERROR = 'SALE_ERROR'
                 E_SIGNDLER.SIGNAL_SALE_EDC.emit('SALE|ERROR')
