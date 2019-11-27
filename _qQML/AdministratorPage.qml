@@ -43,6 +43,7 @@ Base{
         base.result_auth_qprox.connect(ka_login_status);
         base.result_mandiri_settlement.connect(get_admin_action);
         base.result_update_app.connect(get_admin_action);
+        base.result_process_settlement.connect(get_admin_action);
 
     }
 
@@ -59,6 +60,7 @@ Base{
         base.result_auth_qprox.disconnect(ka_login_status);
         base.result_mandiri_settlement.disconnect(get_admin_action);
         base.result_update_app.disconnect(get_admin_action);
+        base.result_process_settlement.disconnect(get_admin_action);
 
     }
 
@@ -122,6 +124,9 @@ Base{
                 _SLOT.start_safely_shutdown('RESTART');
                 return;
             }
+        } else if (a.indexOf('EDC_SETTLEMENT') > -1){
+            var r = a.split('|')[1]
+            false_notif('Dear '+userData.first_name+'|Status Proses EDC Settlement...\n['+r+']');
         } else {
             false_notif('Dear '+userData.first_name+'|Terjadi Kesalahan Dengan Kode:\n'+a);
         }
@@ -439,25 +444,48 @@ Base{
         }
     }
 
+//    AdminPanelButton{
+//        id: test_update_app
+//        anchors.leftMargin: 15
+//        anchors.left: activation_bni_button.right
+//        anchors.top: parent.top
+//        anchors.topMargin: 15
+//        z: 10
+//        button_text: 'update\napp'
+//        visible: !popup_loading.visible
+//        modeReverse: true
+//        MouseArea{
+//            anchors.fill: parent
+//            onClicked: {
+//                _SLOT.user_action_log('Admin Page "Force Update App"');
+//                if (press != '0') return;
+//                press = '1';
+//                console.log('test_update_app is pressed..!');
+//                popup_loading.open();
+//                _SLOT.start_do_update();
+//            }
+//        }
+//    }
+
     AdminPanelButton{
-        id: test_update_app
+        id: edc_settlement_button
         anchors.leftMargin: 15
         anchors.left: activation_bni_button.right
         anchors.top: parent.top
         anchors.topMargin: 15
         z: 10
-        button_text: 'update\napp'
+        button_text: 'edc\nsettlement'
         visible: !popup_loading.visible
         modeReverse: true
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                _SLOT.user_action_log('Admin Page "Force Update App"');
+                _SLOT.user_action_log('Admin Page "EDC Settlement"');
                 if (press != '0') return;
                 press = '1';
-                console.log('test_update_app is pressed..!');
+                console.log('edc_settlement_button is pressed..!');
                 popup_loading.open();
-                _SLOT.start_do_update();
+                _SLOT.start_edc_settlement();
             }
         }
     }

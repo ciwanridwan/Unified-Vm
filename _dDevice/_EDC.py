@@ -607,11 +607,11 @@ def mark_settlement_data(printout=True, mode='DEBIT CARD'):
     if mode == 'DEBIT':
         __data_to_settle = SETTLEMENT_DEBIT
         SETTLEMENT_PARAM['acq_name'] = 'BNI_DEBIT'
-        send_edc_server(SETTLEMENT_PARAM, 'SETTLEMENT')
+        # send_edc_server(SETTLEMENT_PARAM, 'SETTLEMENT')
     elif mode == 'CREDIT':
         SETTLEMENT_PARAM['acq_name'] = 'BNI_CREDIT'
         __data_to_settle = SETTLEMENT_CREDIT
-        send_edc_server(SETTLEMENT_PARAM, 'SETTLEMENT')
+        # send_edc_server(SETTLEMENT_PARAM, 'SETTLEMENT')
     else:
         __data_to_settle = SETTLEMENTS_DATA
 
