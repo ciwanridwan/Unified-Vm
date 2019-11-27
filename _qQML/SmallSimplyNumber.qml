@@ -5,7 +5,7 @@ import QtGraphicalEffects 1.0
 Rectangle {
     id: main_rectangle
     property bool modeReverse: true
-    property var itemName: '1.000'
+    property var itemName: '25'
     property bool buttonActive: true
     property bool isSelected: false
 
@@ -58,8 +58,8 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         font.bold: true
         font.pixelSize: 75
-        verticalAlignment: Text.AlignBottom
-        horizontalAlignment: Text.AlignHCenter
+        verticalAlignment: Text.AlignVCenter
+        horizontalAlignment: Text.AlignRight
         font.family: "Ubuntu"
     }
 
@@ -67,16 +67,16 @@ Rectangle {
         visible: buttonActive || isSelected
         color: "white"
         text: '.000'
+        anchors.left: master_text.right
+        anchors.leftMargin: 10
+        anchors.bottom: master_text.bottom
+        anchors.bottomMargin: 10
         font.italic: true
-        anchors.verticalCenterOffset: 15
-        anchors.horizontalCenterOffset: 100
-        anchors.verticalCenter: parent.verticalCenter
         style: Text.Sunken
-        anchors.horizontalCenter: parent.horizontalCenter
         font.bold: true
-        font.pixelSize: 28
+        font.pixelSize: 35
         verticalAlignment: Text.AlignBottom
-        horizontalAlignment: Text.AlignHCenter
+        horizontalAlignment: Text.AlignLeft
         font.family: "Ubuntu"
     }
 
