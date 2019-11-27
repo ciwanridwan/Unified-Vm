@@ -30,5 +30,5 @@ if '%errorlevel%' NEQ '0' (
 :--------------------------------------
 
 :: BatchGotAdmin (Run as Admin code ends)
-powershell.exe -noexit -command "Get-Content C:\MDD_KIOSK\_lLog\debug.log -Wait"
+git pull origin develop
 
