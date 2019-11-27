@@ -229,7 +229,7 @@ Base{
         _SLOT.start_direct_store_transaction_data(JSON.stringify(details));
         _SLOT.python_dump(JSON.stringify(details))
         _SLOT.start_sale_print_global();
-        abc.counter = 5;
+        abc.counter = 7;
         my_timer.restart();
         reset_default();
     }
@@ -302,7 +302,9 @@ Base{
 //        if (qrMode=='ovo') _SLOT.start_do_pay_ovo_qr(JSON.stringify(qrPayload));
 //        if (qrMode=='gopay') _SLOT.start_do_check_gopay_qr(JSON.stringify(qrPayload));
 //        if (qrMode=='linkaja') _SLOT.start_do_check_linkaja_qr(JSON.stringify(qrPayload));
-        qr_payment_frame.open();
+        var msg = '*' + details.shop_type.toUpperCase() + ' ' + details.provider + ' Rp. ' + FUNC.insert_dot(details.value)
+        if (details.shop_type=='topup') msg = '*Isi Ulang Kartu Prabayar '+ details.provider + ' Rp. ' + FUNC.insert_dot(details.denom) + ' + Biaya Admin Rp. ' + FUNC.insert_dot(adminFee.toString())
+        qr_payment_frame.open(msg);
     }
 
     function topup_result(t){
@@ -1110,6 +1112,7 @@ Base{
         id: popup_input_number
 //        calledFrom: 'general_payment_process'
         handleButtonVisibility: next_button_input_number
+//        visible: true
         z: 99
 
         CircleButton{
@@ -1118,15 +1121,17 @@ Base{
             anchors.leftMargin: 100
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 50
-            button_text: 'BATAL'
+            button_text: 'TIDAK\nPUNYA'
             modeReverse: true
-            visible: false
+            forceColorButton: 'orange'
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('Press "BATAL" in Input Whatsapp Number');
-                    popup_input_number.close()
-                    my_layer.pop();
+                    _SLOT.user_action_log('Press "TIDAK PUNYA" in Input Whatsapp Number');
+                    popup_input_number.close();
+                    details.refund_status = 'AVAILABLE';
+                    details.refund_number = '';
+                    release_print('Pengembalian Dana Tertunda', 'Silakan Ambil Struk Transaksi Anda Dan Lapor Petugas');
                 }
             }
         }
@@ -1140,6 +1145,7 @@ Base{
             button_text: 'SETUJU'
             modeReverse: true
             visible: false
+            blinkingMode: true
             MouseArea{
                 anchors.fill: parent
                 onClicked: {

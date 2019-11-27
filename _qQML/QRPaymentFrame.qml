@@ -173,7 +173,8 @@ Base{
     }
 
 
-    function open(){
+    function open(msg){
+        if (msg!=undefined) textMain = msg;
         qr_payment_frame.visible = true;
         successPayment = false;
         showDuration = timerDuration;
