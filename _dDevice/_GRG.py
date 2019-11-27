@@ -232,7 +232,7 @@ def is_exceed_payment(target, value_in, current_value):
 
 def stop_grg_receive_note():
     # log_book_cash('', get_collected_cash())
-    sleep(3)
+    sleep(1)
     _Helper.get_pool().apply_async(stop_receive_note)
 
 
