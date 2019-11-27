@@ -229,7 +229,7 @@ Base{
         _SLOT.start_direct_store_transaction_data(JSON.stringify(details));
         _SLOT.python_dump(JSON.stringify(details))
         _SLOT.start_sale_print_global();
-        abc.counter = 2;
+        abc.counter = 7;
         my_timer.restart();
         reset_default();
     }
@@ -746,7 +746,7 @@ Base{
             onTriggered:{
                 abc.counter -= 1;
                 notice_no_change.modeReverse = (abc.counter % 2 == 0) ? true : false;
-                if(abc.counter == 3){
+                if (abc.counter == 3){
                     if (details.payment=='cash' && !isPaid) {
                         proceedAble = false;
                         _SLOT.stop_grg_receive_note();
@@ -762,6 +762,8 @@ Base{
                         }
     //                    _SLOT.start_dis_accept_mei();
                     }
+                }
+                if(abc.counter == 0){
                     my_timer.stop();
                     my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
                 }
