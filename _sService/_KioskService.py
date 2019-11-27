@@ -19,6 +19,7 @@ import pythoncom
 from _sService import _UserService
 from time import sleep
 import subprocess
+from operator import itemgetter
 # from _dDevice import _GRG
 
 
@@ -843,6 +844,7 @@ def get_product_stock():
     stock = []
     try:
         check_stock = _DAO.get_product_stock()
+        check_stock = sorted(check_stock, key=itemgetter('status'))
         if len(check_stock) > 0:
             stock = check_stock
             for s in stock:

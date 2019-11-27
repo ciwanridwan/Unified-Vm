@@ -18,6 +18,8 @@ from _sService import _SettlementService
 from _sService import _TopupService
 from _sService import _UpdateAppService
 from datetime import datetime
+from operator import itemgetter
+
 
 LOGGER = logging.getLogger()
 SETTING_PARAM = []
@@ -418,6 +420,7 @@ def start_get_product_stock():
         s, r = _NetworkAccess.get_from_url(url=_url)
         if s == 200 and r['result'] == 'OK':
             products = r['data']
+            products = sorted(products, key=itemgetter('status'))
             _DAO.flush_table('ProductStock')
             for product in products:
                 if product['url_image'] is not None:

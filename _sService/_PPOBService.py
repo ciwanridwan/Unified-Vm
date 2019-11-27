@@ -7,6 +7,8 @@ from _cConfig import _Global
 from _tTools import _Helper
 from _nNetwork import _NetworkAccess
 import sys
+from operator import itemgetter
+
 # import os
 
 
@@ -48,6 +50,7 @@ def get_ppob_product(signal=True):
         else:
             products = _Global.load_from_temp_data(temp='ppob-product', mode='json')
     # products = store_image_item(products)
+    products = sorted(products, key=itemgetter('status'))
     if signal is True:
         PPOB_SIGNDLER.SIGNAL_GET_PRODUCTS.emit(json.dumps(products))
 

@@ -9,6 +9,8 @@ from _nNetwork import _NetworkAccess
 from _sService import _UserService
 from _sService import _KioskService
 import json
+from operator import itemgetter
+
 
 
 class ProductSignalHandler(QObject):
@@ -67,6 +69,7 @@ def kiosk_get_product_stock():
         s, r = _NetworkAccess.get_from_url(url=_url)
         if s == 200 and r['result'] == 'OK':
             products = r['data']
+            products = sorted(products, key=itemgetter('status'))
             _DAO.flush_table('ProductStock')
             for product in products:
                 _DAO.insert_product_stock(product)
