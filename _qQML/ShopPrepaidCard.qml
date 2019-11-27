@@ -301,7 +301,7 @@ Base{
         wrapMode: Text.WordWrap
         text: "Pilih Kartu Prabayar";
         font.bold: false
-        font.family: "GothamRounded"
+        font.family: "Ubuntu"
         font.pixelSize: 45
     }
 
@@ -449,7 +449,7 @@ Base{
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
         anchors.horizontalCenterOffset: 150
-        font.family:"GothamRounded"
+        font.family:"Ubuntu"
         font.pixelSize: 20
     }
 

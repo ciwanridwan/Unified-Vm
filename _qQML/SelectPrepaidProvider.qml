@@ -211,7 +211,7 @@ Base{
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
         anchors.horizontalCenterOffset: 0
-        font.family: "GothamRounded"
+        font.family: "Ubuntu"
         anchors.horizontalCenter: parent.horizontalCenter
         font.pixelSize: 45
     }
@@ -330,7 +330,7 @@ Base{
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
         anchors.horizontalCenterOffset: 0
-        font.family:"GothamRounded"
+        font.family:"Ubuntu"
         font.pixelSize: 20
     }
 

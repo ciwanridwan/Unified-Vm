@@ -53,7 +53,7 @@ Base{
             font.bold: false
             color: 'white'
             verticalAlignment: Text.AlignVCenter
-            font.family:"GothamRounded"
+            font.family:"Ubuntu"
         }
         Text{
             text: textSlave
@@ -65,7 +65,7 @@ Base{
             font.bold: false
             color: 'white'
             verticalAlignment: Text.AlignVCenter
-            font.family:"GothamRounded"
+            font.family:"Ubuntu"
         }
     }
 

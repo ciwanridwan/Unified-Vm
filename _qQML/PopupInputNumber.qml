@@ -66,7 +66,7 @@ Rectangle{
             font.italic: true
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignRight
-            font.family:"GothamRounded"
+            font.family:"Ubuntu"
             font.pixelSize: 30
         }
 
@@ -99,7 +99,7 @@ Rectangle{
     //        text: "INPUT NUMBER 1234567890SRDCVBUVTY"
             cursorVisible: true
             horizontalAlignment: Text.AlignLeft
-            font.family: "GothamRounded"
+            font.family: "Ubuntu"
             font.pixelSize: 50
             color: CONF.text_color
             clip: true

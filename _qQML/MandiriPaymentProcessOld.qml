@@ -897,7 +897,7 @@ Base{
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
         anchors.horizontalCenterOffset: 150
-        font.family: "GothamRounded"
+        font.family: "Ubuntu"
         anchors.horizontalCenter: parent.horizontalCenter
         font.pixelSize: 45
     }
@@ -916,7 +916,7 @@ Base{
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
         anchors.horizontalCenterOffset: 150
-        font.family: "GothamRounded"
+        font.family: "Ubuntu"
         anchors.horizontalCenter: parent.horizontalCenter
         font.pixelSize: 30
     }
@@ -935,7 +935,7 @@ Base{
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
         anchors.horizontalCenterOffset: 150
-        font.family: "GothamRounded"
+        font.family: "Ubuntu"
         anchors.horizontalCenter: parent.horizontalCenter
         font.pixelSize: 30
     }
@@ -996,7 +996,7 @@ Base{
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
             anchors.horizontalCenterOffset: 200
-            font.family: "GothamRounded"
+            font.family: "Ubuntu"
             anchors.horizontalCenter: parent.horizontalCenter
             font.pixelSize: 30
         }
@@ -1195,7 +1195,7 @@ Base{
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
             anchors.horizontalCenterOffset: 0
-            font.family:"GothamRounded"
+            font.family:"Ubuntu"
             font.pixelSize: 30
         }
 
@@ -1226,7 +1226,7 @@ Base{
         wrapMode: Text.WordWrap
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
-        font.family:"GothamRounded"
+        font.family:"Ubuntu"
         font.pixelSize: 50
         visible: !global_frame.visible && !popup_loading.visible && !qr_payment_frame.visible
     }
@@ -1242,7 +1242,7 @@ Base{
         wrapMode: Text.WordWrap
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignRight
-        font.family:"GothamRounded"
+        font.family:"Ubuntu"
         font.pixelSize: 50
         visible: !global_frame.visible && !popup_loading.visible && !qr_payment_frame.visible
     }
@@ -1258,7 +1258,7 @@ Base{
         wrapMode: Text.WordWrap
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
-        font.family:"GothamRounded"
+        font.family:"Ubuntu"
         font.pixelSize: 50
         visible: !global_frame.visible && !popup_loading.visible && !qr_payment_frame.visible
     }
@@ -1274,7 +1274,7 @@ Base{
         wrapMode: Text.WordWrap
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignRight
-        font.family:"GothamRounded"
+        font.family:"Ubuntu"
         font.pixelSize: 50
         visible: !global_frame.visible && !popup_loading.visible && !qr_payment_frame.visible
     }

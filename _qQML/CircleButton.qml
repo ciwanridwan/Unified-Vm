@@ -42,7 +42,7 @@ Rectangle{
         wrapMode: Text.WordWrap
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
-        font.family:"GothamRounded"
+        font.family:"Ubuntu"
         anchors.horizontalCenter: parent.horizontalCenter
         font.pixelSize: (button_text.length > 5 ) ? 23 : fontSize
         font.bold: true

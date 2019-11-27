@@ -89,7 +89,7 @@ Base{
         x:10
         y:738
         color:"#FFFF00"
-        font.family:"GothamRounded"
+        font.family:"Ubuntu"
         font.pixelSize:16
         visible: false
     }

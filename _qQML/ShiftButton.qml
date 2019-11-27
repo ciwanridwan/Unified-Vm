@@ -13,7 +13,7 @@ Rectangle{
         id: text_button
         text: chars
         color: (full_keyboard.isShifted==true) ? "white" : "red"
-        font.family:"GothamRounded"
+        font.family:"Ubuntu"
         font.pixelSize:30
         anchors.centerIn: parent;
 //        font.bold: true

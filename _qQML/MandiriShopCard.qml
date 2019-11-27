@@ -556,7 +556,7 @@ Base{
         wrapMode: Text.WordWrap
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignLeft
-        font.family:"GothamRounded"
+        font.family:"Ubuntu"
         font.pixelSize: 45
         visible: !global_frame.visible && !popup_loading.visible && mainVisible && multipleEject
     }
@@ -665,7 +665,7 @@ Base{
         wrapMode: Text.WordWrap
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignLeft
-        font.family:"GothamRounded"
+        font.family:"Ubuntu"
         font.pixelSize: 45
         visible: label_choose_qty.visible
     }
@@ -681,7 +681,7 @@ Base{
 //        wrapMode: Text.WordWrap
 //        verticalAlignment: Text.AlignVCenter
 //        horizontalAlignment: Text.AlignLeft
-//        font.family:"GothamRounded"
+//        font.family:"Ubuntu"
 //        font.pixelSize: 45
 //        visible: !global_frame.visible && !popup_loading.visible && mainVisible
 //    }
@@ -737,7 +737,7 @@ Base{
 //        wrapMode: Text.WordWrap
 //        verticalAlignment: Text.AlignVCenter
 //        horizontalAlignment: Text.AlignLeft
-//        font.family:"GothamRounded"
+//        font.family:"Ubuntu"
 //        font.pixelSize: 50
 //        visible: !global_frame.visible && !popup_loading.visible && mainVisible
 //    }

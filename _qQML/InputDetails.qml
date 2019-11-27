@@ -239,14 +239,14 @@ Base{
             text: qsTr("Time Left : ")
             font.pixelSize: 20
             color: "yellow"
-            font.family: "GothamRounded"
+            font.family: "Ubuntu"
         }
         Text{
             id: timer_text
             font.pixelSize: 20
             text: "500"
             color: "yellow"
-            font.family: "GothamRounded"
+            font.family: "Ubuntu"
         }
     }
 
@@ -302,7 +302,7 @@ Base{
             anchors.horizontalCenterOffset: 1
             anchors.horizontalCenter: parent.horizontalCenter
             font.pixelSize: (selectedPrice.length==1) ? 25 : 15
-            font.family: "GothamRounded"
+            font.family: "Ubuntu"
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
         }
@@ -316,7 +316,7 @@ Base{
             color: "darkred"
             font.bold: false
             font.pixelSize: (selectedPrice.length==1) ? 30 : 20
-            font.family: "GothamRounded"
+            font.family: "Ubuntu"
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
         }
@@ -353,7 +353,7 @@ Base{
                 anchors.verticalCenterOffset: 15
                 anchors.verticalCenter: parent.verticalCenter
                 font.pixelSize: 15
-                font.family: "GothamRounded"
+                font.family: "Ubuntu"
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: Text.AlignRight
             }
@@ -380,7 +380,7 @@ Base{
                 anchors.verticalCenterOffset: 15
                 anchors.verticalCenter: parent.verticalCenter
                 font.pixelSize: 15
-                font.family: "GothamRounded"
+                font.family: "Ubuntu"
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: Text.AlignRight
             }
@@ -414,7 +414,7 @@ Base{
             anchors.rightMargin: 0
             font.bold: false
             font.pixelSize: 25
-            font.family: "GothamRounded"
+            font.family: "Ubuntu"
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
         }
@@ -438,7 +438,7 @@ Base{
                 text: qsTr("Title")
                 anchors.top: parent.top
                 anchors.topMargin: -45
-                font.family: "GothamRounded"
+                font.family: "Ubuntu"
                 font.pixelSize: 20
                 color: "darkred"
                 font.bold: false
@@ -460,7 +460,7 @@ Base{
                         text: control.currentText
                         font.pixelSize: 20
                         verticalAlignment: Text.AlignVCenter
-                        font.family: "GothamRounded"
+                        font.family: "Ubuntu"
                     }
                     __dropDownStyle: MenuStyle {
     //                    frame: Rectangle{}
@@ -471,7 +471,7 @@ Base{
                             text: styleData.text
                             font.pixelSize: 20
                             verticalAlignment: Text.AlignVCenter
-                            font.family: "GothamRounded"
+                            font.family: "Ubuntu"
                         }
                         itemDelegate.background: Rectangle {
                             z: 2
@@ -579,7 +579,7 @@ Base{
             Text{
                 id: titleBirthday
                 text: qsTr("BirthDay Date *")
-                font.family: "GothamRounded"
+                font.family: "Ubuntu"
                 font.pixelSize: 20
                 color: "darkred"
                 font.bold: false
@@ -611,7 +611,7 @@ Base{
                 text:Qt.formatDate(calBirthday.selectedDate, "dd MMM yyyy")
                 font.italic: true
                 font.bold: false
-                font.family:"GothamRounded"
+                font.family:"Ubuntu"
                 font.pixelSize: 15
             }
             Calendar{

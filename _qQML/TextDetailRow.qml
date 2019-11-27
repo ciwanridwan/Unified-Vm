@@ -28,7 +28,7 @@ Rectangle{
         anchors.verticalCenter: parent.verticalCenter
         wrapMode: Text.WordWrap
         font.pixelSize: labelSize
-        font.family: 'Gotham'
+        font.family: "Ubuntu"
         color: theme
         font.bold: true
 
@@ -44,7 +44,7 @@ Rectangle{
         anchors.leftMargin: separatorPoint
         wrapMode: Text.WordWrap
         font.pixelSize: labelSize * 1.2
-        font.family: 'Gotham'
+        font.family: "Ubuntu"
         color: theme
         font.bold: true
 
@@ -62,7 +62,7 @@ Rectangle{
         anchors.leftMargin: 50
         wrapMode: Text.WordWrap
         font.pixelSize: contentSize
-        font.family: 'Gotham'
+        font.family: "Ubuntu"
         font.bold: false
         color: theme
 

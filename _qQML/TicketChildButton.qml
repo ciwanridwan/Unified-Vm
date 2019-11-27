@@ -21,7 +21,7 @@ Rectangle{
     }
     Text {
         id: text1
-        font.family:"GothamRounded"
+        font.family:"Ubuntu"
         color: (selected_!==true) ? "white" : "black"
         text: (active_==true) ? price_ : "-"
         anchors.verticalCenter: parent.verticalCenter

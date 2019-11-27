@@ -14,7 +14,7 @@ Rectangle{
         text: show_text
         wrapMode: Text.WordWrap
         font.pixelSize: size_
-        font.family:"GothamRounded"
+        font.family:"Ubuntu"
         color: color_
         textFormat: Text.PlainText
         horizontalAlignment: Text.AlignHCenter

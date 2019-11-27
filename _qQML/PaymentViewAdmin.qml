@@ -105,7 +105,7 @@ Base{
             wrapMode: Text.WordWrap
             verticalAlignment: Text.AlignTop
             horizontalAlignment: Text.AlignHCenter
-            font.family:"GothamRounded"
+            font.family:"Ubuntu"
             font.pixelSize: 21
         }
     }
@@ -174,7 +174,7 @@ Base{
                     text: "COUNT OF RECEIVED NOTES"
                     verticalAlignment: Text.AlignVCenter
                     horizontalAlignment: Text.AlignHCenter
-                    font.family: "GothamRounded"
+                    font.family: "Ubuntu"
                     font.pixelSize: 20
                     font.bold: true
                     color: "darkred"
@@ -188,7 +188,7 @@ Base{
                     text: "AVAILABLE RETURN NOTES"
                     verticalAlignment: Text.AlignVCenter
                     horizontalAlignment: Text.AlignHCenter
-                    font.family: "GothamRounded"
+                    font.family: "Ubuntu"
                     font.pixelSize: 20
                     font.bold: true
                     color: "white"
@@ -224,7 +224,7 @@ Base{
                         text: "     x     " + count100
                         verticalAlignment: Text.AlignVCenter
                         horizontalAlignment: Text.AlignHCenter
-                        font.family: "GothamRounded"
+                        font.family: "Ubuntu"
                         font.pixelSize: 25
                         font.bold: true
                         color: "darkred"
@@ -244,7 +244,7 @@ Base{
                         text: "     x     " + count50
                         verticalAlignment: Text.AlignVCenter
                         horizontalAlignment: Text.AlignHCenter
-                        font.family: "GothamRounded"
+                        font.family: "Ubuntu"
                         font.pixelSize: 25
                         font.bold: true
                         color: "darkred"
@@ -264,7 +264,7 @@ Base{
                         text: "     x     " + count20
                         verticalAlignment: Text.AlignVCenter
                         horizontalAlignment: Text.AlignHCenter
-                        font.family: "GothamRounded"
+                        font.family: "Ubuntu"
                         font.pixelSize: 25
                         font.bold: true
                         color: "darkred"
@@ -284,7 +284,7 @@ Base{
                         text: "     x     " + count10
                         verticalAlignment: Text.AlignVCenter
                         horizontalAlignment: Text.AlignHCenter
-                        font.family: "GothamRounded"
+                        font.family: "Ubuntu"
                         font.pixelSize: 25
                         font.bold: true
                         color: "darkred"
@@ -304,7 +304,7 @@ Base{
                         text: "     x     " + count5
                         verticalAlignment: Text.AlignVCenter
                         horizontalAlignment: Text.AlignHCenter
-                        font.family: "GothamRounded"
+                        font.family: "Ubuntu"
                         font.pixelSize: 25
                         font.bold: true
                         color: "darkred"
@@ -324,7 +324,7 @@ Base{
                         text: "     x     " + count2
                         verticalAlignment: Text.AlignVCenter
                         horizontalAlignment: Text.AlignHCenter
-                        font.family: "GothamRounded"
+                        font.family: "Ubuntu"
                         font.pixelSize: 25
                         font.bold: true
                         color: "darkred"
@@ -360,7 +360,7 @@ Base{
                     text: "     x     " + count5R
                     verticalAlignment: Text.AlignVCenter
                     horizontalAlignment: Text.AlignHCenter
-                    font.family: "GothamRounded"
+                    font.family: "Ubuntu"
                     font.pixelSize: 25
                     font.bold: true
                     color: "darkred"
@@ -380,7 +380,7 @@ Base{
                     text: "     x     " + count2R
                     verticalAlignment: Text.AlignVCenter
                     horizontalAlignment: Text.AlignHCenter
-                    font.family: "GothamRounded"
+                    font.family: "Ubuntu"
                     font.pixelSize: 25
                     font.bold: true
                     color: "darkred"
@@ -399,7 +399,7 @@ Base{
                 color: "#1D294D"; border.width: 2; border.color: "#1D294D";
                 Text{
                     anchors.fill: parent;
-                    font.family: "GothamRounded"
+                    font.family: "Ubuntu"
                     font.bold: false
                     font.pixelSize: 15
                     text: "Available Change "
@@ -414,7 +414,7 @@ Base{
                 color: "white"; border.width: 2; border.color: "#1D294D";
                 Text{
                     anchors.fill: parent;
-                    font.family: "GothamRounded"
+                    font.family: "Ubuntu"
                     font.bold: true
                     font.pixelSize: 20
                     text: totalCountR
@@ -437,7 +437,7 @@ Base{
                 color: "darkred"; border.width: 2; border.color: "darkred";
                 Text{
                     anchors.fill: parent;
-                    font.family: "GothamRounded"
+                    font.family: "Ubuntu"
                     font.bold: false
                     font.pixelSize: 15
                     text: "Total Paid "
@@ -451,7 +451,7 @@ Base{
                 color: "white"; border.width: 2; border.color: "darkred";
                 Text{
                     anchors.fill: parent;
-                    font.family: "GothamRounded"
+                    font.family: "Ubuntu"
                     font.bold: true
                     font.pixelSize: 20
                     text: totalAmount
@@ -474,7 +474,7 @@ Base{
                 color: "darkgreen"; border.width: 2; border.color: "darkgreen";
                 Text{
                     anchors.fill: parent;
-                    font.family: "GothamRounded"
+                    font.family: "Ubuntu"
                     font.bold: false
                     font.pixelSize: 15
                     text: "Money Received "
@@ -488,7 +488,7 @@ Base{
                 color: "white"; border.width: 2; border.color: "darkgreen";
                 Text{
                     anchors.fill: parent;
-                    font.family: "GothamRounded"
+                    font.family: "Ubuntu"
                     font.bold: true
                     font.pixelSize: 20
                     text: totalCount
@@ -511,7 +511,7 @@ Base{
                 color: "orange"; border.width: 2; border.color: "orange";
                 Text{
                     anchors.fill: parent;
-                    font.family: "GothamRounded"
+                    font.family: "Ubuntu"
                     font.bold: true
                     font.pixelSize: 15
                     text: "Change "
@@ -525,7 +525,7 @@ Base{
                 color: "white"; border.width: 2; border.color: "orange";
                 Text{
                     anchors.fill: parent;
-                    font.family: "GothamRounded"
+                    font.family: "Ubuntu"
                     font.bold: true
                     font.pixelSize: 20
                     text: (parseInt(totalCount) - parseInt(totalAmount)).toString()

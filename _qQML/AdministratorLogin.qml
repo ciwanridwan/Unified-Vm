@@ -146,7 +146,7 @@ Base{
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignLeft
             color: 'white'
-            font.family: "GothamRounded"
+            font.family: "Ubuntu"
 
         }
 
@@ -177,7 +177,7 @@ Base{
             text: usernameInput
             cursorVisible: (stepInput==0) ? true : false
             horizontalAlignment: Text.AlignLeft
-            font.family: "GothamRounded"
+            font.family: "Ubuntu"
             font.pixelSize: globalFontSize
             color: "black"
             clip: true
@@ -200,7 +200,7 @@ Base{
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignLeft
             color: 'white'
-            font.family: "GothamRounded"
+            font.family: "Ubuntu"
 
         }
 
@@ -230,7 +230,7 @@ Base{
             text: passwordInput
             cursorVisible: (stepInput==1) ? true : false
             horizontalAlignment: Text.AlignLeft
-            font.family: "GothamRounded"
+            font.family: "Ubuntu"
             font.pixelSize: globalFontSize
             color: "black"
             clip: true

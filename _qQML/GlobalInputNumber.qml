@@ -486,7 +486,7 @@ Base{
         text: textInput
         cursorVisible: true
         horizontalAlignment: Text.AlignLeft
-        font.family: "GothamRounded"
+        font.family: "Ubuntu"
         font.pixelSize: 50
         // Use Frame Color
         color: CONF.frame_color

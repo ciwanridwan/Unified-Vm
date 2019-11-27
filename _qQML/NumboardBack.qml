@@ -17,7 +17,7 @@ Rectangle{
 //    Text{
 //        text:slot_text
 //        color:"red"
-//        font.family:"GothamRounded"
+//        font.family:"Ubuntu"
 //        font.pixelSize:20
 //        anchors.centerIn: parent;
 //        font.bold: true

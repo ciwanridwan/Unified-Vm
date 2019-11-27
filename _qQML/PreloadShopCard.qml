@@ -51,7 +51,7 @@ Base{
             font.bold: false
             color: 'white'
             verticalAlignment: Text.AlignVCenter
-            font.family: 'Gotham'
+            font.family: "Ubuntu"
         }
         Text{
             text: textSlave
@@ -63,7 +63,7 @@ Base{
             font.bold: false
             color: 'white'
             verticalAlignment: Text.AlignVCenter
-            font.family: 'Gotham'
+            font.family: "Ubuntu"
         }
         Text{
             text: textRebel
@@ -75,7 +75,7 @@ Base{
             font.bold: false
             color: 'white'
             verticalAlignment: Text.AlignVCenter
-            font.family: 'Gotham'
+            font.family: "Ubuntu"
         }
         Text{
             text: textQuard
@@ -87,7 +87,7 @@ Base{
             font.bold: false
             color: 'white'
             verticalAlignment: Text.AlignVCenter
-            font.family: 'Gotham'
+            font.family: "Ubuntu"
         }
     }
 

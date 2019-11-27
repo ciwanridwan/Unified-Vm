@@ -27,7 +27,7 @@ Rectangle {
         font.pixelSize: 35
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
-        font.family: "GothamRounded"
+        font.family: "Ubuntu"
     }
 
     Rectangle{
@@ -60,7 +60,7 @@ Rectangle {
         font.pixelSize: 75
         verticalAlignment: Text.AlignBottom
         horizontalAlignment: Text.AlignHCenter
-        font.family: "GothamRounded"
+        font.family: "Ubuntu"
     }
 
     Text{
@@ -77,7 +77,7 @@ Rectangle {
         font.pixelSize: 28
         verticalAlignment: Text.AlignBottom
         horizontalAlignment: Text.AlignHCenter
-        font.family: "GothamRounded"
+        font.family: "Ubuntu"
     }
 
     function set_active(){

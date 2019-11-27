@@ -126,7 +126,7 @@ Base{
         text: textInput
         cursorVisible: true
         horizontalAlignment: Text.AlignLeft
-        font.family: "GothamRounded"
+        font.family: "Ubuntu"
         font.pixelSize: 50
         color: "darkred"
         clip: true
@@ -146,7 +146,7 @@ Base{
             id: notif_text1
             width: parent.width
             height: 30
-            font.family: "GothamRounded"
+            font.family: "Ubuntu"
             font.pixelSize: 30
             color: "darkred"
             text: qsTr('Note :')
@@ -160,7 +160,7 @@ Base{
             y: 0
             width: parent.width
             height: 20
-            font.family: "GothamRounded"
+            font.family: "Ubuntu"
             font.pixelSize: 25
             color: "darkred"
             text: qsTr("Available only for booking code which generated from this machine.")

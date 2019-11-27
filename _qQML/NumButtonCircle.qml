@@ -12,7 +12,7 @@ Rectangle{
     Text{
         text:show_text
         color:"black"
-        font.family:"GothamRounded"
+        font.family:"Ubuntu"
         font.pixelSize:30
         anchors.centerIn: rec;
         font.bold: true

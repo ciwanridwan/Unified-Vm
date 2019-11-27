@@ -345,7 +345,7 @@ Base{
                     font.pixelSize: 25
                     color: "#000000"
                     font.bold: false
-                    font.family:"GothamRounded"
+                    font.family:"Ubuntu"
                     verticalAlignment: Text.AlignVCenter
                     horizontalAlignment: Text.AlignHCenter
                 }
@@ -479,7 +479,7 @@ Base{
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 80
             anchors.horizontalCenter: parent.horizontalCenter
-            font.family:"GothamRounded"
+            font.family:"Ubuntu"
             font.bold: true
             rotation: 270
             verticalAlignment: Text.AlignVCenter
@@ -530,7 +530,7 @@ Base{
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 80
             anchors.horizontalCenter: parent.horizontalCenter
-            font.family:"GothamRounded"
+            font.family:"Ubuntu"
             font.bold: true
             rotation: 270
             verticalAlignment: Text.AlignVCenter
@@ -583,14 +583,14 @@ Base{
                 height: parent.height
                 verticalAlignment: Text.AlignVCenter
                 color: "#000000"
-                font.family:"GothamRounded"
+                font.family:"Ubuntu"
             }
             Text{
                 id: box_version
                 height: parent.height
                 verticalAlignment: Text.AlignVCenter
                 color: "#000000"
-                font.family:"GothamRounded"
+                font.family:"Ubuntu"
             }
             Image{
                 id: img_kiosk
@@ -606,7 +606,7 @@ Base{
                 height: parent.height
                 verticalAlignment: Text.AlignVCenter
                 color: 'white'
-                font.family:"GothamRounded"
+                font.family:"Ubuntu"
             }
         }
 

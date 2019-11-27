@@ -21,7 +21,7 @@ Item {
      color:paint;
      font.pixelSize: fontsize;
      font.bold: fontbold;
-     font.family: "GothamRounded";
+     font.family: "Ubuntu";
      wrapMode: Text.WrapAtWordBoundaryOrAnywhere;
      text:content;
      }

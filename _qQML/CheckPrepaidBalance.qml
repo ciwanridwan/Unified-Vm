@@ -330,7 +330,7 @@ Base{
         wrapMode: Text.WordWrap
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
-        font.family:"GothamRounded"
+        font.family:"Ubuntu"
         font.pixelSize: 50
         visible: !popup_loading.visible && !preload_check_card.visible
     }
@@ -347,7 +347,7 @@ Base{
         wrapMode: Text.WordWrap
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignRight
-        font.family:"GothamRounded"
+        font.family:"Ubuntu"
         font.pixelSize: 50
         visible: !popup_loading.visible && !preload_check_card.visible
     }
@@ -363,7 +363,7 @@ Base{
         wrapMode: Text.WordWrap
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
-        font.family:"GothamRounded"
+        font.family:"Ubuntu"
         font.pixelSize: 50
         visible: !popup_loading.visible && !preload_check_card.visible
     }
@@ -380,7 +380,7 @@ Base{
         wrapMode: Text.WordWrap
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignRight
-        font.family:"GothamRounded"
+        font.family:"Ubuntu"
         font.pixelSize: 50
         visible: !popup_loading.visible && !preload_check_card.visible
     }
@@ -396,7 +396,7 @@ Base{
         wrapMode: Text.WordWrap
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
-        font.family:"GothamRounded"
+        font.family:"Ubuntu"
         font.pixelSize: 50
         visible: !popup_loading.visible && !preload_check_card.visible
     }
@@ -413,7 +413,7 @@ Base{
         wrapMode: Text.WordWrap
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignRight
-        font.family:"GothamRounded"
+        font.family:"Ubuntu"
         font.pixelSize: 50
         visible: !popup_loading.visible && !preload_check_card.visible
     }
@@ -528,7 +528,7 @@ Base{
         font.italic: true
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
-        font.family:"GothamRounded"
+        font.family:"Ubuntu"
         font.pixelSize: 20
     }
 
