@@ -178,12 +178,11 @@ def start_receive_note():
                 COLLECTED_CASH += int(cash_in)
                 _Helper.dump([str(CASH_HISTORY), COLLECTED_CASH])
                 GRG_SIGNDLER.SIGNAL_GRG_RECEIVE.emit('RECEIVE_GRG|'+str(COLLECTED_CASH))
-                if COLLECTED_CASH < _MEI.DIRECT_PRICE_AMOUNT:
-                    param = GRG["STORE"] + '|'
-                    _Command.send_request(param=param, output=None)
-                    LOGGER.info(('Cash Status:', json.dumps({'ADD': cash_in,
-                                                             'COLLECTED': COLLECTED_CASH,
-                                                             'HISTORY': CASH_HISTORY})))
+                _Command.send_request(param=GRG["STORE"]+'|', output=None)
+                LOGGER.info(('Cash Status:', json.dumps({
+                    'ADD': cash_in,
+                    'COLLECTED': COLLECTED_CASH,
+                    'HISTORY': CASH_HISTORY})))
                 if COLLECTED_CASH >= _MEI.DIRECT_PRICE_AMOUNT:
                     GRG_SIGNDLER.SIGNAL_GRG_RECEIVE.emit('RECEIVE_GRG|COMPLETE')
                     break
@@ -193,8 +192,7 @@ def start_receive_note():
                 #     _Command.send_request(param=param, output=None)
             if TIMEOUT_BAD_NOTES in _result or UNKNOWN_ITEM in _result:
                 if TIMEOUT_BAD_NOTES in _result:
-                    param = GRG["STOP"] + '|'
-                    _Command.send_request(param=param, output=None)
+                    _Command.send_request(param=GRG["STOP"]+'|', output=None)
                 GRG_SIGNDLER.SIGNAL_GRG_RECEIVE.emit('RECEIVE_GRG|BAD_NOTES')
                 break
             if CODE_JAM in _result:
