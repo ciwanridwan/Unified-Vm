@@ -10,21 +10,21 @@ Rectangle{
     property real globalOpacity: .50
     property int fontSize: 30
     property bool blinkingMode: false
-    property var forceColorButton: undefined
+    property var forceColorButton: 'transparent'
 
     Rectangle{
         anchors.fill: parent
         color: (button_text=='BATAL') ? 'red' : 'white'
         opacity: (button_text=='BATAL') ? 1 : globalOpacity
         radius: width/2
-        visible: (!blinkingMode && forceColorButton == undefined)
+        visible: (!blinkingMode && forceColorButton == 'transparent')
     }
 
     Rectangle{
         anchors.fill: parent
         color: forceColorButton
         radius: width/2
-        visible: (!blinkingMode && forceColorButton != undefined)
+        visible: (!blinkingMode && forceColorButton != 'transparent')
     }
 
     Rectangle{
