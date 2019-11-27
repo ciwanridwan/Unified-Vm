@@ -968,7 +968,7 @@ Base{
             font.pixelSize: 20
             font.bold: true
             color: "yellow"
-            font.family: "Gotham"
+            font.family: "GothamRounded"
         }
         Text{
             id: timer_text
@@ -976,7 +976,7 @@ Base{
             font.bold: true
             text: "500"
             color: "yellow"
-            font.family: "Gotham"
+            font.family: "GothamRounded"
         }
     }
 
@@ -1104,7 +1104,7 @@ Base{
             anchors.rightMargin: 0
             font.bold: true
             font.pixelSize: 25
-            font.family: "Gotham"
+            font.family: "GothamRounded"
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignRight
         }
@@ -1118,7 +1118,7 @@ Base{
             anchors.leftMargin: 0
             font.bold: false
             font.pixelSize: 25
-            font.family: "Gotham"
+            font.family: "GothamRounded"
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
         }
@@ -1135,7 +1135,7 @@ Base{
             color: "darkred"
             font.bold: false
             font.pixelSize: 15
-            font.family: "Gotham"
+            font.family: "GothamRounded"
             verticalAlignment: Text.AlignTop
             horizontalAlignment: Text.AlignLeft
         }
@@ -1189,7 +1189,7 @@ Base{
                     color: "white"
                     font.pixelSize: 20
                     font.bold: false
-                    font.family: "Gotham"
+                    font.family: "GothamRounded"
                 }
             }
             Text{
@@ -1205,7 +1205,7 @@ Base{
                 color: "#ffffff"
                 font.bold: false
                 font.pixelSize: 25
-                font.family: "Gotham"
+                font.family: "GothamRounded"
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: Text.AlignRight
 //                text: bookingCodeDepart
@@ -1236,7 +1236,7 @@ Base{
                 color: "darkred"
                 font.bold: true
                 font.pixelSize: 25
-                font.family: "Gotham"
+                font.family: "GothamRounded"
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: Text.AlignLeft
 //                text: flightNoDepart
@@ -1253,7 +1253,7 @@ Base{
                 color: "darkred"
                 font.bold: false
                 font.pixelSize: 15
-                font.family: "Gotham"
+                font.family: "GothamRounded"
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: Text.AlignRight
 //                text: originFrom
@@ -1282,7 +1282,7 @@ Base{
                 color: "darkred"
 //                font.bold: true
                 font.pixelSize: 17
-                font.family: "Gotham"
+                font.family: "GothamRounded"
                 verticalAlignment: Text.AlignTop
                 horizontalAlignment: Text.AlignLeft
 //                text: departDate
@@ -1301,7 +1301,7 @@ Base{
                     color: "darkred"
                     font.bold: true
                     font.pixelSize: 20
-                    font.family: "Gotham"
+                    font.family: "GothamRounded"
                     verticalAlignment: Text.AlignTop
                     horizontalAlignment: Text.AlignHCenter
 //                    text: departDate
@@ -1315,7 +1315,7 @@ Base{
                     color: "darkred"
                     font.bold: true
                     font.pixelSize: 20
-                    font.family: "Gotham"
+                    font.family: "GothamRounded"
                     verticalAlignment: Text.AlignTop
                     horizontalAlignment: Text.AlignHCenter
 //                    text: flightTimeDepart.substring(0, 5)
@@ -1329,7 +1329,7 @@ Base{
                     color: "darkred"
                     font.bold: true
                     font.pixelSize: 20
-                    font.family: "Gotham"
+                    font.family: "GothamRounded"
                     verticalAlignment: Text.AlignTop
                     horizontalAlignment: Text.AlignHCenter
 //                    text: flightTimeDepart.substring(flightTimeDepart.length-5)
@@ -1369,7 +1369,7 @@ Base{
                     color: "white"
                     font.pixelSize: 20
                     font.bold: false
-                    font.family: "Gotham"
+                    font.family: "GothamRounded"
                 }
             }
             Text{
@@ -1385,7 +1385,7 @@ Base{
                 color: "#ffffff"
                 font.bold: false
                 font.pixelSize: 25
-                font.family: "Gotham"
+                font.family: "GothamRounded"
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: Text.AlignRight
 //                text: bookingCodeReturn
@@ -1417,7 +1417,7 @@ Base{
                 color: "darkred"
                 font.bold: true
                 font.pixelSize: 25
-                font.family: "Gotham"
+                font.family: "GothamRounded"
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: Text.AlignLeft
 //                text: flightNoReturn
@@ -1434,7 +1434,7 @@ Base{
                 color: "darkred"
                 font.bold: false
                 font.pixelSize: 15
-                font.family: "Gotham"
+                font.family: "GothamRounded"
                 verticalAlignment: Text.AlignVCenter
                 horizontalAlignment: Text.AlignRight
                 anchors.verticalCenter: img_origin_return.verticalCenter
@@ -1464,7 +1464,7 @@ Base{
                 color: "darkred"
 //                font.bold: true
                 font.pixelSize: 17
-                font.family: "Gotham"
+                font.family: "GothamRounded"
                 verticalAlignment: Text.AlignTop
                 horizontalAlignment: Text.AlignLeft
 //                text: returnDate
@@ -1483,7 +1483,7 @@ Base{
                     color: "darkred"
                     font.bold: true
                     font.pixelSize: 20
-                    font.family: "Gotham"
+                    font.family: "GothamRounded"
                     verticalAlignment: Text.AlignTop
                     horizontalAlignment: Text.AlignHCenter
                 }
@@ -1496,7 +1496,7 @@ Base{
                     color: "darkred"
                     font.bold: true
                     font.pixelSize: 20
-                    font.family: "Gotham"
+                    font.family: "GothamRounded"
                     verticalAlignment: Text.AlignTop
                     horizontalAlignment: Text.AlignHCenter
                 }
@@ -1509,7 +1509,7 @@ Base{
                     color: "darkred"
                     font.bold: true
                     font.pixelSize: 20
-                    font.family: "Gotham"
+                    font.family: "GothamRounded"
                     verticalAlignment: Text.AlignTop
                     horizontalAlignment: Text.AlignHCenter
                 }
@@ -1571,7 +1571,7 @@ Base{
                     color: "darkred"; border.width: 2; border.color: "darkred";
                     Text{
                         anchors.fill: parent;
-                        font.family: "Gotham"
+                        font.family: "GothamRounded"
                         font.bold: false
                         font.pixelSize: 20
                         text: qsTr("Base Fare")
@@ -1585,7 +1585,7 @@ Base{
                     color: "white"; border.width: 2; border.color: "darkred";
                     Text{
                         anchors.fill: parent;
-                        font.family: "Gotham"
+                        font.family: "GothamRounded"
                         font.bold: true
                         font.pixelSize: 20
 //                        text: FUNC.insert_dot(FUNC.get_diff(totalPaid, adminFee))
@@ -1610,7 +1610,7 @@ Base{
                     color: "darkred"; border.width: 2; border.color: "darkred";
                     Text{
                         anchors.fill: parent;
-                        font.family: "Gotham"
+                        font.family: "GothamRounded"
                         font.bold: false
                         font.pixelSize: 20
                         text: qsTr("Admin Fee")
@@ -1625,7 +1625,7 @@ Base{
                     Text{
                         id: admin_fee_text
                         anchors.fill: parent;
-                        font.family: "Gotham"
+                        font.family: "GothamRounded"
                         font.bold: true
                         font.pixelSize: 20
 //                        text: FUNC.insert_dot(adminFee)
@@ -1650,7 +1650,7 @@ Base{
                     color: "darkred"; border.width: 2; border.color: "darkred";
                     Text{
                         anchors.fill: parent;
-                        font.family: "Gotham"
+                        font.family: "GothamRounded"
                         font.bold: false
                         font.pixelSize: 20
                         text: qsTr("Surcharge")
@@ -1665,7 +1665,7 @@ Base{
                     Text{
                         id: surcharge_text
                         anchors.fill: parent;
-                        font.family: "Gotham"
+                        font.family: "GothamRounded"
                         font.bold: true
                         font.pixelSize: 20
                         text: "0"
@@ -1688,7 +1688,7 @@ Base{
                     color: "darkred"; border.width: 2; border.color: "darkred";
                     Text{
                         anchors.fill: parent;
-                        font.family: "Gotham"
+                        font.family: "GothamRounded"
                         font.bold: false
                         font.pixelSize: 20
                         text: qsTr("Total Paid")
@@ -1703,7 +1703,7 @@ Base{
                     Text{
                         id: total_payment_text
                         anchors.fill: parent;
-                        font.family: "Gotham"
+                        font.family: "GothamRounded"
                         font.bold: true
                         font.pixelSize: 20
 //                        text: FUNC.insert_dot((FUNC.round_fare(baseFare)+parseInt(adminFee)).toString())
@@ -2030,7 +2030,7 @@ Base{
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
         wrapMode: Text.WordWrap
-        font.family: "Gotham"
+        font.family: "GothamRounded"
         color: "darkred"
 
     }
@@ -2062,7 +2062,7 @@ Base{
                 id: wallet_button_text
                 text: ' WALLET'
                 color: 'white'
-                font.family:"Gotham"
+                font.family:"GothamRounded"
                 font.pixelSize: 25
 //                font.bold: true
 

@@ -13,7 +13,7 @@ Rectangle{
         id: text_button
         text: chars
         font.bold: true
-        font.family:"Gotham"
+        font.family:"GothamRounded"
         font.pixelSize:30
         anchors.centerIn: parent;
     }

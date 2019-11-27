@@ -73,7 +73,7 @@ Base{
             anchors.top: parent.top
             anchors.topMargin: 40
             anchors.horizontalCenterOffset: 5
-            font.family:"Gotham"
+            font.family:"GothamRounded"
             anchors.horizontalCenter: parent.horizontalCenter
             font.pixelSize: 30
         }
@@ -89,7 +89,7 @@ Base{
             font.bold: true
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 50
-            font.family:"Gotham"
+            font.family:"GothamRounded"
             anchors.horizontalCenter: parent.horizontalCenter
             font.pixelSize: 25
         }

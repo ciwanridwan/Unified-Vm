@@ -74,7 +74,7 @@ Rectangle{
         anchors.top: notif_rec.top
         anchors.topMargin: 30
         anchors.horizontalCenterOffset: 5
-        font.family:"Gotham"
+        font.family:"GothamRounded"
         anchors.horizontalCenter: notif_rec.horizontalCenter
         font.pixelSize: 30
     }
@@ -92,7 +92,7 @@ Rectangle{
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
         font.bold: true
-        font.family:"Gotham"
+        font.family:"GothamRounded"
         anchors.horizontalCenter: notif_rec.horizontalCenter
         font.pixelSize: 25
     }

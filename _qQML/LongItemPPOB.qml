@@ -34,7 +34,7 @@ Rectangle {
         style: Text.Sunken
         anchors.horizontalCenterOffset: 0
         anchors.horizontalCenter: parent.horizontalCenter
-        font.family:"Gotham"
+        font.family:"GothamRounded"
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignLeft
     }
@@ -52,7 +52,7 @@ Rectangle {
         wrapMode: Text.WordWrap
         anchors.horizontalCenterOffset: 0
         anchors.horizontalCenter: parent.horizontalCenter
-        font.family:"Gotham"
+        font.family:"GothamRounded"
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignRight
     }
@@ -78,7 +78,7 @@ Rectangle {
         anchors.horizontalCenterOffset: 0
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
-        font.family:"Gotham"
+        font.family:"GothamRounded"
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignLeft
     }

@@ -14,7 +14,7 @@ Rectangle{
         text: show_label
         anchors.top: parent.top
         anchors.topMargin: -35
-        font.family: "Gotham"
+        font.family: "GothamRounded"
         font.pixelSize: 20
         color: "darkred"
     }
@@ -30,7 +30,7 @@ Rectangle{
         focus: set_focus
         cursorVisible: focus
         horizontalAlignment: Text.AlignLeft
-        font.family: "Gotham"
+        font.family: "GothamRounded"
         font.pixelSize: 20
         color: "darkred"
 //        clip: true

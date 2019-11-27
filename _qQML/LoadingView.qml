@@ -113,7 +113,7 @@ Base{
             text: show_text
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
-            font.family:"Gotham"
+            font.family:"GothamRounded"
             anchors.horizontalCenter: parent.horizontalCenter
             font.pixelSize: 30
         }

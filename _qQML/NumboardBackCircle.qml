@@ -17,7 +17,7 @@ Rectangle{
 //    Text{
 //        text:slot_text
 //        color:"red"
-//        font.family:"Gotham"
+//        font.family:"GothamRounded"
 //        font.pixelSize:20
 //        anchors.centerIn: parent;
 //        font.bold: true

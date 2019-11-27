@@ -124,7 +124,7 @@ Rectangle{
         horizontalAlignment: Text.AlignHCenter
         font.italic: false
         verticalAlignment: Text.AlignVCenter
-        font.family:"Gotham"
+        font.family:"GothamRounded"
         font.pixelSize:35
         color:"#ffffff"
 
@@ -143,7 +143,7 @@ Rectangle{
         anchors.horizontalCenter: parent.horizontalCenter
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
-        font.family:"Gotham"
+        font.family:"GothamRounded"
         font.pixelSize:30
         color:"#ffffff"
         visible: isBoxNameActive
@@ -162,7 +162,7 @@ Rectangle{
         horizontalAlignment: Text.AlignHCenter
         font.italic: false
         verticalAlignment: Text.AlignVCenter
-        font.family:"Gotham"
+        font.family:"GothamRounded"
         font.pixelSize:20
         color:"#ffffff"
         visible: isBoxNameActive
@@ -259,7 +259,7 @@ Rectangle{
             anchors.left: parent.left
             anchors.top: parent.top
             font.pixelSize: 40
-            font.family:"Gotham"
+            font.family:"GothamRounded"
             textFormat: Text.PlainText
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter

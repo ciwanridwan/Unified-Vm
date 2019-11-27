@@ -17,7 +17,7 @@ Rectangle{
         id: text_button
         text:chars
         color:"black"
-        font.family:"Gotham"
+        font.family:"GothamRounded"
         font.pixelSize:30
         anchors.centerIn: parent
         font.bold: isHighlighted

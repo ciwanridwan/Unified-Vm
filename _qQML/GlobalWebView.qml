@@ -116,7 +116,7 @@ Base{
         x:10
         y:738
         color:"#FFFF00"
-        font.family:"Gotham"
+        font.family:"GothamRounded"
         font.pixelSize:16
         visible: false
     }

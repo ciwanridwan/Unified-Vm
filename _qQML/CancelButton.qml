@@ -27,7 +27,7 @@ Rectangle{
         horizontalAlignment: Text.AlignHCenter
         color: "white"
         font.pixelSize: 18
-        font.family: "Gotham"
+        font.family: "GothamRounded"
     }
 
 }

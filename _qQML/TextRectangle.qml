@@ -20,7 +20,7 @@ Rectangle{
         anchors.leftMargin: 30
         anchors.verticalCenter: parent.verticalCenter
         horizontalAlignment: Text.AlignLeft
-        font.family: "Gotham"
+        font.family: "GothamRounded"
         font.pixelSize: 30
         font.italic: true
         color: "silver"

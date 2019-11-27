@@ -21,7 +21,7 @@ Item {
      color:paint;
      font.pixelSize: fontsize;
      font.bold: fontbold;
-     font.family: "Gotham";
+     font.family: "GothamRounded";
      wrapMode: Text.WrapAtWordBoundaryOrAnywhere;
      text:content;
      }

@@ -309,7 +309,7 @@ Base{
                 horizontalAlignment: Text.AlignHCenter
                 font.pixelSize: 20
                 font.bold: true
-                font.family: "Gotham"
+                font.family: "GothamRounded"
                 color: (isWithReturn==false)  ? "white" : "darkred"
 //                color: 'white'
             }
@@ -337,7 +337,7 @@ Base{
                 horizontalAlignment: Text.AlignHCenter
                 font.pixelSize: 20
                 font.bold: true
-                font.family: "Gotham"
+                font.family: "GothamRounded"
                 color: (isWithReturn==false) ? "darkred" : "white"
 //                color: 'white'
             }
@@ -365,7 +365,7 @@ Base{
             text: qsTr("From")
             anchors.top: parent.top
             anchors.topMargin: -45
-            font.family: "Gotham"
+            font.family: "GothamRounded"
             font.pixelSize: 20
             color: "darkred"
             font.bold: false
@@ -404,7 +404,7 @@ Base{
                     text: control.currentText
                     font.pixelSize: 20
                     verticalAlignment: Text.AlignVCenter
-                    font.family: "Gotham"
+                    font.family: "GothamRounded"
                 }
                 __popupStyle: __dropDownStyle
                 __dropDownStyle: MenuStyle {
@@ -416,7 +416,7 @@ Base{
                         text: styleData.text
                         font.pixelSize: 20
                         verticalAlignment: Text.AlignVCenter
-                        font.family: "Gotham"
+                        font.family: "GothamRounded"
                     }
                     itemDelegate.background: Rectangle {
                         z: 2
@@ -539,7 +539,7 @@ Base{
             text: qsTr("To")
             anchors.top: parent.top
             anchors.topMargin: -45
-            font.family: "Gotham"
+            font.family: "GothamRounded"
             font.pixelSize: 20
             color: "darkred"
             font.bold: false
@@ -577,7 +577,7 @@ Base{
                     text: control.currentText
                     font.pixelSize: 20
                     verticalAlignment: Text.AlignVCenter
-                    font.family: "Gotham"
+                    font.family: "GothamRounded"
                 }
                 __popupStyle: __dropDownStyle
                 __dropDownStyle: MenuStyle {
@@ -589,7 +589,7 @@ Base{
                         text: styleData.text
                         font.pixelSize: 20
                         verticalAlignment: Text.AlignVCenter
-                        font.family: "Gotham"
+                        font.family: "GothamRounded"
                     }
                     itemDelegate.background: Rectangle {
                         z: 2
@@ -713,7 +713,7 @@ Base{
         Text{
             id: titleDepart
             text: qsTr("Departure Date")
-            font.family: "Gotham"
+            font.family: "GothamRounded"
             font.pixelSize: 20
             color: "darkred"
             font.bold: false
@@ -746,7 +746,7 @@ Base{
             text:Qt.formatDate(calDepart.selectedDate, "dddd, dd MMM yyyy")
             font.italic: true
             font.bold: false
-            font.family:"Gotham"
+            font.family:"GothamRounded"
             font.pixelSize: 15
         }
         Calendar{
@@ -781,7 +781,7 @@ Base{
         Text{
             id: titleReturn
             text: qsTr("Return Date")
-            font.family: "Gotham"
+            font.family: "GothamRounded"
             font.pixelSize: 20
             color: "darkred"
             font.bold: false
@@ -813,7 +813,7 @@ Base{
 //            text:Qt.formatDate(calReturn.selectedDate, "dddd, dd MMM yyyy")
             font.italic: true
             font.bold: false
-            font.family:"Gotham"
+            font.family:"GothamRounded"
             font.pixelSize: 15
         }
         Calendar{
@@ -847,7 +847,7 @@ Base{
             text: qsTr("Passenger")
             anchors.top: parent.top
             anchors.topMargin: -45
-            font.family: "Gotham"
+            font.family: "GothamRounded"
             font.pixelSize: 20
             color: "darkred"
             font.bold: false
@@ -866,7 +866,7 @@ Base{
                     font.bold: false
                     verticalAlignment: Text.AlignVCenter
                     horizontalAlignment: Text.AlignHCenter
-                    font.family:"Gotham"
+                    font.family:"GothamRounded"
                     font.pixelSize: 30
                 }
                 MouseArea{
@@ -906,7 +906,7 @@ Base{
                     font.bold: false
                     verticalAlignment: Text.AlignVCenter
                     horizontalAlignment: Text.AlignHCenter
-                    font.family:"Gotham"
+                    font.family:"GothamRounded"
                     font.pixelSize: 30
                 }
                 MouseArea{
@@ -945,7 +945,7 @@ Base{
                     font.bold: false
                     verticalAlignment: Text.AlignVCenter
                     horizontalAlignment: Text.AlignHCenter
-                    font.family:"Gotham"
+                    font.family:"GothamRounded"
                     font.pixelSize: 30
                 }
                 MouseArea{
