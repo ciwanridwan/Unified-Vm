@@ -295,12 +295,11 @@ Base{
             {label: 'Metode Bayar', content: i.payment_method.toUpperCase()},
             {label: 'Status', content: i.status}
         ]
-        if (i.remarks.product_category == 'Listrik' && i.remarks.remarks != undefined){
-            var add_info = JSON.parse(i.remarks.remarks);
-            if (add_info.data.sn != undefined){
-                var sn = add_info.data.sn;
-                rows.push({label: 'Token/SN', content: sn.split('*')[0]});
-            }
+        if (i.remarks.product_category == 'Listrik' && i.status=='PAID' ){
+            var add_info = i.remarks.remarks;
+            console.log('get add_info', JSON.stringify(add_info.data.sn));
+            var sn = add_info.data.sn.split('*')[0];
+            rows.push({label: 'Token/SN', content: sn});
         }
         generateConfirm(rows, false, 'backToMain');
     }

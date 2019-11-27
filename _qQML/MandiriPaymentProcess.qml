@@ -507,7 +507,7 @@ Base{
         var meiResult = r.split('|')[1]
         if (meiFunction == 'STACK'){
             if (meiResult == "ERROR"||meiResult == "REJECTED"||meiResult == "OSERROR"){
-                false_notif();
+//                false_notif();
                 if (receivedCash > 0){
                     _SLOT.start_return_es_mei();
                 }
@@ -531,7 +531,7 @@ Base{
             }
         } else if (meiFunction == 'ACCEPT'){
             if(meiResult=='ERROR') {
-                false_notif();
+//                false_notif();
                 return;
             }
         }
@@ -545,6 +545,7 @@ Base{
         global_frame.close();
         popup_loading.close();
         if (['ERROR'].indexOf(edcResult) > -1){
+            next_button_global.visible = false;
             switch_frame_with_button('source/insert_money.png', 'Pembayaran Debit Gagal', 'Mohon Ulangi Transaksi Dalam Beberapa Saat', 'backToMain', true );
             return;
         }
@@ -559,61 +560,49 @@ Base{
             switch(edcResult){
             case 'SR':
                 notif_text = qsTr('Mohon Tunggu, Sedang Mensinkronisasi Ulang.');
-                arrow_down.visible = false;
                 break;
             case 'CI':
                 notif_text  = qsTr('Silakan Masukan Kartu Anda Di Slot Tersedia.');
                 back_button.visible = true;
-                arrow_down.visible = true;
                 break;
             case 'PI':
                 notif_text = qsTr('Kartu Terdeteksi, Silakan Masukkan Kode PIN.');
                 back_button.visible = false;
-                arrow_down.visible = false;
                 break;
             case 'DO':
                 notif_text = qsTr('Kode Pin Diterima, Menunggu Balasan Sistem.');
                 back_button.visible = false;
-                arrow_down.visible = false;
                 break;
             case 'TC':
                 notif_text = qsTr('Mohon Maaf, Terjadi Pembatalan Pada Proses Pembayaran.');
                 back_button.visible = true;
-                arrow_down.visible = true;
                 break;
             case 'CO':
                 notif_text = qsTr('Silakan Ambil Kembali Kartu Anda Dari Slot.');
                 back_button.visible = false;
-                arrow_down.visible = true;
                 break;
             case 'CR#EXCEPTION': case 'CR#UNKNOWN':
                 notif_text = qsTr('Terjadi Suatu Kesalahan, Transaksi Anda Dibatalkan.');
                 back_button.visible = true;
-                arrow_down.visible = true;
                 break;
             case 'CR#CARD_ERROR':
                 notif_text = qsTr('Terjadi Kesalahan Pada Kartu, Transaksi Anda Dibatalkan.');
                 back_button.visible = true;
-                arrow_down.visible = true;
                 break;
             case 'CR#PIN_ERROR':
                 notif_text = qsTr('Terjadi Kesalahan Pada PIN, Transaksi Anda Dibatalkan.');
                 back_button.visible = true;
-                arrow_down.visible = true;
                 break;
             case 'CR#SERVER_ERROR':
                 notif_text = qsTr('Terjadi Kesalahan Pada Sistem, Transaksi Anda Dibatalkan.');
                 back_button.visible = true;
-                arrow_down.visible = true;
                 break;
             case 'CR#NORMAL_CASE':
                 notif_text = qsTr('Silakan Ambil Kembali Kartu Anda untuk Melanjutkan Transaksi.');
                 back_button.visible = true;
-                arrow_down.visible = false;
                 break;
             default:
                 back_button.visible = true;
-                arrow_down.visible = true;
                 break;
             }
         }

@@ -123,7 +123,8 @@ Base{
 
     Column{
         width: 900
-        height: 500
+        height: 700
+        anchors.verticalCenterOffset: 100
         anchors.horizontalCenterOffset: 50
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
