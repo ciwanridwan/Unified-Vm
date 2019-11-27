@@ -1131,6 +1131,7 @@ Base{
                     popup_input_number.close();
                     details.refund_status = 'AVAILABLE';
                     details.refund_number = '';
+                    details.refund_amount = refundAmount.toString();
                     release_print('Pengembalian Dana Tertunda', 'Silakan Ambil Struk Transaksi Anda Dan Lapor Petugas');
                 }
             }

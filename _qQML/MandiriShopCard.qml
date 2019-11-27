@@ -352,7 +352,7 @@ Base{
 
     function define_card(idx){
         defaultItemPrice = parseInt(productData[idx].sell_price);
-        var selected_stock = parseInt(productData[idx].stock);
+//        var selected_stock = parseInt(productData[idx].stock);
 //        if (selected_stock < 4) count4.visible = false;
 //        if (selected_stock < 3) count3.visible = false;
 //        if (selected_stock < 2) count2.visible = false;
@@ -409,7 +409,8 @@ Base{
                     var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
                     productIdx = 0;
                     var selected_product = productData[productIdx];
-                    console.log('select_product_1', now, productIdx, selected_product);
+                    var selected_stock = parseInt(productData[idx].stock);
+                    console.log('select_product_1', now, productIdx, JSON.stringify(selected_product), selected_stock);
                     define_card(productIdx);
                 }
             }
@@ -424,7 +425,8 @@ Base{
                     var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
                     productIdx = 1;
                     var selected_product = productData[productIdx];
-                    console.log('select_product_2', now, productIdx, selected_product);
+                    var selected_stock = parseInt(productData[idx].stock);
+                    console.log('select_product_2', now, productIdx, JSON.stringify(selected_product), selected_stock);
                     define_card(productIdx);
                 }
             }
@@ -439,7 +441,8 @@ Base{
                     var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
                     productIdx = 2;
                     var selected_product = productData[productIdx];
-                    console.log('select_product_3', now, productIdx, selected_product);
+                    var selected_stock = parseInt(productData[idx].stock);
+                    console.log('select_product_3', now, productIdx, JSON.stringify(selected_product), selected_stock);
                     define_card(productIdx);
                 }
             }
