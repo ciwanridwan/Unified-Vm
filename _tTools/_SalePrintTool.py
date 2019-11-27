@@ -60,10 +60,10 @@ class PDF(FPDF):
         # Logo
         if os.path.isfile(LOGO_PATH):
             self.image(LOGO_PATH, 25, 5, 30)
-        self.ln(SPACING)
-        self.set_font(USED_FONT, '', GLOBAL_FONT_SIZE)
-        self.ln(SPACING)
-        self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE, HEADER_TEXT1, 0, 0, 'C')
+        self.ln(SPACING*4)
+        # self.set_font(USED_FONT, '', GLOBAL_FONT_SIZE)
+        # self.ln(SPACING)
+        # self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE, HEADER_TEXT1, 0, 0, 'C')
         # self.ln(SPACING)
         # self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE, HEADER_TEXT2, 0, 0, 'C')
         self.ln(SPACING)
