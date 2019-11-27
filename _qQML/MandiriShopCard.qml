@@ -409,8 +409,7 @@ Base{
                     var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
                     productIdx = 0;
                     var selected_product = productData[productIdx];
-                    var selected_stock = parseInt(productData[idx].stock);
-                    console.log('select_product_1', now, productIdx, JSON.stringify(selected_product), selected_stock);
+                    console.log('select_product_1', now, productIdx, JSON.stringify(selected_product));
                     define_card(productIdx);
                 }
             }
@@ -425,8 +424,7 @@ Base{
                     var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
                     productIdx = 1;
                     var selected_product = productData[productIdx];
-                    var selected_stock = parseInt(productData[idx].stock);
-                    console.log('select_product_2', now, productIdx, JSON.stringify(selected_product), selected_stock);
+                    console.log('select_product_2', now, productIdx, JSON.stringify(selected_product));
                     define_card(productIdx);
                 }
             }
@@ -441,8 +439,7 @@ Base{
                     var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
                     productIdx = 2;
                     var selected_product = productData[productIdx];
-                    var selected_stock = parseInt(productData[idx].stock);
-                    console.log('select_product_3', now, productIdx, JSON.stringify(selected_product), selected_stock);
+                    console.log('select_product_3', now, productIdx, JSON.stringify(selected_product));
                     define_card(productIdx);
                 }
             }
