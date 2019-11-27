@@ -47,12 +47,10 @@ Rectangle {
     }
 
     Image {
-        id: amount_image
-        scale: 1.3
         anchors.fill: parent
         visible: (imageMode.indexOf(itemName) > -1)
         source: "source/money/"+itemName+"000.png"
-        fillMode: Image.PreserveAspectFit
+        fillMode: Image.Stretch
     }
 
 
