@@ -295,11 +295,19 @@ Base{
             {label: 'Metode Bayar', content: i.payment_method.toUpperCase()},
             {label: 'Status', content: i.status}
         ]
-        if (i.remarks.product_category == 'Listrik' && i.status=='PAID' ){
+        if (i.remarks.product_category == 'Listrik' && i.status=='PAID' && i.category == 'PPOB' ){
             var add_info = i.remarks.remarks;
             console.log('get add_info', JSON.stringify(add_info.data.sn));
             var sn = add_info.data.sn.split('*')[0];
-            rows.push({label: 'Token/SN', content: sn});
+            rows = [
+                        {label: 'No Transaksi', content: FUNC.get_value(i.product_id)},
+                        {label: 'Tanggal', content: FUNC.get_value(i.date)},
+                        {label: 'Jenis Transaksi', content: trx_name},
+                        {label: 'Pembayaran', content: FUNC.insert_dot(i.amount.toString())},
+                        {label: 'Metode Bayar', content: i.payment_method.toUpperCase()},
+                        {label: 'Status', content: i.status},
+                        {label: 'Token/SN', content: sn}
+                    ]
         }
         generateConfirm(rows, false, 'backToMain');
     }
