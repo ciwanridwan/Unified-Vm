@@ -272,7 +272,7 @@ Base{
             var info = JSON.parse(r.split('|')[3]);
             now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
             console.log('qr_check_result', now, mode, result, info);
-            qr_payment_frame.success(15)
+            qr_payment_frame.success(3)
             details.payment_details = info;
             details.payment_received = details.value.toString();
             payment_complete(details.shop_type);
