@@ -8,7 +8,7 @@ Rectangle {
     property var itemName: '100'
     property bool buttonActive: true
     property bool isSelected: false
-    property variant imageMode: ['10', '25', '50', '100']
+    property variant imageMode: ['10', '20', '50', '100']
 
     width: 359
     height: 183
