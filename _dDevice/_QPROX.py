@@ -882,8 +882,8 @@ def get_topup_readiness(mode='full'):
     ___['balance_bni'] = str(_Global.BNI_ACTIVE_WALLET)
     ___['bni_wallet_1'] = str(_Global.BNI_SAM_1_WALLET)
     ___['bni_wallet_2'] = str(_Global.BNI_SAM_2_WALLET)
-    ___['mandiri'] = 'AVAILABLE' if (INIT_MANDIRI is True and _Global.MANDIRI_ACTIVE_WALLET > 0) else 'N/A'
-    ___['bni'] = 'AVAILABLE' if (INIT_BNI and _Global.BNI_ACTIVE_WALLET > 0) is True else 'N/A'
+    ___['mandiri'] = 'AVAILABLE' if (INIT_MANDIRI is True and _Global.MANDIRI_ACTIVE_WALLET > 0) is True else 'N/A'
+    ___['bni'] = 'AVAILABLE' if (INIT_BNI is True and _Global.BNI_ACTIVE_WALLET > 0) is True else 'N/A'
     ___['bri'] = 'AVAILABLE' if _ConfigParser.get_set_value('QPROX', 'topup^online^bri', '0') == '1' else 'N/A'
     ___['bca'] = 'AVAILABLE' if _ConfigParser.get_set_value('QPROX', 'topup^online^bca', '0') == '1' else 'N/A'
     ___['dki'] = 'AVAILABLE' if _ConfigParser.get_set_value('QPROX', 'topup^online^dki', '0') == '1' else 'N/A'
