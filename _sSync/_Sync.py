@@ -461,12 +461,16 @@ def start_get_product_stock():
                         product['remarks'] = product['remarks'] + '|' + 'source/card/' + image
                 _DAO.insert_product_stock(product)
             if _KioskService.get_product_stock() is True:
+                _KioskService.K_SIGNDLER.SIGNAL_ADMIN_GET_PRODUCT_STOCK.emit('SYNC_PRODUCT_STOCK|SUCCESS')
                 return 'UPDATE_STOCK_SUCCESS'
             else:
+                _KioskService.K_SIGNDLER.SIGNAL_ADMIN_GET_PRODUCT_STOCK.emit('SYNC_PRODUCT_STOCK|PENDING')
                 return 'UPDATE_STOCK_PENDING'
         else:
+            _KioskService.K_SIGNDLER.SIGNAL_ADMIN_GET_PRODUCT_STOCK.emit('SYNC_PRODUCT_STOCK|ERROR')
             return 'UPDATE_STOCK_FAILED_UNKNOWN_ERROR'
     else:
+        _KioskService.K_SIGNDLER.SIGNAL_ADMIN_GET_PRODUCT_STOCK.emit('SYNC_PRODUCT_STOCK|NO_CONNECTION')
         return 'UPDATE_STOCK_FAILED_NO_CONNECTION'
 
 

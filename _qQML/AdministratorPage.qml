@@ -44,8 +44,8 @@ Base{
         base.result_mandiri_settlement.connect(get_admin_action);
         base.result_update_app.connect(get_admin_action);
         base.result_process_settlement.connect(get_admin_action);
-        base.result_init_online_qprox.connect(get_admin_action)
-
+        base.result_init_online_qprox.connect(get_admin_action);
+        base.result_admin_sync_stock.connect(get_admin_action);
     }
 
     Component.onDestruction:{
@@ -62,12 +62,13 @@ Base{
         base.result_mandiri_settlement.disconnect(get_admin_action);
         base.result_update_app.disconnect(get_admin_action);
         base.result_process_settlement.disconnect(get_admin_action);
-        base.result_init_online_qprox.disconnect(get_admin_action)
-
+        base.result_init_online_qprox.disconnect(get_admin_action);
+        base.result_admin_sync_stock.disconnect(get_admin_action);
     }
 
     function do_action_signal(s){
-        console.log('do_action_signal', s);
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('do_action_signal', s, now);
         var action = JSON.parse(s)
         if (action.type=='changeStock'){
             popup_loading.open();
@@ -77,7 +78,8 @@ Base{
     }
 
     function ka_login_status(t){
-        console.log('ka_login_status', t);
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('ka_login_status', t, now);
         popup_loading.close();
         var result = t.split('|')[1]
         if (result == 'ERROR'){
@@ -114,7 +116,7 @@ Base{
             if (r.indexOf('FAILED') > -1){
                 false_notif('Dear '+userData.first_name+'|Terjadi Kegagalan Pada Settlement Mandiri!\nKode Error ['+r+']');
             } else if (r=='SUCCESS') {
-                standard_notif_view.close();
+                false_notif('Dear '+userData.first_name+'|Status Proses Settlement Mandiri...\n['+r+']', true);
             } else {
                 false_notif('Dear '+userData.first_name+'|Status Proses Settlement Mandiri...\n['+r+']');
                 if (r!='WAITING_RSP_UPDATE') return;
@@ -130,9 +132,16 @@ Base{
                 return;
             }
         } else if (a.indexOf('EDC_SETTLEMENT') > -1){
-            var r = a.split('|')[1]
-            false_notif('Dear '+userData.first_name+'|Status Proses EDC Settlement...\n['+r+']');
-            if (r=='PROCESSED') standard_notif_view.close();
+            var e = a.split('|')[1]
+            if (e=='PROCESSED') {
+                false_notif('Dear '+userData.first_name+'|Status Proses EDC Settlement...\n['+e+']', true);
+            } else {
+                false_notif('Dear '+userData.first_name+'|Status Proses EDC Settlement...\n['+e+']');
+            }
+        } else if (a.indexOf('SYNC_PRODUCT_STOCK') > -1){
+            var s = a.split('|')[1]
+            false_notif('Dear '+userData.first_name+'|Status Proses Sync Product Stock..\n['+s+']');
+
         } else {
             false_notif('Dear '+userData.first_name+'|Terjadi Kesalahan Dengan Kode:\n'+a);
         }
@@ -142,7 +151,8 @@ Base{
     }
 
     function get_product_stock(p){
-        console.log('product_stock', p);
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('product_stock', p, now);
         productData = JSON.parse(p);
         if (productData.length > 0) {
             if (productData[0].status==101) _total_stock_101.labelContent = productData[0].stock.toString();
@@ -451,9 +461,32 @@ Base{
     }
 
     AdminPanelButton{
-        id: test_update_app
+        id: sync_product_stock
         anchors.leftMargin: 15
         anchors.left: activation_bni_button.right
+        anchors.top: parent.top
+        anchors.topMargin: 15
+        z: 10
+        button_text: 'sync\ncard'
+        visible: !popup_loading.visible
+        modeReverse: true
+        MouseArea{
+            anchors.fill: parent
+            onClicked: {
+                _SLOT.user_action_log('Admin Page "Sync Card"');
+                if (press != '0') return;
+                press = '1';
+                console.log('sync_product_stock is pressed..!');
+                popup_loading.open();
+                _SLOT.start_sync_product_stock();
+            }
+        }
+    }
+
+    AdminPanelButton{
+        id: test_update_app
+        anchors.leftMargin: 15
+        anchors.left: sync_product_stock.right
         anchors.top: parent.top
         anchors.topMargin: 15
         z: 10
@@ -472,29 +505,6 @@ Base{
             }
         }
     }
-
-//    AdminPanelButton{
-//        id: edc_settlement_button
-//        anchors.leftMargin: 15
-//        anchors.left: activation_bni_button.right
-//        anchors.top: parent.top
-//        anchors.topMargin: 15
-//        z: 10
-//        button_text: 'edc\nsettlement'
-//        visible: !popup_loading.visible
-//        modeReverse: true
-//        MouseArea{
-//            anchors.fill: parent
-//            onClicked: {
-//                _SLOT.user_action_log('Admin Page "EDC Settlement"');
-//                if (press != '0') return;
-//                press = '1';
-//                console.log('edc_settlement_button is pressed..!');
-//                popup_loading.open();
-//                _SLOT.start_edc_settlement();
-//            }
-//        }
-//    }
 
     //==============================================================
     //PUT MAIN COMPONENT HERE
@@ -1075,10 +1085,13 @@ Base{
        }
     }
 
-    function false_notif(param){
+    function false_notif(param, button){
         press = '0';
         standard_notif_view.z = 100;
         standard_notif_view._button_text = 'tutup';
+        var buttonEnable = true;
+        if (button!=undefined) buttonEnable = button;
+        standard_notif_view.buttonEnabled = buttonEnable;
         if (param==undefined){
             standard_notif_view.show_text = "Mohon Maaf";
             standard_notif_view.show_detail = "Terjadi Kesalahan Pada Sistem, Mohon Coba Lagi Beberapa Saat";

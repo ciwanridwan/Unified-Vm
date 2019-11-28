@@ -31,12 +31,11 @@ Rectangle{
 
     Rectangle{
         id: notif_rec
-        width: 750
+        width: 1200
         height: 600
-        color: (modeReverse) ? "white" : "#1D294D"
+        color: (modeReverse) ? "white" : "black"
         opacity: .8
-        radius: 20
-        anchors.horizontalCenterOffset: 150
+        radius: 25
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
         Image  {
@@ -66,7 +65,7 @@ Rectangle{
 
     Text {
         id: main_text
-        color: (modeReverse) ? "#1D294D" : "white"
+        color: (modeReverse) ? "black" : "white"
         text: show_text
         font.bold: true
         verticalAlignment: Text.AlignVCenter
@@ -82,11 +81,11 @@ Rectangle{
         id: detail_text
         x: 0
         y: 0
-        width: 650
-        height: 400
-        color: (modeReverse) ? "#1D294D" : "white"
+        width: 900
+        height: 350
+        color: (modeReverse) ? "black" : "white"
         text: show_detail
-        anchors.verticalCenterOffset: 0
+        anchors.verticalCenterOffset: -30
         anchors.verticalCenter: parent.verticalCenter
         wrapMode: Text.WordWrap
         horizontalAlignment: Text.AlignHCenter

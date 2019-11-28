@@ -2,8 +2,8 @@ import QtQuick 2.4
 import QtQuick.Controls 1.2
 
 Rectangle{
-    width:120
-    height:70
+    width:100
+    height:80
     color:"transparent"
     property bool modeReverse: false
     property string button_text: 'batal'
@@ -26,7 +26,7 @@ Rectangle{
         horizontalAlignment: Text.AlignHCenter
         font.family:"Ubuntu"
         anchors.horizontalCenter: parent.horizontalCenter
-        font.pixelSize: 23
+        font.pixelSize: 20
     }
 
 }

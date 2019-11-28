@@ -45,6 +45,7 @@ class KioskSignalHandler(QObject):
     SIGNAL_GET_MACHINE_SUMMARY = pyqtSignal(str)
     SIGNAL_GET_PAYMENT_METHOD = pyqtSignal(str)
     SIGNAL_SYNC_ADS_CONTENT = pyqtSignal(str)
+    SIGNAL_ADMIN_GET_PRODUCT_STOCK = pyqtSignal(str)
 
 
 K_SIGNDLER = KioskSignalHandler()
