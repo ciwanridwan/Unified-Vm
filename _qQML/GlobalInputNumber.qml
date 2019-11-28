@@ -287,15 +287,15 @@ Base{
         if (i.status!='PAID' || i.status=='FAILED') amount = FUNC.insert_dot(i.remarks.payment_received.toString());
         if (i.payment_method=='MEI' || i.payment_method=='cash') i.payment_method = "CASH";
         var rows = [
-            {label: 'No Transaksi', content: FUNC.get_value(i.product_id)},
-            {label: 'Tanggal', content: FUNC.get_value(i.date)},
-            {label: 'Jenis Transaksi', content: trx_name},
-            {label: 'Nilai Bayar', content: FUNC.insert_dot(i.amount.toString())},
-            {label: 'Nilai Diterima', content: amount},
-            {label: 'Metode Bayar', content: i.payment_method.toUpperCase()},
-            {label: 'Status', content: i.status}
-        ]
-        if (i.remarks.product_category == 'Listrik' && i.status=='PAID' && i.category == 'PPOB' ){
+                    {label: 'No Transaksi', content: FUNC.get_value(i.product_id)},
+                    {label: 'Tanggal', content: FUNC.get_value(i.date)},
+                    {label: 'Jenis Transaksi', content: trx_name},
+                    {label: 'Nilai Bayar', content: FUNC.insert_dot(i.amount.toString())},
+                    {label: 'Nilai Diterima', content: amount},
+                    {label: 'Metode Bayar', content: i.payment_method.toUpperCase()},
+                    {label: 'Status', content: i.status}
+                ]
+        if (i.remarks.product_category == 'Listrik' && i.status == 'PAID' && i.category == 'PPOB' ){
             var add_info = i.remarks.remarks;
             console.log('get add_info', JSON.stringify(add_info.data.sn));
             var sn = add_info.data.sn.split('*')[0];
