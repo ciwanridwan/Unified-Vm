@@ -337,13 +337,13 @@ Base{
         anchors.top: parent.top
         anchors.topMargin: 15
         z: 10
-        button_text: 'print'
+        button_text: 'collect\nprint'
         visible: !popup_loading.visible
         modeReverse: true
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                _SLOT.user_action_log('Admin Page "Print"');
+                _SLOT.user_action_log('Admin Page "Collection Print"');
                 if (press != '0') return;
                 press = '1';
                 console.log('print_receipt_button is pressed..!');
