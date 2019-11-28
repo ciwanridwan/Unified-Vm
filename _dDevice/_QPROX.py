@@ -839,7 +839,7 @@ def init_online(rsp=None, slot=None):
 
 def do_update_limit_mandiri(rsp):
     attempt = 0
-    _url = 'http://103.28.14.188/bridge-service/filecheck.php?content=1&no_correction=1'
+    _url = 'http://'+_Global.SFTP_MANDIRI['host']+'/bridge-service/filecheck.php?content=1&no_correction=1'
     _param = {
         'ext': '.RSP',
         'file_path': _Global.SFTP_MANDIRI['path']+'/UpdateRequestDownload_DEV/'+rsp
