@@ -455,7 +455,46 @@ def clean_old_data(tables, key='', age_month=0):
         flush_table(_table=_table, _where=_where)
     return True
 
+# CREATE TABLE PendingRefund
+#   id              VARCHAR(100) PRIMARY KEY NOT NULL,
+#   tid             VARCHAR(100)             NOT NULL,
+#   trxid           VARCHAR(100),
+#   amount          BIGINT,
+#   customer        VARCHAR(100),
+#   refundType      VARCHAR(100),
+#   paymentType     VARCHAR(100),
+#   isSuccess       INT,
+#   remarks         TEXT,
+#   createdAt       BIGINT
 
+def get_pending_refund():
+    return get_query_from('PendingRefund', condition='isSuccess = 0')
 
+def insert_pending_refund(param):
+    '''
+    :param param:
+    tid             VARCHAR(100),
+    trxid           VARCHAR(100),
+    amount          BIGINT,
+    customer        VARCHAR(100),
+    refundType      VARCHAR(100),
+    paymentType     VARCHAR(100),
+    remarks         VARCHAR(100),
+    :return:
+    '''
+    param['isSuccess'] = 0
+    param['createdAt'] = _Helper.now()
+    sql = "INSERT INTO PendingRefund(tid, trxid, amount, customer, refundType, paymentType, remarks, isSuccess, createdAt ) " \
+          "VALUES(:tid, :trxid, :amount, :customer, :refundType, :paymentType, :remarks, :isSuccess, :createdAt )"
+    return _Database.insert_update(sql=sql, parameter=param)
 
-
+def update_pending_refund(param):
+    '''
+      trxid          VARCHAR(100),
+      remarks        TEXT,
+    :param param:
+    :return:
+    '''
+    param["updatedAt"] = _Helper.now()
+    sql = " UPDATE PendingRefund SET isSuccess=1, updatedAt=:updatedAt, remarks=:remarks  WHERE trxid=:trxid "
+    return _Database.insert_update(sql=sql, parameter=param) 

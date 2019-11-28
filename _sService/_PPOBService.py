@@ -8,6 +8,7 @@ from _tTools import _Helper
 from _nNetwork import _NetworkAccess
 import sys
 from operator import itemgetter
+from _dDAO import _DAO
 
 # import os
 
@@ -275,10 +276,28 @@ def diva_transfer_balance(payload):
     try:
         url = _Global.BACKEND_URL+'diva/transfer'
         s, r = _NetworkAccess.post_to_url(url=url, param=payload)
-        if s == 200 and r['result'] == 'OK' and r['data'] is not None:
-            LAST_TRANSFER_REFF_NO = _Global.empty(payload['reff_no'])
-            PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|SUCCESS')
+        if s == 200 and r['data'] is not None:
+            if r['result'] == 'OK':
+                LAST_TRANSFER_REFF_NO = _Global.empty(payload['reff_no'])
+                PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|SUCCESS')
+            else:
+                PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|PENDING')
         else:
+            # amount: refund_amount.toString(),
+            # customer: customerPhone,
+            # reff_no: details.shop_type + details.epoch.toString(),
+            # remarks: details,
+            # mode: refundMode,
+            # payment: details.payment
+            _DAO.insert_pending_refund({
+                'tid'           : _Global.TID,
+                'trxid'         : payload['reff_no'],
+                'amount'        : int(payload['amount']),
+                'customer'      : payload['customer'],
+                'refundType'    : str(payload['mode']),
+                'paymentType'   : payload['payment'],
+                'remarks'       : json.dumps(payload['remarks'])
+            })
             PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|ERROR')
         LOGGER.debug((str(payload), str(r)))
     except Exception as e:

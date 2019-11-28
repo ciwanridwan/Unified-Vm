@@ -386,6 +386,7 @@ def edc_settlement():
             response, result = _Command.send_request(param=param, output=None, flushing=_Command.MO_REPORT)
             if response == 0 or EDC_TESTING_MODE is True:
                 handling_settlement('DEBIT')
+                E_SIGNDLER.SIGNAL_PROCESS_SETTLEMENT_EDC.emit('EDC_SETTLEMENT_DEBIT|PROCESSED')
                 LOGGER.info(("edc_settlement", str(response), result))
             else:
                 _Global.EDC_ERROR = 'FAILED_TO_DEBIT_SETTLEMENT'
@@ -416,6 +417,7 @@ def edc_settlement_credit():
             response, result = _Command.send_request(param=param, output=None, flushing=_Command.MO_REPORT)
             if response == 0 or EDC_TESTING_MODE is True:
                 handling_settlement('CREDIT')
+                E_SIGNDLER.SIGNAL_PROCESS_SETTLEMENT_EDC.emit('EDC_SETTLEMENT_CREDIT|PROCESSED')
                 LOGGER.info(("edc_settlement", str(response), result))
             else:
                 _Global.EDC_ERROR = 'FAILED_TO_CREDIT_SETTLEMENT'
@@ -450,7 +452,7 @@ def handling_settlement(mode):
     attempt = 0
     pid = '[' + mode +'-' + _Helper.get_random_chars(5, '1234567890') + ']'
     # Clearing Previous Response
-    _Command.clear_content_of(_Command.MO_REPORT, pid)
+    # _Command.clear_content_of(_Command.MO_REPORT, pid)
     # _Command.clear_content_of(_Command.MO_STATUS, pid)
     settle_result_history = []
     if FORCE_SETTLEMENT is True:

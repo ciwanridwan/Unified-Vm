@@ -309,6 +309,38 @@ def sync_task():
         sleep(33.3)
 
 
+def start_retry_pending_refund():
+    _Helper.get_pool().apply_async(retry_pending_refund)
+
+
+def retry_pending_refund():
+    _url = _Global.BACKEND_URL + 'diva/transfer'
+    while True:
+        try:
+            pendings = _DAO.get_pending_refund()
+            if _Helper.is_online(source='retry_pending_refund') is True and len(pendings) > 0:
+                for p in pendings:
+                    _param = {
+                        'customer_login'    : p['customer'],
+                        'amount'            : str(p['amount']),
+                        'reff_no'           : p['trxid']
+                    } 
+                    s, r = _NetworkAccess.post_to_url(url=_url, param=_param)
+                    if s == 200 and r['result'] == 'OK' and r['data'] is not None:
+                        print('pyt: retry_pending_refund ' + _Helper.time_string() + ' ['+p['trxid']+'] SUCCESS')
+                        _DAO.update_pending_refund({
+                            'trxid'         : p['trxid'],
+                            'remarks'       : json.dumps(r)
+                        })                            
+                    else:
+                        print('pyt: retry_pending_refund ' + _Helper.time_string() + ' ['+p['trxid']+'] FAILED')
+            else:
+                print('pyt: retry_pending_refund ' + _Helper.time_string() + ' NO PENDING')
+        except Exception as e:
+            LOGGER.warning(e)
+        sleep(15.15)
+
+
 def handle_tasks(tasks):
     if len(tasks) == 0:
         return

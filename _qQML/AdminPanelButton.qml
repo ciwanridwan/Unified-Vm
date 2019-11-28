@@ -26,7 +26,7 @@ Rectangle{
         horizontalAlignment: Text.AlignHCenter
         font.family:"Ubuntu"
         anchors.horizontalCenter: parent.horizontalCenter
-        font.pixelSize: 25
+        font.pixelSize: 23
     }
 
 }

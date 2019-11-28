@@ -44,6 +44,7 @@ Base{
         base.result_mandiri_settlement.connect(get_admin_action);
         base.result_update_app.connect(get_admin_action);
         base.result_process_settlement.connect(get_admin_action);
+        base.result_init_online_qprox.connect(get_admin_action)
 
     }
 
@@ -61,6 +62,7 @@ Base{
         base.result_mandiri_settlement.disconnect(get_admin_action);
         base.result_update_app.disconnect(get_admin_action);
         base.result_process_settlement.disconnect(get_admin_action);
+        base.result_init_online_qprox.disconnect(get_admin_action)
 
     }
 
@@ -91,7 +93,8 @@ Base{
     }
 
     function get_admin_action(a){
-        console.log('get_admin_action', a);
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('get_admin_action', a, now);
         popup_loading.close();
         if (a=='CHANGE_PRODUCT|STID_NOT_FOUND'){
             false_notif('Dear '+userData.first_name+'|Update Stock Gagal, Silakan Hubungi Master Admin Untuk Penambahan Product Di Slot Ini');
@@ -110,6 +113,8 @@ Base{
             var r = a.split('|')[1]
             if (r.indexOf('FAILED') > -1){
                 false_notif('Dear '+userData.first_name+'|Terjadi Kegagalan Pada Settlement Mandiri!\nKode Error ['+r+']');
+            } else if (r=='SUCCESS') {
+                standard_notif_view.close();
             } else {
                 false_notif('Dear '+userData.first_name+'|Status Proses Settlement Mandiri...\n['+r+']');
                 if (r!='WAITING_RSP_UPDATE') return;
@@ -127,6 +132,7 @@ Base{
         } else if (a.indexOf('EDC_SETTLEMENT') > -1){
             var r = a.split('|')[1]
             false_notif('Dear '+userData.first_name+'|Status Proses EDC Settlement...\n['+r+']');
+            if (r=='PROCESSED') standard_notif_view.close();
         } else {
             false_notif('Dear '+userData.first_name+'|Terjadi Kesalahan Dengan Kode:\n'+a);
         }
@@ -444,51 +450,51 @@ Base{
         }
     }
 
-//    AdminPanelButton{
-//        id: test_update_app
-//        anchors.leftMargin: 15
-//        anchors.left: activation_bni_button.right
-//        anchors.top: parent.top
-//        anchors.topMargin: 15
-//        z: 10
-//        button_text: 'update\napp'
-//        visible: !popup_loading.visible
-//        modeReverse: true
-//        MouseArea{
-//            anchors.fill: parent
-//            onClicked: {
-//                _SLOT.user_action_log('Admin Page "Force Update App"');
-//                if (press != '0') return;
-//                press = '1';
-//                console.log('test_update_app is pressed..!');
-//                popup_loading.open();
-//                _SLOT.start_do_update();
-//            }
-//        }
-//    }
-
     AdminPanelButton{
-        id: edc_settlement_button
+        id: test_update_app
         anchors.leftMargin: 15
         anchors.left: activation_bni_button.right
         anchors.top: parent.top
         anchors.topMargin: 15
         z: 10
-        button_text: 'edc\nsettlement'
+        button_text: 'update\napp'
         visible: !popup_loading.visible
         modeReverse: true
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                _SLOT.user_action_log('Admin Page "EDC Settlement"');
+                _SLOT.user_action_log('Admin Page "Force Update App"');
                 if (press != '0') return;
                 press = '1';
-                console.log('edc_settlement_button is pressed..!');
+                console.log('test_update_app is pressed..!');
                 popup_loading.open();
-                _SLOT.start_edc_settlement();
+                _SLOT.start_do_update();
             }
         }
     }
+
+//    AdminPanelButton{
+//        id: edc_settlement_button
+//        anchors.leftMargin: 15
+//        anchors.left: activation_bni_button.right
+//        anchors.top: parent.top
+//        anchors.topMargin: 15
+//        z: 10
+//        button_text: 'edc\nsettlement'
+//        visible: !popup_loading.visible
+//        modeReverse: true
+//        MouseArea{
+//            anchors.fill: parent
+//            onClicked: {
+//                _SLOT.user_action_log('Admin Page "EDC Settlement"');
+//                if (press != '0') return;
+//                press = '1';
+//                console.log('edc_settlement_button is pressed..!');
+//                popup_loading.open();
+//                _SLOT.start_edc_settlement();
+//            }
+//        }
+//    }
 
     //==============================================================
     //PUT MAIN COMPONENT HERE

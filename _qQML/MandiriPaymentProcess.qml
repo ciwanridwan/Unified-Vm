@@ -198,6 +198,9 @@ Base{
             amount: refund_amount.toString(),
             customer: customerPhone,
             reff_no: details.shop_type + details.epoch.toString(),
+            remarks: details,
+            mode: refundMode,
+            payment: details.payment
         }
         if (title!=undefined) notifTitle = title;
         if (message!=undefined) notifMessage = message;
@@ -210,7 +213,7 @@ Base{
         console.log('transfer_balance_result', now, transfer);
         popup_loading.close();
         var result = transfer.split('|')[1];
-        if (['MISSING_REFF_NO','MISSING_AMOUNT','MISSING_CUSTOMER', 'ERROR'].indexOf(result) > -1){
+        if (['MISSING_REFF_NO','MISSING_AMOUNT','MISSING_CUSTOMER', 'ERROR', 'PENDING'].indexOf(result) > -1){
             details.refund_status = 'PENDING';
         }
         if (result=='SUCCESS'){

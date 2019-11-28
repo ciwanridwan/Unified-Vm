@@ -829,6 +829,7 @@ def init_online(rsp=None, slot=None):
         ka_info_mandiri(slot=slot)
         QP_SIGNDLER.SIGNAL_INIT_ONLINE_QPROX.emit('INIT_ONLINE|SUCCESS')
         _Global.log_to_temp_config(section='last^update')
+        QP_SIGNDLER.SIGNAL_INIT_ONLINE_QPROX.emit('MANDIRI_SETTLEMENT|SUCCESS')
         return True
     else:
         _Global.NFC_ERROR = 'INIT_ONLINE_ERROR'
@@ -856,6 +857,7 @@ def do_update_limit_mandiri(rsp):
                 __content_rsp = _res['content'].split('#')[1]
                 init_online(__content_rsp, PREV_RQ1_SLOT)
                 LOGGER.info(('RQ1 MATCH', PREV_RQ1_SLOT, PREV_RQ1_DATA, __content_rq1, __content_rsp))
+                break
             else:
                 LOGGER.warning(('[DETECTED] RQ1 NOT MATCH', PREV_RQ1_DATA, __content_rq1))
             if not _Global.mandiri_single_sam():
