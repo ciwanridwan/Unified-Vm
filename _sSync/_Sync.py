@@ -326,12 +326,15 @@ def retry_pending_refund():
                         'reff_no'           : p['trxid']
                     } 
                     s, r = _NetworkAccess.post_to_url(url=_url, param=_param)
-                    if s == 200 and r['result'] == 'OK' and r['data'] is not None:
-                        print('pyt: retry_pending_refund ' + _Helper.time_string() + ' ['+p['trxid']+'] SUCCESS')
+                    if s == 200 and r['data'] is not None:
                         _DAO.update_pending_refund({
                             'trxid'         : p['trxid'],
                             'remarks'       : json.dumps(r)
                         })                            
+                        if r['result'] == 'OK': 
+                            print('pyt: retry_pending_refund ' + _Helper.time_string() + ' ['+p['trxid']+'] SUCCESS RELEASED')
+                        else:
+                            print('pyt: retry_pending_refund ' + _Helper.time_string() + ' ['+p['trxid']+'] TRIGGERED')
                     else:
                         print('pyt: retry_pending_refund ' + _Helper.time_string() + ' ['+p['trxid']+'] FAILED')
             else:
