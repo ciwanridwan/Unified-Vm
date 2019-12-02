@@ -9,6 +9,7 @@ from time import *
 import os
 import sys
 import json
+import re
 
 
 LOGGER = logging.getLogger()
@@ -56,6 +57,10 @@ if not os.path.exists(TEMP_FOLDER):
     os.makedirs(TEMP_FOLDER)
 
 
+def clean_white_space(s):
+    return re.sub(r'\s+', '', s)
+
+
 def init_temp_data():
     global TEMP_FOLDER
     if not os.path.exists(sys.path[0] + '/_tTmp/'):
@@ -67,7 +72,7 @@ def store_to_temp_data(temp, content):
     if '.data' not in temp:
         temp = temp + '.data'
     temp_path = os.path.join(TEMP_FOLDER, temp)
-    if len(content.replace(' ', '')) == 0:
+    if len(clean_white_space(content)) == 0:
         content = '{}'
     with open(temp_path, 'w+') as t:
         t.write(content)
@@ -86,7 +91,7 @@ def load_from_temp_data(temp, mode='text'):
     print(temp)
     print(content)
     print(str(len(content)))
-    if len(content.replace(' ', '')) == 0:
+    if len(clean_white_space(content)) == 0:
         print(str(len(content)))
         os.remove(temp_path)
         store_to_temp_data(temp_path, '{}')
