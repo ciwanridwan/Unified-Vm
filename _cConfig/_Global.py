@@ -83,7 +83,10 @@ def load_from_temp_data(temp, mode='text'):
             t.write('{}')
             t.close()
     content = open(temp_path, 'r').read().strip()
+    print(temp)
+    print(content)
     if len(content.replace(' ', '')) == 0:
+        os.remove(temp_path)
         store_to_temp_data(temp_path, '{}')
         content = '{}'
     if mode == 'json':
