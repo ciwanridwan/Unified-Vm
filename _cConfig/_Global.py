@@ -67,6 +67,8 @@ def store_to_temp_data(temp, content):
     if '.data' not in temp:
         temp = temp + '.data'
     temp_path = os.path.join(TEMP_FOLDER, temp)
+    if len(content.replace(' ', '')) == 0:
+        content = '{}'
     with open(temp_path, 'w+') as t:
         t.write(content)
         t.close()
@@ -81,6 +83,9 @@ def load_from_temp_data(temp, mode='text'):
             t.write('{}')
             t.close()
     content = open(temp_path, 'r').read().strip()
+    if len(content.replace(' ', '')) == 0:
+        store_to_temp_data(temp_path, '{}')
+        content = '{}'
     if mode == 'json':
         return json.loads(content)
     return content
