@@ -85,7 +85,9 @@ def load_from_temp_data(temp, mode='text'):
     content = open(temp_path, 'r').read().strip()
     print(temp)
     print(content)
+    print(str(len(content)))
     if len(content.replace(' ', '')) == 0:
+        print(str(len(content)))
         os.remove(temp_path)
         store_to_temp_data(temp_path, '{}')
         content = '{}'
