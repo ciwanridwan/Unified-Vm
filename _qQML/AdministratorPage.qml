@@ -310,9 +310,8 @@ Base{
                 if (press != '0') return;
                 press = '1';
                 console.log('reboot_button is pressed..!');
-                false_notif('Mohon Tunggu|Mesin VM Akan Dinyalakan Kembali Dalam Beberapa Saat.');
+                false_notif('Dear User|Tekan Tombol Untuk Melanjutkan Proses.');
                 standard_notif_view.buttonEnabled = false;
-                reboot_button_action.enabled = true;
             }
         }
     }
@@ -1119,7 +1118,7 @@ Base{
             x: 1020; y: 694
             width: 180
             height: 90
-            enabled: false
+            visible: !standard_notif_view.buttonEnabled
             onClicked: {
                 _SLOT.user_action_log('Admin Page Notif Button "Reboot"');
                 _SLOT.start_safely_shutdown('RESTART');
