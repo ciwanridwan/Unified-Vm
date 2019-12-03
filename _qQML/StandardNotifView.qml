@@ -99,11 +99,11 @@ Rectangle{
     NextButton{
         id: close_button
         button_text: 'lanjut'
+        visible: buttonEnabled
         anchors.verticalCenterOffset: 200
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: notif_rec.horizontalCenter
         MouseArea{
-            enabled: buttonEnabled
             anchors.fill: parent
             onClicked: close();
         }

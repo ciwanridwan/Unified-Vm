@@ -1107,7 +1107,7 @@ Base{
 
     StandardNotifView{
         id: standard_notif_view
-        visible: true
+//        visible: true
 //        withBackground: false
         modeReverse: true
         show_text: "Dear Customer"
@@ -1119,7 +1119,7 @@ Base{
             button_text: 'reboot'
             anchors.verticalCenterOffset: 200
             anchors.verticalCenter: parent.verticalCenter
-            anchors.horizontalCenter: notif_rec.horizontalCenter
+            anchors.horizontalCenter: parent.horizontalCenter
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
