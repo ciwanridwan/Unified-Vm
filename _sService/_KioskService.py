@@ -76,6 +76,10 @@ def kiosk_status():
     }))
 
 
+def load_from_temp_data(section, selected_mode):
+    return _Global.load_from_temp_data(temp=section, mode=selected_mode)
+
+
 def update_kiosk_status(r):
     _Global.KIOSK_STATUS = 'UNAUTHORIZED'
     try:
@@ -88,6 +92,11 @@ def update_kiosk_status(r):
             _Global.KIOSK_NAME = _Global.KIOSK_SETTING['name']
             if _Global.PRINTER_STATUS == "NORMAL":
                 _Global.KIOSK_STATUS = 'ONLINE'
+            _Global.TOPUP_AMOUNT_SETTING = load_from_temp_data('topup-amount-setting', 'json')
+            _Global.FEATURE_SETTING = load_from_temp_data('feature-setting', 'json')
+            _Global.PAYMENT_SETTING = load_from_temp_data('payment-setting', 'json')
+            _Global.THEME_SETTING = load_from_temp_data('theme-setting', 'json')
+            _Global.ADS_SETTING = load_from_temp_data('ads-setting', 'json')
         else:
             _Global.KIOSK_SETTING = r['data']['kiosk']
             _Global.KIOSK_NAME = _Global.KIOSK_SETTING['name']
