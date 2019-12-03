@@ -310,7 +310,7 @@ Base{
                 if (press != '0') return;
                 press = '1';
                 console.log('reboot_button is pressed..!');
-                false_notif('Dear User|Tekan Tombol Untuk Melanjutkan Proses.');
+                false_notif('Dear User|Tekan Tombol "reboot" Untuk Melanjutkan Proses.', false);
                 standard_notif_view.buttonEnabled = false;
             }
         }
@@ -1107,23 +1107,28 @@ Base{
 
     StandardNotifView{
         id: standard_notif_view
-//        visible: true
+        visible: true
 //        withBackground: false
         modeReverse: true
         show_text: "Dear Customer"
         show_detail: "Please Ensure You have set Your plan correctly."
         z: 99
-        MouseArea{
-            id: reboot_button_action
-            x: 1020; y: 694
-            width: 180
-            height: 90
-            visible: !standard_notif_view.buttonEnabled
-            onClicked: {
-                _SLOT.user_action_log('Admin Page Notif Button "Reboot"');
-                _SLOT.start_safely_shutdown('RESTART');
+        NextButton{
+            id: action_button
+            visible: !parent.buttonEnabled
+            button_text: 'reboot'
+            anchors.verticalCenterOffset: 200
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.horizontalCenter: notif_rec.horizontalCenter
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('Admin Page Notif Button "Reboot"');
+                    _SLOT.start_safely_shutdown('RESTART');
+                }
             }
         }
+
     }
 
 
