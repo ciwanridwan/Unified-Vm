@@ -675,7 +675,7 @@ def rotate_pdf(path_file):
         return None
 
 # -------------------------
-CARD_SALE = 50000
+CARD_SALE = 0 # Will Count All Card Shop TRX
 # -------------------------
 
 
@@ -709,9 +709,9 @@ def get_admin_data():
                                                   ' bankMid = "" AND bankTid = "" AND '
                                                   ' sale = 200000 AND pid like "topup%" ')[0]['__']
         __data['amt_card'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE '
-                                               ' bankMid = "" AND bankTid = "" AND sale = ' + str(CARD_SALE) +
+                                               ' bankMid = "" AND bankTid = "" AND sale > ' + str(CARD_SALE) +
                                                ' AND  pid like "shop%" ')[0]['__']
-        __data['trx_card'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale = ' + str(CARD_SALE) +
+        __data['trx_card'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale > ' + str(CARD_SALE) +
                                                ' AND bankMid = "" AND bankTid = "" AND pid like "shop%" ')[0]['__']
         __data['slot1'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE '
                                             ' status = 101 ')[0]['__']
@@ -737,8 +737,8 @@ def get_admin_data():
         __data['notes_summary'] = '|'.join(__notes)
         # Status Bank BNI in Global
         if _Global.BANKS[0]['STATUS'] is True:
-            __data['sam_1_balance'] = str(_Global.MANDIRI_WALLET_1)
-            __data['sam_2_balance'] = str(_Global.MANDIRI_WALLET_2)
+            __data['sam_1_balance'] = str(_Global.MANDIRI_ACTIVE_WALLET)
+            __data['sam_2_balance'] = str(_Global.BNI_ACTIVE_WALLET)
         if len(_ProductService.LAST_UPDATED_STOCK) > 0:
             CARD_ADJUSTMENT = json.dumps(_ProductService.LAST_UPDATED_STOCK)
             for update in _ProductService.LAST_UPDATED_STOCK:
@@ -826,7 +826,8 @@ def admin_print_global(struct_id, ext='.pdf'):
         qty_card = s['trx_card']
         total_card = str(int(qty_card) * CARD_SALE)
         pdf.cell(padding_left, 0,
-                 '- e-Money : '+str(qty_card)+' x '+clean_number(CARD_SALE)+' = ', 0, 0, 'L')
+                 '- NEW : '+str(qty_card)+' x VARIAN PRICE/UNIT  = ', 0, 0, 'L')
+                #  '- NEW : '+str(qty_card)+' x '+clean_number(CARD_SALE)+' = ', 0, 0, 'L')
         pdf.ln(tiny_space-1)
         pdf.set_font(USED_FONT, '', line_size)
         pdf.cell(padding_left, 0, '                 Rp. '+clean_number(total_card), 0, 0, 'L')
@@ -884,13 +885,13 @@ def admin_print_global(struct_id, ext='.pdf'):
                  '- Slot 3 : ' + str(s['init_slot3']) + ' + ' + str(adjust_slot3) + ' = ' + str(s['slot3']), 0, 0, 'L')
         pdf.ln(line_size+1)
         pdf.set_font(USED_FONT, '', line_size)
+        pdf.cell(padding_left, 0, 'MDR Wallet : Rp. ' + clean_number(str(s['sam_1_balance'])), 0, 0, 'L')
+        pdf.ln(tiny_space)
+        pdf.set_font(USED_FONT, '', line_size)
+        pdf.cell(padding_left, 0, 'BNI Wallet : Rp. ' + clean_number(str(s['sam_2_balance'])), 0, 0, 'L')
+        pdf.ln(tiny_space)
+        pdf.set_font(USED_FONT, '', line_size)
         pdf.cell(padding_left, 0, 'Failed TRX : Rp. ' + clean_number(str(s['failed_amount'])), 0, 0, 'L')
-        pdf.ln(tiny_space)
-        pdf.set_font(USED_FONT, '', line_size)
-        pdf.cell(padding_left, 0, 'SAM 1 Balance : Rp. ' + clean_number(str(s['sam_1_balance'])), 0, 0, 'L')
-        pdf.ln(tiny_space)
-        pdf.set_font(USED_FONT, '', line_size)
-        pdf.cell(padding_left, 0, 'SAM 2 Balance : Rp. ' + clean_number(str(s['sam_2_balance'])), 0, 0, 'L')
         pdf.set_font(USED_FONT, '', line_size+3)
         pdf.ln(tiny_space)
         total_amount = str(s['all_amount'])
