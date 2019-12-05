@@ -159,6 +159,7 @@ Base{
             // Doing Nothing In Cancellation Not Cash
             if (details.payment != 'cash') return;
             refundAmount = receivedCash;
+            details.payment_received = receivedCash.toString();
             message_input_phone = 'Terjadi Pembatalan Transaksi, Masukkan No WhatsApp Anda Untuk Pengembalian Dana';
             if (error=='user_payment_timeout') message_input_phone = 'Waktu Transaksi Habis, Masukkan No WhatsApp Anda Untuk Pengembalian Dana';
             break;
@@ -530,7 +531,7 @@ Base{
                 var cashResponse = JSON.parse(r.replace('STORE_ES|SUCCESS-', ''))
                 details.payment_details = cashResponse;
                 details.payment_received = cashResponse.total;
-                payment_complete();
+                if (proceedAble) payment_complete();
             }
         } else if (meiFunction == 'ACCEPT'){
             if(meiResult=='ERROR') {
