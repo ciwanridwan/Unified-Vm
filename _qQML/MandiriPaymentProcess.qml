@@ -789,9 +789,10 @@ Base{
 //                        _SLOT.start_return_es_mei();
                     }
 //                    _SLOT.start_dis_accept_mei();
+                } else {
+                    my_timer.stop();
+                    my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
                 }
-//                my_timer.stop()
-//                my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
             }
         }
     }
@@ -1034,8 +1035,23 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    _SLOT.user_action_log('Press "BATAL"');
-                    my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
+                    _SLOT.user_action_log('Press "BATAL" in Payment Notification');
+                    if (press != '0') return;
+                    press = '1';
+                    if (details.payment=='cash' && !isPaid) {
+                        proceedAble = false;
+                        _SLOT.stop_grg_receive_note();
+                        if (receivedCash > 0){
+                            validate_release_refund('user_cancellation');
+    //                        print_failed_transaction('cash', 'USER_CANCELLATION');
+    //                        _SLOT.start_return_es_mei();
+                        }
+    //                    _SLOT.start_dis_accept_mei();
+                    } else {
+                        my_timer.stop();
+                        my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
+                    }
+    //
                 }
             }
         }
