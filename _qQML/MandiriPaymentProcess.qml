@@ -488,12 +488,12 @@ Base{
 //                _SLOT.start_grg_receive_note();
             }
         } else if (grgFunction == 'STOP_GRG'){
-            if(grgResult.indexOf('SUCCESS') > -1 && receivedCash >= totalPrice && proceedAble){
-//                console.log("grg_payment_result STOP_SUCCESS : ", now, receivedCash, totalPrice, proceedAble);
+            if(grgResult.indexOf('SUCCESS') > -1 && receivedCash >= totalPrice){
+                console.log("grg_payment_result STOP_SUCCESS : ", now, receivedCash, totalPrice, proceedAble);
                 var cashResponse = JSON.parse(r.replace('STOP_GRG|SUCCESS-', ''))
                 details.payment_details = cashResponse;
                 details.payment_received = cashResponse.total;
-                payment_complete();
+                if (proceedAble) payment_complete();
             }
         } else if (grgFunction == 'STATUS_GRG'){
             if(grgResult=='ERROR') {
