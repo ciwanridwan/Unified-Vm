@@ -8,7 +8,6 @@ import json
 from _cConfig import _Global
 from _tTools import _Helper
 from time import sleep
-from _dDevice import _MEI
 import sys
 import os
 import subprocess
@@ -98,6 +97,21 @@ TIMEOUT_BAD_NOTES = 'acDevReturn:|acReserve:|'
 SMALL_NOTES_NOT_ALLOWED = ['1000', '2000', '5000']
 UNKNOWN_ITEM = 'Received=CNY|Denomination=0|'
 
+DIRECT_PRICE_MODE = False
+DIRECT_PRICE_AMOUNT = 0
+
+
+def start_set_direct_price(price):
+    _Helper.get_pool().apply_async(set_direct_price, (price,))
+
+
+def set_direct_price(price):
+    global DIRECT_PRICE_AMOUNT, DIRECT_PRICE_MODE, CASH_HISTORY, COLLECTED_CASH
+    DIRECT_PRICE_MODE = True
+    DIRECT_PRICE_AMOUNT = int(price)
+    COLLECTED_CASH = 0
+    CASH_HISTORY = []
+
 
 def start_grg_receive_note():
     _Helper.get_pool().apply_async(start_receive_note)
@@ -106,7 +120,7 @@ def start_grg_receive_note():
 def simply_exec_grg(amount=None):
     global COLLECTED_CASH, CASH_HISTORY
     if amount is None:
-        amount = _MEI.DIRECT_PRICE_AMOUNT
+        amount = DIRECT_PRICE_AMOUNT
     try:
         r = _Helper.time_string('%Y%m%d%H%M%S%f')
         command = 'start /B ' + EXEC_GRG + ' input ' + str(amount) + ' ' + str(r) + ' ' + str(MAX_EXECUTION_TIME)
@@ -123,14 +137,14 @@ def simply_exec_grg(amount=None):
                 result = json.loads(output[0])
                 if len(result['money']) > 0:
                     cash_in = str(result['money'][-1]['denom'])
-                    if COLLECTED_CASH < _MEI.DIRECT_PRICE_AMOUNT:
+                    if COLLECTED_CASH < DIRECT_PRICE_AMOUNT:
                         CASH_HISTORY.append(str(cash_in))
                         COLLECTED_CASH += int(cash_in)
                         GRG_SIGNDLER.SIGNAL_GRG_RECEIVE.emit('RECEIVE_GRG|' + str(COLLECTED_CASH))
                         LOGGER.info(('Cash Status:', json.dumps({'ADD': cash_in,
                                                                  'COLLECTED': COLLECTED_CASH,
                                                                  'HISTORY': CASH_HISTORY})))
-                    if COLLECTED_CASH >= _MEI.DIRECT_PRICE_AMOUNT:
+                    if COLLECTED_CASH >= DIRECT_PRICE_AMOUNT:
                         GRG_SIGNDLER.SIGNAL_GRG_RECEIVE.emit('RECEIVE_GRG|COMPLETE')
                         break
             if attempt == MAX_EXECUTION_TIME:
@@ -161,14 +175,14 @@ def start_receive_note():
                     _Command.send_request(param=param, output=None)
                     GRG_SIGNDLER.SIGNAL_GRG_RECEIVE.emit('RECEIVE_GRG|EXCEED')
                     break
-                if is_exceed_payment(_MEI.DIRECT_PRICE_AMOUNT, cash_in, COLLECTED_CASH) is True:
+                if is_exceed_payment(DIRECT_PRICE_AMOUNT, cash_in, COLLECTED_CASH) is True:
                     GRG_SIGNDLER.SIGNAL_GRG_RECEIVE.emit('RECEIVE_GRG|EXCEED')
                     sleep(.25)
                     param = GRG["REJECT"] + '|'
                     _Command.send_request(param=param, output=None)
                     LOGGER.info(('Exceed Payment Detected :', json.dumps({'ADD': cash_in,
                                                                           'COLLECTED': COLLECTED_CASH,
-                                                                          'TARGET': _MEI.DIRECT_PRICE_AMOUNT})))
+                                                                          'TARGET': DIRECT_PRICE_AMOUNT})))
                     break
                 # if COLLECTED_CASH >= _MEI.DIRECT_PRICE_AMOUNT:
                 #     GRG_SIGNDLER.SIGNAL_GRG_RECEIVE.emit('RECEIVE_GRG|COMPLETE')
@@ -183,7 +197,7 @@ def start_receive_note():
                     'ADD': cash_in,
                     'COLLECTED': COLLECTED_CASH,
                     'HISTORY': CASH_HISTORY})))
-                if COLLECTED_CASH >= _MEI.DIRECT_PRICE_AMOUNT:
+                if COLLECTED_CASH >= DIRECT_PRICE_AMOUNT:
                     GRG_SIGNDLER.SIGNAL_GRG_RECEIVE.emit('RECEIVE_GRG|COMPLETE')
                     break
                 # else:
@@ -200,7 +214,7 @@ def start_receive_note():
                 GRG_SIGNDLER.SIGNAL_GRG_RECEIVE.emit('RECEIVE_GRG|JAMMED')
                 LOGGER.warning(('GRG Jammed Detected :', json.dumps({'HISTORY': CASH_HISTORY,
                                                                      'COLLECTED': COLLECTED_CASH,
-                                                                     'TARGET': _MEI.DIRECT_PRICE_AMOUNT})))
+                                                                     'TARGET': DIRECT_PRICE_AMOUNT})))
                 # Call API To Force Update Into Server
                 _Global.upload_device_state('mei', _Global.MEI_ERROR)
                 sleep(1)

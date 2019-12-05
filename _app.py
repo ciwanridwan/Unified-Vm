@@ -333,6 +333,7 @@ class SlotHandler(QObject):
 
     def start_set_direct_price(self, price):
         _MEI.start_set_direct_price(price)
+        _GRG.start_set_direct_price(price)
     start_set_direct_price = pyqtSlot(str)(start_set_direct_price)
 
     def start_multiple_eject(self, attempt, multiply):

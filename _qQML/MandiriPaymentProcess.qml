@@ -790,8 +790,8 @@ Base{
                     }
 //                    _SLOT.start_dis_accept_mei();
                 }
-                my_timer.stop()
-                my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
+//                my_timer.stop()
+//                my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
             }
         }
     }

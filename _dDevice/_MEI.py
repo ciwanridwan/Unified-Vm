@@ -309,9 +309,11 @@ def start_set_direct_price(price):
 
 
 def set_direct_price(price):
-    global DIRECT_PRICE_AMOUNT, DIRECT_PRICE_MODE
+    global DIRECT_PRICE_AMOUNT, DIRECT_PRICE_MODE, COLLECTED_CASH, CASH_HISTORY
     DIRECT_PRICE_MODE = True
     DIRECT_PRICE_AMOUNT = int(price)
+    COLLECTED_CASH = 0
+    CASH_HISTORY = []
 
 
 def handling_cash2():
