@@ -793,7 +793,7 @@ def admin_print_global(struct_id, ext='.pdf'):
         user = _UserService.USER['username']
     try:
         # paper_ = get_paper_size('\r\n'.join(p.keys()))
-        pdf = GeneralPDF('P', 'mm', (80, 120))
+        pdf = GeneralPDF('P', 'mm', (80, 140))
         s = get_admin_data()
         if s is False:
             LOGGER.warning(('get_admin_data', str(s)))

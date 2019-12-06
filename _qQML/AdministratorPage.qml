@@ -252,258 +252,208 @@ Base{
         }
     }
 
-    AdminPanelButton{
-        id:back_button
+    Row{
+        id: admin_buttons_rows
+        spacing: 8
         anchors.left: parent.left
         anchors.leftMargin: 15
         anchors.top: parent.top
-        anchors.topMargin: 15
-        z: 10
-        button_text: 'exit'
-        visible: !popup_loading.visible
-        modeReverse: true
-        MouseArea{
-            anchors.fill: parent
-            onClicked: {
-                _SLOT.user_action_log('Admin Page "Cancel"');
-                my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }))
-            }
-        }
-    }
+        anchors.topMargin: 20
+        width: parent.width - 500
+        height: 100
 
-    AdminPanelButton{
-        id:refresh_button
-        anchors.leftMargin: 15
-        anchors.left: back_button.right
-        anchors.top: parent.top
-        anchors.topMargin: 15
-        z: 10
-        button_text: 'refresh'
-        visible: !popup_loading.visible
-        modeReverse: true
-        MouseArea{
-            anchors.fill: parent
-            onClicked: {
-                _SLOT.user_action_log('Admin Page "Refresh"');
-                console.log('refresh_button is pressed..!');
-                popup_loading.open();
-                _SLOT.kiosk_get_machine_summary();
-                _SLOT.kiosk_get_product_stock();
-            }
-        }
-    }
-
-    AdminPanelButton{
-        id: reboot_button
-        anchors.leftMargin: 15
-        anchors.left: refresh_button.right
-        anchors.top: parent.top
-        anchors.topMargin: 15
-        z: 10
-        button_text: 'reboot'
-        visible: !popup_loading.visible
-        modeReverse: true
-        MouseArea{
-            anchors.fill: parent
-            onClicked: {
-                _SLOT.user_action_log('Admin Page "Reboot"');
-                if (press != '0') return;
-                press = '1';
-                console.log('reboot_button is pressed..!');
-                false_notif('Dear User|Tekan Tombol "reboot" Untuk Melanjutkan Proses.', false);
-                standard_notif_view.buttonEnabled = false;
-            }
-        }
-    }
-
-    AdminPanelButton{
-        id: reset_grg_button
-        anchors.leftMargin: 15
-        anchors.left: reboot_button.right
-        anchors.top: parent.top
-        anchors.topMargin: 15
-        z: 10
-        button_text: 'reset grg'
-        visible: !popup_loading.visible
-        modeReverse: true
-        MouseArea{
-            anchors.fill: parent
-            onClicked: {
-                _SLOT.user_action_log('Admin Page "Reset GRG"');
-                if (press != '0') return;
-                press = '1';
-                console.log('reset_grg_button is pressed..!');
-                popup_loading.open();
-                _SLOT.start_init_grg();
-            }
-        }
-    }
-
-    AdminPanelButton{
-        id: print_receipt_button
-        anchors.leftMargin: 15
-        anchors.left: reset_grg_button.right
-        anchors.top: parent.top
-        anchors.topMargin: 15
-        z: 10
-        button_text: 'collect\nprint'
-        visible: !popup_loading.visible
-        modeReverse: true
-        MouseArea{
-            anchors.fill: parent
-            onClicked: {
-                _SLOT.user_action_log('Admin Page "Collection Print"');
-                if (press != '0') return;
-                press = '1';
-                console.log('print_receipt_button is pressed..!');
-                if (actionList.length > 0){
-                    popup_loading.open();
-                    var epoch = new Date().getTime();
-                    var struct_id = userData.username+epoch;
-                    _SLOT.start_admin_print_global(struct_id);
-                } else {
-                    false_notif('Dear '+userData.first_name+'|Pastikan Anda Telah Melakukan Pemgambilan Cash Atau Update Stock Item');
+        AdminPanelButton{
+            id:back_button
+            z: 10
+            button_text: 'exit'
+            visible: !popup_loading.visible
+            modeReverse: true
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('Admin Page "Cancel"');
+                    my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }))
                 }
             }
         }
-    }
 
-    AdminPanelButton{
-        id: ka_login_button
-        anchors.leftMargin: 15
-        anchors.left: print_receipt_button.right
-        anchors.top: parent.top
-        anchors.topMargin: 15
-        z: 10
-        button_text: 'ka login'
-        visible: !popup_loading.visible
-        modeReverse: true
-        MouseArea{
-            anchors.fill: parent
-            onClicked: {
-                _SLOT.user_action_log('Admin Page "KA Login"');
-                if (press != '0') return;
-                press = '1';
-                popup_loading.open();
-                _SLOT.start_auth_ka();
+        AdminPanelButton{
+            id:refresh_button
+            z: 10
+            button_text: 'refresh'
+            visible: !popup_loading.visible
+            modeReverse: true
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('Admin Page "Refresh"');
+                    console.log('refresh_button is pressed..!');
+                    popup_loading.open();
+                    _SLOT.kiosk_get_machine_summary();
+                    _SLOT.kiosk_get_product_stock();
+                }
             }
         }
-    }
 
-    AdminPanelButton{
-        id: mandiri_settlement_button
-        anchors.leftMargin: 15
-        anchors.left: ka_login_button.right
-        anchors.top: parent.top
-        anchors.topMargin: 15
-        z: 10
-        button_text: 'settle\nmanual'
-        visible: !popup_loading.visible
-        modeReverse: true
-        MouseArea{
-            anchors.fill: parent
-            onClicked: {
-                _SLOT.user_action_log('Admin Page "Settlement Manual Mandiri"');
-                if (press != '0') return;
-                press = '1';
-                console.log('mandiri_settlement_button is pressed..!');
-                popup_loading.open();
-                _SLOT.start_reset_mandiri_settlement();
+        AdminPanelButton{
+            id: reboot_button
+            z: 10
+            button_text: 'reboot'
+            visible: !popup_loading.visible
+            modeReverse: true
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('Admin Page "Reboot"');
+                    if (press != '0') return;
+                    press = '1';
+                    console.log('reboot_button is pressed..!');
+                    false_notif('Dear User|Tekan Tombol "reboot" Untuk Melanjutkan Proses.', false);
+                    standard_notif_view.buttonEnabled = false;
+                }
             }
         }
-    }
 
-//    AdminPanelButton{
-//        id: mandiri_dummy_settlement_button
-//        anchors.leftMargin: 15
-//        anchors.left: mandiri_settlement_button.right
-//        anchors.top: parent.top
-//        anchors.topMargin: 15
-//        z: 10
-//        button_text: 'reset\nsam'
-//        visible: !popup_loading.visible
-//        modeReverse: true
-//        MouseArea{
-//            anchors.fill: parent
-//            onClicked: {
-//                _SLOT.user_action_log('Admin Page "Dummy Settlement"');
-//                if (press != '0') return;
-//                press = '1';
-//                console.log('mandiri_dummy_settlement_button is pressed..!');
-//                popup_loading.open();
-//                _SLOT.start_dummy_mandiri_topup_settlement();
-//            }
-//        }
-//    }
-
-    AdminPanelButton{
-        id: activation_bni_button
-        anchors.leftMargin: 15
-        anchors.left: mandiri_settlement_button.right
-        anchors.top: parent.top
-        anchors.topMargin: 15
-        z: 10
-        button_text: 'activate\nbni'
-        visible: !popup_loading.visible
-        modeReverse: true
-        MouseArea{
-            anchors.fill: parent
-            onClicked: {
-                _SLOT.user_action_log('Admin Page "Activate BNI"');
-                if (press != '0') return;
-                press = '1';
-                console.log('activation_bni_button is pressed..!');
-                popup_loading.open();
-                _SLOT.start_master_activation_bni();
+        AdminPanelButton{
+            id: reset_grg_button
+            z: 10
+            button_text: 'reset grg'
+            visible: !popup_loading.visible
+            modeReverse: true
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('Admin Page "Reset GRG"');
+                    if (press != '0') return;
+                    press = '1';
+                    console.log('reset_grg_button is pressed..!');
+                    popup_loading.open();
+                    _SLOT.start_init_grg();
+                }
             }
         }
-    }
 
-    AdminPanelButton{
-        id: sync_product_stock
-        anchors.leftMargin: 15
-        anchors.left: activation_bni_button.right
-        anchors.top: parent.top
-        anchors.topMargin: 15
-        z: 10
-        button_text: 'sync\ncard'
-        visible: !popup_loading.visible
-        modeReverse: true
-        MouseArea{
-            anchors.fill: parent
-            onClicked: {
-                _SLOT.user_action_log('Admin Page "Sync Card"');
-                if (press != '0') return;
-                press = '1';
-                console.log('sync_product_stock is pressed..!');
-                popup_loading.open();
-                _SLOT.start_sync_product_stock();
+        AdminPanelButton{
+            id: print_receipt_button
+            z: 10
+            button_text: 'collect\nprint'
+            visible: !popup_loading.visible
+            modeReverse: true
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('Admin Page "Collection Print"');
+                    if (press != '0') return;
+                    press = '1';
+                    console.log('print_receipt_button is pressed..!');
+                    if (actionList.length > 0){
+                        popup_loading.open();
+                        var epoch = new Date().getTime();
+                        var struct_id = userData.username+epoch;
+                        _SLOT.start_admin_print_global(struct_id);
+                    } else {
+                        false_notif('Dear '+userData.first_name+'|Pastikan Anda Telah Melakukan Pemgambilan Cash Atau Update Stock Item');
+                    }
+                }
             }
         }
-    }
 
-    AdminPanelButton{
-        id: test_update_app
-        anchors.leftMargin: 15
-        anchors.left: sync_product_stock.right
-        anchors.top: parent.top
-        anchors.topMargin: 15
-        z: 10
-        button_text: 'update\napp'
-        visible: !popup_loading.visible
-        modeReverse: true
-        MouseArea{
-            anchors.fill: parent
-            onClicked: {
-                _SLOT.user_action_log('Admin Page "Force Update App"');
-                if (press != '0') return;
-                press = '1';
-                console.log('test_update_app is pressed..!');
-                popup_loading.open();
-                _SLOT.start_do_update();
+        AdminPanelButton{
+            id: ka_login_button
+            z: 10
+            button_text: 'ka login'
+            visible: !popup_loading.visible
+            modeReverse: true
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('Admin Page "KA Login"');
+                    if (press != '0') return;
+                    press = '1';
+                    popup_loading.open();
+                    _SLOT.start_auth_ka();
+                }
             }
         }
+
+        AdminPanelButton{
+            id: mandiri_settlement_button
+            z: 10
+            button_text: 'settle\nmanual'
+            visible: !popup_loading.visible
+            modeReverse: true
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('Admin Page "Settlement Manual Mandiri"');
+                    if (press != '0') return;
+                    press = '1';
+                    console.log('mandiri_settlement_button is pressed..!');
+                    popup_loading.open();
+                    _SLOT.start_reset_mandiri_settlement();
+                }
+            }
+        }
+
+        AdminPanelButton{
+            id: activation_bni_button
+            z: 10
+            button_text: 'activate\nbni'
+            visible: !popup_loading.visible
+            modeReverse: true
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('Admin Page "Activate BNI"');
+                    if (press != '0') return;
+                    press = '1';
+                    console.log('activation_bni_button is pressed..!');
+                    popup_loading.open();
+                    _SLOT.start_master_activation_bni();
+                }
+            }
+        }
+
+        AdminPanelButton{
+            id: sync_product_stock
+            z: 10
+            button_text: 'sync\ncard'
+            visible: !popup_loading.visible
+            modeReverse: true
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('Admin Page "Sync Card"');
+                    if (press != '0') return;
+                    press = '1';
+                    console.log('sync_product_stock is pressed..!');
+                    popup_loading.open();
+                    _SLOT.start_sync_product_stock();
+                }
+            }
+        }
+
+        AdminPanelButton{
+            id: test_update_app
+            z: 10
+            button_text: 'update\napp'
+            visible: !popup_loading.visible
+            modeReverse: true
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('Admin Page "Force Update App"');
+                    if (press != '0') return;
+                    press = '1';
+                    console.log('test_update_app is pressed..!');
+                    popup_loading.open();
+                    _SLOT.start_do_update();
+                }
+            }
+        }
+
     }
+
 
     //==============================================================
     //PUT MAIN COMPONENT HERE
