@@ -88,7 +88,7 @@ class PDF(FPDF):
 class GeneralPDF(FPDF):
     def header(self):
         self.set_font(USED_FONT, '', 7)
-        self.ln(3)
+        self.ln(3*3)
         self.cell(MARGIN_LEFT, 7, 'COLLECTION REPORT', 0, 0, 'C')
         self.ln(3)
         self.cell(MARGIN_LEFT, 7, 'VM ID : '+_Global.TID, 0, 0, 'C')
@@ -708,11 +708,6 @@ def get_admin_data():
         __data['amt_top200k'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE '
                                                   ' bankMid = "" AND bankTid = "" AND '
                                                   ' sale = 200000 AND pid like "topup%" ')[0]['__']
-        __data['amt_card'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE '
-                                               ' bankMid = "" AND bankTid = "" AND sale > ' + str(CARD_SALE) +
-                                               ' AND  pid like "shop%" ')[0]['__']
-        __data['trx_card'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale > ' + str(CARD_SALE) +
-                                               ' AND bankMid = "" AND bankTid = "" AND pid like "shop%" ')[0]['__']
         __data['slot1'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE '
                                             ' status = 101 ')[0]['__']
         __data['slot2'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE '
@@ -720,11 +715,37 @@ def get_admin_data():
         __data['slot3'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE '
                                             ' status = 103 ')[0]['__']
         __data['all_cash'] = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __ FROM Cash WHERE  '
-                                               ' collectedAt = 19900901 ')[0]['__']
+                                               ' collectedAt = 19900901 ')[0]['__']        
+        __data['all_cards'] = _DAO.custom_query(' SELECT pid, sell_price FROM ProductStock ')
+        # __data['amt_card'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE '
+        #                                        ' bankMid = "" AND bankTid = "" AND sale > ' + str(CARD_SALE) +
+        #                                        ' AND  pid like "shop%" ')[0]['__']
+        # __data['trx_card'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale > ' + str(CARD_SALE) +
+        #                                        ' AND bankMid = "" AND bankTid = "" AND pid like "shop%" ')[0]['__']
+        __data['amt_card'] = 0
+        __data['trx_card'] = 0
+        __data['card_trx_summary'] = []
+        if len(__data['all_cards']) > 0:
+            for card in __data['all_cards']:
+                pid = card['pid']
+                price = card['sell_price']
+                __data['amt_card_'+str(pid)] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE '
+                                                ' bankMid = "" AND bankTid = "" AND amount = ' + str(price) +
+                                                ' AND  pid like "shop%" ')[0]['__']
+                __data['amt_card'] += __data['amt_card_'+str(pid)]
+                __data['trx_card_'+str(pid)] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE amount = ' + str(price) +
+                                                       ' AND bankMid = "" AND bankTid = "" AND pid like "shop%" ')[0]['__']
+                __data['trx_card'] += __data['trx_card_'+str(pid)]
+                __data['card_trx_summary'].append({
+                    'pid': pid,
+                    'price': price,
+                    'count': __data['trx_card_'+str(pid)],
+                    'amount': __data['amt_card_'+str(pid)]
+                })
+        # SELECT sum(amount) as total FROM Cash WHERE collectedAt is null
         __data['all_amount'] = int(__data['amt_card']) + int(__data['amt_top10k']) + int(__data['amt_top20k']) + \
                                int(__data['amt_top50k']) + int(__data['amt_top100k'] + int(__data['amt_top200k']))
         __data['failed_amount'] = int(__data['all_cash']) - int(__data['all_amount'])
-        # SELECT sum(amount) as total FROM Cash WHERE collectedAt is null
         __data['init_slot1'] = __data['slot1']
         __data['init_slot2'] = __data['slot2']
         __data['init_slot3'] = __data['slot3']
@@ -748,10 +769,12 @@ def get_admin_data():
                     __data['init_slot2'] = update['stock']
                 if update['status'] == 103:
                     __data['init_slot3'] = update['stock']
-        LOGGER.info(('get_admin_data', str(__data), str(_ProductService.LAST_UPDATED_STOCK)))
+        _KioskService.python_dump(str(__data))
+        _KioskService.python_dump(str(_ProductService.LAST_UPDATED_STOCK))
+        # LOGGER.info(('get_admin_data', str(__data), str(_ProductService.LAST_UPDATED_STOCK)))
     except Exception as e:
         __data = False
-        LOGGER.warning(('get_admin_data', str(e)))
+        LOGGER.warning(str(e))
     finally:
         return __data
 
@@ -818,19 +841,19 @@ def admin_print_global(struct_id, ext='.pdf'):
         pdf.ln(tiny_space)
         pdf.set_font(USED_FONT, '', line_size)
         pdf.cell(padding_left, 0, '_' * MAX_LENGTH, 0, 0, 'C')
-        pdf.ln(tiny_space)
+        pdf.ln(tiny_space*2)
         pdf.set_font(USED_FONT, '', line_size)
         pdf.cell(padding_left, 0, 'CARD SALE', 0, 0, 'L')
         pdf.ln(tiny_space)
         pdf.set_font(USED_FONT, '', line_size)
-        qty_card = s['trx_card']
-        total_card = str(int(qty_card) * CARD_SALE)
-        pdf.cell(padding_left, 0,
-                 '- NEW : '+str(qty_card)+' x VARIAN PRICE/UNIT  = ', 0, 0, 'L')
-                #  '- NEW : '+str(qty_card)+' x '+clean_number(CARD_SALE)+' = ', 0, 0, 'L')
-        pdf.ln(tiny_space-1)
+        # qty_card = s['trx_card']
+        # total_card = str(int(qty_card) * CARD_SALE)
+        for cs in s['card_trx_summary']:
+            pdf.cell(padding_left, 0,
+                    '- '+cs['pid']+' : '+str(cs['count'])+' x '+clean_number(str(cs['price']))+'  = Rp. '+clean_number(str(cs['amount'])), 0, 0, 'L')
+            pdf.ln(tiny_space-1)
         pdf.set_font(USED_FONT, '', line_size)
-        pdf.cell(padding_left, 0, '                 Rp. '+clean_number(total_card), 0, 0, 'L')
+        pdf.cell(padding_left, 0, '                 Rp. '+clean_number(str(s['amt_card'])), 0, 0, 'L')
         pdf.ln(tiny_space+1)
         pdf.set_font(USED_FONT, '', line_size)
         pdf.cell(padding_left, 0, 'TOPUP', 0, 0, 'L')
@@ -891,7 +914,7 @@ def admin_print_global(struct_id, ext='.pdf'):
         pdf.cell(padding_left, 0, 'BNI Wallet : Rp. ' + clean_number(str(s['sam_2_balance'])), 0, 0, 'L')
         pdf.ln(tiny_space)
         pdf.set_font(USED_FONT, '', line_size)
-        pdf.cell(padding_left, 0, 'Failed TRX : Rp. ' + clean_number(str(s['failed_amount'])), 0, 0, 'L')
+        pdf.cell(padding_left, 0, 'Failed/Case/Exceed: Rp. ' + clean_number(str(s['failed_amount'])), 0, 0, 'L')
         pdf.set_font(USED_FONT, '', line_size+3)
         pdf.ln(tiny_space)
         total_amount = str(s['all_amount'])

@@ -1,13 +1,13 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.2
+import QtGraphicalEffects 1.0
+import "screen.js" as SCREEN
 
 Rectangle{
     id:popup_update_stock
     visible: false
-    x:0
-    y:0
-    width:1920
-    height:1080
+    width: parseInt(SCREEN.size.width)
+    height: parseInt(SCREEN.size.height)
     color: 'transparent'
     property int max_count: 50
     property var press: "0"
@@ -22,17 +22,19 @@ Rectangle{
 
     Rectangle{
         id: notif_rec
-        width: 1000
+        width: 1200
         height: 800
         color: "white"
+        opacity: .8
+        radius: 25
         anchors.verticalCenterOffset: 50
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
 
         Text {
             id: main_text
-            color: "darkred"
-            text: 'Masukkan Update Stock Slot ' + selectedSlot
+            color: "darkblue"
+            text: 'Masukkan Stok Kartu Terbaru Pada Slot ' + selectedSlot
             font.bold: true
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
@@ -72,7 +74,7 @@ Rectangle{
             horizontalAlignment: Text.AlignLeft
             font.family: "Ubuntu"
             font.pixelSize: 40
-            color: "darkred"
+            color: "darkblue"
             clip: true
             visible: true
             focus: true
