@@ -425,8 +425,11 @@ def get_disk_space(caption):
     try:
         d_space = []
         for d in COMP.Win32_LogicalDisk(Caption=caption):
-            d_space.append(int(d.FreeSpace.strip()) / 1024 / 1024)
-            return "%.2f" % d_space[0]
+            if d is not None:
+                d_space.append(int(d.FreeSpace.strip()) / 1024 / 1024)
+                return "%.2f" % d_space[0]
+            else:
+                return "%.2f" % -1
     except Exception as e:
         LOGGER.warning(("FAILED", caption, str(e)))
         return "%.2f" % -1
