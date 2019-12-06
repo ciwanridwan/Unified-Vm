@@ -684,30 +684,25 @@ def get_admin_data():
     __data = dict()
     try:
         __data['trx_top10k'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale = 10000 '
-                                                 ' AND bankMid = "" AND bankTid = "" AND pid like "topup%" ')[0]['__']
+                                                 ' AND isCollected = 0 AND pid like "topup%" ')[0]['__']
         __data['trx_top20k'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale = 20000 '
-                                                 ' AND bankMid = "" AND bankTid = "" AND pid like "topup%" ')[0]['__']
+                                                 ' AND isCollected = 0 AND pid like "topup%" ')[0]['__']
         __data['trx_top50k'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale = 50000 '
-                                                 ' AND bankMid = "" AND bankTid = "" AND pid like "topup%" ')[0]['__']
+                                                 ' AND isCollected = 0 AND pid like "topup%" ')[0]['__']
         __data['trx_top100k'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale = 100000 '
-                                                  'AND bankMid = "" AND bankTid = "" AND pid like "topup%" ')[0]['__']
+                                                  'AND isCollected = 0 AND pid like "topup%" ')[0]['__']
         __data['trx_top200k'] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE sale = 200000 '
-                                                  'AND bankMid = "" AND bankTid = "" AND pid like "topup%" ')[0]['__']
+                                                  'AND isCollected = 0 AND pid like "topup%" ')[0]['__']
         __data['amt_top10k'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE '
-                                                 ' bankMid = "" AND bankTid = "" AND '
-                                                 ' sale = 10000 AND pid like "topup%"')[0]['__']
+                                                 ' isCollected = 0 AND sale = 10000 AND pid like "topup%"')[0]['__']
         __data['amt_top20k'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE '
-                                                 ' bankMid = "" AND bankTid = "" AND '
-                                                 ' sale = 20000 AND pid like "topup%"')[0]['__']
+                                                 ' isCollected = 0 AND sale = 20000 AND pid like "topup%"')[0]['__']
         __data['amt_top50k'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE '
-                                                 ' bankMid = ""  AND bankTid = "" AND '
-                                                 ' sale = 50000 AND pid like "topup%" ')[0]['__']
+                                                 ' isCollected = 0 AND sale = 50000 AND pid like "topup%" ')[0]['__']
         __data['amt_top100k'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE '
-                                                  ' bankMid = "" AND bankTid = "" AND '
-                                                  ' sale = 100000 AND pid like "topup%" ')[0]['__']
+                                                  ' isCollected = 0 AND sale = 100000 AND pid like "topup%" ')[0]['__']
         __data['amt_top200k'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE '
-                                                  ' bankMid = "" AND bankTid = "" AND '
-                                                  ' sale = 200000 AND pid like "topup%" ')[0]['__']
+                                                  ' isCollected = 0 AND sale = 200000 AND pid like "topup%" ')[0]['__']
         __data['slot1'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE '
                                             ' status = 101 ')[0]['__']
         __data['slot2'] = _DAO.custom_query(' SELECT IFNULL(SUM(stock), 0) AS __ FROM ProductStock WHERE '
@@ -730,11 +725,10 @@ def get_admin_data():
                 pid = card['pid']
                 price = card['sell_price']
                 __data['amt_card_'+str(pid)] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE '
-                                                ' bankMid = "" AND bankTid = "" AND amount = ' + str(price) +
-                                                ' AND  pid like "shop%" ')[0]['__']
+                                                ' isCollected = 0 AND pidStock = "' + str(pid) +'" ')[0]['__']
                 __data['amt_card'] += __data['amt_card_'+str(pid)]
                 __data['trx_card_'+str(pid)] = _DAO.custom_query(' SELECT count(*) AS __ FROM Transactions WHERE amount = ' + str(price) +
-                                                       ' AND bankMid = "" AND bankTid = "" AND pid like "shop%" ')[0]['__']
+                                                       ' AND isCollected = 0 AND pidStock = "'+str(pid)+'" ')[0]['__']
                 __data['trx_card'] += __data['trx_card_'+str(pid)]
                 __data['card_trx_summary'].append({
                     'pid': pid,
@@ -753,7 +747,7 @@ def get_admin_data():
         __data['sam_2_balance'] = '0'
         __notes = []
         for money in _DAO.custom_query(' SELECT paymentNotes AS note FROM Transactions WHERE paymentType = "MEI" '
-                                       ' AND bankMid = "" AND bankTid = "" '):
+                                       ' AND isCollected = 0 '):
             __notes.append(json.loads(money['note'])['history'])
         __data['notes_summary'] = '|'.join(__notes)
         # Status Bank BNI in Global
@@ -945,7 +939,7 @@ def admin_print_global(struct_id, ext='.pdf'):
 
 def mark_sync_collected_data(s):
     if s is True:
-        _DAO.custom_update(' UPDATE Transactions SET bankMid = "999", bankTid = "999" WHERE paymentType = "MEI" ')
+        _DAO.custom_update(' UPDATE Transactions SET isCollected = 1 WHERE isCollected = 0 ')
         operator = 'OPERATOR'
         if _UserService.USER is not None:
             operator = _UserService.USER['first_name']

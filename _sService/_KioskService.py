@@ -234,7 +234,8 @@ def define_ads(a):
     for file in __all_file:
         if file.endswith('.mp4') or file.endswith('.wmv') or file.endswith('.avi') or file.endswith('.mpeg'):
             __current_list.append(file)
-    __must_delete = list(set(__current_list) - set(__playlist))
+    # __must_delete = list(set(__current_list) - set(__playlist))
+    __must_delete = __current_list
     # _Helper.dump(__must_delete)
     if len(__must_delete) > 0:
         for d in __must_delete:
@@ -707,6 +708,17 @@ def adjust_table(p, t='Receipts'):
         LOGGER.warning(('FAILED', str(e), t))
 
 
+def start_alter_table(a):
+    _Helper.get_pool().apply_async(alter_table, (a,))
+
+
+def alter_table(a):
+    try:
+        _DAO.adjust_table(a)
+    except Exception as e:
+        LOGGER.warning(('FAILED', str(e)))
+
+
 PREV_RECEIPT_RAW_DATA = None
 PREV_BOOKING_CODE = None
 PREV_PARAM_DATA = None
@@ -994,7 +1006,7 @@ def store_transaction_global(param, retry=False):
             __pid = str(__pid) + '|' + str(_param_stock['pid']) + '|' + str(_param_stock['stock'])
         else:
             _key = 'TOPUP_' + _key
-        __notes = json.dumps(GLOBAL_TRANSACTION_DATA['payment_details']) if len(MEI_HISTORY) == 0 else MEI_HISTORY
+        __notes = json.dumps(GLOBAL_TRANSACTION_DATA['payment_details'])
         __total_price = int(GLOBAL_TRANSACTION_DATA['value']) * int(GLOBAL_TRANSACTION_DATA['qty'])
         __param = {
             'trxid': _trxid,
@@ -1003,14 +1015,14 @@ def store_transaction_global(param, retry=False):
             'pid': __pid,
             # 'tpid': get_tpid(string=_key),
             # Create Simple Mapping For TRXID
-            'tpid': '713251f9e9694c629147f57b64e79d35' if _key == 'SALE_EMONEY' else 'deeb4e043fcd11e8b4670ed5f89f718b',
+            'tpid': '',
             'sale': __total_price,
             'amount': __total_price,
             'cardNo': GLOBAL_TRANSACTION_DATA['payment_details'].get('card_no', ''),
             'paymentType': get_payment(GLOBAL_TRANSACTION_DATA['payment']),
             'paymentNotes': __notes,
-            'bankMid': '',
-            'bankTid': ''
+            'isCollected': 0,
+            'pidStock': PID_STOCK_SALE if GLOBAL_TRANSACTION_DATA['shop_type'] == 'shop' else ''
         }
         attempt = 0
         GLOBAL_TRANSACTION_DATA['pid'] = PID_SALE

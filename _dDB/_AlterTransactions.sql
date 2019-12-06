@@ -1,0 +1,2 @@
+ALTER TABLE Transactions ADD COLUMN pidStock VARCHAR(100);
+ALTER TABLE Transactions ADD COLUMN isCollected INT DEFAULT 0;

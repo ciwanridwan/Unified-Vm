@@ -52,12 +52,16 @@ def insert_transaction(param):
       paymentNotes    TEXT,
       bankTid         VARCHAR(100),
       bankMid         VARCHAR(100),
+      isCollected     INT,
+      pidStock        VARCHAR(100),
     """
+    param["bankTid"] = ""
+    param["bankMid"] = ""
     param["createdAt"] = _Helper.now()
     param["syncFlag"] = 0
-    sql = "INSERT INTO Transactions (trxid, tid, mid, pid, tpid, paymentType, amount, sale, createdAt, syncFlag, " \
-          "bankMid, bankTid, paymentNotes, cardNo) VALUES (:trxid, :tid, :mid, :pid, :tpid, :paymentType, :amount, " \
-          ":sale, :createdAt, :syncFlag, :bankMid, :bankTid, :paymentNotes, :cardNo)"
+    sql = "INSERT INTO Transactions ( trxid, tid, mid, pid, tpid, paymentType, amount, sale, createdAt, syncFlag, " \
+          "bankMid, bankTid, paymentNotes, cardNo, isCollected, pidStock ) VALUES ( :trxid, :tid, :mid, :pid, :tpid, :paymentType, :amount, " \
+          ":sale, :createdAt, :syncFlag, :bankMid, :bankTid, :paymentNotes, :cardNo, :isCollected, :pidStock )"
     return _Database.insert_update(sql=sql, parameter=param)
 
 
