@@ -68,7 +68,7 @@ Base{
 
     function do_action_signal(s){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-        console.log('do_action_signal', s, now);
+        console.log('do_action_signal', now, s);
         var action = JSON.parse(s)
         if (action.type=='changeStock'){
             popup_loading.open();
@@ -79,7 +79,7 @@ Base{
 
     function ka_login_status(t){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-        console.log('ka_login_status', t, now);
+        console.log('ka_login_status', now, t);
         popup_loading.close();
         var result = t.split('|')[1]
         if (result == 'ERROR'){
@@ -96,7 +96,7 @@ Base{
 
     function get_admin_action(a){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-        console.log('get_admin_action', a, now);
+        console.log('get_admin_action', now, a);
         popup_loading.close();
         if (a=='CHANGE_PRODUCT|STID_NOT_FOUND'){
             false_notif('Dear '+userData.first_name+'|Update Stock Gagal, Silakan Hubungi Master Admin Untuk Penambahan Product Di Slot Ini');
@@ -152,7 +152,7 @@ Base{
 
     function get_product_stock(p){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-        console.log('product_stock', p, now);
+        console.log('product_stock', now, p);
         productData = JSON.parse(p);
         if (productData.length > 0) {
             if (productData[0].status==101) _total_stock_101.labelContent = productData[0].stock.toString();
@@ -173,7 +173,8 @@ Base{
     }
 
     function parse_user_data(){
-        console.log('parse_user_data', JSON.stringify(userData));
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('parse_user_data', now, JSON.stringify(userData));
         if (userData.isAbleCollect==0){
             false_notif('Selamat Datang '+userData.first_name+'|Akses Akun Anda Terbatas, Jika Anda Memerlukan Perubahan, Silakan Hubungi Master Admin')
         } else {
@@ -186,7 +187,8 @@ Base{
     }
 
     function parse_machine_summary(s){
-        console.log('parse_machine_summary', s);
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('parse_machine_summary', now, s);
         var info = JSON.parse(s);
         _online_status.labelContent = info.online_status;
         _cpu_temp.labelContent = info.cpu_temp;
@@ -208,16 +210,12 @@ Base{
         _total_trx.labelContent = info.total_trx;
         _cash_trx.labelContent = info.cash_trx;
         _edc_trx.labelContent = info.edc_trx;
-        _mandiri_wallet.labelContent = info.mandiri_wallet;
+        _mandiri_wallet.labelContent = FUNC.insert_dot(info.mandiri_wallet.toString());
         _mandiri_active_slot.labelContent = info.mandiri_active;
-        _bni_wallet.labelContent = info.bni_wallet;
+        _bni_wallet.labelContent = FUNC.insert_dot(info.bni_wallet.toString());
         _bni_active_slot.labelContent = info.bni_active;
-        if (info.cash_available[0].total !== undefined){
-            _total_cash_available.labelContent = info.cash_available[0].total;
-        }
-        if (info.edc_not_settle[0].total !== undefined){
-            _total_edc_available.labelContent = info.edc_not_settle[0].total;
-        }
+        _total_cash_available.labelContent = FUNC.insert_dot(info.cash_available.toString());
+        _total_edc_available.labelContent = FUNC.insert_dot(info.edc_not_settle.toString());
         popup_loading.close();
 
     }
@@ -509,7 +507,7 @@ Base{
                     labelName: qsTr('Status Online')
                     contentSize: 30
                     labelContent: '---'
-                    labelSize: 25
+                    labelSize: 22
                     theme: 'white'
                 }
                 TextDetailRowNew{
@@ -517,7 +515,7 @@ Base{
                     labelName: qsTr('CPU Temp')
                     contentSize: 30
                     labelContent: '---'
-                    labelSize: 25
+                    labelSize: 22
                     theme: 'white'
                 }
                 TextDetailRowNew{
@@ -525,7 +523,7 @@ Base{
                     labelName: qsTr('Disk C: | D:')
                     contentSize: 30
                     labelContent: '---'
-                    labelSize: 25
+                    labelSize: 22
                     theme: 'white'
                 }
                 TextDetailRowNew{
@@ -533,7 +531,7 @@ Base{
                     labelName: qsTr('Status RAM')
                     contentSize: 30
                     labelContent: '---'
-                    labelSize: 25
+                    labelSize: 22
                     theme: 'white'
                 }
                 TextDetailRowNew{
@@ -541,7 +539,7 @@ Base{
                     labelName: qsTr('Theme Name')
                     contentSize: 30
                     labelContent: '---'
-                    labelSize: 25
+                    labelSize: 22
                     theme: 'white'
                 }
                 TextDetailRowNew{
@@ -549,7 +547,7 @@ Base{
                     labelName: qsTr('App Ver.')
                     contentSize: 30
                     labelContent: '---'
-                    labelSize: 25
+                    labelSize: 22
                     theme: 'white'
                 }
                 TextDetailRowNew{
@@ -557,7 +555,7 @@ Base{
                     labelName: qsTr('Service Ver.')
                     contentSize: 30
                     labelContent: '---'
-                    labelSize: 25
+                    labelSize: 22
                     theme: 'white'
                 }
                 TextDetailRowNew{
@@ -565,7 +563,7 @@ Base{
                     labelName: qsTr('Last Sync')
                     contentSize: 30
                     labelContent: '---'
-                    labelSize: 25
+                    labelSize: 22
                     theme: 'white'
                 }
 
@@ -606,7 +604,7 @@ Base{
                     labelName: qsTr('Today TRX')
                     contentSize: 30
                     labelContent: '---'
-                    labelSize: 25
+                    labelSize: 22
                     theme: 'white'
                 }
                 TextDetailRowNew{
@@ -614,7 +612,7 @@ Base{
                     labelName: qsTr('Total TRX')
                     contentSize: 30
                     labelContent: '---'
-                    labelSize: 25
+                    labelSize: 22
                     theme: 'white'
                 }
                 TextDetailRowNew{
@@ -622,7 +620,7 @@ Base{
                     labelName: qsTr('Cash TRX')
                     contentSize: 30
                     labelContent: '---'
-                    labelSize: 25
+                    labelSize: 22
                     theme: 'white'
                 }
                 TextDetailRowNew{
@@ -630,7 +628,7 @@ Base{
                     labelName: qsTr('EDC TRX')
                     contentSize: 30
                     labelContent: '---'
-                    labelSize: 25
+                    labelSize: 22
                     theme: 'white'
                 }
                 TextDetailRowNew{
@@ -638,7 +636,7 @@ Base{
                     labelName: qsTr('Mandiri Wallet')
                     contentSize: 30
                     labelContent: '---'
-                    labelSize: 25
+                    labelSize: 22
                     theme: 'white'
                 }
                 TextDetailRowNew{
@@ -646,7 +644,7 @@ Base{
                     labelName: qsTr('Mandiri Active')
                     contentSize: 30
                     labelContent: '---'
-                    labelSize: 25
+                    labelSize: 22
                     theme: 'white'
                 }
                 TextDetailRowNew{
@@ -654,7 +652,7 @@ Base{
                     labelName: qsTr('BNI Wallet')
                     contentSize: 30
                     labelContent: '---'
-                    labelSize: 25
+                    labelSize: 22
                     theme: 'white'
                 }
                 TextDetailRowNew{
@@ -662,7 +660,7 @@ Base{
                     labelName: qsTr('BNI Active')
                     contentSize: 30
                     labelContent: '---'
-                    labelSize: 25
+                    labelSize: 22
                     theme: 'white'
                 }
 
@@ -702,7 +700,7 @@ Base{
                     labelName: qsTr('Total Cash')
                     contentSize: 30
                     labelContent: '0'
-                    labelSize: 25
+                    labelSize: 22
                     theme: 'white'
                 }
                 NextButton{
@@ -740,7 +738,7 @@ Base{
                     labelName: qsTr('Total EDC')
                     contentSize: 30
                     labelContent: '0'
-                    labelSize: 25
+                    labelSize: 22
                     theme: 'white'
                 }
                 NextButton{
@@ -777,7 +775,7 @@ Base{
                     labelName: qsTr('COM 1 Stock')
                     contentSize: 30
                     labelContent: '0'
-                    labelSize: 25
+                    labelSize: 22
                     theme: 'white'
                 }
                 NextButton{
@@ -810,7 +808,7 @@ Base{
                     labelName: qsTr('COM 2 Stock')
                     contentSize: 30
                     labelContent: '0'
-                    labelSize: 25
+                    labelSize: 22
                     theme: 'white'
                 }
                 NextButton{
@@ -843,7 +841,7 @@ Base{
                     labelName: qsTr('COM 3 Stock')
                     contentSize: 30
                     labelContent: '0'
-                    labelSize: 25
+                    labelSize: 22
                     theme: 'white'
                 }
                 NextButton{
@@ -907,7 +905,7 @@ Base{
                     labelName: qsTr('EDC UPT')
                     contentSize: 30
                     labelContent: '---'
-                    labelSize: 25
+                    labelSize: 22
                     theme: 'white'
                 }
                 TextDetailRowNew{
@@ -915,7 +913,7 @@ Base{
                     labelName: qsTr('Prepaid Reader')
                     contentSize: 30
                     labelContent: '---'
-                    labelSize: 25
+                    labelSize: 22
                     theme: 'white'
                 }
                 TextDetailRowNew{
@@ -923,7 +921,7 @@ Base{
                     labelName: qsTr('Bill Validator')
                     contentSize: 30
                     labelContent: '---'
-                    labelSize: 25
+                    labelSize: 22
                     theme: 'white'
                 }
                 TextDetailRowNew{
@@ -931,7 +929,7 @@ Base{
                     labelName: qsTr('Scanner Reader')
                     contentSize: 30
                     labelContent: '---'
-                    labelSize: 25
+                    labelSize: 22
                     theme: 'white'
                 }
                 TextDetailRowNew{
@@ -939,7 +937,7 @@ Base{
                     labelName: qsTr('Webcam')
                     contentSize: 30
                     labelContent: '---'
-                    labelSize: 25
+                    labelSize: 22
                     theme: 'white'
                 }
                 TextDetailRowNew{
@@ -947,7 +945,7 @@ Base{
                     labelName: qsTr('Card Disp 1')
                     contentSize: 30
                     labelContent: '---'
-                    labelSize: 25
+                    labelSize: 22
                     theme: 'white'
                 }
                 TextDetailRowNew{
@@ -955,7 +953,7 @@ Base{
                     labelName: qsTr('Card Disp 2')
                     contentSize: 30
                     labelContent: '---'
-                    labelSize: 25
+                    labelSize: 22
                     theme: 'white'
                 }
                 TextDetailRowNew{
@@ -963,7 +961,7 @@ Base{
                     labelName: qsTr('Card Disp 3')
                     contentSize: 30
                     labelContent: '---'
-                    labelSize: 25
+                    labelSize: 22
                     theme: 'white'
                 }
 

@@ -342,6 +342,7 @@ LAST_SYNC = 'OFFLINE'
 def kiosk_get_machine_summary():
     _Helper.get_pool().apply_async(get_machine_summary)
 
+# SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE isCollected = 0
 
 def get_machine_summary():
     try:
@@ -352,10 +353,10 @@ def get_machine_summary():
                                                    'date("now") ')
         result['cash_trx'] = _DAO.get_total_count('Transactions', ' paymentType = "MEI" ')
         result['edc_trx'] = _DAO.get_total_count('Transactions', ' paymentType = "EDC" ')
-        result['edc_not_settle'] = _DAO.custom_query(' SELECT sum(amount) as total FROM Settlement '
-                                                     'WHERE status="EDC|OPEN" ')
-        result['cash_available'] = _DAO.custom_query(' SELECT sum(amount) as total FROM Cash '
-                                                     'WHERE collectedAt is null ')
+        result['edc_not_settle'] = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __ FROM Settlement '
+                                                     'WHERE status="EDC|OPEN" ')[0]['__']
+        result['cash_available'] = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __  FROM Cash '
+                                                     'WHERE collectedAt is null ')[0]['__']
         LOGGER.info(('SUCCESS', str(result)))
         K_SIGNDLER.SIGNAL_GET_MACHINE_SUMMARY.emit(json.dumps(result))
     except Exception as e:
