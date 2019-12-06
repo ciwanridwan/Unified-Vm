@@ -248,6 +248,11 @@ Base{
                     my_timer.stop()
                     my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }))
                 }
+                if (abc.counter%2==0 && print_receipt_button.visible==true){
+                    print_receipt_button.modeReverse = true;
+                } else {
+                    print_receipt_button.modeReverse = false;
+                }
             }
         }
     }
@@ -329,31 +334,6 @@ Base{
                     console.log('reset_grg_button is pressed..!');
                     popup_loading.open();
                     _SLOT.start_init_grg();
-                }
-            }
-        }
-
-        AdminPanelButton{
-            id: print_receipt_button
-            z: 10
-            button_text: 'collect\nprint'
-            visible: !popup_loading.visible
-            modeReverse: true
-            MouseArea{
-                anchors.fill: parent
-                onClicked: {
-                    _SLOT.user_action_log('Admin Page "Collection Print"');
-                    if (press != '0') return;
-                    press = '1';
-                    console.log('print_receipt_button is pressed..!');
-                    if (actionList.length > 0){
-                        popup_loading.open();
-                        var epoch = new Date().getTime();
-                        var struct_id = userData.username+epoch;
-                        _SLOT.start_admin_print_global(struct_id);
-                    } else {
-                        false_notif('Dear '+userData.first_name+'|Pastikan Anda Telah Melakukan Pemgambilan Cash Atau Update Stock Item');
-                    }
                 }
             }
         }
@@ -448,6 +428,31 @@ Base{
                     console.log('test_update_app is pressed..!');
                     popup_loading.open();
                     _SLOT.start_do_update();
+                }
+            }
+        }
+
+        AdminPanelButton{
+            id: print_receipt_button
+            z: 10
+            button_text: 'collect\nprint'
+            visible: (!popup_loading.visible && actionList.length > 0)
+            modeReverse: false
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('Admin Page "Collection Print"');
+                    if (press != '0') return;
+                    press = '1';
+                    console.log('print_receipt_button is pressed..!');
+                    if (actionList.length > 0){
+                        popup_loading.open();
+                        var epoch = new Date().getTime();
+                        var struct_id = userData.username+epoch;
+                        _SLOT.start_admin_print_global(struct_id);
+                    } else {
+                        false_notif('Dear '+userData.first_name+'|Pastikan Anda Telah Melakukan Pemgambilan Cash Atau Update Stock Item');
+                    }
                 }
             }
         }
@@ -702,13 +707,13 @@ Base{
                 }
                 NextButton{
                    id: button_collect_cash
-                   width: 80
+                   width: 110
                    height: 40
                    anchors.right: _total_cash_available.right
-                   anchors.rightMargin: 100
+                   anchors.rightMargin: 80
                    fontSize: 15
                    modeRadius: false
-                   button_text: 'collect'
+                   button_text: 're-init grg'
                    modeReverse: true
                    MouseArea{
                        anchors.fill: parent
