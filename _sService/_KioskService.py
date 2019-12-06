@@ -425,7 +425,7 @@ def get_disk_space(caption):
     try:
         d_space = []
         for d in COMP.Win32_LogicalDisk(Caption=caption):
-            if d is not None:
+            if d.FreeSpace is not None:
                 d_space.append(int(d.FreeSpace.strip()) / 1024 / 1024)
                 return "%.2f" % d_space[0]
             else:
@@ -723,7 +723,7 @@ def alter_table(a):
     try:
         _DAO.adjust_table(a)
     except Exception as e:
-        LOGGER.warning(('FAILED', str(e)))
+        LOGGER.debug(('FAILED', str(e)))
 
 
 PREV_RECEIPT_RAW_DATA = None
