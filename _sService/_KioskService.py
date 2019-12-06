@@ -234,14 +234,15 @@ def define_ads(a):
     for file in __all_file:
         if file.endswith('.mp4') or file.endswith('.wmv') or file.endswith('.avi') or file.endswith('.mpeg'):
             __current_list.append(file)
-    # __must_delete = list(set(__current_list) - set(__playlist))
-    __must_delete = __current_list
+    __must_delete = list(set(__current_list)-set(__playlist))
+    LOGGER.debug(("remove expired media(s) : ", str(__must_delete)))
+    # __must_delete = __current_list
     # _Helper.dump(__must_delete)
     if len(__must_delete) > 0:
         for d in __must_delete:
             file_delete = os.path.join(__tvc_path, d)
             if os.path.exists(file_delete):
-                LOGGER.debug(("remove expired media : ", file_delete))
+                LOGGER.debug(("process remove expired media : ", file_delete))
                 K_SIGNDLER.SIGNAL_SYNC_ADS_CONTENT.emit('SYNC_ADS|DELETE_EXPIRED_'+d.upper())
                 os.remove(file_delete)
     __must_download = list(set(__playlist) - set(__current_list))
