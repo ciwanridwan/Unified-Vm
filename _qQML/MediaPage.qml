@@ -68,18 +68,18 @@ Rectangle{
             console.log("No Media Files!");
         } else {
             var files = JSON.parse(result);
+            media_files = files.result;
             if (parseInt(files.count) == 0){
+                console.log("Missing Contents, Cannot Play Media!")
                 my_layer.pop();
                 mediaOnPlaying = false;
-            }
-            if (files.dir == img_path){
-                media_files = files.result;
+                return;
+            } else if (files.dir == img_path && media_files.length > 0){
                 console.log("Media Files (" + media_files.length + ") : " + media_files)
-                if (media_files.length > 0){
-                    if (!mediaOnPlaying) media_mode.setIndex(0);
-                    console.log("Media is Being Played Already!")
-                } else{
-                    console.log("Cannot Play Media!")
+                if (!mediaOnPlaying){
+                    media_mode.setIndex(0);
+                } else {
+                    console.log("Media is Being Played Already!");
                 }
             }
         }
