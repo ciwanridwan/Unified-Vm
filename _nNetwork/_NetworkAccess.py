@@ -192,6 +192,10 @@ def stream_large_download(url, item, temp_path, final_path):
     if not os.path.exists(temp_path):
         os.makedirs(temp_path)
     file = os.path.join(temp_path, item)
+    if os.path.exists(file):
+        shutil.copy(new_file, file)
+        LOGGER.debug(('copy backup', file, new_file))
+        return True, item
     new_file = os.path.join(final_path, item)
     if os.path.exists(new_file):
         return True, item

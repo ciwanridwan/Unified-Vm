@@ -7,6 +7,7 @@ import datetime
 import time
 import random
 import sys
+import shutil
 from PyQt5.QtCore import QObject, pyqtSignal
 from _cConfig import _ConfigParser, _Global
 from _dDAO import _DAO
@@ -227,6 +228,7 @@ def define_ads(a):
     __metadata = a['metadata']
     __playlist = a['playlist']
     __tvc_path = sys.path[0] + '/_vVideo'
+    __tvc_backup = sys.path[0] + '/_tTmp'
     if not os.path.exists(__tvc_path):
         os.makedirs(__tvc_path)
     __current_list = []
@@ -234,19 +236,21 @@ def define_ads(a):
     for file in __all_file:
         if file.endswith('.mp4') or file.endswith('.wmv') or file.endswith('.avi') or file.endswith('.mpeg'):
             __current_list.append(file)
-    __must_delete = list(set(__current_list) - set(__playlist))
+    __must_backup = list(set(__current_list) - set(__playlist))
     LOGGER.debug(("current list : ", str(__current_list)))
     LOGGER.debug(("new playlist : ", str(__playlist)))
-    LOGGER.debug(("expired media(s) : ", str(__must_delete)))
+    LOGGER.debug(("expired media(s) : ", str(__must_backup)))
     # __must_delete = __current_list
     # _Helper.dump(__must_delete)
-    if len(__must_delete) > 0:
-        for d in __must_delete:
-            file_delete = os.path.join(__tvc_path, d)
-            if os.path.exists(file_delete):
-                LOGGER.debug(("remove expired media : ", file_delete))
-                K_SIGNDLER.SIGNAL_SYNC_ADS_CONTENT.emit('SYNC_ADS|DELETE_EXPIRED_'+d.upper())
-                os.remove(file_delete)
+    if len(__must_backup) > 0:
+        for d in __must_backup:
+            file_expired = os.path.join(__tvc_path, d)
+            file_backup = os.path.join(__tvc_backup, d)
+            if os.path.exists(file_expired):
+                LOGGER.debug(("backup expired media : ", file_expired))
+                K_SIGNDLER.SIGNAL_SYNC_ADS_CONTENT.emit('SYNC_ADS|BACKUP_EXPIRED_'+d.upper())
+                shutil.copy(file_expired, file_backup)
+                os.remove(file_backup)
     __must_download = list(set(__playlist) - set(__current_list))
     while len(__must_download) > 0:
         for l in __must_download:
