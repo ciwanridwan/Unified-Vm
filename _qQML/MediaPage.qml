@@ -68,6 +68,10 @@ Rectangle{
             console.log("No Media Files!");
         } else {
             var files = JSON.parse(result);
+            if (parseInt(files.count) == 0){
+                my_layer.pop();
+                mediaOnPlaying = false;
+            }
             if (files.dir == img_path){
                 media_files = files.result;
                 console.log("Media Files (" + media_files.length + ") : " + media_files)

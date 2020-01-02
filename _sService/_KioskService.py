@@ -538,8 +538,9 @@ def file_list(dir_):
             "dir": dir_
         }
         if "Video" in str(dir_):
-            files["old_result"] = files["result"]
-            files["result"] = _Global.ADS_SETTING['playlist']
+            # files["old_result"] = files["result"]
+            files["playlist"] = _Global.ADS_SETTING['playlist']
+            files["count"] = len(files["result"])
         LOGGER.info((_dir_, str(files)))
         K_SIGNDLER.SIGNAL_GET_FILE_LIST.emit(json.dumps(files))
     except Exception as e:
