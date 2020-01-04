@@ -245,7 +245,7 @@ def handling_card(amount, trxid=None):
                 # edc_settlement()
                 _EDCTool.generate_edc_receipt(EDC_PAYMENT_RESULT)
                 store_settlement()
-                send_edc_server(EDC_PAYMENT_RESULT)
+                # send_edc_server(EDC_PAYMENT_RESULT)
                 break
             else:
                 '''
@@ -385,7 +385,7 @@ def edc_settlement():
         if OPEN_STATUS is True:
             response, result = _Command.send_request(param=param, output=None, flushing=_Command.MO_REPORT)
             if response == 0 or EDC_TESTING_MODE is True:
-                handling_settlement('DEBIT')
+                # handling_settlement('DEBIT')
                 E_SIGNDLER.SIGNAL_PROCESS_SETTLEMENT_EDC.emit('EDC_SETTLEMENT_DEBIT|PROCESSED')
                 LOGGER.info(("edc_settlement", str(response), result))
             else:
@@ -416,7 +416,7 @@ def edc_settlement_credit():
         if OPEN_STATUS is True:
             response, result = _Command.send_request(param=param, output=None, flushing=_Command.MO_REPORT)
             if response == 0 or EDC_TESTING_MODE is True:
-                handling_settlement('CREDIT')
+                # handling_settlement('CREDIT')
                 E_SIGNDLER.SIGNAL_PROCESS_SETTLEMENT_EDC.emit('EDC_SETTLEMENT_CREDIT|PROCESSED')
                 LOGGER.info(("edc_settlement", str(response), result))
             else:

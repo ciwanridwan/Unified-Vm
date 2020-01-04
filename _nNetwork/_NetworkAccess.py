@@ -203,7 +203,8 @@ def stream_large_download(url, item, temp_path, final_path):
     if r.status_code != 200:
         return False, item
     with open(file, 'wb') as media:
-        for chunk in r.iter_content(chunk_size=1024*1024):
+        # for chunk in r.iter_content(chunk_size=1024*1024):
+        for chunk in r.iter_content(chunk_size=256*256):
             if chunk:
                 media.write(chunk)
     shutil.copy(file, new_file)

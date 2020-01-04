@@ -413,11 +413,11 @@ Base{
     function payment_complete(mode){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
     //        popup_loading.close();
-        if (mode != undefined){
-            console.log('payment_complete', now, mode)
-            details.notes = mode + ' - ' + new Date().getTime().toString();
-        }
         console.log('payment_complete', now, JSON.stringify(details))
+        if (mode != undefined){
+            console.log('payment_complete mode', mode)
+//            details.notes = mode + ' - ' + new Date().getTime().toString();
+        }
         if (details.shop_type!='ppob') _SLOT.start_store_transaction_global(JSON.stringify(details))
         isPaid = true;
         abc.counter = timer_value;
@@ -494,7 +494,7 @@ Base{
                 var cashResponse = JSON.parse(r.replace('STOP_GRG|SUCCESS-', ''))
                 details.payment_details = cashResponse;
                 details.payment_received = cashResponse.total;
-                if (proceedAble) payment_complete();
+                if (proceedAble) payment_complete('grg');
             }
         } else if (grgFunction == 'STATUS_GRG'){
             if(grgResult=='ERROR') {
@@ -531,7 +531,7 @@ Base{
                 var cashResponse = JSON.parse(r.replace('STORE_ES|SUCCESS-', ''))
                 details.payment_details = cashResponse;
                 details.payment_received = cashResponse.total;
-                if (proceedAble) payment_complete();
+                if (proceedAble) payment_complete('mei');
             }
         } else if (meiFunction == 'ACCEPT'){
             if(meiResult=='ERROR') {
@@ -556,8 +556,8 @@ Base{
         if (edcResult=='SUCCESS') {
             details.payment_details = JSON.parse(r.replace('SALE|SUCCESS|', ''));
             details.payment_received = totalPrice;
-            payment_complete();
-            popup_loading.open();
+            payment_complete('edc');
+//            popup_loading.open();
             return;
         }
         if (edcFunction == 'SALE'){
