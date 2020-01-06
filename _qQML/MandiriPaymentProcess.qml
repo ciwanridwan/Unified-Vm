@@ -705,7 +705,7 @@ Base{
         }
         if (details.payment == 'debit') {
 //            open_preload_notif('Masukkan Kartu Debit dan PIN Anda Pada EDC', 'source/insert_card_new.png');
-            switch_frame('source/insert_card_new.png', 'Masukkan Kartu Debit dan PIN Anda Pada EDC', '', 'closeWindow|90', false )
+            switch_frame('source/insert_card_new.png', 'Masukkan Kartu Debit dan PIN Anda Pada EDC', 'Posisi Mesin EDC Tepat Di Tengah Bawah Layar', 'closeWindow|90', false )
 //            getDenom = parseInt(details.value) * parseInt(details.qty);
 //            totalPrice = getDenom + adminFee;
             var structId = details.shop_type + details.epoch.toString();
