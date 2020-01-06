@@ -25,10 +25,10 @@ def check_error(printer, error_states=PRINTER_ERROR_STATES):
     status = details[18]
     for error in error_states:
         if status & error:
-            print("[WARNING] Match Printer Error: ", str(status), str(error))
+            print("[WARNING] Match Printer Error: ", str(status), '==', str(error))
             return error
         else:
-            print("[DEBUG] Check Printer Error: ", str(status), str(error))
+            print("[DEBUG] Check Printer Error: ", str(status), '<>', str(error))
     return None
 
 
