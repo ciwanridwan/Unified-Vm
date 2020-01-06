@@ -20,7 +20,7 @@ ERROR_PRINTER = {
 
 
 def check_error(printer, error_states=PRINTER_ERROR_STATES):
-    prn_opts = win32print.GetPrinter(printer)
+    prn_opts = win32print.GetPrinter(printer, 9)
     print("[DUMP] Printer Option: ", str(type(prn_opts)), json.dumps(prn_opts))
     status_opts = prn_opts[18]
     result = None
