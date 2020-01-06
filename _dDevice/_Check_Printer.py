@@ -20,16 +20,16 @@ ERROR_PRINTER = {
 
 
 def check_error(printer, error_states=PRINTER_ERROR_STATES):
-    prn_opts = win32print.GetPrinter(printer, 9)
-    print("[DUMP] Printer Option: ", str(type(prn_opts)), json.dumps(prn_opts))
-    status_opts = prn_opts[18]
-    result = None
+    details = win32print.GetPrinter(printer)
+    print("[DUMP] Printer Details: ", str(type(details)), json.dumps(details))
+    status = details[18]
     for error in error_states:
-        print("[DEBUG] Check Printer Error: ", str(error))
-        if status_opts & error:
-            print("[WARNING] Match Printer Error: ", str(status_opts), str(error))
-            result = error
-    return result
+        if status & error:
+            print("[WARNING] Match Printer Error: ", str(status), str(error))
+            return error
+        else:
+            print("[DEBUG] Check Printer Error: ", str(status), str(error))
+    return None
 
 
 def main():
@@ -41,7 +41,6 @@ def main():
         print("[ERROR] Found Printer Error: ", error)
     else:
         print("PRINTER OK")
-        #  Do the real work
     win32print.ClosePrinter(prn)
 
 
