@@ -805,7 +805,7 @@ Base{
         press = '0';
         if (msg==undefined) msg = 'Masukkan Uang Anda Pada Bill Acceptor';
         if (img==undefined) img = 'source/insert_money.png';
-        switch_frame(img, msg, '', 'closeWindow', false )
+        switch_frame(img, msg, 'Lembar Uang Yang Diterima', 'closeWindow', false )
         return;
     }
 
