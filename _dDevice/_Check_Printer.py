@@ -1,4 +1,5 @@
 import win32print
+import os
 
 PRINTER_ERROR_STATES = (
     win32print.PRINTER_STATUS_NO_TONER,
@@ -19,15 +20,17 @@ ERROR_PRINTER = {
 
 def check_error(printer, error_states=PRINTER_ERROR_STATES):
     prn_opts = win32print.GetPrinter(printer)
-    status = int(prn_opts[18])
+    status_opts = prn_opts[18]
     result = None
-    if status != 0:
-        result = error_states[status]
+    for error in error_states:
+        if status_opts & error:
+            result = error
     return result
 
 
 def main():
     printer_name = win32print.GetDefaultPrinter()
+    print("[INFO] Printer: ", printer_name)
     prn = win32print.OpenPrinter(printer_name)
     error = check_error(prn)
     if error is not None:
