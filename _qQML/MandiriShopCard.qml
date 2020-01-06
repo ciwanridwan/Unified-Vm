@@ -52,6 +52,7 @@ Base{
             console.log('shop_type', shop_type);
             mainVisible = true;
             cdReadiness = undefined;
+            popup_loading.open();
             _SLOT.kiosk_get_cd_readiness();
             _SLOT.start_get_device_status();
 //            _SLOT.start_get_multiple_eject_status();
@@ -64,10 +65,10 @@ Base{
 //                small_notif.text = '*Biaya Admin sebesar Rp. 1.500,- Dikenakan Untuk Tiap Transaksi Isi Ulang.';
 //                small_notif.visible = true;
             }
-            if (productData != undefined) {
-                console.log('productData', JSON.stringify(productData));
-                parseDataProduct(productData);
-            }
+//            if (productData != undefined) {
+//                console.log('productData', JSON.stringify(productData));
+//                parseDataProduct(productData);
+//            }
             abc.counter = timer_value;
             my_timer.start();
             press = '0';
@@ -116,8 +117,7 @@ Base{
         cdReadiness = JSON.parse(c);
         if (productData != undefined) {
             console.log('productData', JSON.stringify(productData));
-//            parseDataProduct(productData);
-//            defineProductIndex(productData);
+            parseDataProduct(productData);
         }
     }
 
@@ -207,32 +207,27 @@ Base{
             var item_status = items[x].status;
             var item_image = items[x].image;
             var item_id = items[x].pid;
-            if (cdReadiness != undefined){
-                if (item_status==101 && cdReadiness.port1 == 'N/A') item_stock = '0';
-                if (item_status==102 && cdReadiness.port2 == 'N/A') item_stock = '0';
-                if (item_status==103 && cdReadiness.port3 == 'N/A') item_stock = '0';
-            }
             if (item_image=='') item_image = 'source/card/bni_tapcash_card.png';
             if (item_status==101){
                 card_show_1.visible = true;
                 card_show_1.itemName = item_name;
                 card_show_1.itemImage = item_image;
                 card_show_1.itemPrice = item_price.toString();
-                card_show_1.itemStock = parseInt(item_stock);
+                card_show_1.itemStock = (cdReadiness.port1 != 'N/A') ? parseInt(item_stock) : 0;
             }
             if (item_status==102){
                 card_show_2.visible = true;
                 card_show_2.itemName = item_name;
                 card_show_2.itemImage = item_image;
                 card_show_2.itemPrice = item_price.toString();
-                card_show_2.itemStock = parseInt(item_stock);
+                card_show_2.itemStock = (cdReadiness.port2 != 'N/A') ? parseInt(item_stock) : 0;
             }
             if (item_status==103){
                 card_show_3.visible = true;
                 card_show_3.itemName = item_name;
                 card_show_3.itemImage = item_image;
                 card_show_3.itemPrice = item_price.toString();
-                card_show_3.itemStock = parseInt(item_stock);
+                card_show_3.itemStock = (cdReadiness.port3 != 'N/A') ? parseInt(item_stock) : 0;
             }
             if (item_stock!='0') availItems.push(item_id);
         }

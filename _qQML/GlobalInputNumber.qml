@@ -357,6 +357,10 @@ Base{
                     min_count = 15;
                 }
             break;
+            case 'voucher':
+                wording_text = 'Masukkan Nomor Telepon Seluler Anda';
+                min_count = 10;
+            break;
             default:
                 wording_text = 'Masukkan Nomor Pelanggan/Tagihan Anda';
                 min_count = 15;
@@ -373,6 +377,7 @@ Base{
 
     function switch_frame(imageSource, textMain, textSlave, closeMode, smallerText){
         frameWithButton = false;
+        press = '0';
         if (closeMode.indexOf('|') > -1){
             closeMode = closeMode.split('|')[0];
             var timer = closeMode.split('|')[1];
@@ -389,6 +394,7 @@ Base{
 
     function switch_frame_with_button(imageSource, textMain, textSlave, closeMode, smallerText){
         frameWithButton = true;
+        press = '0';
         global_frame.imageSource = imageSource;
         global_frame.textMain = textMain;
         global_frame.textSlave = textSlave;

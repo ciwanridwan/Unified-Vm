@@ -42,6 +42,7 @@ class CDSignalHandler(QObject):
     SIGNAL_CD_STOP = pyqtSignal(str)
     SIGNAL_MULTIPLE_EJECT = pyqtSignal(str)
     SIGNAL_CD_READINESS = pyqtSignal(str)
+    SIGNAL_CD_PORT_INIT = pyqtSignal(str)
 
 
 CD_SIGNDLER = CDSignalHandler()
@@ -271,12 +272,17 @@ def stop_card_disp():
         CD_SIGNDLER.SIGNAL_CD_STOP.emit('ERROR')
 
 
+def start_check_init_cd(com):
+    _Helper.get_pool().apply_async(init_cd, (com, ))
+
+
 def init_cd(com):
     command = CD_INIT + " init " + str(com)
     process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
     output = process.communicate()[0].decode('utf-8').strip().split("\r\n")
     output = output[0].split(";")
     LOGGER.debug(('init_cd', com, output))
+    CD_SIGNDLER.SIGNAL_CD_PORT_INIT.emit(json.dumps({'port': com, 'status': output}))
     return True if '1' not in output else False
 
 

@@ -584,6 +584,10 @@ class SlotHandler(QObject):
         _QPROX.start_fake_update_dki(card_no, amount)
     start_fake_update_dki = pyqtSlot(str, str)(start_fake_update_dki)
 
+    def start_check_init_cd(self, com):
+        _CD.start_check_init_cd(com)
+    start_check_init_cd = pyqtSlot(str)(start_check_init_cd)
+
 
 def s_handler():
     _KioskService.K_SIGNDLER.SIGNAL_GET_FILE_LIST.connect(view.rootObject().result_get_file_list)
@@ -681,6 +685,7 @@ def s_handler():
     _PPOBService.PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.connect(view.rootObject().result_diva_transfer_balance)
     _QPROX.QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.connect(view.rootObject().result_update_balance_online)
     _KioskService.K_SIGNDLER.SIGNAL_ADMIN_GET_PRODUCT_STOCK.connect(view.rootObject().result_admin_sync_stock)
+    _CD.CDSignalHandler.SIGNAL_CD_PORT_INIT.connect(view.rootObject().result_init_check_cd)
 
 LOGGER = None
 
@@ -776,7 +781,8 @@ def check_db(data_name):
 
 def kill_explorer():
     if setting['dev_mode'] is False:
-        os.system('taskkill /f /im explorer.exe')
+        # os.system('taskkill /f /im explorer.exe')
+        pass
     else:
         LOGGER.info('Development Mode is ON')
 

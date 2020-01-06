@@ -109,6 +109,7 @@ Rectangle {
     signal result_diva_transfer_balance(string str)
     signal result_update_balance_online(string str)
     signal result_admin_sync_stock(string str)
+    signal result_init_check_cd(string str)
 
 
     //==================================================================================================//
