@@ -23,22 +23,23 @@ def check_error(printer, error_states=PRINTER_ERROR_STATES):
     status_opts = prn_opts[18]
     result = None
     for error in error_states:
+        print("[DEBUG] Check Printer Error: ", str(error))
         if status_opts & error:
+            print("[WARNING] Match Printer Error: ", str(status_opts), str(error))
             result = error
     return result
 
 
 def main():
     printer_name = win32print.GetDefaultPrinter()
-    print("[INFO] Printer: ", printer_name)
+    print("[INFO] Printer Name: ", printer_name)
     prn = win32print.OpenPrinter(printer_name)
     error = check_error(prn)
     if error is not None:
-        print("[ERROR] Printer: ", error)
+        print("[ERROR] Found Printer Error: ", error)
     else:
         print("PRINTER OK")
         #  Do the real work
-
     win32print.ClosePrinter(prn)
 
 
