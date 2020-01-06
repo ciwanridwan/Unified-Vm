@@ -685,7 +685,7 @@ def s_handler():
     _PPOBService.PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.connect(view.rootObject().result_diva_transfer_balance)
     _QPROX.QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.connect(view.rootObject().result_update_balance_online)
     _KioskService.K_SIGNDLER.SIGNAL_ADMIN_GET_PRODUCT_STOCK.connect(view.rootObject().result_admin_sync_stock)
-    _CD.CDSignalHandler.SIGNAL_CD_PORT_INIT.connect(view.rootObject().result_init_check_cd)
+    _CD.CD_SIGNDLER.SIGNAL_CD_PORT_INIT.connect(view.rootObject().result_init_check_cd)
 
 LOGGER = None
 
