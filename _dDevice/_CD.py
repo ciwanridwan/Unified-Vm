@@ -276,6 +276,7 @@ def init_cd(com):
     process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
     output = process.communicate()[0].decode('utf-8').strip().split("\r\n")
     output = output[0].split(";")
+    LOGGER.debug(('init_cd', com, output))
     return True if '1' not in output else False
 
 

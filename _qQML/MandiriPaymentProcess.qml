@@ -819,6 +819,7 @@ Base{
 
     function switch_frame(imageSource, textMain, textSlave, closeMode, smallerText){
         frameWithButton = false;
+        press = '0';
         if (closeMode.indexOf('|') > -1){
             closeMode = closeMode.split('|')[0];
             var timer = closeMode.split('|')[1];
@@ -835,6 +836,7 @@ Base{
 
     function switch_frame_with_button(imageSource, textMain, textSlave, closeMode, smallerText){
         frameWithButton = true;
+        press = '0';
         global_frame.withTimer = false;
         if (closeMode.indexOf('|') > -1){
             closeMode = closeMode.split('|')[0];
