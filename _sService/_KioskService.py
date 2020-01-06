@@ -568,7 +568,7 @@ def update_tvc_log(media):
     if media not in _Global.ADS_SETTING['playlist']:
         LOGGER.debug((media, str(_Global.ADS_SETTING['playlist']), 'MEDIA_NOT_FOUND_IN_PLAYLIST'))
         return
-    media_code = media.replace(' ', '^')
+    media_code = '___'+media.replace(' ', '^')
     # _Helper.dump(media_code)
     media_today_path = sys.path[0]+'/_tTmp/'+media_code+'/'+time.strftime("%Y-%m-%d")+'.count'
     # _Helper.dump(media_today_path)
@@ -600,8 +600,9 @@ def send_tvc_log(media, count, media_code=None):
     if _Global.empty(count):
         LOGGER.warning((media, str(count), 'MISSING_MEDIA_COUNT'))
         return
-    if media_code is None:
-        media_code = media.replace(' ', '^')
+    if media_code is None or media_code[:3] != '___':
+        # media_code = media.replace(' ', '^')
+        media_code = '___'+media.replace(' ', '^')
     param = {
         "media": media,
         "count": str(count),

@@ -208,7 +208,7 @@ def stream_large_download(url, item, temp_path, final_path):
             if chunk:
                 media.write(chunk)
     shutil.copy(file, new_file)
-    os.remove(file)
+    # os.remove(file)
     LOGGER.debug(('stream down', file, url))
     del r
     return True, item
