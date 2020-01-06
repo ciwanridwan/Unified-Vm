@@ -17,7 +17,7 @@ ERROR_PRINTER = {
 }
 
 
-def check_error(printer, error_states=ERROR_PRINTER):
+def check_error(printer, error_states=PRINTER_ERROR_STATES):
     prn_opts = win32print.GetPrinter(printer)
     status = int(prn_opts[18])
     result = None
