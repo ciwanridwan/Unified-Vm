@@ -420,6 +420,7 @@ Base{
         }
         if (details.shop_type!='ppob') _SLOT.start_store_transaction_global(JSON.stringify(details))
         isPaid = true;
+        back_button.visible = false;
         abc.counter = timer_value;
         my_timer.restart();
         switch(details.shop_type){
@@ -550,7 +551,7 @@ Base{
         popup_loading.close();
         if (['ERROR'].indexOf(edcResult) > -1){
             next_button_global.visible = false;
-            switch_frame_with_button('source/insert_money.png', 'Pembayaran Debit Gagal', 'Mohon Ulangi Transaksi Dalam Beberapa Saat', 'backToMain', true );
+            switch_frame_with_button('source/insert_card2.png', 'Pembayaran Debit Gagal', 'Mohon Ulangi Transaksi Dalam Beberapa Saat', 'backToMain', true );
             return;
         }
         if (edcResult=='SUCCESS') {
