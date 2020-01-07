@@ -7,7 +7,7 @@ Base{
     isBoxNameActive: false
     property var textMain: 'Masukkan Kartu Debit dan PIN Anda Pada EDC'
     property var textSlave: 'Posisi Mesin EDC Tepat Di Tengah Bawah Layar'
-    property var imageSource: "source/insert_card_new.png"
+    property var imageSource: "source/insert_card_dc.png"
     property bool smallerSlaveSize: true
     property bool withTimer: true
     property int textSize: 40
@@ -29,7 +29,7 @@ Base{
         spacing: 30
         AnimatedImage  {
             id: original_image
-            visible:  (imageSource!='source/insert_card_new.png')
+            visible:  (imageSource!='source/insert_card_dc.png')
             width: 300
             height: 300
             scale: 0.9
@@ -43,7 +43,7 @@ Base{
             width: parent.width
             height: 300
             layoutDirection: Qt.LeftToRight
-            visible: (imageSource=='source/insert_card_new.png')
+            visible: (imageSource=='source/insert_card_dc.png')
             spacing: 200
             Image{
                 scale: 1.5
