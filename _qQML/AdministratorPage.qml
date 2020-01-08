@@ -760,10 +760,10 @@ Base{
                            if (userData.isAbleCollect==1){
                                _SLOT.start_edc_settlement();
                                popup_loading.open();
-                               actionList.push({
-                                                   type: 'settleEdc',
-                                                   user: userData.first_name
-                                               })
+//                               actionList.push({
+//                                                   type: 'settleEdc',
+//                                                   user: userData.first_name
+//                                               })
                            } else {
                                false_notif('Mohon Maaf|User Anda Tidak Diperkenankan, Hubungi Master Admin')
                            }

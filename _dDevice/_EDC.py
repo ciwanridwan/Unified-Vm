@@ -388,6 +388,7 @@ def edc_settlement():
                 # handling_settlement('DEBIT')
                 E_SIGNDLER.SIGNAL_PROCESS_SETTLEMENT_EDC.emit('EDC_SETTLEMENT_DEBIT|PROCESSED')
                 LOGGER.info(("edc_settlement", str(response), result))
+                mark_settlement_data(printout=False, mode='DEBIT CARD')
             else:
                 _Global.EDC_ERROR = 'FAILED_TO_DEBIT_SETTLEMENT'
                 LOGGER.warning(("RESPONSE :", str(response), result))
@@ -419,6 +420,7 @@ def edc_settlement_credit():
                 # handling_settlement('CREDIT')
                 E_SIGNDLER.SIGNAL_PROCESS_SETTLEMENT_EDC.emit('EDC_SETTLEMENT_CREDIT|PROCESSED')
                 LOGGER.info(("edc_settlement", str(response), result))
+                mark_settlement_data(printout=False, mode='CREDIT CARD')
             else:
                 _Global.EDC_ERROR = 'FAILED_TO_CREDIT_SETTLEMENT'
                 LOGGER.warning(("RESPONSE :", str(response), result))

@@ -739,7 +739,9 @@ def get_admin_data():
         # SELECT sum(amount) as total FROM Cash WHERE collectedAt is null
         __data['all_amount'] = int(__data['amt_card']) + int(__data['amt_top10k']) + int(__data['amt_top20k']) + \
                                int(__data['amt_top50k']) + int(__data['amt_top100k'] + int(__data['amt_top200k']))
-        __data['failed_amount'] = int(__data['all_cash']) - int(__data['all_amount'])
+        __data['other_amount'] = 0
+        if int(__data['all_cash']) > int(__data['all_amount']):
+            __data['other_amount'] = int(__data['all_cash']) - int(__data['all_amount'])
         __data['init_slot1'] = __data['slot1']
         __data['init_slot2'] = __data['slot2']
         __data['init_slot3'] = __data['slot3']
@@ -907,17 +909,17 @@ def admin_print_global(struct_id, ext='.pdf'):
         pdf.set_font(USED_FONT, '', line_size)
         pdf.cell(padding_left, 0, 'BNI Wallet : Rp. ' + clean_number(str(s['sam_2_balance'])), 0, 0, 'L')
         pdf.ln(line_size)
+        # pdf.set_font(USED_FONT, '', line_size)
+        # pdf.cell(padding_left, 0, 'Failed/Exceed TRX: Rp. ' + clean_number(str(s['failed_amount'])), 0, 0, 'L')
+        # pdf.ln(tiny_space)
         pdf.set_font(USED_FONT, '', line_size)
-        pdf.cell(padding_left, 0, 'Failed/Exceed TRX: Rp. ' + clean_number(str(s['failed_amount'])), 0, 0, 'L')
-        pdf.ln(tiny_space)
-        pdf.set_font(USED_FONT, '', line_size)
-        pdf.cell(padding_left, 0, 'Normal/Success TRX: Rp. ' + clean_number(str(s['all_amount'])), 0, 0, 'L')
+        pdf.cell(padding_left, 0, 'PPOB/Other Payment: Rp. ' + clean_number(str(s['other_amount'])), 0, 0, 'L')
         pdf.set_font(USED_FONT, '', line_size+3)
         pdf.ln(tiny_space)
-        total_amount = str(int(s['all_amount']) + int(s['failed_amount']))
-        if total_amount == '0':
-            total_amount = str(s['failed_amount'])
-        pdf.cell(padding_left, 0, 'TOTAL CASH = Rp. ' + clean_number(total_amount), 0, 0, 'L')
+        # total_amount = str(int(s['all_amount']) + int(s['failed_amount']))
+        # if total_amount == '0':
+        #     total_amount = str(s['failed_amount'])
+        pdf.cell(padding_left, 0, 'TOTAL CASH = Rp. ' + clean_number(str(s['all_cash'])), 0, 0, 'L')
         # End Layouting
         pdf_file = get_path(file_name+ext)
         pdf.output(pdf_file, 'F')
@@ -929,7 +931,7 @@ def admin_print_global(struct_id, ext='.pdf'):
             sleep(1)
         SPRINTTOOL_SIGNDLER.SIGNAL_ADMIN_PRINT_GLOBAL.emit('ADMIN_PRINT|DONE')
         # Send To Backend
-        _Global.upload_admin_access(struct_id, user, str(total_amount), '0', CARD_ADJUSTMENT, json.dumps(s))
+        _Global.upload_admin_access(struct_id, user, str(s['all_cash']), '0', CARD_ADJUSTMENT, json.dumps(s))
     except Exception as e:
         LOGGER.warning(str(e))
         SPRINTTOOL_SIGNDLER.SIGNAL_ADMIN_PRINT_GLOBAL.emit('ADMIN_PRINT|ERROR')
