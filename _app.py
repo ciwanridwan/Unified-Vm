@@ -588,6 +588,10 @@ class SlotHandler(QObject):
         _CD.start_check_init_cd(com)
     start_check_init_cd = pyqtSlot(str)(start_check_init_cd)
 
+    def start_log_book_cash(self, pid, amount):
+        _GRG.start_log_book_cash(pid, amount)
+    start_log_book_cash = pyqtSlot(str, str)(start_log_book_cash)
+
 
 def s_handler():
     _KioskService.K_SIGNDLER.SIGNAL_GET_FILE_LIST.connect(view.rootObject().result_get_file_list)

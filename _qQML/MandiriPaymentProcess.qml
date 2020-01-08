@@ -418,7 +418,12 @@ Base{
             console.log('payment_complete mode', mode)
 //            details.notes = mode + ' - ' + new Date().getTime().toString();
         }
-        if (details.shop_type!='ppob') _SLOT.start_store_transaction_global(JSON.stringify(details))
+        if (details.shop_type!='ppob') {
+            _SLOT.start_store_transaction_global(JSON.stringify(details))
+        } else {
+            var pid = details.shop_type + details.epoch.toString();
+            if (details.payment=='cash') _SLOT.start_log_book_cash(pid, receivedCash.toString());
+        }
         isPaid = true;
         back_button.visible = false;
         abc.counter = timer_value;

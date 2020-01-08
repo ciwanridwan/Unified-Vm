@@ -291,9 +291,13 @@ def get_status_grg():
         LOGGER.warning(e)
 
 
+def start_log_book_cash(pid, amount):
+    _Helper.get_pool().apply_async(log_book_cash, (pid, amount,))
+
+
 def log_book_cash(pid, amount):
     param = {
-        'csid': _Helper.get_uuid(),
+        'csid': pid[::-1],
         'pid': pid,
         'tid': _Global.TID,
         'amount': amount
