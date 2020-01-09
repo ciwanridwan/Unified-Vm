@@ -281,18 +281,17 @@ def diva_transfer_balance(payload, store_only=False):
             PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|MISSING_AMOUNT')
         return
     payload['customer_login'] = payload['customer']
-    if store_only is True:
-        store_pending_refund(payload)
-        return
     try:
         url = _Global.BACKEND_URL+'diva/transfer'
         s, r = _NetworkAccess.post_to_url(url=url, param=payload)
         if s == 200 and r['data'] is not None:
             if r['result'] == 'OK':
                 LAST_TRANSFER_REFF_NO = payload['reff_no']
-                PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|SUCCESS')
+                if not store_only:
+                    PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|SUCCESS')
             else:
-                PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|PENDING')
+                if not store_only:
+                    PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|PENDING')
         else:
             # amount: refund_amount.toString(),
             # customer: customerPhone,
@@ -301,11 +300,13 @@ def diva_transfer_balance(payload, store_only=False):
             # mode: refundMode,
             # payment: details.payment
             store_pending_refund(payload)
-            PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|ERROR')
+            if not store_only:
+                PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|ERROR')
         LOGGER.debug((str(payload), str(r)))
     except Exception as e:
         LOGGER.warning((str(payload), str(e)))
-        PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|ERROR')
+        if not store_only:
+            PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|ERROR')
 
 
 def store_pending_refund(payload):
@@ -316,5 +317,5 @@ def store_pending_refund(payload):
         'customer'      : payload['customer'],
         'refundType'    : str(payload['mode']),
         'paymentType'   : payload['payment'],
-        'remarks'       : str(payload['remarks'])
+        'remarks'       : json.dumps(payload['remarks'])
         })

@@ -477,20 +477,22 @@ def get_pending_refund():
 def insert_pending_refund(param):
     '''
     :param param:
+    id
     tid             VARCHAR(100),
     trxid           VARCHAR(100),
     amount          BIGINT,
     customer        VARCHAR(100),
     refundType      VARCHAR(100),
     paymentType     VARCHAR(100),
-    remarks         VARCHAR(100),
+    remarks         TEXT,
     :return:
     '''
+    param['id'] = _Helper.uuid()
     param['isSuccess'] = 0
     param['createdAt'] = _Helper.now()
-    sql = "INSERT INTO PendingRefund(tid, trxid, amount, customer, refundType, paymentType, remarks, isSuccess, createdAt ) " \
-          "VALUES(:tid, :trxid, :amount, :customer, :refundType, :paymentType, :remarks, :isSuccess, :createdAt )"
-    return _Database.insert_update(sql=sql, parameter=param)
+    sql = "INSERT INTO PendingRefund(id, tid, trxid, amount, customer, refundType, paymentType, remarks, isSuccess, createdAt ) " \
+          "VALUES(:id, :tid, :trxid, :amount, :customer, :refundType, :paymentType, :remarks, :isSuccess, :createdAt )"
+    _Database.insert_update(sql=sql, parameter=param)
 
 def update_pending_refund(param):
     '''
