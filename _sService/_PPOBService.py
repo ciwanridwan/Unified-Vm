@@ -316,5 +316,5 @@ def store_pending_refund(payload):
         'customer'      : payload['customer'],
         'refundType'    : str(payload['mode']),
         'paymentType'   : payload['payment'],
-        'remarks'       : json.dumps(payload['remarks'])
+        'remarks'       : str(payload['remarks'])
         })
