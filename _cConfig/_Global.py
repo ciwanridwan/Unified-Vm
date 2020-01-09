@@ -347,6 +347,12 @@ GRG = {
     "port": GRG_PORT,
     "status": True if GRG_PORT is not None and digit_in(GRG_PORT) is True else False
 }
+# Handling MEI VS GRG Duplicate Port Activation
+if GRG['status'] is True:
+    MEI['status'] = False
+    MEI_PORT = _ConfigParser.set_value('port', 'MEI', 'COM')
+    MEI['port'] = MEI_PORT
+    
 CD = {
     "port1": CD_PORT1,
     "port2": CD_PORT2,

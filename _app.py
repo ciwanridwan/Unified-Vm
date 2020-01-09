@@ -1022,14 +1022,14 @@ if __name__ == '__main__':
         sleep(.5)
         print("pyt: Restarting MDDTopUpService...")
         _KioskService.start_restart_mdd_service()
-    if _Global.MEI['status'] is True:
-        sleep(1)
-        print("pyt: Connecting to MEI Bill Acceptor...")
-        _MEI.mei_standby_mode()
     if _Global.GRG['status'] is True:
         sleep(1)
         print("pyt: Connecting to GRG Bill Acceptor...")
         _GRG.init_grg()
+    if _Global.MEI['status'] is True:
+        sleep(1)
+        print("pyt: Connecting to MEI Bill Acceptor...")
+        _MEI.mei_standby_mode()
     if _Global.QPROX['status'] is True:
         sleep(1)
         print("pyt: Connecting Into Prepaid Reader...")
