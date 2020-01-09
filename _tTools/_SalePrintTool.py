@@ -929,7 +929,10 @@ def admin_print_global(struct_id, ext='.pdf'):
         # Print-out to printer
         for i in range(print_copy):
             print_ = _Printer.ghost_print(pdf_file)
+            LOGGER.debug(("pyt : ({}) Printing to Default Printer : {}".format(str(i), str(print_))))
             print("pyt : ({}) Printing to Default Printer : {}".format(str(i), str(print_)))
+            if '[ERROR]' in print_:
+                break
             sleep(1)
         SPRINTTOOL_SIGNDLER.SIGNAL_ADMIN_PRINT_GLOBAL.emit('ADMIN_PRINT|DONE')
         # Send To Backend

@@ -143,7 +143,7 @@ Base{
             false_notif('Dear '+userData.first_name+'|Status Proses Sync Product Stock..\n['+s+']');
 
         } else {
-            false_notif('Dear '+userData.first_name+'|Terjadi Kesalahan Dengan Kode:\n'+a);
+            false_notif('Dear '+userData.first_name+'|Perhatian, Kode Proses:\n'+a);
         }
         press = '0';
         _SLOT.kiosk_get_machine_summary();
