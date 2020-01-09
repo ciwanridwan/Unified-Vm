@@ -956,9 +956,9 @@ def mark_sync_collected_data(s):
         # Reset Cash Log
         __update_cash_str = ' UPDATE Cash SET collectedAt = ' + str(_Helper.now()) + ', collectedUser = "' + str(operator) + \
             '"  WHERE collectedAt = 19900901 '
-        _KioskService.python_dump(str(__update_cash_str))
+        # _KioskService.python_dump(str(__update_cash_str))
         __exec_cash_update = _DAO.custom_update(__update_cash_str)
-        _KioskService.python_dump(str(__exec_cash_update))
+        # _KioskService.python_dump(str(__exec_cash_update))
         return True
     else:
         return False

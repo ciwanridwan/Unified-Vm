@@ -309,12 +309,12 @@ def diva_transfer_balance(payload, store_only=False):
 
 
 def store_pending_refund(payload):
-    return _DAO.insert_pending_refund({
-                'tid'           : _Global.TID,
-                'trxid'         : payload['reff_no'],
-                'amount'        : int(payload['amount']),
-                'customer'      : payload['customer'],
-                'refundType'    : str(payload['mode']),
-                'paymentType'   : payload['payment'],
-                'remarks'       : json.dumps(payload['remarks'])
-            })
+    _DAO.insert_pending_refund({
+        'tid'           : _Global.TID,
+        'trxid'         : payload['reff_no'],
+        'amount'        : int(payload['amount']),
+        'customer'      : payload['customer'],
+        'refundType'    : str(payload['mode']),
+        'paymentType'   : payload['payment'],
+        'remarks'       : json.dumps(payload['remarks'])
+        })

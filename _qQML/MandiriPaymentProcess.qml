@@ -1151,6 +1151,7 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
+                    var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
                     _SLOT.user_action_log('Press "TIDAK PUNYA" in Input Whatsapp Number');
                     popup_input_number.close();
                     details.refund_status = 'AVAILABLE';
@@ -1165,6 +1166,7 @@ Base{
                         payment: details.payment
                     }
                     _SLOT.start_store_pending_balance(JSON.stringify(refundPayload));
+                    console.log('start_store_pending_balance', now, JSON.stringify(refundPayload));
                     release_print('Pengembalian Dana Tertunda', 'Silakan Ambil Struk Transaksi Anda Dan Lapor Petugas');
                 }
             }
