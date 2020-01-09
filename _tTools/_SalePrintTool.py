@@ -712,6 +712,8 @@ def get_admin_data():
         __data['all_cash'] = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __ FROM Cash WHERE  '
                                                ' collectedAt = 19900901 ')[0]['__']        
         __data['all_cards'] = _DAO.custom_query(' SELECT pid, sell_price FROM ProductStock ')
+        __data['ppob_cash'] = _DAO.custom_query(' SELECT IFNULL(SUM(amount), 0) AS __ FROM Cash WHERE pid LIKE "ppob%" '
+                                               ' AND collectedAt = 19900901 ')[0]['__']    
         # __data['amt_card'] = _DAO.custom_query(' SELECT IFNULL(SUM(sale), 0) AS __ FROM Transactions WHERE '
         #                                        ' bankMid = "" AND bankTid = "" AND sale > ' + str(CARD_SALE) +
         #                                        ' AND  pid like "shop%" ')[0]['__']
@@ -739,9 +741,9 @@ def get_admin_data():
         # SELECT sum(amount) as total FROM Cash WHERE collectedAt is null
         __data['all_amount'] = int(__data['amt_card']) + int(__data['amt_top10k']) + int(__data['amt_top20k']) + \
                                int(__data['amt_top50k']) + int(__data['amt_top100k'] + int(__data['amt_top200k']))
-        __data['other_amount'] = 0
-        if int(__data['all_cash']) > int(__data['all_amount']):
-            __data['other_amount'] = int(__data['all_cash']) - int(__data['all_amount'])
+        __data['failed_amount'] = 0
+        if int(__data['all_cash']) > (int(__data['all_amount']) + int(__data['ppob_cash'])):
+            __data['failed_amount'] = int(__data['all_cash']) - (int(__data['all_amount']) + int(__data['ppob_cash']))
         __data['init_slot1'] = __data['slot1']
         __data['init_slot2'] = __data['slot2']
         __data['init_slot3'] = __data['slot3']
@@ -909,11 +911,11 @@ def admin_print_global(struct_id, ext='.pdf'):
         pdf.set_font(USED_FONT, '', line_size)
         pdf.cell(padding_left, 0, 'BNI Wallet : Rp. ' + clean_number(str(s['sam_2_balance'])), 0, 0, 'L')
         pdf.ln(line_size)
-        # pdf.set_font(USED_FONT, '', line_size)
-        # pdf.cell(padding_left, 0, 'Failed/Exceed TRX: Rp. ' + clean_number(str(s['failed_amount'])), 0, 0, 'L')
-        # pdf.ln(tiny_space)
         pdf.set_font(USED_FONT, '', line_size)
-        pdf.cell(padding_left, 0, 'PPOB/Other Payment: Rp. ' + clean_number(str(s['other_amount'])), 0, 0, 'L')
+        pdf.cell(padding_left, 0, 'Failed/Exceed TRX: Rp. ' + clean_number(str(s['failed_amount'])), 0, 0, 'L')
+        pdf.ln(tiny_space)
+        pdf.set_font(USED_FONT, '', line_size)
+        pdf.cell(padding_left, 0, 'PPOB Cash TRX: Rp. ' + clean_number(str(s['ppob_cash'])), 0, 0, 'L')
         pdf.set_font(USED_FONT, '', line_size+3)
         pdf.ln(tiny_space)
         # total_amount = str(int(s['all_amount']) + int(s['failed_amount']))
