@@ -253,12 +253,18 @@ def start_transfer_balance(payload):
 LAST_TRANSFER_REFF_NO = ''
 
 
-def diva_transfer_balance(payload):
+def start_store_pending_balance(payload):
+    store_only = True
+    _Helper.get_pool().apply_async(diva_transfer_balance, (payload, store_only,))
+
+
+def diva_transfer_balance(payload, store_only=False):
     global LAST_TRANSFER_REFF_NO
     payload = json.loads(payload)
     if _Global.empty(payload['reff_no']):
         LOGGER.warning((str(payload), 'MISSING_REFF_NO'))
-        PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|MISSING_REFF_NO')
+        if not store_only:
+            PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|MISSING_REFF_NO')
         return
     if LAST_TRANSFER_REFF_NO == payload['reff_no']:
         LOGGER.warning((str(payload), LAST_TRANSFER_REFF_NO, 'DUPLICATE_REFF_NO'))
@@ -266,19 +272,24 @@ def diva_transfer_balance(payload):
         return
     if _Global.empty(payload['customer']):
         LOGGER.warning((str(payload), 'MISSING_CUSTOMER'))
-        PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|MISSING_CUSTOMER')
+        if not store_only:
+            PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|MISSING_CUSTOMER')
         return
     if _Global.empty(payload['amount']):
         LOGGER.warning((str(payload), 'MISSING_AMOUNT'))
-        PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|MISSING_AMOUNT')
+        if not store_only:
+            PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|MISSING_AMOUNT')
         return
     payload['customer_login'] = payload['customer']
+    if store_only is True:
+        store_pending_refund(payload)
+        return
     try:
         url = _Global.BACKEND_URL+'diva/transfer'
         s, r = _NetworkAccess.post_to_url(url=url, param=payload)
         if s == 200 and r['data'] is not None:
             if r['result'] == 'OK':
-                LAST_TRANSFER_REFF_NO = _Global.empty(payload['reff_no'])
+                LAST_TRANSFER_REFF_NO = payload['reff_no']
                 PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|SUCCESS')
             else:
                 PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|PENDING')
@@ -289,7 +300,16 @@ def diva_transfer_balance(payload):
             # remarks: details,
             # mode: refundMode,
             # payment: details.payment
-            _DAO.insert_pending_refund({
+            store_pending_refund(payload)
+            PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|ERROR')
+        LOGGER.debug((str(payload), str(r)))
+    except Exception as e:
+        LOGGER.warning((str(payload), str(e)))
+        PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|ERROR')
+
+
+def store_pending_refund(payload):
+    return _DAO.insert_pending_refund({
                 'tid'           : _Global.TID,
                 'trxid'         : payload['reff_no'],
                 'amount'        : int(payload['amount']),
@@ -298,9 +318,3 @@ def diva_transfer_balance(payload):
                 'paymentType'   : payload['payment'],
                 'remarks'       : json.dumps(payload['remarks'])
             })
-            PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|ERROR')
-        LOGGER.debug((str(payload), str(r)))
-    except Exception as e:
-        LOGGER.warning((str(payload), str(e)))
-        PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|ERROR')
-

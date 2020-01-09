@@ -592,6 +592,10 @@ class SlotHandler(QObject):
         _GRG.start_log_book_cash(pid, amount)
     start_log_book_cash = pyqtSlot(str, str)(start_log_book_cash)
 
+    def start_store_pending_balance(self, payload):
+        _PPOBService.start_store_pending_balance(payload)
+    start_store_pending_balance = pyqtSlot(str)(start_store_pending_balance)
+
 
 def s_handler():
     _KioskService.K_SIGNDLER.SIGNAL_GET_FILE_LIST.connect(view.rootObject().result_get_file_list)

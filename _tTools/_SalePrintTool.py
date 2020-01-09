@@ -941,22 +941,24 @@ def admin_print_global(struct_id, ext='.pdf'):
         LOGGER.warning(str(e))
         SPRINTTOOL_SIGNDLER.SIGNAL_ADMIN_PRINT_GLOBAL.emit('ADMIN_PRINT|ERROR')
     finally:
+        mark_sync_collected_data(s)
         save_receipt_local(struct_id, json.dumps(s), 'ACCESS_REPORT')
         _ProductService.LAST_UPDATED_STOCK = []
-        mark_sync_collected_data(s)
         del pdf
 
 
 def mark_sync_collected_data(s):
-    if s is not False or not _Global.empty(s):
+    if not _Global.empty(s):
         _DAO.custom_update(' UPDATE Transactions SET isCollected = 1 WHERE isCollected = 0 ')
         operator = 'OPERATOR'
         if _UserService.USER is not None:
             operator = _UserService.USER['first_name']
         # Reset Cash Log
-        _DAO.custom_update(
-            ' UPDATE Cash SET collectedAt = ' + str(_Helper.now()) + ', collectedUser = "' + str(operator) +
-            ' WHERE collectedAt = 19900901 ')
+        __update_cash_str = ' UPDATE Cash SET collectedAt = ' + str(_Helper.now()) + ', collectedUser = "' + str(operator) + \
+            '"  WHERE collectedAt = 19900901 '
+        _KioskService.python_dump(str(__update_cash_str))
+        __exec_cash_update = _DAO.custom_update(__update_cash_str)
+        _KioskService.python_dump(str(__exec_cash_update))
         return True
     else:
         return False

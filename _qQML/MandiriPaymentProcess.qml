@@ -1156,6 +1156,15 @@ Base{
                     details.refund_status = 'AVAILABLE';
                     details.refund_number = '';
                     details.refund_amount = refundAmount.toString();
+                    var refundPayload = {
+                        amount: details.refund_amount,
+                        customer: 'NO_PHONE_NUMBER',
+                        reff_no: details.shop_type + details.epoch.toString(),
+                        remarks: details,
+                        mode: 'not_having_phone_no_for_refund',
+                        payment: details.payment
+                    }
+                    _SLOT.start_store_pending_balance(JSON.stringify(refundPayload));
                     release_print('Pengembalian Dana Tertunda', 'Silakan Ambil Struk Transaksi Anda Dan Lapor Petugas');
                 }
             }
