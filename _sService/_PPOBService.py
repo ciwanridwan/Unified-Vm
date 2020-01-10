@@ -51,7 +51,7 @@ def get_ppob_product(signal=True):
         else:
             products = _Global.load_from_temp_data(temp='ppob-product', mode='json')
     # products = store_image_item(products)
-    products = sorted(products, key=itemgetter('status'))
+    products = sorted(products, key=itemgetter('operator'))
     if signal is True:
         PPOB_SIGNDLER.SIGNAL_GET_PRODUCTS.emit(json.dumps(products))
 

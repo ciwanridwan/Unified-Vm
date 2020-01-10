@@ -107,8 +107,8 @@ def get_from_url(url, param=None, header=None, log=True):
         return r.status_code, ERROR_RESPONSE
 
     if log is True:
-        if 'FAIL|' in response:
-            LOGGER.debug(('<URL>: ' + str(url) + " <STAT>: " + str(r.status_code) + " <RESP>: " + str(response[:255])))
+        if 'FAIL|' in response or len(response) > 255:
+            LOGGER.debug(('<URL>: ' + str(url) + " <STAT>: " + str(r.status_code) + " <RESP>: [TRIM]" + str(response[:255])))
         else:
             LOGGER.debug(('<URL>: ' + str(url) + " <STAT>: " + str(r.status_code) + " <RESP>: " + str(response)))
     return r.status_code, response
@@ -141,8 +141,8 @@ def post_to_url(url, param=None, header=None, log=True):
         return r.status_code, ERROR_RESPONSE
 
     if log is True:
-        if 'FAIL|' in response:
-            LOGGER.debug(('<URL>: ' + str(url) + " <POST> : " + str(param) + " <RESP> : " + str(response[:255])))
+        if 'FAIL|' in response or len(response) > 255:
+            LOGGER.debug(('<URL>: ' + str(url) + " <POST> : " + str(param) + " <RESP> : [TRIM]" + str(response[:255])))
         else:
             LOGGER.debug(('<URL>: ' + str(url) + " <POST> : " + str(param) + " <RESP> : " + str(response)))
     return r.status_code, response

@@ -239,6 +239,15 @@ Base{
     }
 
 
+    Image{
+        id: sign_scroll
+        scale: 0.75
+        anchors.right: parent.right
+        anchors.rightMargin: 50
+        anchors.verticalCenter: parent.verticalCenter
+        source: 'source/scroll_sign.png'
+    }
+
     //==============================================================
 
 

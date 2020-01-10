@@ -323,7 +323,8 @@ def retry_pending_refund():
                     _param = {
                         'customer_login'    : p['customer'],
                         'amount'            : str(p['amount']),
-                        'reff_no'           : p['trxid']
+                        'reff_no'           : p['trxid'],
+                        'remarks'           : json.loads(p['remarks'])
                     } 
                     s, r = _NetworkAccess.post_to_url(url=_url, param=_param)
                     if s == 200 and r['data'] is not None:
