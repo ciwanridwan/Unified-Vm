@@ -55,7 +55,12 @@ QPROX = {
     "SEND_CRYPTO": "016", #Send Cryptogram For Topup Modal
     "REFILL_ZERO": "018", #Refill Zero To Fix Error Update Balance Failure
     "UPDATE_BALANCE_ONLINE": "019", #Update Balance Online Mandiri
+    "PURSE_DATA_BNI_CONTACTLESS": "020", #Get Card Info BNI Tapcash contactless,
+    "SEND_CRYPTO_CONTACTLESS": "021", #Send Cryptogram For BNI Tapcash contactless,
 }
+
+# 020 GetPurseData (ambil pursedata dari kartu), tidak ada parameter
+# 021 UpdateCardCryptogram (update cryptogram ke kartu), parameter pursedata & cryptogram
 
 
 BNI_CARD_NO_SLOT_1 = ''
