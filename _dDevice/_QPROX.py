@@ -247,8 +247,9 @@ def init_qprox():
                         INIT_LIST.append(BANK)
                         INIT_STATUS = True
                         INIT_BNI = True
-                        #Add Call KA Auth
-                        ka_info_bni(_Global.BNI_ACTIVE)
+                        ka_info_bni(slot=_Global.BNI_ACTIVE)
+                        sleep(1.5)
+                        get_card_info(slot=_Global.BNI_ACTIVE, bank='BNI')    
                         # get_bni_wallet_status()
                     else:
                         LOGGER.warning((BANK['BANK'], result))

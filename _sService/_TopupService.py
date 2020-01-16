@@ -18,10 +18,9 @@ class TopupSignalHandler(QObject):
 TP_SIGNDLER = TopupSignalHandler()
 LOGGER = logging.getLogger()
 
-# Hardcoded Config For Topup ===============================
-TOPUP_URL = 'http://apiv2.mdd.co.id:10107/'
-TOPUP_TOKEN = 'ab247c99e983d0c0d0772246ccb465e8'
-TOPUP_MID = '1e931ee42dc9d826ff945851782f0942'
+TOPUP_URL = _Global.TOPUP_URL
+TOPUP_TOKEN = _Global.TOPUP_TOKEN
+TOPUP_MID = _Global.TOPUP_MID
 # TOPUP_TID = '0123456789abcdefghijkl' -> Change Using Terminal ID
 TOPUP_TID = _Global.TID
 # ==========================================================

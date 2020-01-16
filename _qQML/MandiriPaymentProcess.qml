@@ -489,6 +489,7 @@ Base{
                 press = '0'
                 return;
             } else {
+                global_frame.close();
                 receivedCash = parseInt(grgResult);
                 abc.counter = timer_value;
                 my_timer.restart();

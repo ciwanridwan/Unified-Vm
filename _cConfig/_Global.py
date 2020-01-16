@@ -116,6 +116,11 @@ QR_HOST = _ConfigParser.get_set_value('QR', 'qr^host', 'http://apiv2.mdd.co.id:1
 QR_TOKEN = _ConfigParser.get_set_value('QR', 'qr^token', 'e6f092a0fa88d9cac8dac3d2162f1450')
 QR_MID = _ConfigParser.get_set_value('QR', 'qr^mid', '000972721511382bf739669cce165808')
 
+# APIV2 Credentials For Topup
+TOPUP_URL = 'http://apiv2.mdd.co.id:10107/'
+TOPUP_TOKEN = 'ab247c99e983d0c0d0772246ccb465e8'
+TOPUP_MID = '1e931ee42dc9d826ff945851782f0942'
+
 
 def serialize_payload(data, specification='MDD_CORE_API'):
     if specification == 'MDD_CORE_API':
@@ -271,8 +276,8 @@ BRI_WALLET = 0
 BCA_WALLET = 0
 DKI_WALLET = 0
 
-BNI_SAM_1_NO = ''
-BNI_SAM_2_NO = ''
+BNI_SAM_1_NO = _ConfigParser.get_set_value('QPROX', 'bni^sam^1^no', '---')
+BNI_SAM_2_NO = _ConfigParser.get_set_value('QPROX', 'bni^sam^2^no', '---')
 
 EDC_ERROR = ''
 NFC_ERROR = ''
@@ -324,6 +329,16 @@ def set_mandiri_uid(slot, uid):
     if slot == '2':
         MANDIRI_NO_2 = uid
         _ConfigParser.set_value('QPROX', 'mandiri^sam^uid^2', uid)
+
+
+def set_bni_sam_no(slot, no):
+    global BNI_SAM_1_NO, BNI_SAM_2_NO
+    if slot == '1':
+        BNI_SAM_1_NO = no
+        _ConfigParser.set_value('QPROX', 'bni^sam^1^no', no)
+    if slot == '2':
+        BNI_SAM_2_NO = no
+        _ConfigParser.set_value('QPROX', 'bni^sam^2^no', no)
 
 
 def digit_in(s):
