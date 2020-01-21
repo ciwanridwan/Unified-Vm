@@ -933,9 +933,9 @@ def update_balance_online(bank):
                 QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|SUCCESS|'+json.dumps(output))
             else:
                 if MANDIRI_GENERAL_ERROR in result:
-                    QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|MANDIRI_GENERAL_ERROR')
+                    QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|GENERAL_ERROR')
                 elif MANDIRI_NO_PENDING in result:
-                    QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|MANDIRI_NO_PENDING')
+                    QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|NO_PENDING_BALANCE')
                 else:
                     QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
             LOGGER.debug((result, response))
@@ -953,7 +953,10 @@ def update_balance_online(bank):
             # - Request Update Balance BNI
             crypto_data = request_update_balance_bni(card_info)
             if crypto_data is False:
-                QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
+                QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|GENERAL_ERROR')
+                return
+            if crypto_data == 'NO_PENDING_BALANCE':
+                QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|NO_PENDING_BALANCE')
                 return
             attempt = 0
             while True:
@@ -1021,6 +1024,8 @@ def request_update_balance_bni(card_info):
                 # }
             # }
             return response['data']
+        elif response['response']['code'] == 400 and 'No Pending Balance' in response['response']['message']:
+            return 'NO_PENDING_BALANCE'
         else:
             return False
     except Exception as e:

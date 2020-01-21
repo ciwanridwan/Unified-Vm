@@ -72,12 +72,12 @@ Base{
             press = '0';
             return;
         }
-        if (['MANDIRI_GENERAL_ERROR'].indexOf(result) > -1){
+        if (['GENERAL_ERROR'].indexOf(result) > -1){
             switch_frame('source/take_prepaid_white.png', 'Update Saldo Hampir Berhasil', 'Angkat Dan Tempelkan Kembali Kartu Anda', 'closeWindow', true )
             press = '0';
             return;
         }
-        if (['MANDIRI_NO_PENDING'].indexOf(result) > -1){
+        if (['NO_PENDING_BALANCE'].indexOf(result) > -1){
             switch_frame('source/smiley_down.png', 'Update Saldo Gagal', 'Kartu Anda Tidak Memiliki Pending Balance', 'closeWindow', true )
             press = '0';
             return;
