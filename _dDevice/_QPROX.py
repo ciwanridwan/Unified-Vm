@@ -1002,7 +1002,8 @@ def request_update_balance_bni(card_info):
             'mid': _Global.TOPUP_MID,
             'tid': _Global.TID,
             'reff_no': _Helper.time_string(f='%Y%m%d%H%M%S'),
-            'card_info': card_info
+            'card_info': card_info,
+            'card_no': card_info[4:20]
         }
         status, response = _NetworkAccess.post_to_url(url=_Global.TOPUP_URL + 'v1/topup-bni/update', param=param)
         LOGGER.debug((str(param), str(status), str(response)))
