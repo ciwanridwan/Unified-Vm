@@ -925,6 +925,7 @@ def update_balance_online(bank):
             #   result = '6032111122223333|20000|198000'
             if response == 0 and result is not None:
                 output = {
+                    'bank': bank,
                     'card_no': result.split('|')[0],
                     'topup_amount': result.split('|')[1],
                     'last_balance': result.split('|')[2],
@@ -940,4 +941,105 @@ def update_balance_online(bank):
             LOGGER.debug((result, response))
         except Exception as e:
             LOGGER.warning(str(e))
+            QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
+    if bank == 'BNI':
+        try:
+            # Do Action List :
+            # - Get Purse Data Tapcash
+            card_info = get_card_info_tapcash()
+            if card_info is False:
+                QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
+                return
+            # - Request Update Balance BNI
+            crypto_data = request_update_balance_bni(card_info)
+            if crypto_data is False:
+                QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
+                return
+            attempt = 0
+            while True:
+                attempt+=1
+                send_crypto_tapcash = send_cryptogram_tapcash(crypto_data['dataToCard'], card_info)
+                if send_crypto_tapcash is True:
+                # - Send Output as Mandiri Specification            
+                    output = {
+                        'bank': bank,
+                        'card_no': card_info[4:20],
+                        'topup_amount': crypto_data['amount'],
+                        'last_balance': '0', #TODO: replace "last_balance"
+                    }
+                    QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|SUCCESS|'+json.dumps(output))
+                    return
+                if attempt >= 3:
+                    QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
+                    return
+                sleep(1)
+        except Exception as e:
+            LOGGER.warning(str(e))
+            QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
+
+
+def get_card_info_tapcash():
+    # PURSE_DATA_BNI_CONTACTLESS
+    # {"Result":"0","Command":"020","Parameter":"0","Response":"000175461700003074850000000001232195AEEADE4A080F4B00285DDCD9B4BA924B00000000010013B288889999040000962F210F4088889999040000962F210F4000000000000000000000ACD44750B49BC46B63D15DC8579D3280","ErrorDesc":"Sukses"}
+    param = QPROX['PURSE_DATA_BNI_CONTACTLESS'] + '|'
+    try:
+        response, result = _Command.send_request(param=param, output=None)
+        if response == 0 and result is not None:
+            return result
+        else:
+            return False
+    except Exception as e:
+        LOGGER.warning(str(e))
+        return False
+
+
+def request_update_balance_bni(card_info):
+    if card_info is None:
+        return False
+    try:
+        param = {
+            'token': _Global.TOPUP_TOKEN,
+            'mid': _Global.TOPUP_MID,
+            'tid': _Global.TID,
+            'reff_no': _Helper.time_string(f='%Y%m%d%H%M%S'),
+            'card_info': card_info
+        }
+        status, response = _NetworkAccess.post_to_url(url=_Global.TOPUP_URL + 'v1/topup-bni/update', param=param)
+        LOGGER.debug((str(param), str(status), str(response)))
+        if status == 200 and response['response']['code'] == 200:
+            # {
+                # "response":{
+                #   "code":200,
+                #   "message":"Update Balance Success",
+                #   "latency":1.4313230514526
+                # },
+                # "data":{
+                #   "amount":"30000",
+                #   "auth_id":"164094",
+                #   "dataToCard":"06015F902D04C57100000000000000001C54522709845B42F240343E96F11041"
+                # }
+            # }
+            return response['data']
+        else:
+            return False
+    except Exception as e:
+        LOGGER.warning(str(e))
+        return False
+
+
+def send_cryptogram_tapcash(cyptogram, card_info):
+    if cyptogram is None or card_info is None:
+        return False
+    try:
+        param = QPROX['SEND_CRYPTO_CONTACTLESS'] + '|' + str(card_info) + '|' + str(cyptogram)
+        response, result = _Command.send_request(param=param, output=_Command.MO_REPORT)
+        LOGGER.debug((str(response), str(result)))
+        if response == 0 and result is not None: #TODO: Check Send Cryptogram Result
+            return True
+        else:
+            return False
+    except Exception as e:
+        LOGGER.warning(str(e))
+        return False
+
 

@@ -54,9 +54,7 @@ def check_connection(url, param):
                         _KioskService.update_kiosk_status(r)
                     start_sync_machine_status()
                     sleep(10)
-                    _KioskService.kiosk_status()
-                else:
-                    _KioskService.kiosk_status()
+                _KioskService.kiosk_status()
             except Exception as e:
                 LOGGER.debug(e)
         sleep(61.7)

@@ -22,6 +22,7 @@ Base{
     property bool jakcardAvailable: false
     property var actionMode: 'check_balance'
     property variant allowedBank: []
+    property variant allowedUpdateBalanceOnline: ['MANDIRI', 'BNI']
 
     imgPanel: 'source/cek_saldo.png'
     textPanel: 'Cek Saldo Kartu Prabayar'
@@ -66,8 +67,8 @@ Base{
         var func = u.split('|')[0]
         var result = u.split('|')[1]
         popup_loading.close();
-        if (['ERROR', 'UNKNOWN_BANK'].indexOf(result) > -1){
-            switch_frame('source/smiley_down.png', 'Terjadi Kesalahan Saat Update Balance', '', 'closeWindow', false )
+        if (['UNKNOWN_BANK', 'ERROR'].indexOf(result) > -1){
+            switch_frame('source/smiley_down.png', 'Terjadi Kesalahan Saat Update Balance', 'Silakan Coba Lagi Dalam Beberapa Saat', 'closeWindow', false )
             press = '0';
             return;
         }
@@ -85,7 +86,12 @@ Base{
             var info = JSON.parse(u.split('|')[2]);
             var topup_amount = info.topup_amount;
             cardNo = info.card_no;
-            balance = info.last_balance;
+            if (parseInt(info.last_balance) == 0){
+                balance = parseInt(balance) + parseInt(topup_amount)
+                balance = balance.toString()
+            } else {
+                balance = info.last_balance;
+            }
             switch_frame('source/success.png', 'Penambahan Saldo '+FUNC.insert_dot(topup_amount)+' Berhasil', 'Saldo Akhir Kartu Anda ' + FUNC.insert_dot(balance), 'backToMain', true );
             return;
         }
@@ -227,11 +233,11 @@ Base{
         anchors.horizontalCenter: parent.horizontalCenter
         button_text: 'UPDATE SALDO'
         modeReverse: true
-        visible: !popup_loading.visible && !preload_check_card.visible && (['MANDIRI'].indexOf(bankName) > -1)
+        visible: !popup_loading.visible && !preload_check_card.visible && (allowedUpdateBalanceOnline.indexOf(bankName) > -1)
         MouseArea{
             anchors.fill: parent
             onClicked: {
-                _SLOT.user_action_log('Press "UPDATE SALDO"');
+                _SLOT.user_action_log('Press "UPDATE SALDO ONLINE" for Bank '+bankName);
                 actionMode = 'update_balance_online';
                 preload_check_card.open();
             }
