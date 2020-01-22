@@ -408,7 +408,6 @@ def edc_settlement_credit():
     try:
         # Add Clear of Content
         # _Command.clear_content_of(_Command.MO_REPORT, '['+_Tools.get_random_chars(5, '1234567890')+']')
-
         if OPEN_STATUS is False:
             if EDC_TESTING_MODE is True:
                 OPEN_STATUS = EDC_TESTING_MODE

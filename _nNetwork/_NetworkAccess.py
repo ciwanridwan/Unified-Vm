@@ -168,6 +168,8 @@ def get_local(url, param=None, log=True):
 
 
 def item_download(url, path, name=None):
+    if 'mdd.co.id:11199' in url:
+        url = url.replace('11199', '2142')
     if name is None:
         item = url.split('/')[-1]
     else:

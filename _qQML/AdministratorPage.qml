@@ -98,15 +98,21 @@ Base{
 
     function get_topup_bni_result(r){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-        console.log('get_topup_bni_result', now, a);
+        console.log('get_topup_bni_result', now, r);
         popup_loading.close();
-        false_notif('Dear '+userData.first_name+'|Perhatian, Kode Proses:\n'+r);
         if (r=='SUCCESS_TOPUP_BNI'){
             false_notif('Dear '+userData.first_name+'|Selamat Proses Topup Deposit BNI Berhasil');
             press = '0';
             _SLOT.kiosk_get_machine_summary();
             _SLOT.kiosk_get_product_stock();
         }
+        if (r=='FAILED_UPDATE_BALANCE_BNI'){
+            false_notif('Dear '+userData.first_name+'|Gagal Memproses, Silakan Aktivasi Ulang Deposit');
+            press = '0';
+            _SLOT.kiosk_get_machine_summary();
+            _SLOT.kiosk_get_product_stock();
+        }
+        false_notif('Dear '+userData.first_name+'|Perhatian, Kode Proses:\n'+r);
     }
 
     function get_admin_action(a){
