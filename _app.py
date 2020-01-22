@@ -596,6 +596,10 @@ class SlotHandler(QObject):
         _PPOBService.start_store_pending_balance(payload)
     start_store_pending_balance = pyqtSlot(str)(start_store_pending_balance)
 
+    def start_do_force_topup_bni(self):
+        _TopupService.start_do_force_topup_bni()
+    start_do_force_topup_bni = pyqtSlot()(start_do_force_topup_bni)
+
 
 def s_handler():
     _KioskService.K_SIGNDLER.SIGNAL_GET_FILE_LIST.connect(view.rootObject().result_get_file_list)
@@ -1019,9 +1023,6 @@ if __name__ == '__main__':
     print("pyt: Retrying Pending Refund...")
     _Sync.start_retry_pending_refund()
     sleep(.5)
-    print("pyt: Syncing BNI Settlement...")
-    _Sync.start_sync_settlement_bni()
-    sleep(.5)
     if setting['reloadService'] is True:
         sleep(.5)
         print("pyt: Restarting MDDTopUpService...")
@@ -1050,6 +1051,9 @@ if __name__ == '__main__':
     sleep(.5)
     print("pyt: Triggering Mandiri Balance Validation...")
     _SettlementService.start_validate_update_balance()
+    sleep(.5)
+    print("pyt: Triggering BNI Settlement Sync...")
+    _Sync.start_sync_settlement_bni()
     view.show()
     app.exec_()
     del view

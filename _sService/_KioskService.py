@@ -201,6 +201,8 @@ def define_theme(d):
     if not _Global.empty(d['tvc_waiting_time']):
         _Global.log_to_temp_config('tvc^waiting^time', str(d['tvc_waiting_time']))
         content_js += 'var tvc_waiting_time = ' +  str(d['tvc_waiting_time']) + ';' + os.linesep
+    # Temp Config For Ubal Online
+    content_js += 'var bank_ubal_online = ' + json.dumps(_Global.BANK_UBAL_ONLINE) + ';' + os.linesep
     # Receipt Logo
     if not _Global.empty(d['receipt_custom_text']):
         _Global.CUSTOM_RECEIPT_TEXT = d['receipt_custom_text'].replace(os.linesep, '|')

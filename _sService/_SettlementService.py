@@ -41,6 +41,7 @@ HEADER = {
 FILE_PATH = os.path.join(sys.path[0], '_rRemoteFiles')
 
 BID = _Global.BID
+GLOBAL_SETTLEMENT = []
 
 
 def store_local_settlement(__param):
@@ -106,7 +107,6 @@ def get_response_settlement(filename, remote_path):
     return _SFTPAccess.get_file(filename, remote_path=remote_path)
 
 
-GLOBAL_SETTLEMENT = []
 MANDIRI_LAST_TIMESTAMP = ''
 MANDIRI_LAST_FILENAME = ''
 

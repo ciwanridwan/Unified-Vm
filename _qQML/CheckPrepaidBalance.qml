@@ -2,6 +2,7 @@ import QtQuick 2.4
 import QtQuick.Controls 1.3
 import QtGraphicalEffects 1.0
 import "base_function.js" as FUNC
+import "config.js" as CONF
 
 
 Base{
@@ -22,7 +23,7 @@ Base{
     property bool jakcardAvailable: false
     property var actionMode: 'check_balance'
     property variant allowedBank: []
-    property variant allowedUpdateBalanceOnline: ['MANDIRI', 'BNI']
+    property variant allowedUpdateBalanceOnline: CONF.bank_ubal_online
 
     imgPanel: 'source/cek_saldo.png'
     textPanel: 'Cek Saldo Kartu Prabayar'

@@ -49,6 +49,12 @@ def start_do_topup_bni(slot):
     _Helper.get_pool().apply_async(do_topup_bni, (int(slot),))
 
 
+def start_do_force_topup_bni():
+    slot = _Global.BNI_ACTIVE
+    force = True
+    _Helper.get_pool().apply_async(do_topup_bni, (int(slot), force, ))
+
+
 def do_topup_bni(slot=1, force=False):
     try:
         if force is False and _Global.ALLOW_DO_TOPUP is False:

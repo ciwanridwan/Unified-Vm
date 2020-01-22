@@ -46,6 +46,7 @@ Base{
         base.result_process_settlement.connect(get_admin_action);
         base.result_init_online_qprox.connect(get_admin_action);
         base.result_admin_sync_stock.connect(get_admin_action);
+        base.result_do_topup_bni.connect(get_topup_bni_result)
     }
 
     Component.onDestruction:{
@@ -64,6 +65,7 @@ Base{
         base.result_process_settlement.disconnect(get_admin_action);
         base.result_init_online_qprox.disconnect(get_admin_action);
         base.result_admin_sync_stock.disconnect(get_admin_action);
+        base.result_do_topup_bni.disconnect(get_topup_bni_result)
     }
 
     function do_action_signal(s){
@@ -92,6 +94,19 @@ Base{
         press = '0';
         _SLOT.kiosk_get_machine_summary();
         _SLOT.kiosk_get_product_stock();
+    }
+
+    function get_topup_bni_result(r){
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('get_topup_bni_result', now, a);
+        popup_loading.close();
+        false_notif('Dear '+userData.first_name+'|Perhatian, Kode Proses:\n'+r);
+        if (r=='SUCCESS_TOPUP_BNI'){
+            false_notif('Dear '+userData.first_name+'|Selamat Proses Topup Deposit BNI Berhasil');
+            press = '0';
+            _SLOT.kiosk_get_machine_summary();
+            _SLOT.kiosk_get_product_stock();
+        }
     }
 
     function get_admin_action(a){
@@ -388,6 +403,25 @@ Base{
                     console.log('activation_bni_button is pressed..!');
                     popup_loading.open();
                     _SLOT.start_master_activation_bni();
+                }
+            }
+        }
+
+        AdminPanelButton{
+            id: topup_bni_deposit_button
+            z: 10
+            button_text: 'topup bni\ndeposit'
+            visible: !popup_loading.visible
+            modeReverse: true
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('Admin Page "Topup BNI Deposit"');
+                    if (press != '0') return;
+                    press = '1';
+                    console.log('topup_bni_deposit_button is pressed..!');
+                    popup_loading.open();
+                    _SLOT.start_do_force_topup_bni();
                 }
             }
         }

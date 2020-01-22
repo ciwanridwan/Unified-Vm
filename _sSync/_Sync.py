@@ -253,6 +253,8 @@ def start_sync_settlement_bni():
 
 def sync_settlement_data(bank):
     _url = _Global.SMT_CONFIG['full_url']
+    # Do BNI Settlement Creation Every +- 15 Minutes
+    _SettlementService.start_do_bni_topup_settlement()
     _table_ = 'Settlement'
     while True:
         try:

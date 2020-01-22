@@ -56,6 +56,9 @@ TEMP_FOLDER = sys.path[0] + '/_tTmp/'
 if not os.path.exists(TEMP_FOLDER):
     os.makedirs(TEMP_FOLDER)
 
+# Temporary Update Balance Config Hardcoded
+BANK_UBAL_ONLINE = ['MANDIRI']
+
 
 def clean_white_space(s):
     return re.sub(r'\s+', '', s)
