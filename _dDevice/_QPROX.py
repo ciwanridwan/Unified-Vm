@@ -163,12 +163,12 @@ def get_card_info(slot=1, bank='BNI'):
             }
             # ka_info_bni(slot=slot)
             if slot == 1:
-                BNI_CARD_NO_SLOT_1 = output['card_no']
-                _Global.BNI_SAM_1_NO = BNI_CARD_NO_SLOT_1
+                _Global.BNI_SAM_1_NO = BNI_CARD_NO_SLOT_1 = output['card_no'] 
             if slot == 2:
-                BNI_CARD_NO_SLOT_2 = output['card_no']
-                _Global.BNI_SAM_2_NO = BNI_CARD_NO_SLOT_2
-            LOGGER.info(('final', str(slot), bank, str(output)))
+                _Global.BNI_SAM_2_NO = BNI_CARD_NO_SLOT_2 = output['card_no']
+            LOGGER.debug(('set_bni_sam_no', str(slot), output['card_no']))
+            _Global.set_bni_sam_no(str(slot), output['card_no'])
+            LOGGER.info(('final result', str(slot), bank, str(output)))
             return output
         else:
             _Global.NFC_ERROR = 'CHECK_CARD_INFO_BNI_ERROR_SLOT_'+str(slot)
