@@ -411,7 +411,7 @@ Base{
                     wa_voucher_button.color = 'white';
                 }
 //                _SLOT.post_tvc_log('Integrasi Transportasi.mp4');
-                if(tvc_loading.counter == 0){
+                if(tvc_loading.counter == 0 && tvc_timeout != 999999){
                     if (!mediaOnPlaying) {
                         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
                         console.log("starting tvc player...", now);
