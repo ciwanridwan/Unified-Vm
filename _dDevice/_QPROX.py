@@ -230,15 +230,14 @@ def init_qprox():
                         INIT_MANDIRI = False
                         if _Global.active_auth_session():
                             INIT_MANDIRI = True
-                            if _Global.mandiri_single_sam():
-                                _Global.MANDIRI_ACTIVE = 1
-                                _Global.save_sam_config(bank='MANDIRI')
-                                ka_info_mandiri(str(_Global.MANDIRI_ACTIVE))
-                            else:
-                                ka_info_mandiri(str(_Global.get_active_sam(bank='MANDIRI', reverse=True)))
+                        if _Global.mandiri_single_sam():
+                            _Global.MANDIRI_ACTIVE = 1
+                            _Global.save_sam_config(bank='MANDIRI')
+                            ka_info_mandiri(str(_Global.MANDIRI_ACTIVE))
+                        else:
+                            ka_info_mandiri(str(_Global.get_active_sam(bank='MANDIRI', reverse=True)))
                     else:
                         LOGGER.warning((BANK['BANK'], result))
-
                 if BANK['BANK'] == 'BNI':
                     param = QPROX['UPDATE_TID_BNI'] + '|' + TID_BNI
                     response, result = _Command.send_request(param=param, output=None)

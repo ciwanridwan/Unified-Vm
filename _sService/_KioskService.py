@@ -82,7 +82,7 @@ def load_from_temp_data(section, selected_mode):
 
 
 def update_kiosk_status(r):
-    _Global.KIOSK_STATUS = 'UNAUTHORIZED'
+    # _Global.KIOSK_STATUS = 'UNAUTHORIZED'
     try:
         _Global.PRINTER_STATUS = get_printer_status_v2()
         LOGGER.info(("get_printer_status : ", _Global.PRINTER_STATUS))
