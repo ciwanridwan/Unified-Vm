@@ -228,6 +228,11 @@ Base{
             allowedBank.push('BCA');
         }
 
+        if (allowedBank.indexOf(cardData.bank_name) == -1){
+            switch_frame('source/smiley_down.png', 'Mohon Maaf, fitur topup bank '+cardData.bank_name, 'sedang tidak dapat digunakan saat ini', 'backToMain', false );
+            return;
+        }
+
         switch(cardData.bank_name){
         case 'MANDIRI':
             highDenomTopup = ready.emoney[0]
@@ -336,7 +341,7 @@ Base{
         if (bank_name=='BRI') provider = 'Brizzi BRI';
         mainVisible = true;
         if (topupData!=undefined) topup_readiness(topupData);
-        if (topupData==undefined) _SLOT.start_get_topup_readiness();
+        else _SLOT.start_get_topup_readiness();
         popup_loading.close();
     }
 
