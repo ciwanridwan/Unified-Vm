@@ -235,7 +235,7 @@ def init_qprox():
                             # _Global.save_sam_config(bank='MANDIRI')
                             ka_info_mandiri(str(_Global.MANDIRI_ACTIVE), caller='FIRST_INIT_SINGLE_SAM')
                         else:
-                            ka_info_mandiri(str(_Global.get_active_sam(bank='MANDIRI', reverse=True)), , caller='FIRST_INIT')
+                            ka_info_mandiri(str(_Global.get_active_sam(bank='MANDIRI', reverse=True)), caller='FIRST_INIT')
                     else:
                         LOGGER.warning((BANK['BANK'], result))
                 if BANK['BANK'] == 'BNI':
