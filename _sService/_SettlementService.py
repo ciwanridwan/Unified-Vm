@@ -481,7 +481,7 @@ def validate_update_balance():
     while True:
         daily_settle_time = _ConfigParser.get_set_value('QPROX', 'mandiri^daily^settle^time', '02:00')
         if _Helper.time_string('%H') == daily_settle_time.split(':')[0]:
-            LOGGER.info(('TRIGGERED_BY_TIME_SETUP', _Helper.time_string, daily_settle_time))
+            LOGGER.info(('TRIGGERED_BY_TIME_SETUP', _Helper.time_string('%H'), daily_settle_time))
             _Global.MANDIRI_ACTIVE_WALLET = 0
             do_settlement_for(bank='MANDIRI', dummy=True)
             ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TRIGGERED')
