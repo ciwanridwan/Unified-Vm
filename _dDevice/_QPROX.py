@@ -446,7 +446,7 @@ def top_up_mandiri(amount, trxid='', slot=None):
             INIT_MANDIRI = False
             _Global.MANDIRI_ACTIVE_WALLET = 0
             return
-        if __status == '6982':
+        if __status in ['6982', '1001']:
             LOGGER.warning(('TOPUP_FAILED_KA_NOT_LOGIN', _result))
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_FAILED_KA_NOT_LOGIN')
             INIT_MANDIRI = False
