@@ -233,9 +233,9 @@ def init_qprox():
                         if _Global.MANDIRI_SINGLE_SAM:
                             # _Global.MANDIRI_ACTIVE = 1
                             # _Global.save_sam_config(bank='MANDIRI')
-                            ka_info_mandiri(str(_Global.MANDIRI_ACTIVE))
+                            ka_info_mandiri(str(_Global.MANDIRI_ACTIVE), caller='FIRST_INIT_SINGLE_SAM')
                         else:
-                            ka_info_mandiri(str(_Global.get_active_sam(bank='MANDIRI', reverse=True)))
+                            ka_info_mandiri(str(_Global.get_active_sam(bank='MANDIRI', reverse=True)), , caller='FIRST_INIT')
                     else:
                         LOGGER.warning((BANK['BANK'], result))
                 if BANK['BANK'] == 'BNI':
@@ -318,7 +318,7 @@ def auth_ka(_slot=None, initial=True):
         # Log Auth Time
         _Global.log_to_temp_config()
         INIT_MANDIRI = True
-        ka_info_mandiri(slot=_slot)
+        ka_info_mandiri(slot=_slot, caller='KA_AUTH')
         if initial is False or __single_sam is True:
             QP_SIGNDLER.SIGNAL_AUTH_QPROX.emit('AUTH_KA|SUCCESS')
         else:
@@ -332,7 +332,7 @@ def auth_ka(_slot=None, initial=True):
             __response, __result = _Command.send_request(param=__param, output=None)
             LOGGER.debug(("auth_ka : ", __slot, __result))
             if __response == 0:
-                ka_info_mandiri(slot=__slot)
+                ka_info_mandiri(slot=__slot, caller='KA_AUTH_#2')
                 QP_SIGNDLER.SIGNAL_AUTH_QPROX.emit('AUTH_KA|SUCCESS')
             else:
                 _Global.NFC_ERROR = 'AUTH_KA_MANDIRI_ERROR'
@@ -704,7 +704,7 @@ OUTPUT = Limit TopUp, Main Counter, History Counter
 MANDIRI_TOPUP_AMOUNT = 0
 
 
-def ka_info_mandiri(slot=None):
+def ka_info_mandiri(slot=None, caller=''):
     global MANDIRI_TOPUP_AMOUNT
     # if len(INIT_LIST) == 0:
     #     LOGGER.warning(('ka_info_mandiri', 'INIT_LIST', str(INIT_LIST)))
@@ -715,7 +715,7 @@ def ka_info_mandiri(slot=None):
         slot = str(_Global.MANDIRI_ACTIVE)
     param = QPROX['KA_INFO'] + '|' + slot + '|'
     response, result = _Command.send_request(param=param, output=_Command.MO_REPORT)
-    LOGGER.debug(("ka_info_mandiri", slot, result))
+    LOGGER.debug(("ka_info_mandiri", caller, slot, result))
     if response == 0 and result is not None:
         MANDIRI_TOPUP_AMOUNT = int(result.split('|')[0])
         _Global.MANDIRI_ACTIVE_WALLET = MANDIRI_TOPUP_AMOUNT
@@ -837,7 +837,7 @@ def init_online(rsp=None, slot=None):
     response, result = _Command.send_request(param=param, output=None)
     LOGGER.debug(("init_online : ", rsp, slot, result, response))
     if response == 0 and result is not None:
-        ka_info_mandiri(slot=slot)
+        ka_info_mandiri(slot=slot, caller='UPDATE_SALDO_KA')
         QP_SIGNDLER.SIGNAL_INIT_ONLINE_QPROX.emit('INIT_ONLINE|SUCCESS')
         _Global.log_to_temp_config(section='last^update')
         QP_SIGNDLER.SIGNAL_INIT_ONLINE_QPROX.emit('MANDIRI_SETTLEMENT|SUCCESS')
