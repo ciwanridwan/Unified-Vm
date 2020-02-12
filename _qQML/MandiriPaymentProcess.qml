@@ -319,13 +319,13 @@ Base{
         if (['ovo', 'gopay', 'dana', 'linkaja'].indexOf(details.payment) > -1) qr_payment_frame.close();
         abc.counter = 30;
         my_timer.restart();
-        if (t==undefined||t.indexOf('ERROR') > -1||t=='TOPUP_ERROR'||t=='TOPUP_FAILED_BALANCE_EXPIRED'||t.indexOf('TOPUP_SAM_REQUIRED')> -1){
+        if (t==undefined||t.indexOf('ERROR') > -1||t=='TOPUP_ERROR'||t=='TOPUP_FAILED_BALANCE_EXPIRED'||t.indexOf('BNI_SAM_BALANCE_NOT_SUFFICIENT')> -1){
             if (t=='TOPUP_FAILED_BALANCE_EXPIRED') _SLOT.start_reset_mandiri_settlement();
-            if (t.indexOf('TOPUP_SAM_REQUIRED')> -1) {
-                var slot_topup = t.split('|')[1]
-                _SLOT.start_do_topup_bni(slot_topup);
-                console.log('do topup action for slot : ', now, slot_topup)
-            }
+//            if (t.indexOf('BNI_SAM_BALANCE_NOT_SUFFICIENT')> -1) {
+//                var slot_topup = t.split('|')[1]
+//                _SLOT.start_do_topup_bni(slot_topup);
+//                console.log('Trigger Manual Topup BNI By Failed TRX : ', now, slot_topup)
+//            }
             switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Pada Proses Isi Ulang Saldo Prabayar Anda', 'closeWindow|3', true )
         } else if (t=='TOPUP_FAILED_CARD_NOT_MATCH'){
             switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Terdeteksi Perbedaan Kartu Saat Isi Ulang', 'closeWindow|3', true )

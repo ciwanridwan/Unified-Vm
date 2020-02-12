@@ -467,6 +467,25 @@ Base{
         }
     }
 
+    function minus_sam_balance(denom){
+        var sam_balance = 0;
+        switch(cardData.bank_name){
+            case 'MANDIRI':
+                sam_balance = parseInt(mandiriTopupWallet);
+                break;
+            case 'BNI':
+                sam_balance = parseInt(bniTopupWallet);
+                break;
+        }
+        if (parseInt(denom) > sam_balance){
+            press = '0';
+            switch_frame('source/smiley_down.png', 'Mohon Maaf Saldo Mesin Tidak Mencukupi', 'Silakan Pilih Denom Yang Lebih Kecil', 'closeWindow', false )
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     function generateConfirm(rows, confirmation, closeMode, timer){
         press = '0';
         global_confirmation_frame.open(rows, confirmation, closeMode, timer);
@@ -805,8 +824,9 @@ Base{
                 anchors.fill: parent
                 enabled: parent.buttonActive
                 onClicked: {
-                    if (exceed_balance(smallDenomTopup)) return
-                    _SLOT.user_action_log('Choose smallDenom "'+smallDenomTopup+'"');
+                    if (exceed_balance(smallDenomTopup)) return;
+                    if (minus_sam_balance(smallDenomTopup)) return;
+                    _SLOT.user_action_log('Choose smallDenom "'+smallDenomTopup+'"');;
                     if (press!='0') return;
                     press = '1';
                     release_denom_selection(small_denom);
@@ -822,7 +842,8 @@ Base{
                 anchors.fill: parent
                 enabled: parent.buttonActive
                 onClicked: {
-                    if (exceed_balance(midDenomTopup)) return
+                    if (exceed_balance(midDenomTopup)) return;
+                    if (minus_sam_balance(midDenomTopup)) return;
                     _SLOT.user_action_log('Choose midDenom "'+midDenomTopup+'"');
                     if (press!='0') return;
                     press = '1';
@@ -839,7 +860,8 @@ Base{
                 anchors.fill: parent
                 enabled: parent.buttonActive
                 onClicked: {
-                    if (exceed_balance(highDenomTopup)) return
+                    if (exceed_balance(highDenomTopup)) return;
+                    if (minus_sam_balance(highDenomTopup)) return;
                     _SLOT.user_action_log('Choose highDenom "'+highDenomTopup+'"');
                     if (press!='0') return;
                     press = '1';

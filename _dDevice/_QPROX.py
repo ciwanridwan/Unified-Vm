@@ -577,7 +577,6 @@ def update_bni_wallet(slot, amount, last_balance=None):
         else:
             _Global.BNI_SAM_2_WALLET = int(last_balance)
         _Global.BNI_ACTIVE_WALLET = _Global.BNI_SAM_2_WALLET
-    # Do Upload To Server
     _Global.upload_bni_wallet()
 
 
@@ -615,7 +614,6 @@ def fake_update_balance(bank, card_no, amount):
         return
 
 
-
 def start_topup_up_bni_with_attempt(amount, trxid, attempt):
     slot = None
     _Helper.get_pool().apply_async(top_up_bni, (amount, trxid, slot, attempt,))
@@ -647,6 +645,10 @@ def top_up_bni(amount, trxid, slot=None, attempt=None):
             __status = __data[0]
             if __status == '0000':
                 __remarks = __data[5]
+            if __status == '6984':
+                LOGGER.warning(('BNI_SAM_BALANCE_NOT_SUFFICIENT', slot, _result))
+                QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('BNI_SAM_BALANCE_NOT_SUFFICIENT|'+str(slot))
+                return
             if __status == '6969':
                 LOGGER.warning(('TOPUP_FAILED_CARD_NOT_MATCH', LAST_BALANCE_CHECK))
                 QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_FAILED_CARD_NOT_MATCH')

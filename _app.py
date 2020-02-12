@@ -1044,8 +1044,8 @@ if __name__ == '__main__':
             _QPROX.init_qprox()
         else:
             print("pyt: [ERROR] Connect to Prepaid Reader...")
-    sleep(.5)
     if _Global.CD['status'] is True:
+        sleep(.5)
         print("pyt: [INFO] Re-Init CD V2 Configuration...")
         _CD.reinit_v2_config()
     if _QPROX.INIT_MANDIRI is True:
@@ -1056,6 +1056,9 @@ if __name__ == '__main__':
         sleep(.5)
         print("pyt: Triggering BNI Settlement Sync...")
         _Sync.start_sync_settlement_bni()
+        sleep(.5)
+        print("pyt: Triggering BNI Balance Validation...")
+        _TopupService.start_define_topup_slot_bni()
     print("pyt: Syncing Ads Content...")
     sleep(.5)
     _KioskService.start_define_ads(3)

@@ -31,18 +31,20 @@ def start_define_topup_slot_bni():
 
 
 def define_topup_slot_bni():
-    try:
-        if _Global.BNI_SAM_1_WALLET <= _Global.MINIMUM_AMOUNT:
-            LOGGER.debug(('define_topup_slot_bni 1', str(_Global.MINIMUM_AMOUNT), str(_Global.BNI_SAM_1_WALLET)))
-            TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_1')
-            do_topup_bni(slot=1)
-        if _Global.BNI_SAM_2_WALLET <= _Global.MINIMUM_AMOUNT:
-            LOGGER.debug(('define_topup_slot_bni 2', str(_Global.MINIMUM_AMOUNT), str(_Global.BNI_SAM_2_WALLET)))
-            TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_2')
-            do_topup_bni(slot=2)
-    except Exception as e:
-        LOGGER.warning(('define_topup_slot_bni', str(e)))
-        TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_ERROR')
+    while True:
+        try:
+            if _Global.BNI_SAM_1_WALLET <= _Global.MINIMUM_AMOUNT:
+                LOGGER.debug(('START_BNI_SAM_AUTO_UPDATE_SLOT_1', str(_Global.MINIMUM_AMOUNT), str(_Global.BNI_SAM_1_WALLET)))
+                TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_1')
+                do_topup_bni(slot=1, force=True)
+            if _Global.BNI_SINGLE_SAM is False and _Global.BNI_SAM_2_WALLET <= _Global.MINIMUM_AMOUNT:
+                LOGGER.debug(('START_BNI_SAM_AUTO_UPDATE_SLOT_2', str(_Global.MINIMUM_AMOUNT), str(_Global.BNI_SAM_2_WALLET)))
+                TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_2')
+                do_topup_bni(slot=2, force=True)
+        except Exception as e:
+            LOGGER.warning(('FAILED_BNI_SAM_AUTO_UPDATE', str(e)))
+            TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_ERROR')
+        sleep(5)
 
 
 def start_do_topup_bni(slot):
