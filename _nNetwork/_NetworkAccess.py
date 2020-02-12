@@ -105,8 +105,10 @@ def get_from_url(url, param=None, header=None, log=True):
         LOGGER.warning((url, ERROR_RESPONSE, e))
         return r.status_code, ERROR_RESPONSE
 
-    if log is True:
-        if 'FAIL|' in response or len(response) > 255:
+    if log is True and 'get/product' not in url:
+        if len(response) > 255:
+            LOGGER.debug(('<URL>: ' + str(url) + " <STAT>: " + str(r.status_code) + " <RESP>: [TRIM]" + str(response[:255])))
+        elif 'FAIL|' in response:
             LOGGER.debug(('<URL>: ' + str(url) + " <STAT>: " + str(r.status_code) + " <RESP>: [TRIM]" + str(response[:255])))
         else:
             LOGGER.debug(('<URL>: ' + str(url) + " <STAT>: " + str(r.status_code) + " <RESP>: " + str(response)))
@@ -140,7 +142,9 @@ def post_to_url(url, param=None, header=None, log=True):
         return r.status_code, ERROR_RESPONSE
 
     if log is True:
-        if 'FAIL|' in response or len(response) > 255:
+        if len(response) > 255:
+            LOGGER.debug(('<URL>: ' + str(url) + " <POST> : " + str(param) + " <RESP> : [TRIM]" + str(response[:255])))
+        elif 'FAIL|' in response:
             LOGGER.debug(('<URL>: ' + str(url) + " <POST> : " + str(param) + " <RESP> : [TRIM]" + str(response[:255])))
         else:
             LOGGER.debug(('<URL>: ' + str(url) + " <POST> : " + str(param) + " <RESP> : " + str(response)))

@@ -382,6 +382,7 @@ Base{
 
     }
 
+
     Rectangle{
         id: timer_tvc
         width: 10
@@ -403,9 +404,14 @@ Base{
             running:false
             triggeredOnStart:true
             onTriggered:{
-                var hm = Qt.formatDateTime(new Date(), "HH:mm");
-                console.log('CHECK MANDIRI_UPDATE_SCHEDULE', hm, mandiri_update_schedule)
-                if (hm == mandiri_update_schedule) _SLOT.start_mandiri_update_schedule()
+                //Mandiri Auto Settlement Timer Trigger
+                if (mandiri_update_schedule != undefined){
+                    var hm = Qt.formatDateTime(new Date(), "HH:mm");
+                    if (hm == mandiri_update_schedule) {
+                        console.log('MANDIRI_UPDATE_SCHEDULE', hm, mandiri_update_schedule);
+                        _SLOT.start_mandiri_update_schedule();
+                    }
+                }
                 tvc_loading.counter -= 1
                 if (tvc_loading.counter%2==0){
                     search_trx_button.color = 'silver';
@@ -414,7 +420,6 @@ Base{
                     search_trx_button.color = 'white';
                     wa_voucher_button.color = 'white';
                 }
-//                _SLOT.post_tvc_log('Integrasi Transportasi.mp4');
                 if(tvc_loading.counter == 0 && tvc_timeout != 999999){
                     if (!mediaOnPlaying) {
                         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
