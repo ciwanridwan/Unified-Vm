@@ -407,7 +407,7 @@ Base{
                 //Mandiri Auto Settlement Timer Trigger
                 if (mandiri_update_schedule != undefined){
                     var hm = Qt.formatDateTime(new Date(), "HH:mm");
-                    if (hm == mandiri_update_schedule) {
+                    if (hm == mandiri_update_schedule && tvc_loading.counter%10==0) {
                         console.log('MANDIRI_UPDATE_SCHEDULE', hm, mandiri_update_schedule);
                         _SLOT.start_mandiri_update_schedule();
                     }

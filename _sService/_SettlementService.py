@@ -495,19 +495,26 @@ def validate_update_balance():
         sleep(sync_time)
 
 
+MANDIRI_UPDATE_SCHEDULE_RUNNING = False
+
+
 def start_trigger_mandiri_sam_update():
-    _Helper.get_pool().apply_async(trigger_mandiri_sam_update)
+    if not MANDIRI_UPDATE_SCHEDULE_RUNNING:
+        _Helper.get_pool().apply_async(trigger_mandiri_sam_update)
 
 
 def trigger_mandiri_sam_update():
+    global MANDIRI_UPDATE_SCHEDULE_RUNNING
     daily_settle_time = _ConfigParser.get_set_value('QPROX', 'mandiri^daily^settle^time', '02:00')
     current_time = _Helper.now() / 1000
     last_update_with_tolerance = (_Global.LAST_UPDATE + 84600000)/1000
     if _Global.empty(_Global.LAST_UPDATE) or current_time >= last_update_with_tolerance:
+        MANDIRI_UPDATE_SCHEDULE_RUNNING = True
         LOGGER.info(('TRIGGERED_BY_TIME_SETUP', _Helper.time_string('%H:%M'), daily_settle_time))
         _Global.MANDIRI_ACTIVE_WALLET = 0
         do_settlement_for(bank='MANDIRI', dummy=True)
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TRIGGERED')
+        MANDIRI_UPDATE_SCHEDULE_RUNNING = False
     else:
         LOGGER.warning(('FAILED_START_TIME_TRIGGER', _Helper.time_string('%H%M'), daily_settle_time))
 
