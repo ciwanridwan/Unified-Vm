@@ -907,9 +907,6 @@ def get_topup_readiness(mode='full'):
     ___['brizzi'] = _Global.TOPUP_AMOUNT_SETTING['brizzi']
     ___['flazz'] = _Global.TOPUP_AMOUNT_SETTING['flazz']
     ___['jakcard'] = _Global.TOPUP_AMOUNT_SETTING['jakcard']
-    # if _Global.TEST_MODE is True:
-    #     ___['mandiri'] = 'TEST_MODE'
-    #     ___['bni'] = 'TEST_MODE'
     LOGGER.info((str(___), str(mode)))
     QP_SIGNDLER.SIGNAL_GET_TOPUP_READINESS.emit(json.dumps(___))
 

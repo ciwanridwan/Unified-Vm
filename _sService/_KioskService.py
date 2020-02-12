@@ -61,8 +61,6 @@ def kiosk_status():
     if _Helper.is_online(source='kiosk_status') is False:
         _Global.KIOSK_SETTING = _DAO.init_kiosk()[0]
         _Global.KIOSK_ADMIN = _Global.KIOSK_SETTING['defaultAdmin']
-        if _Global.TEST_MODE is True:
-            _Global.KIOSK_ADMIN = 1
         _Global.KIOSK_MARGIN = _Global.KIOSK_SETTING['defaultMargin']
         _Global.KIOSK_NAME = _Global.KIOSK_SETTING['name']
         _Global.KIOSK_REAL_STATUS = 'OFFLINE'
@@ -284,8 +282,6 @@ def get_kiosk_price_setting():
 
 
 def kiosk_price_setting():
-    if _Global.TEST_MODE is True:
-        _Global.KIOSK_ADMIN = 1
     K_SIGNDLER.SIGNAL_PRICE_SETTING.emit(json.dumps({
         'margin': _Global.KIOSK_MARGIN,
         'adminFee': _Global.KIOSK_ADMIN,
