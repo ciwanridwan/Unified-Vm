@@ -162,6 +162,11 @@ def define_theme(d):
     _Global.log_to_temp_config('theme^name', d['name'])
     config_js = sys.path[0] + '/_qQml/config.js'
     content_js = ''
+    # Mandiri Update Schedule Time For Timer Trigger
+    daily_settle_time = _ConfigParser.get_set_value('QPROX', 'mandiri^daily^settle^time', '02:00')
+    content_js += 'var mandiri_update_schedule = "' + daily_settle_time + '";' + os.linesep
+    # Temp Config For Ubal Online
+    content_js += 'var bank_ubal_online = ' + json.dumps(_Global.ALLOWED_BANK_UBAL_ONLINE) + ';' + os.linesep
     if type(d['master_logo']) != list:
         d['master_logo'] = [d['master_logo']]
     master_logo = []
@@ -179,8 +184,6 @@ def define_theme(d):
             partner_logos.append(image)
         else:
             continue
-    daily_settle_time = _ConfigParser.get_set_value('QPROX', 'mandiri^daily^settle^time', '02:00')
-    content_js += 'var mandiri_update_schedule = "' + daily_settle_time + '";' + os.linesep
     content_js += 'var partner_logos = ' + json.dumps(partner_logos) + ';' + os.linesep
     backgrounds = []
     for b in d['backgrounds']:
@@ -203,8 +206,6 @@ def define_theme(d):
     if not _Global.empty(d['tvc_waiting_time']):
         _Global.log_to_temp_config('tvc^waiting^time', str(d['tvc_waiting_time']))
         content_js += 'var tvc_waiting_time = ' +  str(d['tvc_waiting_time']) + ';' + os.linesep
-    # Temp Config For Ubal Online
-    content_js += 'var bank_ubal_online = ' + json.dumps(_Global.BANK_UBAL_ONLINE) + ';' + os.linesep
     # Receipt Logo
     if not _Global.empty(d['receipt_custom_text']):
         _Global.CUSTOM_RECEIPT_TEXT = d['receipt_custom_text'].replace(os.linesep, '|')

@@ -57,7 +57,7 @@ if not os.path.exists(TEMP_FOLDER):
     os.makedirs(TEMP_FOLDER)
 
 # Temporary Update Balance Config Hardcoded (Filled With Bank Name)
-BANK_UBAL_ONLINE = ['MANDIRI', 'BNI']
+ALLOWED_BANK_UBAL_ONLINE = ['MANDIRI', 'BNI']
 
 
 def clean_white_space(s):
