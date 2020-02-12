@@ -469,6 +469,7 @@ Base{
 
     function minus_sam_balance(denom){
         var sam_balance = 0;
+        var topup_amount = parseInt(denom) - parseInt(adminFee);
         switch(cardData.bank_name){
             case 'MANDIRI':
                 sam_balance = parseInt(mandiriTopupWallet);
@@ -477,7 +478,7 @@ Base{
                 sam_balance = parseInt(bniTopupWallet);
                 break;
         }
-        if (parseInt(denom) > sam_balance){
+        if (topup_amount > sam_balance){
             press = '0';
             switch_frame('source/smiley_down.png', 'Mohon Maaf Saldo Mesin Tidak Mencukupi', 'Silakan Pilih Denom Yang Lebih Kecil', 'closeWindow', false )
             return true;
