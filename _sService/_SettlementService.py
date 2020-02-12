@@ -499,6 +499,8 @@ MANDIRI_UPDATE_SCHEDULE_RUNNING = False
 
 
 def start_trigger_mandiri_sam_update():
+    if not _QPROX.INIT_MANDIRI:
+        return
     if not MANDIRI_UPDATE_SCHEDULE_RUNNING:
         _Helper.get_pool().apply_async(trigger_mandiri_sam_update)
 

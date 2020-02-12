@@ -1037,10 +1037,9 @@ if __name__ == '__main__':
         print("pyt: Connecting to MEI Bill Acceptor...")
         _MEI.mei_standby_mode()
     if _Global.QPROX['status'] is True:
-        sleep(1)
         print("pyt: Connecting Into Prepaid Reader...")
+        sleep(1)
         if _QPROX.open_qprox() is True:
-            sleep(1)
             print("pyt: [INFO] Init Prepaid Reader...")
             _QPROX.init_qprox()
         else:
@@ -1049,12 +1048,14 @@ if __name__ == '__main__':
     if _Global.CD['status'] is True:
         print("pyt: [INFO] Re-Init CD V2 Configuration...")
         _CD.reinit_v2_config()
-    sleep(.5)
-    print("pyt: Triggering Mandiri Balance Validation...")
-    _SettlementService.start_validate_update_balance()
-    sleep(.5)
-    print("pyt: Triggering BNI Settlement Sync...")
-    _Sync.start_sync_settlement_bni()
+    if _QPROX.INIT_MANDIRI is True:
+        sleep(.5)
+        print("pyt: Triggering Mandiri Balance Validation...")
+        _SettlementService.start_validate_update_balance()
+    if _QPROX.INIT_BNI is True:
+        sleep(.5)
+        print("pyt: Triggering BNI Settlement Sync...")
+        _Sync.start_sync_settlement_bni()
     print("pyt: Syncing Ads Content...")
     sleep(.5)
     _KioskService.start_define_ads(3)
