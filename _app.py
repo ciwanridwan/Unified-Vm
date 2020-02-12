@@ -600,6 +600,10 @@ class SlotHandler(QObject):
         _TopupService.start_do_force_topup_bni()
     start_do_force_topup_bni = pyqtSlot()(start_do_force_topup_bni)
 
+    def start_mandiri_update_schedule(self):
+        _SettlementService.start_trigger_mandiri_sam_update()
+    start_trigger_mandiri_sam_update = pyqtSlot()(start_trigger_mandiri_sam_update)
+
 
 def s_handler():
     _KioskService.K_SIGNDLER.SIGNAL_GET_FILE_LIST.connect(view.rootObject().result_get_file_list)

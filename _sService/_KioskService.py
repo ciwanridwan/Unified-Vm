@@ -179,6 +179,8 @@ def define_theme(d):
             partner_logos.append(image)
         else:
             continue
+    daily_settle_time = _ConfigParser.get_set_value('QPROX', 'mandiri^daily^settle^time', '02:00')
+    content_js += 'var mandiri_update_schedule = "' + daily_settle_time + '";' + os.linesep
     content_js += 'var partner_logos = ' + json.dumps(partner_logos) + ';' + os.linesep
     backgrounds = []
     for b in d['backgrounds']:

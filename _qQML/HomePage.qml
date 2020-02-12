@@ -1,6 +1,6 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.2
-import QtGraphicalEffects 1.0
+//import QtGraphicalEffects 1.0
 import "screen.js" as SCREEN
 import "config.js" as CONF
 
@@ -24,6 +24,7 @@ Base{
     property bool kalogButton: false
     property bool withSlider: true
     property bool first_run: true
+    property var mandiri_update_schedule: CONF.mandiri_update_schedule
     isPanelActive: false
 
     Stack.onStatusChanged:{
@@ -402,6 +403,9 @@ Base{
             running:false
             triggeredOnStart:true
             onTriggered:{
+                var hm = Qt.formatDateTime(new Date(), "HH:mm");
+                console.log('CHECK MANDIRI_UPDATE_SCHEDULE', hm, mandiri_update_schedule)
+                if (hm == mandiri_update_schedule) _SLOT.start_mandiri_update_schedule()
                 tvc_loading.counter -= 1
                 if (tvc_loading.counter%2==0){
                     search_trx_button.color = 'silver';
@@ -413,7 +417,7 @@ Base{
 //                _SLOT.post_tvc_log('Integrasi Transportasi.mp4');
                 if(tvc_loading.counter == 0 && tvc_timeout != 999999){
                     if (!mediaOnPlaying) {
-                        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+                        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
                         console.log("starting tvc player...", now);
                         my_layer.push(media_page, {mode: 'mediaPlayer'});
                     }

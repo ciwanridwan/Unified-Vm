@@ -807,6 +807,8 @@ def create_online_info(slot=None):
     if slot is None:
         slot = str(_Global.MANDIRI_ACTIVE)
     param = QPROX['CREATE_ONLINE_INFO'] + '|' + slot + '|'
+    if _Global.MANDIRI_ACTIVE_WALLET > 0:
+        _Global.MANDIRI_ACTIVE_WALLET = 0  
     response, result = _Command.send_request(param=param, output=None)
     LOGGER.debug(("create_online_info : ", slot, result))
     if response == 0 and len(result) > 3:

@@ -482,15 +482,10 @@ def validate_update_balance():
         daily_settle_time = _ConfigParser.get_set_value('QPROX', 'mandiri^daily^settle^time', '02:00')
         sync_time = int(_ConfigParser.get_set_value('QPROX', 'mandiri^daily^sync^time', '3600'))
         current_time = _Helper.now() / 1000
-        LOGGER.debug(('MANDIRI_SAM_UPDATE_BALANCE', sync_time, _Helper.time_string(), daily_settle_time, _Global.LAST_UPDATE))
-        if _Helper.time_string('%H') == daily_settle_time.split(':')[0]:
-            LOGGER.info(('TRIGGERED_BY_TIME_SETUP', _Helper.time_string('%H'), daily_settle_time))
-            _Global.MANDIRI_ACTIVE_WALLET = 0
-            do_settlement_for(bank='MANDIRI', dummy=True)
-            ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TRIGGERED')
-        elif _Global.LAST_UPDATE > 0:
+        LOGGER.debug(('MANDIRI_SAM_UPDATE_BALANCE', 'SYNC_TIME', sync_time, 'DAILY_SETTLEMENT', daily_settle_time))
+        if _Global.LAST_UPDATE > 0:
             last_update_with_tolerance = (_Global.LAST_UPDATE/1000) + 84600
-            if last_update_with_tolerance <= current_time:
+            if current_time >= last_update_with_tolerance:
                 LOGGER.info(('DETECTED_EXPIRED_LIMIT_UPDATE', last_update_with_tolerance, current_time))
                 _Global.MANDIRI_ACTIVE_WALLET = 0
                 do_settlement_for(bank='MANDIRI', dummy=True)
@@ -498,3 +493,22 @@ def validate_update_balance():
         next_run_time = current_time + sync_time
         LOGGER.debug(('MANDIRI_SAM_UPDATE_BALANCE NEXT RUN', _Helper.convert_epoch(t=next_run_time)))
         sleep(sync_time)
+
+
+def start_trigger_mandiri_sam_update():
+    _Helper.get_pool().apply_async(trigger_mandiri_sam_update)
+
+
+def trigger_mandiri_sam_update():
+    daily_settle_time = _ConfigParser.get_set_value('QPROX', 'mandiri^daily^settle^time', '02:00')
+    current_time = _Helper.now() / 1000
+    last_update_with_tolerance = (_Global.LAST_UPDATE + 84600000)/1000
+    if _Global.empty(_Global.LAST_UPDATE) or current_time >= last_update_with_tolerance:
+        LOGGER.info(('TRIGGERED_BY_TIME_SETUP', _Helper.time_string('%H:%M'), daily_settle_time))
+        _Global.MANDIRI_ACTIVE_WALLET = 0
+        do_settlement_for(bank='MANDIRI', dummy=True)
+        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TRIGGERED')
+    else:
+        LOGGER.warning(('FAILED_START_TIME_TRIGGER', _Helper.time_string('%H%M'), daily_settle_time))
+
+
