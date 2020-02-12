@@ -602,7 +602,7 @@ class SlotHandler(QObject):
 
     def start_mandiri_update_schedule(self):
         _SettlementService.start_trigger_mandiri_sam_update()
-    start_trigger_mandiri_sam_update = pyqtSlot()(start_trigger_mandiri_sam_update)
+    start_mandiri_update_schedule = pyqtSlot()(start_mandiri_update_schedule)
 
 
 def s_handler():
