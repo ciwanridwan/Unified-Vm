@@ -62,7 +62,11 @@ def do_update():
     #     UPDATEAPP_SIGNDLER.SIGNAL_UPDATE_APP.emit('APP_UPDATE|FAILED_PULLING')
     #     LOGGER.warning(('step-3', 'APP_UPDATE|FAILED_PULLING'))
     #     return 'APP_UPDATE|FAILED_PULLING'
-    os.system("git pull -f")
+    origin = 'develop'
+    if _Global.LIVE_MODE:
+        origin = 'master'
+    os.system(" git stash && git checkout "+origin+" && git stash pop ")
+    os.system(" git pull -f ")
     # LOGGER.info(('step-3', 'APP_UPDATE|SUCCESS_PULLING'))
     UPDATEAPP_SIGNDLER.SIGNAL_UPDATE_APP.emit('APP_UPDATE|SUCCESS')
     LOGGER.info(('step-4', 'APP_UPDATE|SUCCESS'))
