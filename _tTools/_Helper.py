@@ -47,11 +47,24 @@ def today():
 
 def today_time():
     now_time = time.time()
-    midnight = now_time - now_time % 86400 + time.timezone
+    midnight = now_time - (now_time % 86400) + time.timezone
     return int(midnight)
 
 
-def time_string(f='%Y-%m-%d %H:%M:%S'):
+TIME_FORMAT = '%Y-%m-%d %H:%M:%S'
+
+
+def convert_epoch(t = None, f=''):
+    if t is None:
+        t = time.time()
+    if len(f) == 0:
+        f = TIME_FORMAT
+    return datetime.datetime.fromtimestamp(t).strftime(f)
+
+
+def time_string(f=''):
+    if len(f) == 0:
+        f = TIME_FORMAT
     return datetime.datetime.now().strftime(f)
 
 
