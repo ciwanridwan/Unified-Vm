@@ -441,8 +441,8 @@ def top_up_mandiri(amount, trxid='', slot=None):
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_FAILED_CARD_NOT_MATCH')
             return
         if __status == '6984':
-            LOGGER.warning(('TOPUP_FAILED_BALANCE_EXPIRED', _result))
-            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('TOPUP_FAILED_BALANCE_EXPIRED')
+            LOGGER.warning(('MANDIRI_SAM_BALANCE_EXPIRED', _result))
+            QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MANDIRI_SAM_BALANCE_EXPIRED')
             INIT_MANDIRI = False
             _Global.MANDIRI_ACTIVE_WALLET = 0
             return

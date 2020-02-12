@@ -319,8 +319,8 @@ Base{
         if (['ovo', 'gopay', 'dana', 'linkaja'].indexOf(details.payment) > -1) qr_payment_frame.close();
         abc.counter = 30;
         my_timer.restart();
-        if (t==undefined||t.indexOf('ERROR') > -1||t=='TOPUP_ERROR'||t=='TOPUP_FAILED_BALANCE_EXPIRED'||t.indexOf('BNI_SAM_BALANCE_NOT_SUFFICIENT')> -1){
-            if (t=='TOPUP_FAILED_BALANCE_EXPIRED') _SLOT.start_reset_mandiri_settlement();
+        if (t==undefined||t.indexOf('ERROR') > -1||t=='TOPUP_ERROR'||t=='MANDIRI_SAM_BALANCE_EXPIRED'||t.indexOf('BNI_SAM_BALANCE_NOT_SUFFICIENT')> -1){
+            if (t=='MANDIRI_SAM_BALANCE_EXPIRED') _SLOT.start_reset_mandiri_settlement();
 //            if (t.indexOf('BNI_SAM_BALANCE_NOT_SUFFICIENT')> -1) {
 //                var slot_topup = t.split('|')[1]
 //                _SLOT.start_do_topup_bni(slot_topup);
