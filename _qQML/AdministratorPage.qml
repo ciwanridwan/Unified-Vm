@@ -143,15 +143,14 @@ Base{
                 if (r!='WAITING_RSP_UPDATE') return;
             }
         } else if (a.indexOf('APP_UPDATE') > -1){
-            var u = a.split('|')[1]
-            if (u !== 'SUCCESS'){
-                false_notif('Dear '+userData.first_name+'|Memproses Pembaharuan Aplikasi!\nKode Eksekusi ['+u+']');
-            } else {
+            if (a == 'APP_UPDATE|SUCCESS'){
                 false_notif('Dear '+userData.first_name+'|Pembaharuan Aplikasi Berhasil, Aplikasi Akan Mencoba Memuat Ulang...');
                 _SLOT.user_action_log('Admin Page Notif Button "Reboot By Update"');
                 _SLOT.start_safely_shutdown('RESTART');
-                return;
+            } else {
+                false_notif('Dear '+userData.first_name+'|Memproses Pembaharuan Aplikasi!\nKode Eksekusi ['+u+']');
             }
+            return;
         } else if (a.indexOf('EDC_SETTLEMENT') > -1){
             var e = a.split('|')[1]
             if (e=='PROCESSED') {
@@ -463,7 +462,7 @@ Base{
                     _SLOT.user_action_log('Admin Page "Force Update App"');
                     if (press != '0') return;
                     press = '1';
-                    console.log('test_update_app is pressed..!');
+                    console.log('update_app is pressed..!');
                     popup_loading.open();
                     _SLOT.start_do_update();
                 }

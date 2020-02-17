@@ -50,7 +50,6 @@ ORIGIN = 'develop'
 
 def checkout_branch_by_app_env():
     global ORIGIN
-    ORIGIN = 'develop'
     if _Global.LIVE_MODE:
         ORIGIN = 'master'
     UPDATEAPP_SIGNDLER.SIGNAL_UPDATE_APP.emit('APP_UPDATE|DEFINE_BRANCH_'+ORIGIN.upper())
