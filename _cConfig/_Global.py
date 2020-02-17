@@ -59,6 +59,8 @@ if not os.path.exists(TEMP_FOLDER):
 # Temporary Update Balance Config Hardcoded (Filled With Bank Name)
 ALLOWED_BANK_UBAL_ONLINE = ['MANDIRI', 'BNI']
 
+MANDIRI_FORCE_PRODUCTION_SAM = True if _ConfigParser.get_set_value('TERMINAL', 'mandiri^sam^production', '0') == '1' else False
+
 
 def clean_white_space(s):
     return re.sub(r'\s+', '', s)

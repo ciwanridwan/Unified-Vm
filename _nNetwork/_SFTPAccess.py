@@ -75,6 +75,8 @@ def send_file(filename, local_path, remote_path=None):
     if '_DEV' in remote_path:
         if _Global.LIVE_MODE is True:
             remote_path = remote_path.replace('_DEV', '')
+        if 'TopUpOffline' in remote_path and _Global.MANDIRI_FORCE_PRODUCTION_SAM is True:
+            remote_path = remote_path.replace('_DEV', '')
     try:
         if type(filename) == list:
             _filename = filename[0]
