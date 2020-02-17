@@ -230,6 +230,10 @@ def init_qprox():
                         INIT_MANDIRI = False
                         if _Global.active_auth_session():
                             INIT_MANDIRI = True
+                        # Positive Assumption Last Update Bringing KA LOGIN Session
+                        if _Global.last_update_attempt():
+                            INIT_MANDIRI = True
+                            _Global.log_to_temp_config('last^auth')
                         if _Global.MANDIRI_SINGLE_SAM:
                             # _Global.MANDIRI_ACTIVE = 1
                             # _Global.save_sam_config(bank='MANDIRI')
@@ -443,7 +447,7 @@ def top_up_mandiri(amount, trxid='', slot=None):
         if __status == '6984':
             LOGGER.warning(('MANDIRI_SAM_BALANCE_EXPIRED', _result))
             QP_SIGNDLER.SIGNAL_TOPUP_QPROX.emit('MANDIRI_SAM_BALANCE_EXPIRED')
-            INIT_MANDIRI = False
+            # INIT_MANDIRI = False
             _Global.MANDIRI_ACTIVE_WALLET = 0
             return
         if __status in ['6982', '1001']:
@@ -816,6 +820,8 @@ def create_online_info(slot=None):
     if response == 0 and len(result) > 3:
         PREV_RQ1_DATA = str(result)
         PREV_RQ1_SLOT = str(_Global.MANDIRI_ACTIVE)
+        # Also Re-write last^auth (MANDIRI_KA_LOGIN state in temp config)
+        _Global.log_to_temp_config(section='last^auth')
         # QP_SIGNDLER.SIGNAL_ONLINE_INFO_QPROX.emit('CREATE_ONLINE_INFO|' + str(result))
         return PREV_RQ1_DATA
     else:

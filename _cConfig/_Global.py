@@ -316,6 +316,15 @@ def active_auth_session():
         return False
 
 
+def last_update_attempt():
+    if LAST_UPDATE > 0:
+        today = _Helper.today_time()
+        current = (LAST_UPDATE/1000)
+        return True if (today+86400) > current else False
+    else:
+        return False
+
+
 def mandiri_single_sam():
     return MANDIRI_SINGLE_SAM
 
@@ -368,7 +377,7 @@ GRG = {
 # Handling MEI VS GRG Duplicate Port Activation
 if GRG['status'] is True:
     MEI['status'] = False
-    MEI_PORT = _ConfigParser.set_value('port', 'MEI', 'COM')
+    MEI_PORT = _ConfigParser.set_value('MEI', 'port', 'COM')
     MEI['port'] = MEI_PORT
     
 CD = {
