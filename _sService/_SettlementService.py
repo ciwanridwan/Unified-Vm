@@ -502,8 +502,8 @@ def start_trigger_mandiri_sam_update():
     if not _QPROX.INIT_MANDIRI:
         LOGGER.warning(('FAILED MANDIRI_SAM_UPDATE_BALANCE', 'INIT_MANDIRI', _QPROX.INIT_MANDIRI))
         return
+    sleep(_Helper.get_random_num(.5, 1.3))
     if not MANDIRI_UPDATE_SCHEDULE_RUNNING:
-        sleep(_Helper.get_random_num(.5, 1.3))
         _Helper.get_pool().apply_async(trigger_mandiri_sam_update)
 
 
@@ -517,9 +517,12 @@ def trigger_mandiri_sam_update():
     last_update = 0
     if _Global.LAST_UPDATE > 0:
         last_update = _Global.LAST_UPDATE/1000
-    if current_time > (last_update+3600):
-        LOGGER.warning(('LAST_UPDATE_BALANCE', _Helper.convert_epoch(last_update)))
+    current_limit = 5000000
+    if _Global.MANDIRI_ACTIVE_WALLET > current_limit:
+        current_limit = 10000000
+    if _Global.MANDIRI_ACTIVE_WALLET < current_limit and current_time > (last_update+1800):
         MANDIRI_UPDATE_SCHEDULE_RUNNING = True
+        LOGGER.warning(('LAST_UPDATE_BALANCE', _Helper.convert_epoch(last_update)))
         LOGGER.info(('TRIGGERED_BY_TIME_SETUP', _Helper.time_string('%H:%M'), daily_settle_time))
         _Global.MANDIRI_ACTIVE_WALLET = 0
         do_settlement_for(bank='MANDIRI', dummy=MANDIRI_UPDATE_SCHEDULE_RUNNING)
@@ -536,5 +539,6 @@ def trigger_mandiri_sam_update():
     else:
         LOGGER.warning(('FAILED_START_TIME_TRIGGER', _Helper.time_string('%H:%M'), daily_settle_time))
         LOGGER.warning(('LAST_UPDATE_BALANCE', _Helper.convert_epoch(last_update)))
+        LOGGER.warning(('CURRENT_SAM_BALANCE', _Global.MANDIRI_ACTIVE_WALLET), current_limit)
 
 
