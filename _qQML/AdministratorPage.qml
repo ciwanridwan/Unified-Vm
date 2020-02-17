@@ -149,7 +149,7 @@ Base{
                 _SLOT.start_safely_shutdown('RESTART');
             } else {
                 var u = a.split('|')[1]
-                false_notif('Dear '+userData.first_name+'|Memproses Pembaharuan Aplikasi!\nKode Eksekusi ['+u+']');
+                false_notif('Dear '+userData.first_name+'|Memproses Pembaharuan Aplikasi!\nKode Eksekusi ['+u+']', false);
             }
             return;
         } else if (a.indexOf('EDC_SETTLEMENT') > -1){

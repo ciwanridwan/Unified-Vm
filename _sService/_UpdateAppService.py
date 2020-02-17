@@ -5,6 +5,7 @@ from PyQt5.QtCore import QObject, pyqtSignal
 from _cConfig import _Global
 from _tTools import _Helper
 import os
+from time import sleep
 
 
 class UpdateAppSignalHandler(QObject):
@@ -87,7 +88,11 @@ def do_update():
         for p in __pull:
             UPDATEAPP_SIGNDLER.SIGNAL_UPDATE_APP.emit('APP_UPDATE|'+p.upper())
     # LOGGER.info(('step-3', 'APP_UPDATE|SUCCESS_PULLING'))
-    LOGGER.info(('step-4', 'APP_UPDATE|SUCCESS'))
+    __version = open(os.path.join(os.getcwd(), 'kiosk.ver'), 'r').read().strip()
+    _Global.VERSION = __version
+    UPDATEAPP_SIGNDLER.SIGNAL_UPDATE_APP.emit('APP_UPDATE|VER.'+str(__version))
+    sleep(2)
+    LOGGER.info(('APP_UPDATE|SUCCESS', _Global.VERSION))
     UPDATEAPP_SIGNDLER.SIGNAL_UPDATE_APP.emit('APP_UPDATE|SUCCESS')
     return 'APP_UPDATE|SUCCESS'
 
