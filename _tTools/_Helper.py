@@ -89,6 +89,10 @@ def get_random_chars(length=3, chars='ABCDEFGHJKMNPQRSTUVWXYZ'):
     return __random
 
 
+def get_random_num(start=0, end=1):
+    return random.uniform(start, end)
+
+
 def file2crc32(filename):
     try:
         buf = open(filename, 'rb').read()

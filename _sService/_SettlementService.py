@@ -503,6 +503,7 @@ def start_trigger_mandiri_sam_update():
         LOGGER.warning(('FAILED MANDIRI_SAM_UPDATE_BALANCE', 'INIT_MANDIRI', _QPROX.INIT_MANDIRI))
         return
     if not MANDIRI_UPDATE_SCHEDULE_RUNNING:
+        sleep(_Helper.get_random_num(.5, 1.3))
         _Helper.get_pool().apply_async(trigger_mandiri_sam_update)
 
 
