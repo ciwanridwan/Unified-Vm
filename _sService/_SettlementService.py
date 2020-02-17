@@ -512,14 +512,16 @@ def trigger_mandiri_sam_update():
     # When This Function is Triggered, It will be forced update the SAM Balance And Ignore
     # Last Update Timestamp on TEMPORARY 
     daily_settle_time = _ConfigParser.get_set_value('QPROX', 'mandiri^daily^settle^time', '02:00')
-    LOGGER.warning(('LAST_UPDATE_BALANCE', _Helper.convert_epoch(_Global.LAST_UPDATE/1000)))
-    MANDIRI_UPDATE_SCHEDULE_RUNNING = True
-    LOGGER.info(('TRIGGERED_BY_TIME_SETUP', _Helper.time_string('%H:%M'), daily_settle_time))
-    _Global.MANDIRI_ACTIVE_WALLET = 0
-    do_settlement_for(bank='MANDIRI', dummy=MANDIRI_UPDATE_SCHEDULE_RUNNING)
-    ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TRIGGERED')
-    MANDIRI_UPDATE_SCHEDULE_RUNNING = False
-    # current_time = _Helper.now() / 1000
+    last_update_with_tolerance = (_Global.LAST_UPDATE + 3600000)/1000
+    current_time = _Helper.now() / 1000
+    if _Global.empty(_Global.LAST_UPDATE) or current_time >= last_update_with_tolerance:
+        LOGGER.warning(('LAST_UPDATE_BALANCE', _Helper.convert_epoch(_Global.LAST_UPDATE/1000)))
+        MANDIRI_UPDATE_SCHEDULE_RUNNING = True
+        LOGGER.info(('TRIGGERED_BY_TIME_SETUP', _Helper.time_string('%H:%M'), daily_settle_time))
+        _Global.MANDIRI_ACTIVE_WALLET = 0
+        do_settlement_for(bank='MANDIRI', dummy=MANDIRI_UPDATE_SCHEDULE_RUNNING)
+        ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TRIGGERED')
+        MANDIRI_UPDATE_SCHEDULE_RUNNING = False
     # last_update_with_tolerance = (_Global.LAST_UPDATE + 84600000)/1000
     # if _Global.empty(_Global.LAST_UPDATE) or current_time >= last_update_with_tolerance:
     #     MANDIRI_UPDATE_SCHEDULE_RUNNING = True
@@ -528,8 +530,8 @@ def trigger_mandiri_sam_update():
     #     do_settlement_for(bank='MANDIRI', dummy=True)
     #     ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TRIGGERED')
     #     MANDIRI_UPDATE_SCHEDULE_RUNNING = False
-    # else:
-    #     LOGGER.warning(('FAILED_START_TIME_TRIGGER', _Helper.time_string('%H:%M'), daily_settle_time))
-    #     LOGGER.warning(('LAST_UPDATE_BALANCE', _Helper.convert_epoch(_Global.LAST_UPDATE/1000)))
+    else:
+        LOGGER.warning(('FAILED_START_TIME_TRIGGER', _Helper.time_string('%H:%M'), daily_settle_time))
+        LOGGER.warning(('LAST_UPDATE_BALANCE', _Helper.convert_epoch(_Global.LAST_UPDATE/1000)))
 
 
