@@ -148,6 +148,7 @@ Base{
                 _SLOT.user_action_log('Admin Page Notif Button "Reboot By Update"');
                 _SLOT.start_safely_shutdown('RESTART');
             } else {
+                var u = a.split('|')[1]
                 false_notif('Dear '+userData.first_name+'|Memproses Pembaharuan Aplikasi!\nKode Eksekusi ['+u+']');
             }
             return;
