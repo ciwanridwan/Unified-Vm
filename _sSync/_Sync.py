@@ -52,7 +52,7 @@ def check_connection(url, param):
                     s, r = _NetworkAccess.post_to_url(url=_Global.BACKEND_URL + 'get/setting', param=SETTING_PARAM)
                     if s == 200 and r['result'] == 'OK':
                         _KioskService.update_kiosk_status(r)
-                    # start_sync_machine_status()
+                    start_sync_machine_status()
                     sleep(10)
                 _KioskService.kiosk_status()
             except Exception as e:

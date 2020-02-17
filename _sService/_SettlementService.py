@@ -510,7 +510,7 @@ def trigger_mandiri_sam_update():
     global MANDIRI_UPDATE_SCHEDULE_RUNNING
 
     # When This Function is Triggered, It will be forced update the SAM Balance And Ignore
-    # The Last Update Timestamp on TEMPORARY 
+    # Last Update Timestamp on TEMPORARY 
     daily_settle_time = _ConfigParser.get_set_value('QPROX', 'mandiri^daily^settle^time', '02:00')
     LOGGER.warning(('LAST_UPDATE_BALANCE', _Helper.convert_epoch(_Global.LAST_UPDATE/1000)))
     MANDIRI_UPDATE_SCHEDULE_RUNNING = True

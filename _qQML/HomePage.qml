@@ -408,7 +408,7 @@ Base{
                 if (mandiri_update_schedule != undefined){
                     var hm = Qt.formatDateTime(new Date(), "HH:mm");
                     if (hm == mandiri_update_schedule && tvc_loading.counter%10==0) {
-                        console.log('MANDIRI_UPDATE_SCHEDULE', hm, mandiri_update_schedule);
+                        console.log('MANDIRI_UPDATE_SCHEDULE_IDLE', hm, mandiri_update_schedule);
                         _SLOT.start_mandiri_update_schedule();
                     }
                 }
@@ -424,7 +424,7 @@ Base{
                     if (!mediaOnPlaying) {
                         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
                         console.log("starting tvc player...", now);
-                        my_layer.push(media_page, {mode: 'mediaPlayer'});
+                        my_layer.push(media_page, {mode: 'mediaPlayer', mandiri_update_schedule: mandiri_update_schedule});
                     }
 //                    _SLOT.set_tvc_player('START')
                     tvc_loading.counter = tvc_timeout;
