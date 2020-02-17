@@ -144,8 +144,8 @@ Base{
             }
         } else if (a.indexOf('APP_UPDATE') > -1){
             var u = a.split('|')[1]
-            if (u.indexOf('FAILED') > -1){
-                false_notif('Dear '+userData.first_name+'|Terjadi Kegagalan Pada Saat Pembaharuan Aplikasi!\nKode Error ['+u+']');
+            if (u !== 'SUCCESS'){
+                false_notif('Dear '+userData.first_name+'|Memproses Pembaharuan Aplikasi!\nKode Eksekusi ['+u+']');
             } else {
                 false_notif('Dear '+userData.first_name+'|Pembaharuan Aplikasi Berhasil, Aplikasi Akan Mencoba Memuat Ulang...');
                 _SLOT.user_action_log('Admin Page Notif Button "Reboot By Update"');
