@@ -107,12 +107,26 @@ def start_kiosk_sync():
 
 
 def kiosk_sync():
+    print("pyt: Start Syncing Remote Task...")
     sync_task()
-    sync_product_data()
-    sync_data_transaction()
+    print("pyt: Start Syncing Machine Status...")
     sync_machine_status()
+    print("pyt: Start Syncing Pending Refund...")
+    sync_pending_refund()
+    print("pyt: Start Syncing Product Stock...")
+    sync_product_stock()
+    print("pyt: Start Syncing Product Data...")
+    sync_product_data()
+    print("pyt: Start Syncing Topup Amount...")
+    sync_topup_amount()
+    print("pyt: Start Syncing Topup Data Records...")
     sync_topup_records()
-
+    print("pyt: Start Syncing Shop Data Records ...")
+    sync_data_transaction()
+    print("pyt: Start Syncing Failed Shop Data Records ...")
+    sync_data_transaction_failure()
+    print("pyt: Start Syncing SAM Audit Records ...")
+    sync_sam_audit()
 
 def start_sync_topup_records():
     _Helper.get_pool().apply_async(sync_topup_records)
@@ -309,16 +323,16 @@ def sync_task():
         sleep(33.3)
 
 
-def start_retry_pending_refund():
-    _Helper.get_pool().apply_async(retry_pending_refund)
+def start_sync_pending_refund():
+    _Helper.get_pool().apply_async(sync_pending_refund)
 
 
-def retry_pending_refund():
+def sync_pending_refund():
     _url = _Global.BACKEND_URL + 'diva/transfer'
     while True:
         try:
             pendings = _DAO.get_pending_refund()
-            if _Helper.is_online(source='retry_pending_refund') is True and len(pendings) > 0:
+            if _Helper.is_online(source='sync_pending_refund') is True and len(pendings) > 0:
                 for p in pendings:
                     _param = {
                         'customer_login'    : p['customer'],
@@ -333,13 +347,13 @@ def retry_pending_refund():
                             'remarks'       : json.dumps(r)
                         })                            
                         if r['result'] == 'OK': 
-                            print('pyt: retry_pending_refund ' + _Helper.time_string() + ' ['+p['trxid']+'] SUCCESS RELEASED')
+                            print('pyt: sync_pending_refund ' + _Helper.time_string() + ' ['+p['trxid']+'] SUCCESS RELEASED')
                         else:
-                            print('pyt: retry_pending_refund ' + _Helper.time_string() + ' ['+p['trxid']+'] TRIGGERED')
+                            print('pyt: sync_pending_refund ' + _Helper.time_string() + ' ['+p['trxid']+'] TRIGGERED')
                     else:
-                        print('pyt: retry_pending_refund ' + _Helper.time_string() + ' ['+p['trxid']+'] FAILED')
+                        print('pyt: sync_pending_refund ' + _Helper.time_string() + ' ['+p['trxid']+'] FAILED')
             else:
-                print('pyt: retry_pending_refund ' + _Helper.time_string() + ' NO PENDING')
+                print('pyt: sync_pending_refund ' + _Helper.time_string() + ' NO PENDING')
         except Exception as e:
             LOGGER.warning(e)
         sleep(15.15)
@@ -447,10 +461,10 @@ def update_task(task, result='TRIGGERED_TO_SYSTEM'):
 
 
 def start_sync_product_stock():
-    _Helper.get_pool().apply_async(start_get_product_stock)
+    _Helper.get_pool().apply_async(sync_product_stock)
 
 
-def start_get_product_stock():
+def sync_product_stock():
     _url = _Global.BACKEND_URL + 'get/product-stock'
     if _Helper.is_online(source='start_get_product_stock') is True:
         s, r = _NetworkAccess.get_from_url(url=_url)
@@ -479,14 +493,14 @@ def start_get_product_stock():
         return 'UPDATE_STOCK_FAILED_NO_CONNECTION'
 
 
-def start_get_topup_amount():
-    _Helper.get_pool().apply_async(get_topup_amount)
+def start_sync_topup_amount():
+    _Helper.get_pool().apply_async(sync_topup_amount)
 
 
-def get_topup_amount():
+def sync_topup_amount():
     _url = _Global.BACKEND_URL + 'get/topup-amount'
     while True:
-        if _Helper.is_online(source='get_topup_amount') is True and IDLE_MODE is True:
+        if _Helper.is_online(source='sync_topup_amount') is True and IDLE_MODE is True:
             s, r = _NetworkAccess.get_from_url(url=_url)
             if s == 200 and r['result'] == 'OK':
                 _Global.TOPUP_AMOUNT_SETTING = r['data']
