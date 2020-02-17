@@ -888,7 +888,7 @@ def init_setting():
     setting['tid'] = _Global.TID
     # setting['prepaid'] = _QPROX.BANKS
     setting['server'] = _Global.BACKEND_URL
-    setting['reloadService'] = _Global.RELOAD_SERVICE
+    # setting['reloadService'] = _Global.RELOAD_SERVICE
     # setting['sftpMandiri'] = _Global.SFTP_MANDIRI
     # setting['ftp'] = _Global.FTP
     # setting['bankConfig'] = _Global.BANKS
@@ -997,17 +997,23 @@ if __name__ == '__main__':
     print("pyt: HouseKeeping Old Local Data...")
     _KioskService.house_keeping(age_month=2)
     sleep(1)
-    print("pyt: Syncing Kiosk Task...")
-    _Sync.start_kiosk_sync()
-    sleep(1)
-    # print("pyt: Syncing Remote Task...")
-    # _Sync.start_sync_task()
-    # sleep(1)
+    print("pyt: Syncing Kiosk Data...")
+    _Sync.start_kiosk_data_sync()
+    sleep(.5)
+    print("pyt: Syncing Topup Data...")
+    _Sync.start_kiosk_topup_sync()
+    sleep(.5)
+    print("pyt: Syncing Remote Task...")
+    _Sync.start_sync_task()
+    sleep(.5)
     # print("pyt: Syncing Product Item...")
     # _Sync.start_sync_product_data()
-    # sleep(1)
+    # sleep(.5)
     # print("pyt: Syncing Transaction...")
     # _Sync.start_sync_data_transaction()
+    # sleep(.5)
+    # print("pyt: Syncing Transaction Failure Data...")
+    # _Sync.start_sync_data_transaction_failure()
     # sleep(.5)
     # print("pyt: Syncing Topup Records...")
     # _Sync.start_sync_topup_records()
@@ -1018,14 +1024,14 @@ if __name__ == '__main__':
     # print("pyt: Syncing SAM Audit...")
     # _Sync.start_sync_sam_audit()
     # sleep(.5)
-    # print("pyt: Syncing Transaction Failure Data...")
-    # _Sync.start_sync_data_transaction_failure()
-    # sleep(.5)
-    # print("pyt: Retrying Pending Refund...")
-    # _Sync.start_sync_pending_refund()
-    # sleep(.5)
+    print("pyt: Retrying Pending Refund...")
+    _Sync.start_sync_pending_refund()
+    sleep(.5)
     print("pyt: Syncing PPOB Product...")
     _PPOBService.start_init_ppob_product()
+    sleep(.5)
+    print("pyt: Syncing Machine Status...")
+    _Sync.start_sync_machine_status()
     sleep(.5)
     if setting['reloadService'] is True:
         sleep(.5)

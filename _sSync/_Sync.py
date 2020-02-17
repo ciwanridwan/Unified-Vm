@@ -52,7 +52,7 @@ def check_connection(url, param):
                     s, r = _NetworkAccess.post_to_url(url=_Global.BACKEND_URL + 'get/setting', param=SETTING_PARAM)
                     if s == 200 and r['result'] == 'OK':
                         _KioskService.update_kiosk_status(r)
-                    start_sync_machine_status()
+                    # start_sync_machine_status()
                     sleep(10)
                 _KioskService.kiosk_status()
             except Exception as e:
@@ -104,6 +104,35 @@ def sync_machine_status():
 
 def start_kiosk_sync():
     _Helper.get_pool().apply_async(kiosk_sync)
+
+
+def start_kiosk_data_sync():
+    _Helper.get_pool().apply_async(kiosk_data_sync)
+
+
+def kiosk_data_sync():
+    print("pyt: Start Syncing Product Stock...")
+    sync_product_stock()
+    print("pyt: Start Syncing Product Data...")
+    sync_product_data()
+    print("pyt: Start Syncing Shop Data Records ...")
+    sync_data_transaction()
+    print("pyt: Start Syncing Failed Shop Data Records ...")
+    sync_data_transaction_failure()
+
+
+def start_kiosk_topup_sync():
+    _Helper.get_pool().apply_async(kiosk_topup_sync)
+
+
+def kiosk_topup_sync():
+    print("pyt: Start Syncing SAM Audit Records ...")
+    sync_sam_audit()
+    print("pyt: Start Syncing Topup Amount...")
+    sync_topup_amount()
+    print("pyt: Start Syncing Topup Data Records...")
+    sync_topup_records()
+
 
 
 def kiosk_sync():
@@ -425,7 +454,7 @@ def handle_tasks(tasks):
             _DAO.clear_stock_product()
             update_task(task, 'RESET_STOCK_PRODUCT_SUCCESS')
         if task['taskName'] in ['UPDATE_STOCK_PRODUCT', 'REMOTE_UPDATE_STOCK']:
-            result = start_get_product_stock()
+            result = sync_product_stock()
             update_task(task, result)
         if task['taskName'] == 'UPDATE_KIOSK':
             update_task(task)
