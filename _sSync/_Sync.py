@@ -495,7 +495,7 @@ def start_sync_product_stock():
 
 def sync_product_stock():
     _url = _Global.BACKEND_URL + 'get/product-stock'
-    if _Helper.is_online(source='start_get_product_stock') is True:
+    if _Helper.is_online(source='start_sync_product_stock') is True:
         s, r = _NetworkAccess.get_from_url(url=_url)
         if s == 200 and r['result'] == 'OK':
             products = r['data']

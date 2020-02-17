@@ -13,7 +13,7 @@ import subprocess
 from sys import _getframe as whois
 
 LOGGER = logging.getLogger()
-POOL = ThreadPool(16)
+POOL = ThreadPool(32)
 
 
 def get_pool():
