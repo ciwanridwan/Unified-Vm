@@ -888,7 +888,7 @@ def init_setting():
     setting['tid'] = _Global.TID
     # setting['prepaid'] = _QPROX.BANKS
     setting['server'] = _Global.BACKEND_URL
-    # setting['reloadService'] = _Global.RELOAD_SERVICE
+    setting['reloadService'] = _Global.RELOAD_SERVICE
     # setting['sftpMandiri'] = _Global.SFTP_MANDIRI
     # setting['ftp'] = _Global.FTP
     # setting['bankConfig'] = _Global.BANKS
