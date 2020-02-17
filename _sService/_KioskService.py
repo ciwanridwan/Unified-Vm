@@ -380,7 +380,7 @@ def machine_summary():
         'on_usage': 'IDLE',
         'edc_error': _Global.EDC_ERROR,
         'nfc_error': _Global.NFC_ERROR,
-        'mei_error': _Global.MEI_ERROR,
+        'mei_error': _Global.BILL_ERROR,
         'printer_error': _Global.PRINTER_ERROR,
         'scanner_error': _Global.SCANNER_ERROR,
         'webcam_error': _Global.WEBCAM_ERROR,

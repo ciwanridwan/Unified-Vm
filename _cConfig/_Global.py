@@ -284,7 +284,7 @@ BNI_SAM_2_NO = _ConfigParser.get_set_value('QPROX', 'bni^sam^2^no', '---')
 
 EDC_ERROR = ''
 NFC_ERROR = ''
-MEI_ERROR = ''
+BILL_ERROR = ''
 PRINTER_ERROR = ''
 SCANNER_ERROR = ''
 WEBCAM_ERROR = ''
