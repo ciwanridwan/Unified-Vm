@@ -519,6 +519,7 @@ def trigger_mandiri_sam_update():
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TRIGGERED')
         MANDIRI_UPDATE_SCHEDULE_RUNNING = False
     else:
-        LOGGER.warning(('FAILED_START_TIME_TRIGGER', _Helper.time_string('%H%M'), daily_settle_time))
+        LOGGER.warning(('FAILED_START_TIME_TRIGGER', _Helper.time_string('%H:%M'), daily_settle_time))
+        LOGGER.warning(('LAST_UPDATE_BALANCE', _Helper.convert_epoch(_Global.LAST_UPDATE/1000)))
 
 
