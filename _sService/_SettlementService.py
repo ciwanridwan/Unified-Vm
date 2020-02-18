@@ -520,7 +520,7 @@ def trigger_mandiri_sam_update():
     current_limit = 5000000
     if _Global.MANDIRI_ACTIVE_WALLET > current_limit:
         current_limit = 10000000
-    if _Global.MANDIRI_ACTIVE_WALLET < current_limit and current_time > (last_update+1800):
+    if _Global.MANDIRI_ACTIVE_WALLET < current_limit and current_time > (last_update+600):
         MANDIRI_UPDATE_SCHEDULE_RUNNING = True
         LOGGER.warning(('LAST_UPDATE_BALANCE', _Helper.convert_epoch(last_update)))
         LOGGER.info(('TRIGGERED_BY_TIME_SETUP', _Helper.time_string('%H:%M'), daily_settle_time))
