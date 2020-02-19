@@ -983,10 +983,10 @@ def update_balance_online(bank):
                         'last_balance': '0', #TODO: replace "last_balance"
                     }
                     QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|SUCCESS|'+json.dumps(output))
-                    return
+                    break
                 if attempt >= 3:
                     QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
-                    return
+                    break
                 sleep(1)
         except Exception as e:
             LOGGER.warning(str(e))
@@ -1052,10 +1052,7 @@ def send_cryptogram_tapcash(cyptogram, card_info):
         param = QPROX['SEND_CRYPTO_CONTACTLESS'] + '|' + str(card_info) + '|' + str(cyptogram)
         response, result = _Command.send_request(param=param, output=_Command.MO_REPORT)
         LOGGER.debug((str(response), str(result)))
-        if response == 0 and result is not None: #TODO: Check Send Cryptogram Result
-            return True
-        else:
-            return False
+        return True if response == 0 else False
     except Exception as e:
         LOGGER.warning(str(e))
         return False

@@ -796,7 +796,7 @@ def check_db(data_name):
 
 
 def kill_explorer():
-    if setting['dev_mode'] is False:
+    if INITIAL_SETTING['dev_mode'] is False:
         # os.system('taskkill /f /im explorer.exe')
         pass
     else:
@@ -843,7 +843,6 @@ def check_path(new):
 
 
 def set_tvc_player(command):
-    global setting
     if command == "":
         return
     elif command == "STOP":
@@ -876,23 +875,24 @@ def set_ext_keyboard(command):
         return
 
 
-setting = dict()
+INITIAL_SETTING = dict()
 
 
 def init_setting():
-    global setting
-    setting['dev_mode'] = _Global.TEST_MODE
-    setting['db'] = _ConfigParser.get_value('TERMINAL', 'DB')
-    setting['display'] = get_screen_resolution()
-    setting['devices'] = _Global.get_devices()
-    setting['tid'] = _Global.TID
+    global INITIAL_SETTING
+    INITIAL_SETTING['dev_mode'] = _Global.TEST_MODE
+    INITIAL_SETTING['db'] = _ConfigParser.get_value('TERMINAL', 'DB')
+    INITIAL_SETTING['display'] = get_screen_resolution()
+    INITIAL_SETTING['devices'] = _Global.get_devices()
+    INITIAL_SETTING['tid'] = _Global.TID
     # setting['prepaid'] = _QPROX.BANKS
-    setting['server'] = _Global.BACKEND_URL
-    setting['reloadService'] = _Global.RELOAD_SERVICE
+    INITIAL_SETTING['server'] = _Global.BACKEND_URL
+    INITIAL_SETTING['reloadService'] = _Global.RELOAD_SERVICE
+    INITIAL_SETTING['allowedSyncTask'] = _Global.ALLOWED_SYNC_TASK
     # setting['sftpMandiri'] = _Global.SFTP_MANDIRI
     # setting['ftp'] = _Global.FTP
     # setting['bankConfig'] = _Global.BANKS
-    setting['serviceVersion'] = _Global.get_service_version()
+    INITIAL_SETTING['serviceVersion'] = _Global.get_service_version()
     # pprint(setting)
 
 
@@ -959,7 +959,7 @@ if __name__ == '__main__':
     disable_screensaver()
     if _Global.LIVE_MODE:
         kill_explorer()
-    check_db(setting['db'])
+    check_db(INITIAL_SETTING['db'])
     if os.name == 'nt':
         path = '_qQML/'
     else:
@@ -970,7 +970,7 @@ if __name__ == '__main__':
     context = view.rootContext()
     context.setContextProperty('_SLOT', SLOT_HANDLER)
     print("pyt: Checking Auth to Server...")
-    _Sync.start_check_connection(url=setting['server'].replace('v2/', '')+'ping', param=setting)
+    _Sync.start_check_connection(url=INITIAL_SETTING['server'].replace('v2/', '')+'ping', param=INITIAL_SETTING)
     translator = QTranslator()
     translator.load(path + 'INA.qm')
     app.installTranslator(translator)
@@ -1027,10 +1027,10 @@ if __name__ == '__main__':
     print("pyt: Syncing PPOB Product...")
     _PPOBService.start_init_ppob_product()
     sleep(.5)
-    # print("pyt: Syncing Machine Status...")
-    # _Sync.start_sync_machine_status()
-    # sleep(.5)
-    if setting['reloadService'] is True:
+    print("pyt: Syncing Machine Status...")
+    _Sync.start_sync_machine_status()
+    sleep(.5)
+    if INITIAL_SETTING['reloadService'] is True:
         sleep(.5)
         print("pyt: Restarting MDDTopUpService...")
         _KioskService.start_restart_mdd_service()

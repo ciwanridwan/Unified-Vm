@@ -11,9 +11,10 @@ import binascii
 from _nNetwork import _NetworkAccess
 import subprocess
 from sys import _getframe as whois
+# import inspect
 
 LOGGER = logging.getLogger()
-POOL = ThreadPool(32)
+POOL = ThreadPool(16)
 
 
 def get_pool():
@@ -164,4 +165,7 @@ def execute_console(command):
     dump(response)
     return response
 
+
+def whoisme():
+    return whois(1).f_code.co_name
 

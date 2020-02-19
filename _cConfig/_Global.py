@@ -294,6 +294,18 @@ CD1_ERROR = ''
 CD2_ERROR = ''
 CD3_ERROR = ''
 
+ALLOWED_SYNC_TASK = [
+    'sync_pending_refund',
+    'sync_task',
+    'sync_settlement_data',
+    'sync_sam_audit',
+    'sync_data_transaction_failure',
+    'sync_data_transaction',
+    'sync_topup_records',
+    'sync_machine_status'
+
+]
+
 
 def log_to_temp_config(section='last^auth', content=''):
     global LAST_AUTH, LAST_UPDATE
