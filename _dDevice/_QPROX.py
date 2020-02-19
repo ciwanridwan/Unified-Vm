@@ -974,6 +974,7 @@ def update_balance_online(bank):
             while True:
                 attempt+=1
                 send_crypto_tapcash = send_cryptogram_tapcash(crypto_data['dataToCard'], card_info)
+                _Helper.dump(send_crypto_tapcash)
                 if send_crypto_tapcash is True:
                 # - Send Output as Mandiri Specification            
                     output = {
