@@ -880,6 +880,12 @@ INITIAL_SETTING = dict()
 
 def init_setting():
     global INITIAL_SETTING
+    qml_config = sys.path[0] + '/_qQML/config.js'
+    if not os.path.exists(qml_config):
+        with open(sys.path[0] + '/_qQML/config.js', 'w+') as qml:
+            qml.write('//INITIATION_QML_CONFIG'+os.linesep)
+            qml.close()
+        LOGGER.info(("CREATE INITIATION_QML_CONFIG ON ", qml_config))
     INITIAL_SETTING['dev_mode'] = _Global.TEST_MODE
     INITIAL_SETTING['db'] = _ConfigParser.get_value('TERMINAL', 'DB')
     INITIAL_SETTING['display'] = get_screen_resolution()
