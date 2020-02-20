@@ -166,6 +166,6 @@ def execute_console(command):
     return response
 
 
-def whoisme():
+def whoami():
     return whois(1).f_code.co_name
 

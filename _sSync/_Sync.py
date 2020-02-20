@@ -100,8 +100,8 @@ def sync_machine_status():
         except Exception as e:
             LOGGER.warning(e)
         finally:
-            if _Helper.whoisme() not in _Global.ALLOWED_SYNC_TASK:
-                LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoisme()))
+            if _Helper.whoami() not in _Global.ALLOWED_SYNC_TASK:
+                LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
                 break
         sleep(25.5)
 
@@ -186,8 +186,8 @@ def sync_topup_records():
         except Exception as e:
             LOGGER.warning(e)
         finally:
-            if _Helper.whoisme() not in _Global.ALLOWED_SYNC_TASK:
-                LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoisme()))
+            if _Helper.whoami() not in _Global.ALLOWED_SYNC_TASK:
+                LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
                 break
         sleep(44.5)
 
@@ -217,8 +217,8 @@ def sync_data_transaction():
         except Exception as e:
             LOGGER.warning(e)
         finally:
-            if _Helper.whoisme() not in _Global.ALLOWED_SYNC_TASK:
-                LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoisme()))
+            if _Helper.whoami() not in _Global.ALLOWED_SYNC_TASK:
+                LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
                 break
         sleep(99.9)
 
@@ -247,8 +247,8 @@ def sync_data_transaction_failure():
         except Exception as e:
             LOGGER.warning(e)
         finally:
-            if _Helper.whoisme() not in _Global.ALLOWED_SYNC_TASK:
-                LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoisme()))
+            if _Helper.whoami() not in _Global.ALLOWED_SYNC_TASK:
+                LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
                 break
         sleep(99.9)
 
@@ -277,8 +277,8 @@ def sync_product_data():
         except Exception as e:
             LOGGER.warning(e)
         finally:
-            if _Helper.whoisme() not in _Global.ALLOWED_SYNC_TASK:
-                LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoisme()))
+            if _Helper.whoami() not in _Global.ALLOWED_SYNC_TASK:
+                LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
                 break
         sleep(55.5)
 
@@ -307,8 +307,8 @@ def sync_sam_audit():
         except Exception as e:
             LOGGER.warning(e)
         finally:
-            if _Helper.whoisme() not in _Global.ALLOWED_SYNC_TASK:
-                LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoisme()))
+            if _Helper.whoami() not in _Global.ALLOWED_SYNC_TASK:
+                LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
                 break
         sleep(77.7)
 
@@ -352,8 +352,8 @@ def sync_settlement_data(bank):
         except Exception as e:
             LOGGER.warning(e)
         finally:
-            if _Helper.whoisme() not in _Global.ALLOWED_SYNC_TASK:
-                LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoisme()))
+            if _Helper.whoami() not in _Global.ALLOWED_SYNC_TASK:
+                LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
                 break
         sleep(888.8)
 
@@ -378,8 +378,8 @@ def sync_task():
         except Exception as e:
             LOGGER.warning(e)
         finally:
-            if _Helper.whoisme() not in _Global.ALLOWED_SYNC_TASK:
-                LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoisme()))
+            if _Helper.whoami() not in _Global.ALLOWED_SYNC_TASK:
+                LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
                 break
         sleep(33.3)
 
@@ -418,8 +418,8 @@ def sync_pending_refund():
         except Exception as e:
             LOGGER.warning(e)
         finally:
-            if _Helper.whoisme() not in _Global.ALLOWED_SYNC_TASK:
-                LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoisme()))
+            if _Helper.whoami() not in _Global.ALLOWED_SYNC_TASK:
+                LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
                 break
         sleep(15.15)
 
@@ -570,8 +570,8 @@ def sync_topup_amount():
             if s == 200 and r['result'] == 'OK':
                 _Global.TOPUP_AMOUNT_SETTING = r['data']
                 _Global.store_to_temp_data('topup-amount-setting', json.dumps(r['data']))
-        if _Helper.whoisme() not in _Global.ALLOWED_SYNC_TASK:
-            LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoisme()))
+        if _Helper.whoami() not in _Global.ALLOWED_SYNC_TASK:
+            LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
             break
         sleep(333.3)
 

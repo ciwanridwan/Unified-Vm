@@ -490,6 +490,9 @@ def validate_update_balance():
                 _Global.MANDIRI_ACTIVE_WALLET = 0
                 do_settlement_for(bank='MANDIRI', force=True)
                 ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TRIGGERED')
+        if _Helper.whoami() not in _Global.ALLOWED_SYNC_TASK:
+            LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
+            break
         next_run_time = current_time + sync_time
         LOGGER.debug(('MANDIRI_SAM_UPDATE_BALANCE NEXT RUN', _Helper.convert_epoch(t=next_run_time)))
         sleep(sync_time)

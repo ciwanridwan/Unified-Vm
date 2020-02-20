@@ -79,6 +79,7 @@ def do_update():
     #     UPDATEAPP_SIGNDLER.SIGNAL_UPDATE_APP.emit('APP_UPDATE|FAILED_PULLING')
     #     LOGGER.warning(('step-3', 'APP_UPDATE|FAILED_PULLING'))
     #     return 'APP_UPDATE|FAILED_PULLING'
+    UPDATEAPP_SIGNDLER.SIGNAL_UPDATE_APP.emit('APP_UPDATE|INITIATION')
     __checkout = checkout_branch_by_app_env()
     if len(__checkout) > 1:
         for c in __checkout:

@@ -149,7 +149,11 @@ Base{
                 _SLOT.start_safely_shutdown('RESTART');
             } else {
                 var u = a.split('|')[1]
-                false_notif('Dear '+userData.first_name+'|Memproses Pembaharuan Aplikasi!\nKode Proses Eksekusi ['+u+']\nAplikasi Akan Memuat Ulang Jika Proses Selesai.');
+                if (a.indexOf('APP_UPDATE|VER.') > -1){
+                    false_notif('Dear '+userData.first_name+'|Memproses Pembaharuan Aplikasi!\n\nKode Versi Pembaharuan ['+u+']\n\nAplikasi Akan Memuat Ulang.');
+                } else {
+                    false_notif('Dear '+userData.first_name+'|Memproses Pembaharuan Aplikasi!\n\nProses Eksekusi ['+u+']\n\nMohon Tunggu Hingga Semua Proses Selesai.');
+                }
             }
             return;
         } else if (a.indexOf('EDC_SETTLEMENT') > -1){
