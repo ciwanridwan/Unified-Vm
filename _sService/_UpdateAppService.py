@@ -80,19 +80,26 @@ def do_update():
     #     LOGGER.warning(('step-3', 'APP_UPDATE|FAILED_PULLING'))
     #     return 'APP_UPDATE|FAILED_PULLING'
     UPDATEAPP_SIGNDLER.SIGNAL_UPDATE_APP.emit('APP_UPDATE|INITIATION')
+    sleep(.5)
     __checkout = checkout_branch_by_app_env()
     if len(__checkout) > 1:
         for c in __checkout:
             UPDATEAPP_SIGNDLER.SIGNAL_UPDATE_APP.emit('APP_UPDATE|'+c.upper())
+    UPDATEAPP_SIGNDLER.SIGNAL_UPDATE_APP.emit('APP_UPDATE|SUCCESS_CHECKOUT')
+    sleep(.5)
     __pull = pull_branch()
     if len(__pull) > 1:
         for p in __pull:
             UPDATEAPP_SIGNDLER.SIGNAL_UPDATE_APP.emit('APP_UPDATE|'+p.upper())
     # LOGGER.info(('step-3', 'APP_UPDATE|SUCCESS_PULLING'))
+    UPDATEAPP_SIGNDLER.SIGNAL_UPDATE_APP.emit('APP_UPDATE|SUCCESS_PULLLING')
+    sleep(.5)
+    UPDATEAPP_SIGNDLER.SIGNAL_UPDATE_APP.emit('APP_UPDATE|DETECTING_VERSION')
+    sleep(.5)
     __version = open(os.path.join(os.getcwd(), 'kiosk.ver'), 'r').read().strip()
     _Global.VERSION = __version
     UPDATEAPP_SIGNDLER.SIGNAL_UPDATE_APP.emit('APP_UPDATE|VER. '+str(__version))
-    sleep(2)
+    sleep(1)
     LOGGER.info(('APP_UPDATE|SUCCESS', _Global.VERSION))
     UPDATEAPP_SIGNDLER.SIGNAL_UPDATE_APP.emit('APP_UPDATE|SUCCESS')
     return 'APP_UPDATE|SUCCESS'
