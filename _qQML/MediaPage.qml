@@ -69,7 +69,7 @@ Rectangle{
                 //Mandiri Auto Settlement Timer Trigger
                 if (mandiri_update_schedule != undefined){
                     var hm = Qt.formatDateTime(new Date(), "HH:mm");
-                    if (hm == mandiri_update_schedule && counter%4==0) {
+                    if (hm == mandiri_update_schedule && counter%3==0) {
                         console.log('MANDIRI_UPDATE_SCHEDULE_TVC', hm, mandiri_update_schedule);
                         _SLOT.start_mandiri_update_schedule();
                     }
