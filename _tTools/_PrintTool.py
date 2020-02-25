@@ -118,7 +118,7 @@ def print_global(input_text='\r\n', use_for='EDC_SETTLEMENT', ext='.pdf'):
         pdf.output(pdf_file, 'F')
         LOGGER.debug(('pdf print_global : ', file_name))
         # Print-out to printer
-        print_ = _Printer.ghost_print(pdf_file)
+        print_ = _Printer.do_printout(pdf_file)
         print("pyt : sending pdf to default printer : {}".format(str(print_)))
         PRINTTOOL_SIGNDLER.SIGNAL_PRINT_GLOBAL.emit(use_for+'|DONE')
     except Exception as e:
@@ -136,7 +136,7 @@ def pdf_print(pdf_file, rotate=False):
     try:
         if rotate is True:
             pdf_file = rotate_pdf(pdf_file)
-        print_ = _Printer.ghost_print(pdf_file)
+        print_ = _Printer.do_printout(pdf_file)
         print("pyt : sending pdf to default printer : {}".format(str(print_)))
     except Exception as e:
         LOGGER.warning(str(e))

@@ -256,7 +256,7 @@ def generate_edc_receipt_old(trx):
     except Exception as e:
         LOGGER.warning(str(e))
     finally:
-        print_ = _Printer.ghost_print(GLOBAL_RECEIPT_FILE)
+        print_ = _Printer.do_printout(GLOBAL_RECEIPT_FILE)
         print("pyt : sending edc_receipt to printer : {}".format(str(print_)))
         del pdf
 
@@ -333,6 +333,6 @@ def generate_edc_receipt(trx):
     except Exception as e:
         LOGGER.warning(str(e))
     finally:
-        print_ = _Printer.ghost_print(GLOBAL_RECEIPT_FILE)
+        print_ = _Printer.do_printout(GLOBAL_RECEIPT_FILE)
         print("pyt : sending edc_receipt to printer : {}".format(str(print_)))
         del pdf

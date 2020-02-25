@@ -82,15 +82,13 @@ def load_from_temp_data(section, selected_mode):
 def update_kiosk_status(r):
     # _Global.KIOSK_STATUS = 'UNAUTHORIZED'
     try:
-        _Global.PRINTER_STATUS = get_printer_status_v2()
+        # _Global.PRINTER_STATUS = get_printer_status_v2()
         LOGGER.info(("get_printer_status : ", _Global.PRINTER_STATUS))
         if _Global.empty(r['data']):
             _Global.KIOSK_SETTING = _DAO.init_kiosk()[0]
             _Global.KIOSK_ADMIN = int(_Global.KIOSK_SETTING['defaultAdmin'])
             _Global.KIOSK_MARGIN = int(_Global.KIOSK_SETTING['defaultMargin'])
             _Global.KIOSK_NAME = _Global.KIOSK_SETTING['name']
-            if _Global.PRINTER_STATUS == "NORMAL":
-                _Global.KIOSK_STATUS = 'ONLINE'
             _Global.TOPUP_AMOUNT_SETTING = load_from_temp_data('topup-amount-setting', 'json')
             _Global.FEATURE_SETTING = load_from_temp_data('feature-setting', 'json')
             _Global.PAYMENT_SETTING = load_from_temp_data('payment-setting', 'json')
@@ -207,11 +205,11 @@ def define_theme(d):
     # Receipt Logo
     if not _Global.empty(d['receipt_custom_text']):
         _Global.CUSTOM_RECEIPT_TEXT = d['receipt_custom_text'].replace(os.linesep, '|')
-        _Global.log_to_temp_config('receipt^custom^text', d['receipt_custom_text'])
+        _Global.log_to_config('PRINTER', 'receipt^custom^text', d['receipt_custom_text'])
     store, receipt_logo = _NetworkAccess.item_download(d['receipt_logo'], os.getcwd() + '/_rReceipts')
     if store is True:
         _Global.RECEIPT_LOGO = receipt_logo
-        _Global.log_to_temp_config('receipt^logo', receipt_logo)
+        _Global.log_to_config('PRINTER', 'receipt^logo', receipt_logo)
     with open(config_js, 'w+') as config_qml:
         config_qml.write(content_js)
         config_qml.close()

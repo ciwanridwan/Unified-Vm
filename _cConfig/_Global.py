@@ -109,11 +109,9 @@ THEME_SETTING = None
 ADS_SETTING = load_from_temp_data('ads-setting', 'json')
 THEME_NAME = _ConfigParser.get_set_value('TEMPORARY', 'theme^name', '---')
 KIOSK_REAL_STATUS = 'ONLINE'
-RECEIPT_LOGO = _ConfigParser.get_set_value('TEMPORARY', 'receipt^logo', 'mandiri_logo.gif')
 REPO_USERNAME = _ConfigParser.get_set_value('REPOSITORY', 'username', 'developer')
 REPO_PASSWORD = _ConfigParser.get_set_value('REPOSITORY', 'password', 'Mdd*123#')
 SERVICE_VERSION = _ConfigParser.get_set_value('TEMPORARY', 'service^version', '---')
-CUSTOM_RECEIPT_TEXT = _ConfigParser.get_set_value('TEMPORARY', 'receipt^custom^text', '')
 COLOR_TEXT = _ConfigParser.get_set_value('TEMPORARY', 'color^text', 'white')
 COLOR_BACK = _ConfigParser.get_set_value('TEMPORARY', 'color^back', 'black')
 
@@ -294,6 +292,14 @@ CD1_ERROR = ''
 CD2_ERROR = ''
 CD3_ERROR = ''
 
+RECEIPT_PRINT_COUNT = int(_ConfigParser.get_set_value('PRINTER', 'receipt^print^count', '0'))
+RECEIPT_PRINT_LIMIT = int(_ConfigParser.get_set_value('PRINTER', 'receipt^print^limit', '1800'))
+if RECEIPT_PRINT_COUNT <= RECEIPT_PRINT_LIMIT:
+    PRINTER_ERROR = 'PAPER_ROLL_WARNING'
+RECEIPT_LOGO = _ConfigParser.get_set_value('PRINTER', 'receipt^logo', 'mandiri_logo.gif')
+CUSTOM_RECEIPT_TEXT = _ConfigParser.get_set_value('PRINTER', 'receipt^custom^text', '')
+
+
 ALLOWED_SYNC_TASK = [
     'sync_pending_refund',
     'sync_task',
@@ -319,6 +325,19 @@ def log_to_temp_config(section='last^auth', content=''):
     else:
         content = str(content)
     _ConfigParser.set_value('TEMPORARY', section, content)
+
+
+def log_to_config(option='TEMPORARY', section='last^auth', content=''):
+    content = str(content)
+    _ConfigParser.set_value(option, section, content)
+
+
+def update_receipt_count():
+    global PRINTER_ERROR, RECEIPT_PRINT_COUNT
+    RECEIPT_PRINT_COUNT = RECEIPT_PRINT_COUNT - 1
+    log_to_config('PRINTER', 'receipt^print^count', str(RECEIPT_PRINT_COUNT))
+    if RECEIPT_PRINT_COUNT <= RECEIPT_PRINT_LIMIT:
+        PRINTER_ERROR = 'PAPER_ROLL_WARNING'
 
 
 def active_auth_session():

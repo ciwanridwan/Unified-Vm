@@ -337,7 +337,7 @@ def print_topup_trx(p, t, ext='.pdf'):
         pdf.output(pdf_file, 'F')
         LOGGER.debug(('pdf sale_print_global : ', file_name))
         # Print-out to printer
-        print_ = _Printer.ghost_print(pdf_file)
+        print_ = _Printer.do_printout(pdf_file)
         print("pyt : sending pdf to default printer : {}".format(str(print_)))
         SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|DONE')
         # failure = 'USER_CANCELLATION'
@@ -475,7 +475,7 @@ def print_shop_trx(p, t, ext='.pdf'):
         pdf.output(pdf_file, 'F')
         LOGGER.debug(('pdf sale_print_global : ', file_name))
         # Print-out to printer
-        print_ = _Printer.ghost_print(pdf_file)
+        print_ = _Printer.do_printout(pdf_file)
         print("pyt : sending pdf to default printer : {}".format(str(print_)))
         SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|DONE')
         # failure = 'USER_CANCELLATION'
@@ -626,7 +626,7 @@ def print_ppob_trx(p, t, ext='.pdf'):
         pdf.output(pdf_file, 'F')
         LOGGER.debug(('pdf sale_print_global : ', file_name))
         # Print-out to printer
-        print_ = _Printer.ghost_print(pdf_file)
+        print_ = _Printer.do_printout(pdf_file)
         print("pyt : sending pdf to default printer : {}".format(str(print_)))
         SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|DONE')
     except Exception as e:
@@ -652,7 +652,7 @@ def pdf_print(pdf_file, rotate=False):
     try:
         if rotate is True:
             pdf_file = rotate_pdf(pdf_file)
-        print_ = _Printer.ghost_print(pdf_file)
+        print_ = _Printer.do_printout(pdf_file)
         print("pyt : sending pdf to default printer : {}".format(str(print_)))
     except Exception as e:
         LOGGER.warning(str(e))
@@ -928,7 +928,7 @@ def admin_print_global(struct_id, ext='.pdf'):
         LOGGER.debug(('pdf admin_print_global : ', file_name))
         # Print-out to printer
         for i in range(print_copy):
-            print_ = _Printer.ghost_print(pdf_file)
+            print_ = _Printer.do_printout(pdf_file)
             # LOGGER.debug(("pyt : ({}) Printing to Default Printer : {}".format(str(i), str(print_))))
             print("pyt : ({}) Printing to Default Printer : {}".format(str(i), str(print_)))
             if '[ERROR]' in print_:

@@ -68,6 +68,7 @@ def default_print(path):
         #                              + DEFAULT_PRINTER +'"' + PDF_FILE, '.', 0)
         _print = subprocess.Popen([GSPRINT_PATH, PDF_FILE], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         result, error = _print.communicate()
+        _Global.update_receipt_count()
         LOGGER.debug(('[DEBUG] default print : ', str(result), str(error)))
         return result, error
     except Exception as e:
@@ -76,7 +77,7 @@ def default_print(path):
         return '[ERROR] {}'.format(str(e))
 
 
-def ghost_print(path):
+def do_printout(path):
     global PDF_FILE
     if path is None:
         return '[ERROR] No File Path Found!'
@@ -89,38 +90,15 @@ def ghost_print(path):
         #                              + DEFAULT_PRINTER +'"' + PDF_FILE, '.', 0)
         _print = subprocess.Popen(_command, shell=True, stdout=subprocess.PIPE)
         _result = _print.communicate()[0].decode('utf-8').strip().split("\r\n")
+        _Global.update_receipt_count()
         # LOGGER.debug(('[DEBUG] default print : ', _result))
         return _result
     except Exception as e:
-        _Global.PRINTER_ERROR = 'FAILED_TO_EXECUTE_GHOST_PRINT'
+        _Global.PRINTER_ERROR = 'FAILED_TO_EXECUTE_do_printout'
         LOGGER.warning(('[ERROR] default print : ', e))
         return '[ERROR] {}'.format(str(e))
 
 
-# def start_test_print():
-#     _Tools.get_pool().apply_async(test_default_print)
-#
-#
-# def test_default_print():
-#     try:
-#         _print = win32api.ShellExecute(0, 'open', GSPRINT_PATH, '-ghostscript "' + GHOSTSCRIPT_PATH + '" -printer "' +
-#                                        DEFAULT_PRINTER + '"' + TEST_FILE, '.', 0)
-#         LOGGER.debug(('[DEBUG] default print : ', _print, TEST_FILE))
-#     except Exception as e:
-#         LOGGER.warning(('[ERROR] default print : ', e))
-#
-#
-# def simply_print(path):
-#     global PDF_FILE
-#     if path is None:
-#         return '[ERROR] No File Path Found!'
-#     try:
-#         PDF_FILE = path
-#         _print = os.startfile(path, "print")
-#         return _print
-#     except Exception as e:
-#         LOGGER.warning(('[ERROR] simply_print : ', str(e)))
-#         return '[ERROR] ' + str(e)
 '''
  import win32api
  fname="C:\\somePDF.pdf"
