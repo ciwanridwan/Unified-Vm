@@ -475,6 +475,27 @@ Base{
         }
 
         AdminPanelButton{
+            id: reset_printer_count
+            z: 10
+            button_text: 'reset\nprinter'
+            visible: !popup_loading.visible
+            modeReverse: true
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('Admin Page "Reset Printer"');
+                    if (press != '0') return;
+                    press = '1';
+                    console.log('reset_printer is pressed..!');
+                    popup_loading.open();
+                    _SLOT.start_reset_receipt_count('0');
+                    _SLOT.kiosk_get_machine_summary();
+                    _SLOT.kiosk_get_product_stock();
+                }
+            }
+        }
+
+        AdminPanelButton{
             id: print_receipt_button
             z: 10
             button_text: 'collect\nprint'

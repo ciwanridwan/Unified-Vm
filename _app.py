@@ -604,6 +604,10 @@ class SlotHandler(QObject):
         _SettlementService.start_trigger_mandiri_sam_update()
     start_mandiri_update_schedule = pyqtSlot()(start_mandiri_update_schedule)
 
+    def start_reset_receipt_count(self, count):
+        _Global.start_reset_receipt_count(count)
+    start_reset_receipt_count = pyqtSlot(str)(start_reset_receipt_count)
+
 
 def s_handler():
     _KioskService.K_SIGNDLER.SIGNAL_GET_FILE_LIST.connect(view.rootObject().result_get_file_list)

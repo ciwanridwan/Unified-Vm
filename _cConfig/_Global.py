@@ -340,6 +340,20 @@ def update_receipt_count():
         PRINTER_ERROR = 'PAPER_ROLL_WARNING'
 
 
+def start_reset_receipt_count(count):
+    _Helper.get_pool().apply_async(reset_receipt_count, (count,))
+
+
+def reset_receipt_count(count):
+    global PRINTER_ERROR, RECEIPT_PRINT_COUNT
+    RECEIPT_PRINT_COUNT = int(count)
+    log_to_config('PRINTER', 'receipt^print^count', str(RECEIPT_PRINT_COUNT))
+    if RECEIPT_PRINT_COUNT <= RECEIPT_PRINT_LIMIT:
+        PRINTER_ERROR = 'PAPER_ROLL_WARNING'
+    else:
+        PRINTER_ERROR = ''
+
+
 def active_auth_session():
     if LAST_AUTH > 0:
         today = _Helper.today_time()
