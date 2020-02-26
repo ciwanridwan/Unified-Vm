@@ -334,9 +334,9 @@ def log_to_config(option='TEMPORARY', section='last^auth', content=''):
 
 def update_receipt_count():
     global PRINTER_ERROR, RECEIPT_PRINT_COUNT
-    RECEIPT_PRINT_COUNT = RECEIPT_PRINT_COUNT - 1
+    RECEIPT_PRINT_COUNT = RECEIPT_PRINT_COUNT + 1
     log_to_config('PRINTER', 'receipt^print^count', str(RECEIPT_PRINT_COUNT))
-    if RECEIPT_PRINT_COUNT <= RECEIPT_PRINT_LIMIT:
+    if RECEIPT_PRINT_COUNT >= RECEIPT_PRINT_LIMIT:
         PRINTER_ERROR = 'PAPER_ROLL_WARNING'
 
 
@@ -348,7 +348,7 @@ def reset_receipt_count(count):
     global PRINTER_ERROR, RECEIPT_PRINT_COUNT
     RECEIPT_PRINT_COUNT = int(count)
     log_to_config('PRINTER', 'receipt^print^count', str(RECEIPT_PRINT_COUNT))
-    if RECEIPT_PRINT_COUNT <= RECEIPT_PRINT_LIMIT:
+    if RECEIPT_PRINT_COUNT >= RECEIPT_PRINT_LIMIT:
         PRINTER_ERROR = 'PAPER_ROLL_WARNING'
     else:
         PRINTER_ERROR = ''
