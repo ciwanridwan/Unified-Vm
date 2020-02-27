@@ -161,6 +161,8 @@ def define_theme(d):
     # Mandiri Update Schedule Time For Timer Trigger
     daily_settle_time = _ConfigParser.get_set_value('QPROX', 'mandiri^daily^settle^time', '02:00')
     content_js += 'var mandiri_update_schedule = "' + daily_settle_time + '";' + os.linesep
+    edc_daily_settle_time = _ConfigParser.get_set_value('EDC', 'daily^settle^time', '23:00')
+    content_js += 'var edc_settlement_schedule = "' + edc_daily_settle_time + '";' + os.linesep
     # Temp Config For Ubal Online
     content_js += 'var bank_ubal_online = ' + json.dumps(_Global.ALLOWED_BANK_UBAL_ONLINE) + ';' + os.linesep
     if type(d['master_logo']) != list:
@@ -292,7 +294,7 @@ def development_status():
     return True if _ConfigParser.get_value('TERMINAL', 'server') == "dev" else False
 
 
-IS_DEV = development_status()
+IS_DEV = _Global.TEST_MODE
 
 
 def rename_file(filename, list_, x):
@@ -551,7 +553,7 @@ def post_tvc_list(list_):
     if list_ is None or list_ == "":
         return
     try:
-        #TODO Create Backend URL
+        #NOTES: NO NEED, PLAYLIST FROM SERVER ALREADY
         status, response = _NetworkAccess.post_to_url('box/tvcList', {"tvclist": list_})
         LOGGER.info(('SUCCESS', response))
     except Exception as e:
@@ -610,6 +612,7 @@ def send_tvc_log(media, count, media_code=None):
     try:
         status, response = _NetworkAccess.post_to_url(_Global.BACKEND_URL+'count/ads', param)
         _Global.log_to_temp_config(media_code, str(_Helper.now()))
+        # Not Handling Response Result
         LOGGER.info((media, str(count), status, response))
     except Exception as e:
         LOGGER.warning((media, str(count), str(e)))
@@ -699,7 +702,11 @@ def post_cash_collection(l, t):
             "updatedAt": t
         }
         status, response = _NetworkAccess.post_to_url(_Global.BACKEND_URL + 'collect/cash', param)
-        LOGGER.info(("SUCCESS", response))
+        if status == 200:
+            LOGGER.info(("SUCCESS", response))
+        else:
+            # LOG REQUEST
+            _Global.log_request(name=_Helper.whoami, url=_Global.BACKEND_URL + 'collect/cash', payload=param)
     except Exception as e:
         LOGGER.warning(("FAILED", str(e)))
 

@@ -25,6 +25,7 @@ Base{
     property bool withSlider: true
     property bool first_run: true
     property var mandiri_update_schedule: CONF.mandiri_update_schedule
+    property var edc_settlement_schedule: CONF.edc_settlement_schedule
     isPanelActive: false
 
     Stack.onStatusChanged:{
@@ -410,6 +411,14 @@ Base{
                     if (hm == mandiri_update_schedule && tvc_loading.counter%5==0) {
                         console.log('MANDIRI_UPDATE_SCHEDULE_IDLE', hm, mandiri_update_schedule);
                         _SLOT.start_mandiri_update_schedule();
+                    }
+                }
+                //EDC Auto Settlement Timer Trigger
+                if (edc_settlement_schedule != undefined){
+                    var hm = Qt.formatDateTime(new Date(), "HH:mm");
+                    if (hm == edc_settlement_schedule && counter%5==0) {
+                        console.log('EDC_SETTLEMENT_SCHEDULE_IDLE', hm, edc_settlement_schedule);
+                        _SLOT.start_trigger_edc_settlement();
                     }
                 }
                 tvc_loading.counter -= 1

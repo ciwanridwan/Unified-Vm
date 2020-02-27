@@ -608,6 +608,10 @@ class SlotHandler(QObject):
         _Global.start_reset_receipt_count(count)
     start_reset_receipt_count = pyqtSlot(str)(start_reset_receipt_count)
 
+    def start_trigger_edc_settlement(self):
+        _SettlementService.start_trigger_edc_settlement()
+    start_trigger_edc_settlement = pyqtSlot()(start_trigger_edc_settlement)
+
 
 def s_handler():
     _KioskService.K_SIGNDLER.SIGNAL_GET_FILE_LIST.connect(view.rootObject().result_get_file_list)
@@ -1078,6 +1082,9 @@ if __name__ == '__main__':
     print("pyt: Syncing Ads Content...")
     sleep(.5)
     _KioskService.start_define_ads(3)
+    print("pyt: Do Pending Jobs...")
+    sleep(.5)
+    _Sync.start_do_pending_job()
     view.show()
     app.exec_()
     del view

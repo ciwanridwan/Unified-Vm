@@ -11,7 +11,7 @@ from _dDAO import _DAO
 from _tTools import _Helper
 from _nNetwork import _NetworkAccess
 from _nNetwork import _SFTPAccess
-from _dDevice import _QPROX
+from _dDevice import _QPROX, _EDC
 from time import sleep
 
 
@@ -546,5 +546,26 @@ def trigger_mandiri_sam_update():
         LOGGER.warning(('FAILED_START_TIME_TRIGGER', _Helper.time_string('%H:%M'), daily_settle_time))
         LOGGER.warning(('LAST_UPDATE_BALANCE', _Helper.convert_epoch(last_update)))
         LOGGER.warning(('CURRENT_SAM_BALANCE', _Global.MANDIRI_ACTIVE_WALLET), current_limit)
+
+
+EDC_SETTLEMENT_RUNNING = False
+
+
+def start_trigger_edc_settlement():
+    sleep(_Helper.get_random_num(.7, 2.9))
+    if not EDC_SETTLEMENT_RUNNING:
+        _Helper.get_pool().apply_async(trigger_edc_settlement)
+    else:
+        print("pyt: Failed EDC_SETTLEMENT_SCHEDULE, Already Triggered Previously")
+
+
+def trigger_edc_settlement():
+    global EDC_SETTLEMENT_RUNNING
+    daily_settle_time = _ConfigParser.get_set_value('EDC', 'daily^settle^time', '23:00')
+    LOGGER.info(('TRIGGERED_BY_TIME_SETUP', 'EDC_SETTLEMENT_SCHEDULE', _Helper.time_string('%H:%M'), daily_settle_time))
+    EDC_SETTLEMENT_RUNNING = True
+    _EDC.define_edc_settlement()
+    EDC_SETTLEMENT_RUNNING = False
+
 
 

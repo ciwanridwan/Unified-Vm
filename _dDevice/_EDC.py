@@ -639,12 +639,12 @@ def mark_settlement_data(printout=True, mode='DEBIT CARD'):
         _PrintTool.print_global(input_text=SETTLEMENTS_TXT, use_for='EDC_SETTLEMENT')
 
     # Post Update Settlement - DISABLED
-    # post_mark_settlement(list_settlement, _Tools.now())
+    # post_mark_settlement(list_settlement, _Helper.now())
     sleep(1)
     if SETTLEMENT_TYPE_COUNT == 1:
         # SETTLEMENT_PARAM['b_tid'] = tid_settle
         # SETTLEMENT_PARAM['b_mid'] = mid_settle
-        post_mark_settlement_direct(SETTLEMENT_PARAM)
+        upload_edc_settlement_data(SETTLEMENT_PARAM)
         E_SIGNDLER.SIGNAL_PROCESS_SETTLEMENT_EDC.emit('SUCCESS')
         sleep(2)
         E_SIGNDLER.SIGNAL_PROCESS_SETTLEMENT_EDC.emit('FINISH')
@@ -664,15 +664,18 @@ def post_mark_settlement(l, t):
         status, response = _NetworkAccess.post_to_url(_KioskService.BACKEND_URL + 'settlement/mark', param)
         LOGGER.info(("post_mark_settlement : ", response))
     except Exception as e:
-        LOGGER.warning(("post_mark_settlement : ", e))
+        LOGGER.warning((e))
 
 
-def post_mark_settlement_direct(param):
+def upload_edc_settlement_data(param):
     try:
         status, response = _NetworkAccess.post_to_url(_KioskService.BACKEND_URL + 'settlement/mark-direct', param)
-        LOGGER.info(("post_mark_settlement : ", response))
+        if status == 200 and response['result'] == 'OK':
+            LOGGER.info((status, response))
+        else:
+            _Global.log_request(name=_Helper.whoami, url=_KioskService.BACKEND_URL + 'settlement/mark-direct', payload=param)
     except Exception as e:
-        LOGGER.warning(("post_mark_settlement : ", e))
+        LOGGER.warning((e))
 
 
 def start_void_data():

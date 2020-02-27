@@ -23,7 +23,8 @@ def is_online_old(host="8.8.8.8", port=53, timeout=3, source=''):
 
 IS_ONLINE = False
 LAST_REQUEST = 0
-WAITING_TIME_ONLINE = 3
+# Set Previous Waiting Time Into 1 second only
+WAITING_TIME_ONLINE = 1 
 
 
 def is_online(host="www.google.com", timeout=1, source=''):

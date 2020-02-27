@@ -21,6 +21,7 @@ Rectangle{
     property variant media_files: []
     property int index: 0
     property var mandiri_update_schedule
+    property var edc_settlement_schedule
     property int counter: 0
 
 
@@ -72,6 +73,14 @@ Rectangle{
                     if (hm == mandiri_update_schedule && counter%3==0) {
                         console.log('MANDIRI_UPDATE_SCHEDULE_TVC', hm, mandiri_update_schedule);
                         _SLOT.start_mandiri_update_schedule();
+                    }
+                }
+                //EDC Auto Settlement Timer Trigger
+                if (edc_settlement_schedule != undefined){
+                    var hm = Qt.formatDateTime(new Date(), "HH:mm");
+                    if (hm == edc_settlement_schedule && counter%3==0) {
+                        console.log('EDC_SETTLEMENT_SCHEDULE_TVC', hm, edc_settlement_schedule);
+                        _SLOT.start_trigger_edc_settlement();
                     }
                 }
             }

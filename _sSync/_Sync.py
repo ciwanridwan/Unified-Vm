@@ -106,6 +106,37 @@ def sync_machine_status():
         sleep(25.5)
 
 
+def start_do_pending_job():
+    _Helper.get_pool().apply_async(do_pending_job)
+
+
+def do_pending_job():
+    while True:
+        pending_jobs = [f for f in os.listdir(_Global.JOB_PATH) if f.endswith('.request')]
+        print('pyt: count pending_jobs : ' + str(len(pending_jobs)))
+        LOGGER.info(('count', len(pending_jobs)))
+        if len(pending_jobs) > 0:
+            try:
+                for p in pending_jobs:
+                    jobs_path = os.path.join(_Global.JOB_PATH, p)
+                    content = open(jobs_path, 'r').read().strip()
+                    if len(_Global.clean_white_space(content)) == 0:
+                        os.remove(jobs_path)
+                        continue
+                    job = json.loads(content)
+                    __url = job['url']
+                    __param = job['payload']
+                    print('pyt: do_pending_job ' + _Helper.time_string() + ' ' + p)
+                    LOGGER.debug((p, __url, __param))
+                    status, response = _NetworkAccess.post_to_url(url=__url, param=__param)
+                    if status == 200 and response['result'] == 'OK':
+                        os.remove(jobs_path)
+                        continue
+            except Exception as e:
+                LOGGER.warning(e)
+        sleep(3.33)
+
+
 def start_kiosk_sync():
     _Helper.get_pool().apply_async(kiosk_sync)
 

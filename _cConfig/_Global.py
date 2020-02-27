@@ -313,6 +313,40 @@ ALLOWED_SYNC_TASK = [
 ]
 
 
+JOB_PATH = os.path.join(sys.path[0], '_jJob')
+if not os.path.exists(JOB_PATH):
+        os.makedirs(JOB_PATH)
+
+
+def log_request(name='', url='', payload=''):
+    if empty(name) is True or empty(url) is True or empty(payload) is True:
+        return
+    filename = _Helper.time_string(f='%Y%m%d%H%M%S___') + name
+    log = {
+        'url': url,
+        'payload': payload
+    }
+    LOGGER.debug((filename, str(log)))
+    log_to_file(content=log, path=JOB_PATH, filename=filename)
+
+
+def log_to_file(content='', path='', filename='', default_ext='.request'):
+    if empty(content) is True or empty(filename) is True:
+        return
+    if empty(path) is True:
+        path = TEMP_FOLDER
+    if not os.path.exists(path):
+        os.makedirs(path)
+    if '.' not in filename:
+        filename = filename + default_ext
+    log_file = os.path.join(path, filename)
+    if type(content) != str:
+        content = json.dumps(content)
+    with open(log_file, 'w+') as file_logging:
+        file_logging.write(content)
+        file_logging.close()
+
+
 def log_to_temp_config(section='last^auth', content=''):
     global LAST_AUTH, LAST_UPDATE
     __timestamp = _Helper.now()

@@ -57,6 +57,8 @@ def change_product_stock(port, stock):
             # _KioskService.kiosk_get_product_stock()
             PR_SIGNDLER.SIGNAL_CHANGE_STOCK.emit('CHANGE_PRODUCT_STOCK|SUCCESS')
         else:
+            # LOG REQUEST
+            _Global.log_request(name=_Helper.whoami, url=BACKEND_URL + 'change/product-stock', payload=_param)
             PR_SIGNDLER.SIGNAL_CHANGE_STOCK.emit('CHANGE_PRODUCT_STOCK|ERROR')
     except Exception as e:
         LOGGER.warning(('change_product_stock', e))
