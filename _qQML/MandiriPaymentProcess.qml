@@ -978,6 +978,7 @@ Base{
         id: notice_no_change
         width: 1200
         height: 120
+        visible: false
         radius: 50
         fontSize: 30
         border.width: 0
