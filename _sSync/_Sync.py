@@ -365,7 +365,7 @@ def sync_settlement_data(bank):
                         _param = {
                             'mid': _Global.SMT_CONFIG['mid'],
                             'token': _Global.SMT_CONFIG['token'],
-                            'tid': 'TJ-TOPUP-VM'+_Global.TID,
+                            'tid': 'MDD-VM'+_Global.TID,
                             'path_file': os.path.join(sys.path[0], '_rRemoteFiles', s['filename']),
                             'filename': s['filename'],
                             'row': s['row'],
@@ -375,7 +375,7 @@ def sync_settlement_data(bank):
                             'settlement_created_at': datetime.fromtimestamp(s['createdAt']).strftime('%Y-%m-%d %H:%M:%S')
                         }
                         status, response = _NetworkAccess.post_to_url(url=_url, param=_param)
-                        if status == 200:
+                        if status == 200 and response['response']['code'] == 200:
                             _DAO.update_settlement({'sid': s['sid'], 'status': 'TOPUP_PREPAID|CLOSED'})
                             LOGGER.info(response)
                         else:

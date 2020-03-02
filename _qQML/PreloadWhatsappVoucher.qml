@@ -9,7 +9,7 @@ Base{
     property var textSlave: '1. Pada smartphone Anda, unduh Aplikasi QR Reader/Pembaca QR'
     property var textRebel: '2. Buka Tautan yang terbaca pada Aplikasi tersebut (membuka aplikasi Whatsapp Anda)'
     property var textQuard: '3. Kirim text "START" pada Aplikasi Whatsapp Anda pada nomor tersebut.'
-    property var imageSource: "source/qr_transjakarta_register.jpeg"
+    property var imageSource: "source/qr_transjakarta_register_new.jpeg"
     property bool smallerSlaveSize: true
     property int textSize: 40
     visible: false

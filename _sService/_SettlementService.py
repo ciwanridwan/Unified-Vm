@@ -85,7 +85,7 @@ def push_settlement_data(__param):
         __param['tid'] = 'MDD-VM'+TID
         status, response = _NetworkAccess.post_to_url(url=__url, param=__param)
         # LOGGER.debug(('push_settlement_data :', str(status), str(response)))
-        if status == 200:
+        if status == 200 and response['response']['code'] == 200:
             _DAO.update_settlement({'sid': __sid, 'status': 'TOPUP_PREPAID|CLOSED'})
             for settle in GLOBAL_SETTLEMENT:
                 settle['key'] = settle['rid']

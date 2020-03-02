@@ -403,13 +403,13 @@ def check_balance():
             'able_topup': '0000', #Force Allowed Topup For All Non BNI
         }
         # Special Handling For BNI Tapcash
-        if output['bank_type'] == '2':
+        if bank_name == 'BNI':
             output['able_topup'] == result.split('|')[3].replace('#', '')
             # Drop Balance Check If Not Available For Topup
             if output['able_topup'] in ERROR_TOPUP.keys():
                 QP_SIGNDLER.SIGNAL_BALANCE_QPROX.emit('BALANCE|ERROR')
                 return
-        if bank_name == 'DKI':
+        elif bank_name == 'DKI':
             prev_last_balance = _ConfigParser.get_value('TEMPORARY', card_no)
             if not _Global.empty(prev_last_balance):
                 output['balance'] = prev_last_balance
