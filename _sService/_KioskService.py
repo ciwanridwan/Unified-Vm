@@ -967,7 +967,6 @@ def store_transaction_global(param, retry=False):
         if retry is False:
             _trxid = _Helper.get_uuid()
             TRX_ID_SALE = _trxid
-
             if 'payment_error' in GLOBAL_TRANSACTION_DATA.keys():
                 if GLOBAL_TRANSACTION_DATA['shop_type'] == 'shop':
                     PID_SALE = GLOBAL_TRANSACTION_DATA['raw']['pid']
@@ -978,7 +977,6 @@ def store_transaction_global(param, retry=False):
                     save_cash_local(GLOBAL_TRANSACTION_DATA['payment_received'], 'cancel')
                 K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('PAYMENT_FAILED_CANCEL_TRIGGERED')
                 return
-
             _total_price = int(GLOBAL_TRANSACTION_DATA['value']) * int(GLOBAL_TRANSACTION_DATA['qty'])
             _param = {
                 'pid': PID_SALE,
@@ -987,21 +985,17 @@ def store_transaction_global(param, retry=False):
                 'details': param,
                 'status': 1
             }
-
             check_prod = _DAO.check_product(PID_SALE)
             if len(check_prod) == 0:
                 _DAO.insert_product(_param)
-
             status, response = _NetworkAccess.post_to_url(url=_Global.BACKEND_URL + 'sync/product', param=_param)
             if status == 200 and response['id'] == _param['pid']:
                 _param['key'] = _param['pid']
                 _DAO.mark_sync(param=_param, _table='Product', _key='pid')
             K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|STORE_PRODUCT-'+_param['pid'])
-
             if GLOBAL_TRANSACTION_DATA['payment'] == 'cash':
                 # Saving The CASH
                 save_cash_local(GLOBAL_TRANSACTION_DATA['payment_received'])
-
         # ================== RETRY MODE ==================
         _param_stock = dict()
         _trxid = TRX_ID_SALE

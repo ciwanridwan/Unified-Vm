@@ -338,6 +338,8 @@ Base{
                 details.topup_details = result;
                 cardNo = result.card_no;
                 lastBalance = result.last_balance;
+                // Move TRX Success Store Here
+                _SLOT.start_store_transaction_global(JSON.stringify(details))
                 _SLOT.start_store_topup_transaction(JSON.stringify(details));
                 _SLOT.start_do_mandiri_topup_settlement();
                 validate_release_refund();
@@ -404,6 +406,8 @@ Base{
             return;
         }
         if (r == 'EJECT|SUCCESS') {
+            // Move TRX Success Store Here
+            _SLOT.start_store_transaction_global(JSON.stringify(details))
             validate_release_refund();
             return;
 //            switch_frame('source/thumb_ok.png', 'Silakan Ambil Kartu dan Struk Transaksi Anda', 'Terima Kasih', 'backToMain', false )
@@ -418,12 +422,9 @@ Base{
             console.log('payment_complete mode', mode)
 //            details.notes = mode + ' - ' + new Date().getTime().toString();
         }
-        if (details.shop_type!='ppob') {
-            _SLOT.start_store_transaction_global(JSON.stringify(details))
-        } else {
-            var pid = details.shop_type + details.epoch.toString();
-            if (details.payment=='cash') _SLOT.start_log_book_cash(pid, receivedCash.toString());
-        }
+        
+        var pid = details.shop_type + details.epoch.toString();
+        if (details.payment=='cash') _SLOT.start_log_book_cash(pid, receivedCash.toString());
         isPaid = true;
         back_button.visible = false;
         abc.counter = timer_value;

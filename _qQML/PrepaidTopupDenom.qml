@@ -289,7 +289,7 @@ Base{
         popup_loading.close();
         var result = text.split('|')[1];
         if (result == 'ERROR'){
-            switch_frame('source/insert_card_new.png', 'Anda tidak meletakkan kartu', 'atau kartu Anda tidak dapat digunakan', 'backToMain', false );
+            switch_frame('source/insert_card_new.png', 'Anda tidak meletakkan kartu', 'atau kartu Anda tidak dapat digunakan untuk Isi Ulang', 'backToMain', false );
             return;
         } else {
             var info = JSON.parse(result);

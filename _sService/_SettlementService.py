@@ -82,7 +82,7 @@ def push_settlement_data(__param):
     try:
         __param['mid'] = SMT_MID
         __param['token'] = SMT_TOKEN
-        __param['tid'] = 'TJ-TOPUP-VM'+TID
+        __param['tid'] = 'MDD-VM'+TID
         status, response = _NetworkAccess.post_to_url(url=__url, param=__param)
         # LOGGER.debug(('push_settlement_data :', str(status), str(response)))
         if status == 200:
@@ -339,7 +339,6 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=Fal
 #      'bid': BID[bank],
 #      'settlement_created_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 # }
-
 
 def start_do_bni_topup_settlement():
     bank = 'BNI'

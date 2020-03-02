@@ -87,6 +87,16 @@ QP_SIGNDLER = QSignalHandler()
 OPEN_STATUS = False
 TEST_MODE = _Global.TEST_MODE
 
+# BNI ERROR CARD
+ERROR_TOPUP = {
+    '5106': 'ERROR_BNI_NOT_PRODUCTION',
+    '5103': 'ERROR_BNI_PURSE_DISABLED',
+    '1008': 'ERROR_INACTIVECARD',
+    'FFFE': 'CARD_NOT_EXIST',
+    '1004': 'PROCESS_TIMEOUT',
+    'FFFD': 'PROCESS_NOT_FINISHED',
+    '6969': 'CARD_NOT_MATCH'
+}
 
 def send_cryptogram(card_info, cyptogram, slot=1, bank='BNI'):
     if bank == 'BNI':
@@ -377,19 +387,9 @@ def get_fw_bank(key):
 
 def check_balance():
     global LAST_BALANCE_CHECK
-    # if TEST_MODE is True and not _Global.LIVE_MODE:
-    #     output = {
-    #         'balance': '99000',
-    #         'card_no': '6032123443211234',
-    #         'bank_type': '0',
-    #         'bank_name': 'MANDIRI',
-    #         'able_topup': '0000'
-    #     }
-    #     QP_SIGNDLER.SIGNAL_BALANCE_QPROX.emit('BALANCE|' + json.dumps(output))
-    #     return
     param = QPROX['BALANCE'] + '|'
     response, result = _Command.send_request(param=param, output=_Command.MO_REPORT, wait_for=1.5)
-    LOGGER.debug(("check_balance : ", 'non-native', 'force_allowed_topup', result))
+    LOGGER.debug(("check_balance : ", 'non-native', result))
     if response == 0:
         bank_name = get_fw_bank(result.split('|')[2])
         card_no = result.split('|')[1].replace('#', '')
@@ -400,8 +400,15 @@ def check_balance():
             'bank_type': result.split('|')[2].replace('#', ''),
             'bank_name': bank_name,
             # 'able_topup': result.split('|')[3].replace('#', ''),
-            'able_topup': '0000', #Force Allowed Topup
+            'able_topup': '0000', #Force Allowed Topup For All Non BNI
         }
+        # Special Handling For BNI Tapcash
+        if output['bank_type'] == '2':
+            output['able_topup'] == result.split('|')[3].replace('#', '')
+            # Drop Balance Check If Not Available For Topup
+            if output['able_topup'] in ERROR_TOPUP.keys():
+                QP_SIGNDLER.SIGNAL_BALANCE_QPROX.emit('BALANCE|ERROR')
+                return
         if bank_name == 'DKI':
             prev_last_balance = _ConfigParser.get_value('TEMPORARY', card_no)
             if not _Global.empty(prev_last_balance):
@@ -583,16 +590,6 @@ def update_bni_wallet(slot, amount, last_balance=None):
         _Global.BNI_ACTIVE_WALLET = _Global.BNI_SAM_2_WALLET
     _Global.upload_bni_wallet()
 
-
-ERROR_TOPUP = {
-    '5106': 'ERROR_BNI_NOT_PRODUCTION',
-    '5103': 'ERROR_BNI_PURSE_DISABLED',
-    '1008': 'ERROR_INACTIVECARD',
-    'FFFE': 'CARD_NOT_EXIST',
-    '1004': 'PROCESS_TIMEOUT',
-    'FFFD': 'PROCESS_NOT_FINISHED',
-    '6969': 'CARD_NOT_MATCH'
-}
 
 def start_fake_update_dki(card_no, amount):
     bank = 'DKI'
