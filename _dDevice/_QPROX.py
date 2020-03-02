@@ -953,6 +953,9 @@ def update_balance_online(bank):
             QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|ERROR')
     if bank == 'BNI':
         try:
+            if LAST_BALANCE_CHECK['able_topup'] in ERROR_TOPUP.keys():
+                QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.emit('UPDATE_BALANCE_ONLINE|INVALID_CARD')
+                return
             # Do Action List :
             # - Get Purse Data Tapcash
             card_info = get_card_info_tapcash()

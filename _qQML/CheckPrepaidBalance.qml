@@ -68,6 +68,11 @@ Base{
         var func = u.split('|')[0]
         var result = u.split('|')[1]
         popup_loading.close();
+        if (['INVALID_CARD'].indexOf(result) > -1){
+            switch_frame('source/smiley_down.png', 'Terjadi Kesalahan Saat Update Balance', 'Kartu Prabayar Anda Tidak Aktif/Valid', 'closeWindow', false )
+            press = '0';
+            return;
+        }
         if (['UNKNOWN_BANK', 'ERROR'].indexOf(result) > -1){
             switch_frame('source/smiley_down.png', 'Terjadi Kesalahan Saat Update Balance', 'Silakan Coba Lagi Dalam Beberapa Saat', 'closeWindow', false )
             press = '0';
