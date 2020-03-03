@@ -60,7 +60,7 @@ def checkout_branch_by_app_env():
 
 def pull_branch():
     UPDATEAPP_SIGNDLER.SIGNAL_UPDATE_APP.emit('APP_UPDATE|PULLING_BRANCH_'+ORIGIN.upper())
-    command = 'git pull -f "{}" {}'.format(REPO, ORIGIN)
+    command = 'git pull -f'
     return _Helper.execute_console(command)
 
 
