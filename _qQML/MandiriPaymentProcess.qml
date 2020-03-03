@@ -468,7 +468,6 @@ Base{
         console.log("grg_payment_result : ", now, r, receivedCash, totalPrice, proceedAble);
         var grgFunction = r.split('|')[0]
         var grgResult = r.split('|')[1]
-        press = '0'
         if (grgFunction == 'RECEIVE_GRG'){
             if (grgResult == "ERROR" || grgResult == 'TIMEOUT' || grgResult == 'JAMMED'){
                 details.process_error = 1;
@@ -477,9 +476,9 @@ Base{
             } else if (grgResult == 'COMPLETE'){
 //                _SLOT.start_dis_accept_mei();
 //                _SLOT.start_store_es_mei();
+                _SLOT.stop_grg_receive_note();
                 popup_loading.textMain = 'Harap Tunggu Sebentar';
                 popup_loading.textSlave = 'Memproses Penyimpanan Uang Anda';
-                _SLOT.stop_grg_receive_note();
                 back_button.visible = false;
                 popup_loading.smallerSlaveSize = true;
                 popup_loading.open();
@@ -796,14 +795,14 @@ Base{
                     _SLOT.stop_grg_receive_note();
                     if (receivedCash > 0){
                         validate_release_refund('user_cancellation');
+                        return;
 //                        print_failed_transaction('cash', 'USER_CANCELLATION');
 //                        _SLOT.start_return_es_mei();
                     }
 //                    _SLOT.start_dis_accept_mei();
-                } else {
-                    my_timer.stop();
-                    my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
                 }
+                my_timer.stop();
+                my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
             }
         }
     }
@@ -986,7 +985,7 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    console.log('GLOBAL_FRAME_CANCEL_BUTTON', press);
+//                    console.log('GLOBAL_FRAME_CANCEL_BUTTON', press);
                     _SLOT.user_action_log('Press "BATAL" in Payment Notification');
                     if (press != '0') return;
                     press = '1';
@@ -995,14 +994,15 @@ Base{
                         _SLOT.stop_grg_receive_note();
                         if (receivedCash > 0){
                             validate_release_refund('user_cancellation');
+                            return;
     //                        print_failed_transaction('cash', 'USER_CANCELLATION');
     //                        _SLOT.start_return_es_mei();
                         }
     //                    _SLOT.start_dis_accept_mei();
-                    } else {
-                        my_timer.stop();
-                        my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
                     }
+                    my_timer.stop();
+                    my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
+
     //
                 }
             }
@@ -1022,7 +1022,7 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
-                    console.log('GLOBAL_FRAME_NEXT_BUTTON', press);
+//                    console.log('GLOBAL_FRAME_NEXT_BUTTON', press);
                     _SLOT.user_action_log('Press "LANJUT"');
                     if (press!='0') return;
                     press = '1'
