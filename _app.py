@@ -884,6 +884,20 @@ def set_ext_keyboard(command):
 
 
 INITIAL_SETTING = dict()
+TEMP_CONFIG_JS = '''
+var mandiri_update_schedule = "02:00";
+var edc_settlement_schedule = "23:00";
+var bank_ubal_online = ["MANDIRI", "BNI"];
+var master_logo = ["20200226174450cs4c79p1DvSstTqxPV.png"];
+var partner_logos = ["202002261744501WN95z1DClnpPR6COJ.png", "20200226174450E1r8h3I4g2NDfMMgvM.png"];
+var backgrounds = ["202002261744502niSQy0MVpaktdm8z1.png"];
+var running_text = "Silahkan Tekan Layar Untuk Mulai Transaksi";
+var running_text_color = "steelblue";
+var text_color = "white";
+var frame_color = "steelblue";
+var background_color = "black";
+var tvc_waiting_time = 999999;
+'''
 
 
 def init_setting():
@@ -891,7 +905,7 @@ def init_setting():
     qml_config = sys.path[0] + '/_qQML/config.js'
     if not os.path.exists(qml_config):
         with open(sys.path[0] + '/_qQML/config.js', 'w+') as qml:
-            qml.write('//INITIATION_QML_CONFIG'+os.linesep)
+            qml.write(TEMP_CONFIG_JS)
             qml.close()
         LOGGER.info(("CREATE INITIATION_QML_CONFIG ON ", qml_config))
     INITIAL_SETTING['dev_mode'] = _Global.TEST_MODE
