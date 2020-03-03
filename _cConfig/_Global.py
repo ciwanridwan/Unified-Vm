@@ -299,6 +299,8 @@ if RECEIPT_PRINT_COUNT >= RECEIPT_PRINT_LIMIT:
 RECEIPT_LOGO = _ConfigParser.get_set_value('PRINTER', 'receipt^logo', 'mandiri_logo.gif')
 CUSTOM_RECEIPT_TEXT = _ConfigParser.get_set_value('PRINTER', 'receipt^custom^text', '')
 
+EDC_PRINT_ON_LAST = True if _ConfigParser.get_set_value('EDC', 'print^last', '1') == '1' else False
+LAST_EDC_TRX_RECEIPT = None
 
 ALLOWED_SYNC_TASK = [
     'sync_pending_refund',

@@ -204,7 +204,7 @@ def print_topup_trx(p, t, ext='.pdf'):
         pdf.cell(padding_left, 0, '_' * MAX_LENGTH, 0, 0, 'C')
         pdf.ln(small_space)
         pdf.set_font(USED_FONT, '', regular_space)
-        pdf.cell(padding_left, 0, 'Tanggal : '+datetime.strftime(datetime.now(), '%Y-%m-%d'), 0, 0, 'L')
+        pdf.cell(padding_left, 0, 'Tanggal : '+datetime.strftime(datetime.now(), '%d-%m-%Y'), 0, 0, 'L')
         pdf.cell(padding_left, 0, 'Jam : ' + datetime.strftime(datetime.now(), '%H:%M'), 0, 0, 'R')
         pdf.ln(small_space*2)
         pdf.set_font(USED_FONT, '', regular_space)
@@ -359,6 +359,10 @@ def print_topup_trx(p, t, ext='.pdf'):
             _Global.store_upload_failed_trx(trxid, p.get('pid', ''), cash, failure, p.get('payment', 'cash'),
                                             json.dumps(p))
         save_receipt_local(trxid[-6:], json.dumps(p), 'CUSTOMER_TOPUP_TRX')
+        if p['payment'].upper() == 'DEBIT' and _Global.LAST_EDC_TRX_RECEIPT is not None:
+            print__ = _Printer.do_printout(_Global.LAST_EDC_TRX_RECEIPT)
+            print("pyt : sending pdf to default printer : {}".format(str(print__)))
+            _Global.LAST_EDC_TRX_RECEIPT = None
         del pdf
 
 
@@ -389,7 +393,7 @@ def print_shop_trx(p, t, ext='.pdf'):
         pdf.cell(padding_left, 0, '_' * MAX_LENGTH, 0, 0, 'C')
         pdf.ln(small_space)
         pdf.set_font(USED_FONT, '', regular_space)
-        pdf.cell(padding_left, 0, 'Tanggal : '+datetime.strftime(datetime.now(), '%Y-%m-%d'), 0, 0, 'L')
+        pdf.cell(padding_left, 0, 'Tanggal : '+datetime.strftime(datetime.now(), '%d-%m-%Y'), 0, 0, 'L')
         pdf.cell(padding_left, 0, 'Jam : ' + datetime.strftime(datetime.now(), '%H:%M'), 0, 0, 'R')
         pdf.ln(small_space*2)
         pdf.set_font(USED_FONT, '', regular_space)
@@ -497,6 +501,10 @@ def print_shop_trx(p, t, ext='.pdf'):
             _Global.store_upload_failed_trx(trxid, p.get('pid', ''), cash, failure, p.get('payment', 'cash'),
                                             json.dumps(p))
         save_receipt_local(trxid[-6:], json.dumps(p), 'CUSTOMER_SHOP_TRX')
+        if p['payment'].upper() == 'DEBIT' and _Global.LAST_EDC_TRX_RECEIPT is not None:
+            print__ = _Printer.do_printout(_Global.LAST_EDC_TRX_RECEIPT)
+            print("pyt : sending pdf to default printer : {}".format(str(print__)))
+            _Global.LAST_EDC_TRX_RECEIPT = None
         del pdf
 
 
@@ -527,7 +535,7 @@ def print_ppob_trx(p, t, ext='.pdf'):
         pdf.cell(padding_left, 0, '_' * MAX_LENGTH, 0, 0, 'C')
         pdf.ln(small_space)
         pdf.set_font(USED_FONT, '', regular_space)
-        pdf.cell(padding_left, 0, 'Tanggal : '+datetime.strftime(datetime.now(), '%Y-%m-%d'), 0, 0, 'L')
+        pdf.cell(padding_left, 0, 'Tanggal : '+datetime.strftime(datetime.now(), '%d-%m-%Y'), 0, 0, 'L')
         pdf.cell(padding_left, 0, 'Jam : ' + datetime.strftime(datetime.now(), '%H:%M'), 0, 0, 'R')
         pdf.ln(small_space*2)
         pdf.set_font(USED_FONT, '', regular_space)
@@ -634,6 +642,10 @@ def print_ppob_trx(p, t, ext='.pdf'):
         SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
     finally:
         save_receipt_local(trxid[-6:], json.dumps(p), 'CUSTOMER_PPOB_TRX')
+        if p['payment'].upper() == 'DEBIT' and _Global.LAST_EDC_TRX_RECEIPT is not None:
+            print__ = _Printer.do_printout(_Global.LAST_EDC_TRX_RECEIPT)
+            print("pyt : sending pdf to default printer : {}".format(str(print__)))
+            _Global.LAST_EDC_TRX_RECEIPT = None
         del pdf
 
 
@@ -828,7 +840,7 @@ def admin_print_global(struct_id, ext='.pdf'):
         pdf.cell(padding_left, 0, '_' * MAX_LENGTH, 0, 0, 'C')
         pdf.ln(tiny_space)
         pdf.set_font(USED_FONT, '', line_size)
-        pdf.cell(padding_left, 0, 'Tanggal : '+datetime.strftime(datetime.now(), '%Y-%m-%d')+'  Jam : ' +
+        pdf.cell(padding_left, 0, 'Tanggal : '+datetime.strftime(datetime.now(), '%d-%m-%Y')+'  Jam : ' +
                  datetime.strftime(datetime.now(), '%H:%M:%S'), 0, 0, 'L')
         pdf.ln(tiny_space)
         pdf.set_font(USED_FONT, '', line_size)
