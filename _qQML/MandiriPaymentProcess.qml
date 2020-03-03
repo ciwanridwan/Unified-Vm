@@ -986,6 +986,7 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
+                    console.log('GLOBAL_FRAME_CANCEL_BUTTON', press);
                     _SLOT.user_action_log('Press "BATAL" in Payment Notification');
                     if (press != '0') return;
                     press = '1';
@@ -1021,6 +1022,7 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
+                    console.log('GLOBAL_FRAME_NEXT_BUTTON', press);
                     _SLOT.user_action_log('Press "LANJUT"');
                     if (press!='0') return;
                     press = '1'
