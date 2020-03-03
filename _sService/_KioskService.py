@@ -68,10 +68,11 @@ def kiosk_status():
         'name': _Global.KIOSK_NAME,
         'version': _Global.VERSION,
         'status': _Global.KIOSK_STATUS,
-        'real_status': _Global.KIOSK_REAL_STATUS,
+        'real_status': _Global.KIOSK_STATUS,
         'tid': _Global.TID,
         # 'payment': _Global.PAYMENT_SETTING,
         'feature': _Global.FEATURE_SETTING,
+        'last_money_inserted': _ConfigParser.get_value('GRG', 'last^money^inserted')
     }))
 
 
@@ -398,6 +399,7 @@ def machine_summary():
         'bni_active': str(_Global.BNI_ACTIVE),
         'service_ver': str(_Global.SERVICE_VERSION),
         'theme': str(_Global.THEME_NAME),
+        'last_money_inserted': _ConfigParser.get_value('GRG', 'last^money^inserted')
         # 'bni_sam1_no': str(_Global.BNI_SAM_1_NO),
         # 'bni_sam2_no': str(_Global.BNI_SAM_2_NO),
     }

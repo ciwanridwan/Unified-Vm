@@ -171,6 +171,7 @@ def start_receive_note():
             _Helper.dump([_response, _result])
             if _response == 0 and KEY_RECEIVED in _result:
                 cash_in = _result.split('|')[1].split('=')[1]
+                _Global.log_to_config('GRG', 'last^money^inserted', str(cash_in))
                 if cash_in in SMALL_NOTES_NOT_ALLOWED:
                     sleep(.25)
                     param = GRG["REJECT"] + '|'
@@ -207,11 +208,13 @@ def start_receive_note():
                 #     param = GRG["RECEIVE"] + '|'
                 #     _Command.send_request(param=param, output=None)
             if TIMEOUT_BAD_NOTES in _result or UNKNOWN_ITEM in _result:
+                _Global.log_to_config('GRG', 'last^money^inserted', 'ERROR')
                 if TIMEOUT_BAD_NOTES in _result:
                     _Command.send_request(param=GRG["STOP"]+'|', output=None)
                 GRG_SIGNDLER.SIGNAL_GRG_RECEIVE.emit('RECEIVE_GRG|BAD_NOTES')
                 break
             if CODE_JAM in _result:
+                _Global.log_to_config('GRG', 'last^money^inserted', 'ERROR')
                 _Global.BILL_ERROR = 'GRG_DEVICE_JAM'
                 GRG_SIGNDLER.SIGNAL_GRG_RECEIVE.emit('RECEIVE_GRG|JAMMED')
                 LOGGER.warning(('GRG Jammed Detected :', json.dumps({'HISTORY': CASH_HISTORY,
@@ -232,6 +235,7 @@ def start_receive_note():
                 break
             sleep(1)
     except Exception as e:
+        _Global.log_to_config('GRG', 'last^money^inserted', 'ERROR')
         _Global.BILL_ERROR = 'FAILED_RECEIVE_GRG'
         GRG_SIGNDLER.SIGNAL_GRG_RECEIVE.emit('RECEIVE_GRG|ERROR')
         LOGGER.warning(e)

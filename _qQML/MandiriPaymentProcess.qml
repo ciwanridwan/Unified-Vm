@@ -308,6 +308,7 @@ Base{
 //        if (qrMode=='linkaja') _SLOT.start_do_check_linkaja_qr(JSON.stringify(qrPayload));
         var msg = '*' + details.shop_type.toUpperCase() + ' ' + details.provider + ' Rp. ' + FUNC.insert_dot(details.value)
         if (details.shop_type=='topup') msg = '*Isi Ulang Kartu Prabayar '+ details.provider + ' Rp. ' + FUNC.insert_dot(details.denom) + ' + Biaya Admin Rp. ' + FUNC.insert_dot(adminFee.toString())
+        press = '0'
         qr_payment_frame.open(msg);
     }
 
@@ -463,9 +464,10 @@ Base{
 
     function grg_payment_result(r){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-        console.log("grg_payment_result STOP_SUCCESS : ", now, receivedCash, totalPrice, proceedAble);
+        console.log("grg_payment_result : ", now, r, receivedCash, totalPrice, proceedAble);
         var grgFunction = r.split('|')[0]
         var grgResult = r.split('|')[1]
+        press = '0'
         if (grgFunction == 'RECEIVE_GRG'){
             if (grgResult == "ERROR" || grgResult == 'TIMEOUT' || grgResult == 'JAMMED'){
                 details.process_error = 1;
@@ -487,7 +489,6 @@ Base{
             } else if (grgResult == 'BAD_NOTES'){
                 modeButtonPopup = 'retrigger_grg';
                 switch_frame_with_button('source/insert_money.png', 'Masukan Nilai Uang Yang Sesuai Dengan Nominal Transaksi', '(Ambil Terlebih Dahulu Uang Anda Sebelum Menekan Tombol)', 'closeWindow|30', true );
-                press = '0'
                 return;
             } else {
                 global_frame.close();
@@ -1116,6 +1117,26 @@ Base{
 
     QRPaymentFrame{
         id: qr_payment_frame
+        CircleButton{
+            id: cancel_button_qr
+            anchors.left: parent.left
+            anchors.leftMargin: 100
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 50
+            button_text: 'BATAL'
+            modeReverse: true
+            visible: parent.visible
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('Press "BATAL" in QR Payment Frame');
+                    if (press != '0') return;
+                    press = '1';
+                    my_timer.stop();
+                    my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
+                }
+            }
+        }
     }
 
     function get_signal_frame(s){

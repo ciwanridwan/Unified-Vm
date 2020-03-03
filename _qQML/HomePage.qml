@@ -1,6 +1,6 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.2
-//import QtGraphicalEffects 1.0
+import QtGraphicalEffects 1.0
 import "screen.js" as SCREEN
 import "config.js" as CONF
 
@@ -26,6 +26,7 @@ Base{
     property bool first_run: true
     property var mandiri_update_schedule: CONF.mandiri_update_schedule
     property var edc_settlement_schedule: CONF.edc_settlement_schedule
+    property var last_money_insert: 'N/A'
     isPanelActive: false
 
     Stack.onStatusChanged:{
@@ -153,6 +154,7 @@ Base{
         base.globalBoxName = kiosk.name;
         box_version.text = kiosk.version;
         box_tid.text = kiosk.tid;
+        last_money_insert = kiosk.last_money_inserted;
 
         //Handle Feature Button From Kiosk Status
         check_saldo_button.visible = (kiosk.feature.balance_check == 1)
@@ -578,6 +580,44 @@ Base{
                 preload_whatasapp_voucher.open()
             }
         }
+    }
+
+    Rectangle{
+        id: info_last_money
+        color: "#ffffff"
+        anchors.left: parent.left
+        anchors.leftMargin: 50
+        opacity: 0.75
+        border.width: 0
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 0
+        width: 150
+        height: 30
+        Row{
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.top: parent.top
+            spacing: 20
+            Image{
+                id: img_money
+                height: parent.height
+                source: 'source/cash black.png'
+                fillMode: Image.PreserveAspectFit
+                scale: .8
+                verticalAlignment: Text.AlignVCenter
+            }
+            Text{
+                id: last_money_text
+                font.bold: true
+                height: parent.height
+                verticalAlignment: Text.AlignVCenter
+                color: 'black'
+                text: last_money_insert
+                font.pixelSize: 15
+                font.family:"Ubuntu"
+            }
+        }
+
     }
 
     Rectangle{

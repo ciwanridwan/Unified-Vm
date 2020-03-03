@@ -8,7 +8,7 @@ from shutil import copyfile
 FILE_NAME = sys.path[0] + '/setting.ini'
 BACKUP_FILE = FILE_NAME+'.bak'
 
-if not os.path.exists(BACKUP_FILE):
+if not os.path.exists(BACKUP_FILE) and os.stat(FILE_NAME).st_size != 0:
     copyfile(FILE_NAME, BACKUP_FILE)
 
 
@@ -20,6 +20,9 @@ def init():
     check_setting = open(FILE_NAME, 'r').readlines()
     if os.stat(FILE_NAME).st_size == 0 or len(check_setting) < 10:
         copyfile(BACKUP_FILE, FILE_NAME)
+    else:
+        # Re-write Backup File
+        copyfile(FILE_NAME, BACKUP_FILE)
     CONF = configparser.ConfigParser()
     CONF.read(FILE_NAME)
 

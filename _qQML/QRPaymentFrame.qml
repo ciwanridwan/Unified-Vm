@@ -13,7 +13,7 @@ Base{
     property var modeQR: "linkaja"
     property var textMain: 'Scan QR Berikut Dengan Aplikasi ' + modeQR.toUpperCase()
     property var textSlave: 'Menunggu Pembayaran...'
-    property var imageSource: "http://apidev.mdd.co.id:28194/ovo/qr/1234567abc_TELKOMSEL-081319971046.png"
+    property var imageSource: "source/sand-clock-animated-2.gif"
     property bool successPayment: false
     property bool smallerSlaveSize: true
     property bool withTimer: true
