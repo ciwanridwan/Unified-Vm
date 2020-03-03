@@ -1144,7 +1144,7 @@ def save_cash_local(amount, mode='normal'):
 
 
 def reset_db_record():
-    LOGGER.info(('reset_db_record', 'START'))
+    LOGGER.info(('START'))
     try:
         # _DAO.flush_table('TopUpRecords', ' tid <> "'+_Global.TID+'" ')
         # time.sleep(1)
@@ -1164,10 +1164,10 @@ def reset_db_record():
         _DAO.flush_table('TransactionFailure', ' tid <> "'+_Global.TID+'" ')
         # # Add Data HouseKeeping Which Older Than n Months
         # house_keeping(age_month=3)
-        LOGGER.info(('reset_db_record', 'FINISH'))
+        LOGGER.info(('FINISH'))
         return 'FIRST_INIT_CLEANUP_SUCCESS'
     except Exception as e:
-        LOGGER.warning(('reset_db_record', str(e)))
+        LOGGER.warning((str(e)))
         return 'FIRST_INIT_CLEANUP_FAILED'
 
 
@@ -1194,5 +1194,5 @@ def house_keeping(age_month=1):
                 stat = os.stat(file)
                 if stat.st_ctime < expired:
                     os.remove(file)
-    LOGGER.info(('house_keeping', str(age_month), 'FINISH'))
+    LOGGER.info((str(age_month), 'FINISH'))
     return 'HOUSE_KEEPING_' + str(age_month) + 'SUCCESS'

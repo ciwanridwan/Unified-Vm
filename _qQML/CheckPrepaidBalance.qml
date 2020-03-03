@@ -69,7 +69,7 @@ Base{
         var result = u.split('|')[1]
         popup_loading.close();
         if (['INVALID_CARD'].indexOf(result) > -1){
-            switch_frame('source/smiley_down.png', 'Terjadi Kesalahan Saat Update Balance', 'Kartu Prabayar Anda Tidak Aktif/Valid', 'closeWindow', false )
+            switch_frame('source/smiley_down.png', 'Terjadi Kesalahan Saat Update Balance', 'Kartu Prabayar Anda Tidak Aktif/Tidak Valid', 'closeWindow', false )
             press = '0';
             return;
         }
@@ -79,7 +79,7 @@ Base{
             return;
         }
         if (['GENERAL_ERROR'].indexOf(result) > -1){
-            switch_frame('source/take_prepaid_white.png', 'Update Saldo Hampir Berhasil', 'Angkat Dan Tempelkan Kembali Kartu Anda', 'closeWindow', true )
+            switch_frame('source/take_prepaid_white.png', 'Terjadi Kesalahan Saat Update Balance', 'Angkat Dan Tempelkan Kembali Kartu Anda', 'closeWindow', true )
             press = '0';
             return;
         }

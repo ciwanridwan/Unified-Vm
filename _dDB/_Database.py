@@ -56,8 +56,8 @@ def delete_row(sql):
 def insert_update(sql, parameter, log=True):
     try:
         LOCK.acquire()
-        if log is True and DEBUG is True:
-            LOGGER.info((sql, str(parameter)))
+        # if log is True and DEBUG is True:
+        LOGGER.info((sql, str(parameter)))
         conn__ = get_conn()
         conn__.execute(sql, parameter)
         conn__.commit()
