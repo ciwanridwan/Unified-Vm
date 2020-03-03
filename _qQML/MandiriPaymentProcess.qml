@@ -166,6 +166,7 @@ Base{
             break;
         case 'cash_device_error':
             if (receivedCash == 0) {
+                press = '0';
                 switch_frame('source/smiley_down.png', 'Terjadi Kesalahan Mesin, Membatalkan Transaksi Anda', '', 'backToMain', false);
                 return;
             }
@@ -873,70 +874,6 @@ Base{
 
     }
 
-//    Text {
-//        id: label_money_in
-//        color: "white"
-//        text: "Uang Masuk                       :"
-//        anchors.top: parent.top
-//        anchors.topMargin: 400
-//        anchors.left: parent.left
-//        anchors.leftMargin: 200
-//        wrapMode: Text.WordWrap
-//        verticalAlignment: Text.AlignVCenter
-//        horizontalAlignment: Text.AlignHCenter
-//        font.family:"Ubuntu"
-//        font.pixelSize: 50
-//        visible: !global_frame.visible && !popup_loading.visible && !qr_payment_frame.visible
-//    }
-
-//    Text {
-//        id: content_money_in
-//        color: "white"
-//        text: (receivedCash==0) ? 'Rp 0' : 'Rp ' + FUNC.insert_dot(receivedCash.toString())
-//        anchors.right: parent.right
-//        anchors.rightMargin: 350
-//        anchors.top: parent.top
-//        anchors.topMargin: 400
-//        wrapMode: Text.WordWrap
-//        verticalAlignment: Text.AlignVCenter
-//        horizontalAlignment: Text.AlignRight
-//        font.family:"Ubuntu"
-//        font.pixelSize: 50
-//        visible: !global_frame.visible && !popup_loading.visible && !qr_payment_frame.visible
-//    }
-
-//    Text {
-//        id: label_target_money
-//        color: "white"
-//        text: "Total Pembayaran             :"
-//        anchors.top: parent.top
-//        anchors.topMargin: 550
-//        anchors.left: parent.left
-//        anchors.leftMargin: 200
-//        wrapMode: Text.WordWrap
-//        verticalAlignment: Text.AlignVCenter
-//        horizontalAlignment: Text.AlignHCenter
-//        font.family:"Ubuntu"
-//        font.pixelSize: 50
-//        visible: !global_frame.visible && !popup_loading.visible && !qr_payment_frame.visible
-//    }
-
-//    Text {
-//        id: content_balance
-//        color: "white"
-//        text: 'Rp ' + FUNC.insert_dot(totalPrice.toString())
-//        anchors.right: parent.right
-//        anchors.rightMargin: 350
-//        anchors.top: parent.top
-//        anchors.topMargin: 550
-//        wrapMode: Text.WordWrap
-//        verticalAlignment: Text.AlignVCenter
-//        horizontalAlignment: Text.AlignRight
-//        font.family:"Ubuntu"
-//        font.pixelSize: 50
-//        visible: !global_frame.visible && !popup_loading.visible && !qr_payment_frame.visible
-//    }
-
     Column{
         width: 900
         height: 500
@@ -1044,6 +981,7 @@ Base{
             anchors.bottomMargin: 50
             button_text: 'BATAL'
             modeReverse: true
+            z:99
             visible: frameWithButton
             MouseArea{
                 anchors.fill: parent
@@ -1079,6 +1017,7 @@ Base{
             modeReverse: true
             visible: frameWithButton || centerOnlyButton
             blinkingMode: true
+            z:99
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
