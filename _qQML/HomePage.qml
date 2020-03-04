@@ -3,6 +3,7 @@ import QtQuick.Controls 1.2
 import QtGraphicalEffects 1.0
 import "screen.js" as SCREEN
 import "config.js" as CONF
+import "base_function.js" as FUNC
 
 Base{
     id: base_page
@@ -155,6 +156,7 @@ Base{
         box_version.text = kiosk.version;
         box_tid.text = kiosk.tid;
         last_money_insert = kiosk.last_money_inserted;
+        if (last_money_insert.indexOf('000') > -1) last_money_insert = FUNC.insert_dot(last_money_insert);
 
         //Handle Feature Button From Kiosk Status
         check_saldo_button.visible = (kiosk.feature.balance_check == 1)

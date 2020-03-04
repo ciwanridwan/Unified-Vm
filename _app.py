@@ -896,7 +896,7 @@ var running_text_color = "steelblue";
 var text_color = "white";
 var frame_color = "steelblue";
 var background_color = "black";
-var tvc_waiting_time = 999999;
+var tvc_waiting_time = 60;
 '''
 
 
