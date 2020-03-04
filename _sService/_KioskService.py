@@ -399,7 +399,7 @@ def machine_summary():
         'bni_active': str(_Global.BNI_ACTIVE),
         'service_ver': str(_Global.SERVICE_VERSION),
         'theme': str(_Global.THEME_NAME),
-        'last_money_inserted': _ConfigParser.get_value('GRG', 'last^money^inserted')
+        'last_money_inserted': _ConfigParser.get_set_value('GRG', 'last^money^inserted', 'N/A')
         # 'bni_sam1_no': str(_Global.BNI_SAM_1_NO),
         # 'bni_sam2_no': str(_Global.BNI_SAM_2_NO),
     }
