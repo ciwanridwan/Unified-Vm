@@ -561,74 +561,82 @@ Base{
             }
             Column{
                 id: col_summary
-                width: 300
+                width: (globalScreenType == '1') ? 300 : 200
                 anchors.left: parent.left
                 anchors.leftMargin: 14
                 anchors.top: parent.top
                 anchors.topMargin: 80
-                spacing: 25
+                spacing: (globalScreenType == '1') ? 25 : 10
                 TextDetailRowNew{
                     id: _online_status
                     labelName: qsTr('Status Online')
-                    contentSize: 30
+                    contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: 22
+                    labelSize: (globalScreenType == '1') ? 22 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 200
                     theme: 'white'
                 }
                 TextDetailRowNew{
                     id: _cpu_temp
                     labelName: qsTr('CPU Temp')
-                    contentSize: 30
+                    contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: 22
+                    labelSize: (globalScreenType == '1') ? 22 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 200
                     theme: 'white'
                 }
                 TextDetailRowNew{
                     id: _disk_c
                     labelName: qsTr('Disk C: | D:')
-                    contentSize: 30
+                    contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: 22
+                    labelSize: (globalScreenType == '1') ? 22 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 200
                     theme: 'white'
                 }
                 TextDetailRowNew{
                     id: _ram_status
                     labelName: qsTr('Status RAM')
-                    contentSize: 30
+                    contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: 22
+                    labelSize: (globalScreenType == '1') ? 22 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 200
                     theme: 'white'
                 }
                 TextDetailRowNew{
                     id: _theme_status
                     labelName: qsTr('Theme Name')
-                    contentSize: 30
+                    contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: 22
+                    labelSize: (globalScreenType == '1') ? 22 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 200
                     theme: 'white'
                 }
                 TextDetailRowNew{
                     id: _version_status
                     labelName: qsTr('App Ver.')
-                    contentSize: 30
+                    contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: 22
+                    labelSize: (globalScreenType == '1') ? 22 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 200
                     theme: 'white'
                 }
                 TextDetailRowNew{
                     id: _service_status
                     labelName: qsTr('Service Ver.')
-                    contentSize: 30
+                    contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: 22
+                    labelSize: (globalScreenType == '1') ? 22 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 200
                     theme: 'white'
                 }
                 TextDetailRowNew{
                     id: _last_sync
                     labelName: qsTr('Last Sync')
-                    contentSize: 30
+                    contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: 22
+                    labelSize: (globalScreenType == '1') ? 22 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 200
                     theme: 'white'
                 }
 
@@ -658,7 +666,7 @@ Base{
             }
             Column{
                 id: col_summary2
-                width: 300
+                width: (globalScreenType == '1') ? 300 : 200
                 anchors.left: parent.left
                 anchors.leftMargin: 14
                 anchors.top: parent.top
@@ -667,65 +675,73 @@ Base{
                 TextDetailRowNew{
                     id: _today_trx
                     labelName: qsTr('Today TRX')
-                    contentSize: 30
+                    contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: 22
+                    labelSize: (globalScreenType == '1') ? 22 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 200
                     theme: 'white'
                 }
                 TextDetailRowNew{
                     id: _total_trx
                     labelName: qsTr('Total TRX')
-                    contentSize: 30
+                    contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: 22
+                    labelSize: (globalScreenType == '1') ? 22 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 200
                     theme: 'white'
                 }
                 TextDetailRowNew{
                     id: _cash_trx
                     labelName: qsTr('Cash TRX')
-                    contentSize: 30
+                    contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: 22
+                    labelSize: (globalScreenType == '1') ? 22 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 200
                     theme: 'white'
                 }
                 TextDetailRowNew{
                     id: _edc_trx
                     labelName: qsTr('EDC TRX')
-                    contentSize: 30
+                    contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: 22
+                    labelSize: (globalScreenType == '1') ? 22 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 200
                     theme: 'white'
                 }
                 TextDetailRowNew{
                     id: _mandiri_wallet
                     labelName: qsTr('Mandiri Wallet')
-                    contentSize: 30
+                    contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: 22
+                    labelSize: (globalScreenType == '1') ? 22 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 200
                     theme: 'white'
                 }
                 TextDetailRowNew{
                     id: _mandiri_active_slot
                     labelName: qsTr('Mandiri Active')
-                    contentSize: 30
+                    contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: 22
+                    labelSize: (globalScreenType == '1') ? 22 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 200
                     theme: 'white'
                 }
                 TextDetailRowNew{
                     id: _bni_wallet
                     labelName: qsTr('BNI Wallet')
-                    contentSize: 30
+                    contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: 22
+                    labelSize: (globalScreenType == '1') ? 22 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 200
                     theme: 'white'
                 }
                 TextDetailRowNew{
                     id: _bni_active_slot
                     labelName: qsTr('BNI Active')
-                    contentSize: 30
+                    contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: 22
+                    labelSize: (globalScreenType == '1') ? 22 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 200
                     theme: 'white'
                 }
 
@@ -754,7 +770,7 @@ Base{
             }
             Column{
                 id: col_summary3
-                width: 300
+                width: (globalScreenType == '1') ? 300 : 200
                 anchors.left: parent.left
                 anchors.leftMargin: 14
                 anchors.top: parent.top
@@ -763,9 +779,10 @@ Base{
                 TextDetailRowNew{
                     id: _total_cash_available
                     labelName: qsTr('Total Cash')
-                    contentSize: 30
-                    labelContent: '0'
-                    labelSize: 22
+                    contentSize: (globalScreenType == '1') ? 30 : 20
+                    labelContent: '---'
+                    labelSize: (globalScreenType == '1') ? 22 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 200
                     theme: 'white'
                 }
                 NextButton{
@@ -801,9 +818,10 @@ Base{
                 TextDetailRowNew{
                     id: _total_edc_available
                     labelName: qsTr('Total EDC')
-                    contentSize: 30
-                    labelContent: '0'
-                    labelSize: 22
+                    contentSize: (globalScreenType == '1') ? 30 : 20
+                    labelContent: '---'
+                    labelSize: (globalScreenType == '1') ? 22 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 200
                     theme: 'white'
                 }
                 NextButton{
@@ -811,7 +829,7 @@ Base{
                    width: 80
                    height: 40
                    anchors.right: _total_edc_available.right
-                   anchors.rightMargin: 100
+                   anchors.rightMargin:  (globalScreenType == '1') ? 100 : 50
                    fontSize: 15
                    modeRadius: false
                    button_text: 'settle'
@@ -838,9 +856,10 @@ Base{
                 TextDetailRowNew{
                     id: _total_stock_101
                     labelName: qsTr('COM 1 Stock')
-                    contentSize: 30
-                    labelContent: '0'
-                    labelSize: 22
+                    contentSize: (globalScreenType == '1') ? 30 : 20
+                    labelContent: '---'
+                    labelSize: (globalScreenType == '1') ? 22 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 200
                     theme: 'white'
                 }
                 NextButton{
@@ -850,7 +869,7 @@ Base{
                    width: 80
                    height: 40
                    anchors.right: _total_stock_101.right
-                   anchors.rightMargin: 100
+                   anchors.rightMargin:  (globalScreenType == '1') ? 100 : 50
                    fontSize: 15
                    modeRadius: false
                    modeReverse: true
@@ -871,9 +890,10 @@ Base{
                 TextDetailRowNew{
                     id: _total_stock_102
                     labelName: qsTr('COM 2 Stock')
-                    contentSize: 30
-                    labelContent: '0'
-                    labelSize: 22
+                    contentSize: (globalScreenType == '1') ? 30 : 20
+                    labelContent: '---'
+                    labelSize: (globalScreenType == '1') ? 22 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 200
                     theme: 'white'
                 }
                 NextButton{
@@ -883,7 +903,7 @@ Base{
                    width: 80
                    height: 40
                    anchors.right: _total_stock_102.right
-                   anchors.rightMargin: 100
+                   anchors.rightMargin:  (globalScreenType == '1') ? 100 : 50
                    fontSize: 15
                    modeRadius: false
                    modeReverse: true
@@ -904,9 +924,10 @@ Base{
                 TextDetailRowNew{
                     id: _total_stock_103
                     labelName: qsTr('COM 3 Stock')
-                    contentSize: 30
-                    labelContent: '0'
-                    labelSize: 22
+                    contentSize: (globalScreenType == '1') ? 30 : 20
+                    labelContent: '---'
+                    labelSize: (globalScreenType == '1') ? 22 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 200
                     theme: 'white'
                 }
                 NextButton{
@@ -916,7 +937,7 @@ Base{
                    width: 80
                    height: 40
                    anchors.right: _total_stock_103.right
-                   anchors.rightMargin: 100
+                   anchors.rightMargin:  (globalScreenType == '1') ? 100 : 50
                    fontSize: 15
                    modeRadius: false
                    modeReverse: true
@@ -959,7 +980,7 @@ Base{
             }
             Column{
                 id: col_summary4
-                width: 300
+                width: (globalScreenType == '1') ? 300 : 200
                 anchors.left: parent.left
                 anchors.leftMargin: 14
                 anchors.top: parent.top
@@ -968,65 +989,73 @@ Base{
                 TextDetailRowNew{
                     id: _edc_error
                     labelName: qsTr('EDC UPT')
-                    contentSize: 30
+                    contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: 22
+                    labelSize: (globalScreenType == '1') ? 22 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 200
                     theme: 'white'
                 }
                 TextDetailRowNew{
                     id: _nfc_error
                     labelName: qsTr('Prepaid Reader')
-                    contentSize: 30
+                    contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: 22
+                    labelSize: (globalScreenType == '1') ? 22 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 200
                     theme: 'white'
                 }
                 TextDetailRowNew{
                     id: _bill_error
                     labelName: qsTr('Bill Validator')
-                    contentSize: 30
+                    contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: 22
+                    labelSize: (globalScreenType == '1') ? 22 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 200
                     theme: 'white'
                 }
                 TextDetailRowNew{
                     id: _scanner_error
                     labelName: qsTr('Scanner Reader')
-                    contentSize: 30
+                    contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: 22
+                    labelSize: (globalScreenType == '1') ? 22 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 200
                     theme: 'white'
                 }
                 TextDetailRowNew{
                     id: _webcam_error
                     labelName: qsTr('Webcam')
-                    contentSize: 30
+                    contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: 22
+                    labelSize: (globalScreenType == '1') ? 22 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 200
                     theme: 'white'
                 }
                 TextDetailRowNew{
                     id: _cd1_error
                     labelName: qsTr('Card Disp 1')
-                    contentSize: 30
+                    contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: 22
+                    labelSize: (globalScreenType == '1') ? 22 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 200
                     theme: 'white'
                 }
                 TextDetailRowNew{
                     id: _cd2_error
                     labelName: qsTr('Card Disp 2')
-                    contentSize: 30
+                    contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: 22
+                    labelSize: (globalScreenType == '1') ? 22 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 200
                     theme: 'white'
                 }
                 TextDetailRowNew{
                     id: _cd3_error
                     labelName: qsTr('Card Disp 3')
-                    contentSize: 30
+                    contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: 22
+                    labelSize: (globalScreenType == '1') ? 22 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 200
                     theme: 'white'
                 }
 

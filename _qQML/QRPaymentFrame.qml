@@ -1,14 +1,11 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.2
 import QtGraphicalEffects 1.0
-import "screen.js" as SCREEN
 import "config.js" as CONF
 
 
 Base{
     id: qr_payment_frame
-    width: parseInt(SCREEN.size.width)
-    height: parseInt(SCREEN.size.height)
     isBoxNameActive: false
     property var modeQR: "linkaja"
     property var textMain: 'Scan QR Berikut Dengan Aplikasi ' + modeQR.toUpperCase()
@@ -17,7 +14,7 @@ Base{
     property bool successPayment: false
     property bool smallerSlaveSize: true
     property bool withTimer: true
-    property int textSize: 40
+    property int textSize: (globalScreenType == '1') ? 40 : 35
     property int timerDuration: 90
     property int waitAfterSuccess: 10
     property int showDuration: timerDuration
@@ -32,10 +29,10 @@ Base{
         width: parent.width
         height: 500
         anchors.top: parent.top
-        anchors.topMargin: 200
+        anchors.topMargin: (globalScreenType == '1') ? 200 : 150
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        spacing: 30
+        spacing: (globalScreenType == '1') ? 30 : 25
         visible: !successPayment
         AnimatedImage  {
             width: 400

@@ -8,8 +8,6 @@ import "config.js" as CONF
 
 Base{
     id: general_payment_process
-    width: parseInt(SCREEN.size.width)
-    height: parseInt(SCREEN.size.height)
     property int timer_value: 300
     property var press: '0'
     property var details
@@ -54,7 +52,7 @@ Base{
             if (preloadNotif==undefined){
                 define_first_process();
             } else {
-                popup_input_number.open('Silakan Masukkan No WhatsApp Anda')
+                popup_input_number.open('Silakan Masukkan No HP Anda')
             }
             modeButtonPopup = 'check_balance';
             abc.counter = timer_value;
@@ -136,7 +134,7 @@ Base{
 
     function validate_release_refund(error){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-        var message_input_phone = 'Terjadi Kegagalan Transaksi, Masukkan No WhatsApp Anda Untuk Pengembalian Dana';
+        var message_input_phone = 'Terjadi Kegagalan Transaksi, Masukkan No HP Anda Untuk Pengembalian Dana';
         refundMode = error;
         abc.counter = timer_value/2;
         my_timer.restart();
@@ -151,7 +149,7 @@ Base{
             // If Cash Exceed Payment Detected
             refundMode = 'payment_cash_exceed';
             refundAmount = exceed;
-            message_input_phone = 'Terjadi Lebih Bayar [Rp. '+FUNC.insert_dot(exceed.toString())+'], Masukkan No WhatsApp Anda Untuk Pengembalian Dana';
+            message_input_phone = 'Terjadi Lebih Bayar [Rp. '+FUNC.insert_dot(exceed.toString())+'], Masukkan No HP Anda Untuk Pengembalian Dana';
         }
         switch(error){
         case 'user_payment_timeout':
@@ -161,8 +159,8 @@ Base{
             refundAmount = receivedCash;
             details.process_error = error;
             details.payment_received = receivedCash.toString();
-            message_input_phone = 'Terjadi Pembatalan Transaksi, Masukkan No WhatsApp Anda Untuk Pengembalian Dana';
-            if (error=='user_payment_timeout') message_input_phone = 'Waktu Transaksi Habis, Masukkan No WhatsApp Anda Untuk Pengembalian Dana';
+            message_input_phone = 'Terjadi Pembatalan Transaksi, Masukkan No HP Anda Untuk Pengembalian Dana';
+            if (error=='user_payment_timeout') message_input_phone = 'Waktu Transaksi Habis, Masukkan No HP Anda Untuk Pengembalian Dana';
             break;
         case 'cash_device_error':
             if (receivedCash == 0) {
@@ -173,7 +171,7 @@ Base{
             details.payment_error = error;
             details.payment_received = receivedCash.toString();
             refundAmount = receivedCash;
-            message_input_phone = 'Terjadi Kesalahan Mesin, Masukkan No WhatsApp Anda Untuk Pengembalian Dana';
+            message_input_phone = 'Terjadi Kesalahan Mesin, Masukkan No HP Anda Untuk Pengembalian Dana';
             break;
         case 'ppob_error':
         case 'card_eject_error':
@@ -1117,7 +1115,7 @@ Base{
                 anchors.fill: parent
                 onClicked: {
                     var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-                    _SLOT.user_action_log('Press "TIDAK PUNYA" in Input Whatsapp Number');
+                    _SLOT.user_action_log('Press "TIDAK PUNYA" in Input HP Number');
                     popup_input_number.close();
                     details.refund_status = 'AVAILABLE';
                     details.refund_number = '';
@@ -1153,7 +1151,7 @@ Base{
                     if (press != '0') return;
                     press = '1';
                     set_refund_number(popup_input_number.numberInput);
-                    _SLOT.user_action_log('Press "LANJUT" Input Whatsapp Number ' + customerPhone);
+                    _SLOT.user_action_log('Press "LANJUT" Input HP Number ' + customerPhone);
                     switch(refundMode){
                     case 'payment_cash_exceed':
                         release_print_with_refund(refundAmount.toString());

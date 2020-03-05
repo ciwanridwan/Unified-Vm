@@ -5,13 +5,21 @@ import "screen.js" as SCREEN
 
 Rectangle {
     id:base
-    width: parseInt(SCREEN.size.width)
-    height: parseInt(SCREEN.size.height)
     color: 'transparent'
     property var top_color: "#f03838"
     property var language: "INA"
     property var globalBoxName: 'VM01 - Box Name'
     property bool mediaOnPlaying: false
+    property int globalWidth: parseInt(SCREEN.size.width)
+    property int globalHeight: parseInt(SCREEN.size.height)
+    width: globalWidth
+    height: globalHeight
+
+    property var globalScreenType: (globalWidth==1920) ? '1' : '2'
+
+    //Type 1 : var size = { "width": 1920, "height": 1080};
+    //Type 2 : var size = { "width": 1280, "height": 1024};
+
 
     //==================================================================================================//
     signal result_get_file_list(string str)

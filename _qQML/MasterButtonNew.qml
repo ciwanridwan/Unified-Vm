@@ -9,8 +9,9 @@ Rectangle {
     property var text2_:"Flight Ticket"
     property var text_color: (modeReverse) ? "black" : "white"
     property var mode3d: undefined
-    width: 350
-    height: 350
+    property int size: 350
+    width: size
+    height: size
     color: 'transparent'
     Rectangle{
         id: background_base

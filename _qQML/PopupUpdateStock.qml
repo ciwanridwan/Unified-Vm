@@ -22,12 +22,12 @@ Rectangle{
 
     Rectangle{
         id: notif_rec
-        width: 1200
-        height: 800
+        width: (parent.width==1920) ? 1200 : parent.width
+        height: (parent.width==1920) ? 800 : 750
         color: "white"
         opacity: .8
         radius: 25
-        anchors.verticalCenterOffset: 50
+        anchors.verticalCenterOffset: (parent.width==1920) ? 50 : 35
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
 

@@ -6,12 +6,10 @@ import "screen.js" as SCREEN
 
 Base{
     id:globalConfirmationFrame
-    width: parseInt(SCREEN.size.width)
-    height: parseInt(SCREEN.size.height)
     isBoxNameActive: false
     property var textMain: 'Ringkasan Transaksi'
     property bool withTimer: false
-    property int textSize: 40
+    property int textSize: (globalScreenType == '1') ? 40 : 35
     property int timerDuration: 15
     property int showDuration: timerDuration
     property var closeMode: 'closeWindow' // 'closeWindow', 'backToMain', 'backToPrev'
@@ -47,10 +45,10 @@ Base{
     MainTitle{
         id: main_title
         anchors.top: parent.top
-        anchors.topMargin: 200
+        anchors.topMargin: (globalScreenType == '1') ? 175 : 150
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: textMain
-        size_: 50
+        size_: (globalScreenType == '1') ? 50 : 45
         color_: "white"
 
     }

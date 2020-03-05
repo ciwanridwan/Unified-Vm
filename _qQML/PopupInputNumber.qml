@@ -15,7 +15,7 @@ Rectangle{
     property int max_count: 15
     property var press: "0"
     property var numberInput: ""
-    property string mainTitle: "Terjadi Kegagalan Transaksi, Masukkan No WhatsApp Anda Untuk Pengembalian Dana"
+    property string mainTitle: "Terjadi Kegagalan Transaksi, Masukkan No HP Anda Untuk Pengembalian Dana"
     property var titleImage: "source/whatsapp_transparent_white.png"
     property bool withBackground: true
     property int min_count: 9

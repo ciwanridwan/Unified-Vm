@@ -159,19 +159,19 @@ Base{
 
     MainTitle{
         anchors.top: parent.top
-        anchors.topMargin: 180
+        anchors.topMargin: (globalScreenType == '1') ? 175 : 150
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: 'Pilih Nominal / Item Produk'
         visible: !popup_loading.visible
-        size_: 50
+        size_: (globalScreenType == '1') ? 50 : 45
         color_: "white"
 
     }
 
     Item  {
         id: flickable_items
-        width: 1100
-        height: 750
+        width: (globalScreenType == '1') ? 1100 : 900
+        height: 800
         anchors.verticalCenterOffset: 100
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
@@ -187,11 +187,11 @@ Base{
         GridView{
             id: gridViewPPOB
             cellHeight: 170
-            cellWidth: 1010
+            cellWidth: (globalScreenType == '1') ? 1010 : 810
             anchors.fill: parent
             flickableDirection: Flickable.VerticalFlick
             contentHeight: 150
-            contentWidth: 1000
+            contentWidth: (globalScreenType == '1') ? 1000 : 800
             flickDeceleration: 750
             maximumFlickVelocity: 1500
             layoutDirection: Qt.LeftToRight
@@ -243,7 +243,7 @@ Base{
         id: sign_scroll
         scale: 0.75
         anchors.right: parent.right
-        anchors.rightMargin: 50
+        anchors.rightMargin: (globalScreenType == '1') ? 50 : 25
         anchors.verticalCenter: parent.verticalCenter
         source: 'source/scroll_sign.png'
     }

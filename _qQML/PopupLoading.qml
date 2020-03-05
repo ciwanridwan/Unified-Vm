@@ -9,7 +9,7 @@ Base{
     property var textSlave: ''
     property var imageSource: "source/sand-clock-animated-2.gif"
     property bool smallerSlaveSize: false
-    property int textSize: 45
+    property int textSize: (globalScreenType == '1') ? 40 : 35
     visible: false
     opacity: visible ? 1.0 : 0.0
     Behavior on opacity {
@@ -24,7 +24,7 @@ Base{
     property int forceCloseLoading: 0
 
     Column{
-        width: 600
+        width: parent.width
         height: 500
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter

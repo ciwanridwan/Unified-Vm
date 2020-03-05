@@ -11,7 +11,7 @@ Base{
     property var textQuard: '3. Kirim text "START" pada Aplikasi Whatsapp Anda pada nomor tersebut.'
     property var imageSource: "source/qr_transjakarta_register_new.jpeg"
     property bool smallerSlaveSize: true
-    property int textSize: 40
+    property int textSize: (globalScreenType == '1') ? 40 : 35
     visible: false
     opacity: visible ? 1.0 : 0.0
     Behavior on opacity {
@@ -26,10 +26,10 @@ Base{
 
     MainTitle{
         anchors.top: parent.top
-        anchors.topMargin: 180
+        anchors.topMargin: (globalScreenType == '1') ? 175 : 150
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: 'Fitur Baru : Kemudahan Transaksi Dari Whatsapp'
-        size_: 50
+        size_: (globalScreenType == '1') ? 50 : 45
         color_: "yellow"
 
     }

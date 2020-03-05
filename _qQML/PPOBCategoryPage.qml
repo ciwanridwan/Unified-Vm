@@ -156,18 +156,18 @@ Base{
 
     MainTitle{
         anchors.top: parent.top
-        anchors.topMargin: 180
+        anchors.topMargin: (globalScreenType == '1') ? 175 : 150
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: 'Pilih Kategori Produk'
         visible: !popup_loading.visible
-        size_: 50
+        size_: (globalScreenType == '1') ? 50 : 45
         color_: "white"
 
     }
 
     Item  {
         id: flickable_items
-        width: 1550
+        width: (globalScreenType == '1') ? 1550 : parent.width
         height: 800
         anchors.verticalCenterOffset: 120
         anchors.verticalCenter: parent.verticalCenter

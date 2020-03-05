@@ -10,7 +10,7 @@ Base{
     property var imageSource: "source/insert_card_dc.png"
     property bool smallerSlaveSize: true
     property bool withTimer: true
-    property int textSize: 40
+    property int textSize: (globalScreenType == '1') ? 40 : 35
     property int timerDuration: 5
     property int showDuration: timerDuration
     property var closeMode: 'closeWindow' // 'closeWindow', 'backToMain', 'backToPrev'
@@ -22,11 +22,11 @@ Base{
 
     Column{
         id: column
-        width: 1100
+        width: parent.width
         height: 500
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        spacing: 30
+        spacing: (globalScreenType == '1') ? 30 : 25
         AnimatedImage  {
             id: original_image
             visible:  (imageSource!='source/insert_card_dc.png')

@@ -698,10 +698,10 @@ Base{
 
     MainTitle{
         anchors.top: parent.top
-        anchors.topMargin: 175
+        anchors.topMargin: (globalScreenType == '1') ? 175 : 150
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: 'Pilih nominal topup'
-        size_: 50
+        size_: (globalScreenType == '1') ? 50 : 45
         color_: "white"
         visible: mainVisible
     }
@@ -809,13 +809,13 @@ Base{
 
     Row{
         id: denom_button
-        width: 1220
+        width: parent.width
         height: 200
         anchors.horizontalCenterOffset: 20
         anchors.top: parent.top
-        anchors.topMargin: 350
+        anchors.topMargin: (globalScreenType == '1') ? 350 : 300
         anchors.horizontalCenter: parent.horizontalCenter
-        spacing: 50
+        spacing: (globalScreenType == '1') ? 50 : 30
         visible: mainVisible
         SmallSimplyNumber{
             id: small_denom

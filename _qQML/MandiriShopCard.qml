@@ -376,10 +376,10 @@ Base{
     MainTitle{
         id: main_title
         anchors.top: parent.top
-        anchors.topMargin: 175
+        anchors.topMargin: (globalScreenType == '1') ? 175 : 150
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: 'Pilih Kartu Tersedia'
-        size_: 50
+        size_: (globalScreenType == '1') ? 50 : 45
         color_: "white"
         visible: !global_frame.visible && !popup_loading.visible && mainVisible
 

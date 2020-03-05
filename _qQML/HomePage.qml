@@ -7,8 +7,6 @@ import "base_function.js" as FUNC
 
 Base{
     id: base_page
-    width: parseInt(SCREEN.size.width)
-    height: parseInt(SCREEN.size.height)
     property var press: "0"
     property int tvc_timeout: parseInt(CONF.tvc_waiting_time)
     property bool isMedia: true
@@ -28,6 +26,8 @@ Base{
     property var mandiri_update_schedule: CONF.mandiri_update_schedule
     property var edc_settlement_schedule: CONF.edc_settlement_schedule
     property var last_money_insert: 'N/A'
+    width: globalWidth
+    height: globalHeight
     isPanelActive: false
 
     Stack.onStatusChanged:{
@@ -235,11 +235,11 @@ Base{
 
     MainTitle{
         anchors.top: parent.top
-        anchors.topMargin: 350
+        anchors.topMargin: (globalScreenType == '1') ? 350 : 300
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: 'Selamat Datang, Silakan Pilih Menu Berikut : '
         visible: !popup_loading.visible
-        size_: 50
+        size_: (globalScreenType == '1') ? 50 : 45
         color_: "white"
 
     }
@@ -249,11 +249,12 @@ Base{
         anchors.verticalCenterOffset: 100
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
-        spacing: 60
+        spacing: (globalScreenType == '1') ? 60 : 30
         visible: (!standard_notif_view.visible && !kalogin_notif_view.visible && !popup_loading.visible) ? true : false;
 
         MasterButtonNew {
             id: check_saldo_button
+            size: (globalScreenType == '1') ? 350 : 250
             x: 150
             anchors.verticalCenter: parent.verticalCenter
             img_: "source/cek_saldo.png"
@@ -279,6 +280,7 @@ Base{
 
         MasterButtonNew {
             id: topup_saldo_button
+            size: (globalScreenType == '1') ? 350 : 250
             x: 150
             anchors.verticalCenter: parent.verticalCenter
             img_: "source/topup_kartu.png"
@@ -308,6 +310,7 @@ Base{
 
         MasterButtonNew {
             id: buy_card_button
+            size: (globalScreenType == '1') ? 350 : 250
             x: 150
             anchors.verticalCenter: parent.verticalCenter
             img_: "source/beli_kartu.png"
@@ -360,6 +363,7 @@ Base{
 
         MasterButtonNew {
             id: ppob_button
+            size: (globalScreenType == '1') ? 350 : 250
             x: 150
             anchors.verticalCenter: parent.verticalCenter
             img_: "source/shop_cart.png"
@@ -490,7 +494,7 @@ Base{
         anchors.right: parent.right
         anchors.rightMargin: -15
         anchors.top: parent.top
-        anchors.topMargin: 200
+        anchors.topMargin: (globalScreenType == '1') ? 200 : 150
         width: 100
         height: 300
         visible: false
@@ -539,7 +543,7 @@ Base{
         color: 'white'
         radius: 20
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 275
+        anchors.bottomMargin: (globalScreenType == '1') ? 275 : 225
         anchors.right: parent.right
         anchors.rightMargin: -15
         width: 100
