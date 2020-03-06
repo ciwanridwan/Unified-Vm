@@ -803,8 +803,8 @@ def complete_booking_data(p):
             return False, p
     else:
         d = json.loads(p['receiptData'])
-        PREV_TIBOX_ID = p['tiboxId']
-        p['t_booking_id'] = p['tiboxId']
+        PREV_TIBOX_ID = p['tid']
+        p['t_booking_id'] = p['tid']
         p['t_payment_status'] = d['GET_PAYMENT_STATUS']
         p['t_grand_total'] = d['GET_INIT_FARE']
         # p['t_rawData'] = 'DUMMY'
@@ -1150,7 +1150,7 @@ def reset_db_record():
     try:
         # _DAO.flush_table('TopUpRecords', ' tid <> "'+_Global.TID+'" ')
         # time.sleep(1)
-        _DAO.flush_table('Receipts', ' tiboxId <> "'+_Global.TID+'" ')
+        _DAO.flush_table('Receipts', ' tid <> "'+_Global.TID+'" ')
         time.sleep(1)
         _DAO.flush_table('Settlement', ' tid <> "'+_Global.TID+'" AND status NOT LIKE "%EDC%" ')
         time.sleep(1)

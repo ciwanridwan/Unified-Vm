@@ -338,13 +338,13 @@ def insert_receipt(param):
     '''
     rid,
     bookingCode,
-    tiboxId,
+    tid,
     receiptRaw,
     receiptData,
     createdAt,
     '''
-    sql = "  INSERT INTO Receipts(rid, bookingCode, tiboxId, receiptRaw, receiptData, syncFlag, createdAt) " \
-          "VALUES(:rid, :bookingCode, :tiboxId, :receiptRaw, :receiptData, :syncFlag, :createdAt)  "
+    sql = "  INSERT INTO Receipts(rid, bookingCode, tid, receiptRaw, receiptData, syncFlag, createdAt) " \
+          "VALUES(:rid, :bookingCode, :tid, :receiptRaw, :receiptData, :syncFlag, :createdAt)  "
     return _Database.insert_update(sql=sql, parameter=param)
 
 

@@ -797,7 +797,7 @@ def save_receipt_local(__id, __data, __type):
         param_receipt = {
             'rid': _Helper.get_uuid(),
             'bookingCode': __id,
-            'tiboxId': _Global.TID,
+            'tid': _Global.TID,
             'receiptRaw': __type,
             'receiptData': __data,
             'createdAt': _Helper.now()

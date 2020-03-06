@@ -67,7 +67,7 @@ def init_db():
     try:
         LOCK.acquire()
         conn__ = get_conn()
-        with open(sys.path[0] + '/_dDB/_ClientDB.sql') as f:
+        with open(sys.path[0] + '/_dDB/_KioskDB.sql') as f:
             conn__.cursor().executescript(f.read())
     finally:
         LOCK.release()
@@ -83,5 +83,5 @@ def adjust_db(db):
 
 if __name__ == '__main__':
     __CONN = sqlite3.connect(sys.path[0] + '/_dDB/' + DB)
-    with open('_ClientDB.sql') as f:
+    with open('_KioskDB.sql') as f:
         __CONN.cursor().executescript(f.read())
