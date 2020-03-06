@@ -500,7 +500,7 @@ Base{
         anchors.top: parent.top
         anchors.topMargin: 200
         width: 100
-        height: (globalScreenType == '1') ? 300 : 250
+        height: (globalScreenType == '1') ? 300 : 225
         visible: false
         Text{
             text: 'CEK\nTRANSAKSI'
@@ -546,11 +546,11 @@ Base{
         color: 'white'
         radius: 20
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 275
+        anchors.bottomMargin: 200
         anchors.right: parent.right
         anchors.rightMargin:  (globalScreenType == '1') ? -15 : -5
         width: 100
-        height: (globalScreenType == '1') ? 300 : 250
+        height: (globalScreenType == '1') ? 300 : 225
         visible: false
         Text{
             text: "WHATSAPP\nVOUCHER"
