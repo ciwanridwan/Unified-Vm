@@ -175,7 +175,7 @@ Base{
         anchors.verticalCenterOffset: 100
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.horizontalCenterOffset:  (globalScreenType == '1') ? 0 : 25
+        anchors.horizontalCenterOffset:  (globalScreenType == '1') ? 0 : 125
 
         ScrollBarVertical{
             id: vertical_sbar

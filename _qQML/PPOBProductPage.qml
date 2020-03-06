@@ -177,7 +177,7 @@ Base{
         height: 800
         anchors.verticalCenterOffset: 100
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.horizontalCenterOffset: (globalScreenType == '1') ? 0 : 25
+        anchors.horizontalCenterOffset: (globalScreenType == '1') ? 0 : 125
         anchors.verticalCenter: parent.verticalCenter
 
         ScrollBarVertical{
