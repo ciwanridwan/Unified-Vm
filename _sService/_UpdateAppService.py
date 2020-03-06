@@ -54,8 +54,8 @@ def checkout_branch_by_app_env():
     if _Global.LIVE_MODE:
         ORIGIN = 'master'
     UPDATEAPP_SIGNDLER.SIGNAL_UPDATE_APP.emit('APP_UPDATE|DEFINING_BRANCH_'+ORIGIN.upper())
-    # return _Helper.execute_console(" git stash && git checkout "+ORIGIN+" && git stash pop ")
-    return _Helper.execute_console("git checkout "+ORIGIN)
+    return _Helper.execute_console(" git stash && git checkout "+ORIGIN+" && git stash pop ")
+    # return _Helper.execute_console("git checkout "+ORIGIN)
 
 
 def pull_branch():
