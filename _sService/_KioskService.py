@@ -1182,10 +1182,11 @@ def python_dump(log):
 
 
 def house_keeping(age_month=1):
-    _DAO.clean_old_data(tables=['Cash', 'Receipts', 'Settlement', 'Product', 'SAMAudit', 'SAMRecords',
-                                'TopupRecords', 'TransactionFailure', 'Transactions'],
-                        key='createdAt',
-                        age_month=age_month)
+    # Disable Cleaning Old Data
+    # _DAO.clean_old_data(tables=['Cash', 'Receipts', 'Settlement', 'Product', 'SAMAudit', 'SAMRecords',
+    #                             'TopupRecords', 'TransactionFailure', 'Transactions'],
+    #                     key='createdAt',
+    #                     age_month=age_month)
     expired = time.time() - (age_month * 30 * 24 * 60 * 60)
     paths = ['_pPDF', '_lLog']
     for path in paths:
