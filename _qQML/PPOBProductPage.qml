@@ -4,7 +4,7 @@ import "base_function.js" as FUNC
 
 Base{
     id: ppob_product
-//        property var globalScreenType: '1'
+//        property var globalScreenType: '2'
 //        height: (globalScreenType=='2') ? 1024 : 1080
 //        width: (globalScreenType=='2') ? 1280 : 1920
     property int timer_value: 60*5
@@ -175,8 +175,9 @@ Base{
         id: flickable_items
         width: (globalScreenType == '1') ? 1100 : 950
         height: 800
-        anchors.verticalCenterOffset: (globalScreenType == '1') ? 100 : 0
+        anchors.verticalCenterOffset: 100
         anchors.horizontalCenter: parent.horizontalCenter
+        anchors.horizontalCenterOffset: (globalScreenType == '1') ? 0 : 25
         anchors.verticalCenter: parent.verticalCenter
 
         ScrollBarVertical{
@@ -245,7 +246,7 @@ Base{
 
     Image{
         id: sign_scroll
-        scale: (globalScreenType == '1') ? 0.75 : 0.5
+        scale: (globalScreenType == '1') ? 0.75 : 0.45
         anchors.right: parent.right
         anchors.rightMargin: (globalScreenType == '1') ? 50 : -50
         anchors.verticalCenter: parent.verticalCenter

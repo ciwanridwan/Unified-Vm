@@ -5,7 +5,7 @@ import "base_function.js" as FUNC
 Base{
     id: ppob_category
 
-//    property var globalScreenType: '2'
+//    property var globalScreenType: '1'
 //    height: (globalScreenType=='2') ? 1024 : 1080
 //    width: (globalScreenType=='2') ? 1280 : 1920
 
@@ -172,9 +172,10 @@ Base{
         id: flickable_items
         width: (globalScreenType == '1') ? 1550 : parent.width
         height: 800
-        anchors.verticalCenterOffset: (globalScreenType == '1') ? 120 : 0
+        anchors.verticalCenterOffset: 100
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
+        anchors.horizontalCenterOffset:  (globalScreenType == '1') ? 0 : 25
 
         ScrollBarVertical{
             id: vertical_sbar

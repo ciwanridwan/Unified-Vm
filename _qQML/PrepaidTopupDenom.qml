@@ -813,12 +813,11 @@ Base{
 
     Row{
         id: denom_button
-        width: parent.width
         height: 200
-        anchors.horizontalCenterOffset:(globalScreenType == '1') ? 20 : 0
+        layoutDirection: Qt.LeftToRight
+        anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: parent.top
         anchors.topMargin: (globalScreenType == '1') ? 350 : 320
-        anchors.horizontalCenter: parent.horizontalCenter
         spacing: (globalScreenType == '1') ? 50 : 30
         visible: mainVisible
         SmallSimplyNumber{
