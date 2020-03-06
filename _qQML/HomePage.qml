@@ -7,6 +7,10 @@ import "base_function.js" as FUNC
 
 Base{
     id: base_page
+
+//            property var globalScreenType: '2'
+//            height: (globalScreenType=='2') ? 1024 : 1080
+//            width: (globalScreenType=='2') ? 1280 : 1920
     property var press: "0"
     property int tvc_timeout: parseInt(CONF.tvc_waiting_time)
     property bool isMedia: true
@@ -26,8 +30,8 @@ Base{
     property var mandiri_update_schedule: CONF.mandiri_update_schedule
     property var edc_settlement_schedule: CONF.edc_settlement_schedule
     property var last_money_insert: 'N/A'
-    width: globalWidth
-    height: globalHeight
+//    width: globalWidth
+//    height: globalHeight
     isPanelActive: false
 
     Stack.onStatusChanged:{
@@ -239,7 +243,7 @@ Base{
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: 'Selamat Datang, Silakan Pilih Menu Berikut : '
         visible: !popup_loading.visible
-        size_: (globalScreenType == '1') ? 50 : 45
+        size_: (globalScreenType == '1') ? 50 : 40
         color_: "white"
 
     }
@@ -492,18 +496,18 @@ Base{
         color: 'white'
         radius: 20
         anchors.right: parent.right
-        anchors.rightMargin: -15
+        anchors.rightMargin: (globalScreenType == '1') ? -15 : -5
         anchors.top: parent.top
-        anchors.topMargin: (globalScreenType == '1') ? 200 : 150
+        anchors.topMargin: 200
         width: 100
-        height: 300
+        height: (globalScreenType == '1') ? 300 : 250
         visible: false
         Text{
             text: 'CEK\nTRANSAKSI'
-            font.pixelSize: 30
+            font.pixelSize: (globalScreenType == '1') ? 30 : 20
             anchors.horizontalCenterOffset: -10
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 80
+            anchors.bottomMargin: (globalScreenType == '1') ? 80 : 50
             anchors.horizontalCenter: parent.horizontalCenter
             font.family:"Ubuntu"
             font.bold: true
@@ -522,7 +526,6 @@ Base{
             source: "source/find.png"
             fillMode: Image.PreserveAspectFit
         }
-
         MouseArea{
             anchors.fill: parent
             onClicked: {
@@ -543,18 +546,18 @@ Base{
         color: 'white'
         radius: 20
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: (globalScreenType == '1') ? 275 : 225
+        anchors.bottomMargin: 275
         anchors.right: parent.right
-        anchors.rightMargin: -15
+        anchors.rightMargin:  (globalScreenType == '1') ? -15 : -5
         width: 100
-        height: 300
+        height: (globalScreenType == '1') ? 300 : 250
         visible: false
         Text{
             text: "WHATSAPP\nVOUCHER"
-            font.pixelSize: 28
+            font.pixelSize: (globalScreenType == '1') ? 28 : 20
             anchors.horizontalCenterOffset: -10
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 80
+            anchors.bottomMargin: (globalScreenType == '1') ? 80 : 50
             anchors.horizontalCenter: parent.horizontalCenter
             font.family:"Ubuntu"
             font.bold: true
