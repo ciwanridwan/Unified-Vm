@@ -355,15 +355,16 @@ def define_edc_settlement():
     global SETTLEMENT_TYPE_COUNT, SETTLEMENTS_DATA
     SETTLEMENTS_DATA = _DAO.check_settlement()
     SETTLEMENT_TYPE_COUNT = card_type_count()
-    settlement_method = card_type_settle()
-    LOGGER.debug(("define_edc_settlement [DATA, COUNT, TYPE]", str(SETTLEMENTS_DATA), str(SETTLEMENT_TYPE_COUNT),
-                 str(settlement_method)))
+    get_settlement = card_type_settle()
+    LOGGER.debug(("DATA, COUNT, TYPE", str(SETTLEMENTS_DATA), str(SETTLEMENT_TYPE_COUNT),
+                 str(get_settlement)))
     if SETTLEMENT_TYPE_COUNT == 0:
         E_SIGNDLER.SIGNAL_PROCESS_SETTLEMENT_EDC.emit('EDC_SETTLEMENT|ERROR')
+        LOGGER.warning(("NO EDC SETTLEMENT DETECTED", str(len(SETTLEMENT_TYPE_COUNT))))
         return
-    elif settlement_method[0] == 'DEBIT CARD':
+    elif get_settlement[0] == 'DEBIT CARD':
         edc_settlement()
-    elif settlement_method[0] == 'CREDIT CARD':
+    elif get_settlement[0] == 'CREDIT CARD':
         edc_settlement_credit()
 
 
@@ -387,7 +388,7 @@ def edc_settlement():
             if response == 0 or EDC_TESTING_MODE is True:
                 # handling_settlement('DEBIT')
                 E_SIGNDLER.SIGNAL_PROCESS_SETTLEMENT_EDC.emit('EDC_SETTLEMENT_DEBIT|PROCESSED')
-                LOGGER.info(("edc_settlement", str(response), result))
+                LOGGER.info((str(response), result))
                 mark_settlement_data(printout=False, mode='DEBIT')
             else:
                 _Global.EDC_ERROR = 'FAILED_TO_DEBIT_SETTLEMENT'
@@ -418,7 +419,7 @@ def edc_settlement_credit():
             if response == 0 or EDC_TESTING_MODE is True:
                 # handling_settlement('CREDIT')
                 E_SIGNDLER.SIGNAL_PROCESS_SETTLEMENT_EDC.emit('EDC_SETTLEMENT_CREDIT|PROCESSED')
-                LOGGER.info(("edc_settlement", str(response), result))
+                LOGGER.info((str(response), result))
                 mark_settlement_data(printout=False, mode='CREDIT')
             else:
                 _Global.EDC_ERROR = 'FAILED_TO_CREDIT_SETTLEMENT'
