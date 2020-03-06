@@ -32,8 +32,7 @@ def get_query(sql, parameter, log=True):
         conn__ = get_conn()
         cursor = conn__.cursor().execute(sql, parameter)
         result = cursor.fetchall()
-        if DEBUG is True:
-            LOGGER.info((sql, len(result)))
+        LOGGER.info((sql, len(result)))
         if log is True and DEBUG is True:
             LOGGER.info(result)
     finally:
@@ -44,8 +43,7 @@ def get_query(sql, parameter, log=True):
 def delete_row(sql):
     try:
         LOCK.acquire()
-        if DEBUG is True:
-            LOGGER.info(sql)
+        LOGGER.info(sql)
         conn__ = sqlite3.connect(sys.path[0] + '/_dDB/' + DB)
         conn__.cursor().execute(sql)
         conn__.commit()
