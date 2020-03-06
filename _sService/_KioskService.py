@@ -770,13 +770,13 @@ def search_booking(bk):
                 K_SIGNDLER.SIGNAL_BOOKING_SEARCH.emit(json.dumps(_r))
             else:
                 K_SIGNDLER.SIGNAL_BOOKING_SEARCH.emit('ERROR')
-            LOGGER.debug(('search_booking : ', bk, _r))
+            LOGGER.debug((bk, _r))
         else:
             K_SIGNDLER.SIGNAL_BOOKING_SEARCH.emit('NO_DATA')
-            LOGGER.debug(('search_booking : ', str(r)))
+            LOGGER.debug((str(r)))
     except Exception as e:
         K_SIGNDLER.SIGNAL_BOOKING_SEARCH.emit('ERROR')
-        LOGGER.warning(('search_booking : ', e))
+        LOGGER.warning((e))
 
 
 DUMMY_PROCESS = False
@@ -848,7 +848,7 @@ def recreate_payment(payment):
                 break
             time.sleep(2)
     except Exception as e:
-        LOGGER.warning(('recreate_payment : ', e))
+        LOGGER.warning((e))
         K_SIGNDLER.SIGNAL_RECREATE_PAYMENT.emit('ERROR')
 
 
@@ -869,13 +869,13 @@ def check_wallet(amount):
     try:
         param = {"amount": int(amount)}
         status, response = _NetworkAccess.post_to_url(_Global.BACKEND_URL + 'task/check-wallet', param)
-        LOGGER.info(("check_wallet : ", response))
+        LOGGER.info((response))
         if status == 200 and response is not None:
             K_SIGNDLER.SIGNAL_WALLET_CHECK.emit(json.dumps(response))
         else:
             K_SIGNDLER.SIGNAL_WALLET_CHECK.emit('ERROR')
     except Exception as e:
-        LOGGER.warning(("check_wallet : ", e))
+        LOGGER.warning((e))
         K_SIGNDLER.SIGNAL_WALLET_CHECK.emit('ERROR')
 
 
@@ -1059,12 +1059,12 @@ def store_transaction_global(param, retry=False):
                     K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('PENDING|UPLOAD_TRX-' + _trxid)
                     break
             if attempt == 3:
-                LOGGER.warning(('store_transaction_global', 'max_attempt', str(attempt)))
+                LOGGER.warning(('max_attempt', str(attempt)))
                 K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('FAILED|STORE_TRX-' + _trxid)
                 break
             sleep(1)
     except Exception as e:
-        LOGGER.warning(('store_transaction_global', str(retry), str(e)))
+        LOGGER.warning((str(retry), str(e)))
         K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('ERROR')
     finally:
         MEI_HISTORY = ''
@@ -1076,7 +1076,7 @@ def start_kiosk_get_topup_amount():
 
 
 def kiosk_get_topup_amount():
-    LOGGER.info(('kiosk_get_topup_amount', str(_Global.TOPUP_AMOUNT_SETTING)))
+    LOGGER.info((str(_Global.TOPUP_AMOUNT_SETTING)))
     K_SIGNDLER.SIGNAL_GET_TOPUP_AMOUNT.emit(json.dumps(_Global.TOPUP_AMOUNT_SETTING))
 
 
@@ -1085,7 +1085,7 @@ def start_kiosk_get_payment_method():
 
 
 def kiosk_get_payment_method():
-    LOGGER.info(('kiosk_get_payment_method', str(_Global.PAYMENT_SETTING)))
+    LOGGER.info((str(_Global.PAYMENT_SETTING)))
     K_SIGNDLER.SIGNAL_GET_PAYMENT_METHOD.emit(json.dumps(_Global.PAYMENT_SETTING))
 
 
@@ -1124,7 +1124,7 @@ def store_topup_transaction(param):
         else:
             K_SIGNDLER.SIGNAL_STORE_TOPUP.emit('STORE_TOPUP|SUCCESS-SYNC-FAILED')
     except Exception as e:
-        LOGGER.warning(('store_topup_transaction', e))
+        LOGGER.warning((e))
         K_SIGNDLER.SIGNAL_STORE_TOPUP.emit('STORE_TOPUP|ERROR')
 
 
@@ -1138,10 +1138,10 @@ def save_cash_local(amount, mode='normal'):
             'pid': PID_SALE
         }
         _DAO.insert_cash(param_cash)
-        LOGGER.info(('save_cash_local', mode, PID_SALE, str(amount)))
+        LOGGER.info((mode, PID_SALE, str(amount)))
         return True
     except Exception as e:
-        LOGGER.warning(('save_cash_local', mode, PID_SALE, str(amount), str(e)))
+        LOGGER.warning((mode, PID_SALE, str(amount), str(e)))
         return False
 
 
@@ -1182,14 +1182,17 @@ def python_dump(log):
 
 
 def house_keeping(age_month=1, mode='DATA_FILES'):
-    # Disable Cleaning Old Data
     if mode == 'DATA_FILES':
+        LOGGER.info(('START DATA HOUSE_KEEPING', mode, _Helper.time_string()))
+        print('pyt: START DATA HOUSE_KEEPING ' + mode + ' ' +_Helper.time_string())
         _DAO.clean_old_data(tables=['Cash', 'Receipts', 'Settlement', 'Product', 'SAMAudit', 'SAMRecords',
                                     'TopupRecords', 'TransactionFailure', 'Transactions'],
                             key='createdAt',
                             age_month=age_month)
     expired = time.time() - (age_month * 30 * 24 * 60 * 60)
     paths = ['_pPDF', '_lLog']
+    LOGGER.info(('START FILES HOUSE_KEEPING', paths, expired, mode, _Helper.time_string()))
+    print('pyt: START FILES HOUSE_KEEPING ' + str(paths) + ' ' + str(expired) + ' ' + mode + ' ' + _Helper.time_string())
     for path in paths:
         work_dir = os.path.join(sys.path[0], path)
         for f in os.listdir(work_dir):
