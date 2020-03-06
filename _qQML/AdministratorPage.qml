@@ -1,9 +1,15 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.3
+import QtGraphicalEffects 1.0
 import "base_function.js" as FUNC
 
 Base{
     id: admin_page
+    //property for display test
+//    property var globalScreenType: '2'
+//    height: (globalScreenType=='2') ? 1024 : 1080
+//    width: (globalScreenType=='2') ? 1280 : 1920
+
     property var press: '0'
     property int timer_value: 240
     property var userData: undefined
@@ -282,12 +288,12 @@ Base{
 
     Row{
         id: admin_buttons_rows
-        spacing: 8
+        spacing: (globalScreenType == '1') ? 8 : 5
         anchors.left: parent.left
         anchors.leftMargin: 15
         anchors.top: parent.top
         anchors.topMargin: 20
-        width: parent.width - 500
+        width: (globalScreenType == '1') ? parent.width - 500 : parent.width
         height: 100
 
         AdminPanelButton{
@@ -533,13 +539,12 @@ Base{
         anchors.leftMargin: 10
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 20
-        spacing: 10
+        spacing: (globalScreenType == '1') ? 10 : 5
         visible: (!standard_notif_view.visible && !popup_loading.visible && !popup_update_stock.visible) ? true : false;
         scale: visible ? 1.0 : 0.1
         Behavior on scale {
             NumberAnimation  { duration: 500 ; easing.type: Easing.InOutBounce  }
         }
-
 
         GroupBox{
             id: groupBox_1
@@ -561,19 +566,19 @@ Base{
             }
             Column{
                 id: col_summary
-                width: (globalScreenType == '1') ? 300 : 200
+                width: parent.width - 28
                 anchors.left: parent.left
                 anchors.leftMargin: 14
                 anchors.top: parent.top
                 anchors.topMargin: 80
-                spacing: (globalScreenType == '1') ? 25 : 10
+                spacing: (globalScreenType == '1') ? 25 : 15
                 TextDetailRowNew{
                     id: _online_status
                     labelName: qsTr('Status Online')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: (globalScreenType == '1') ? 22 : 15
-                    globalWidth:  (globalScreenType == '1') ? 400 : 200
+                    labelSize: (globalScreenType == '1') ? 20 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
                 TextDetailRowNew{
@@ -581,8 +586,8 @@ Base{
                     labelName: qsTr('CPU Temp')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: (globalScreenType == '1') ? 22 : 15
-                    globalWidth:  (globalScreenType == '1') ? 400 : 200
+                    labelSize: (globalScreenType == '1') ? 20 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
                 TextDetailRowNew{
@@ -590,8 +595,8 @@ Base{
                     labelName: qsTr('Disk C: | D:')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: (globalScreenType == '1') ? 22 : 15
-                    globalWidth:  (globalScreenType == '1') ? 400 : 200
+                    labelSize: (globalScreenType == '1') ? 20 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
                 TextDetailRowNew{
@@ -599,8 +604,8 @@ Base{
                     labelName: qsTr('Status RAM')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: (globalScreenType == '1') ? 22 : 15
-                    globalWidth:  (globalScreenType == '1') ? 400 : 200
+                    labelSize: (globalScreenType == '1') ? 20 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
                 TextDetailRowNew{
@@ -608,8 +613,8 @@ Base{
                     labelName: qsTr('Theme Name')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: (globalScreenType == '1') ? 22 : 15
-                    globalWidth:  (globalScreenType == '1') ? 400 : 200
+                    labelSize: (globalScreenType == '1') ? 20 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
                 TextDetailRowNew{
@@ -617,8 +622,8 @@ Base{
                     labelName: qsTr('App Ver.')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: (globalScreenType == '1') ? 22 : 15
-                    globalWidth:  (globalScreenType == '1') ? 400 : 200
+                    labelSize: (globalScreenType == '1') ? 20 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
                 TextDetailRowNew{
@@ -626,8 +631,8 @@ Base{
                     labelName: qsTr('Service Ver.')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: (globalScreenType == '1') ? 22 : 15
-                    globalWidth:  (globalScreenType == '1') ? 400 : 200
+                    labelSize: (globalScreenType == '1') ? 20 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
                 TextDetailRowNew{
@@ -635,8 +640,8 @@ Base{
                     labelName: qsTr('Last Sync')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: (globalScreenType == '1') ? 22 : 15
-                    globalWidth:  (globalScreenType == '1') ? 400 : 200
+                    labelSize: (globalScreenType == '1') ? 20 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
 
@@ -666,19 +671,19 @@ Base{
             }
             Column{
                 id: col_summary2
-                width: (globalScreenType == '1') ? 300 : 200
+                width: parent.width - 28
                 anchors.left: parent.left
                 anchors.leftMargin: 14
                 anchors.top: parent.top
                 anchors.topMargin: 80
-                spacing: 25
+                spacing: (globalScreenType == '1') ? 25 : 15
                 TextDetailRowNew{
                     id: _today_trx
                     labelName: qsTr('Today TRX')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: (globalScreenType == '1') ? 22 : 15
-                    globalWidth:  (globalScreenType == '1') ? 400 : 200
+                    labelSize: (globalScreenType == '1') ? 20 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
                 TextDetailRowNew{
@@ -686,8 +691,8 @@ Base{
                     labelName: qsTr('Total TRX')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: (globalScreenType == '1') ? 22 : 15
-                    globalWidth:  (globalScreenType == '1') ? 400 : 200
+                    labelSize: (globalScreenType == '1') ? 20 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
                 TextDetailRowNew{
@@ -695,8 +700,8 @@ Base{
                     labelName: qsTr('Cash TRX')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: (globalScreenType == '1') ? 22 : 15
-                    globalWidth:  (globalScreenType == '1') ? 400 : 200
+                    labelSize: (globalScreenType == '1') ? 20 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
                 TextDetailRowNew{
@@ -704,8 +709,8 @@ Base{
                     labelName: qsTr('EDC TRX')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: (globalScreenType == '1') ? 22 : 15
-                    globalWidth:  (globalScreenType == '1') ? 400 : 200
+                    labelSize: (globalScreenType == '1') ? 20 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
                 TextDetailRowNew{
@@ -713,8 +718,8 @@ Base{
                     labelName: qsTr('Mandiri Wallet')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: (globalScreenType == '1') ? 22 : 15
-                    globalWidth:  (globalScreenType == '1') ? 400 : 200
+                    labelSize: (globalScreenType == '1') ? 20 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
                 TextDetailRowNew{
@@ -722,8 +727,8 @@ Base{
                     labelName: qsTr('Mandiri Active')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: (globalScreenType == '1') ? 22 : 15
-                    globalWidth:  (globalScreenType == '1') ? 400 : 200
+                    labelSize: (globalScreenType == '1') ? 20 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
                 TextDetailRowNew{
@@ -731,8 +736,8 @@ Base{
                     labelName: qsTr('BNI Wallet')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: (globalScreenType == '1') ? 22 : 15
-                    globalWidth:  (globalScreenType == '1') ? 400 : 200
+                    labelSize: (globalScreenType == '1') ? 20 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
                 TextDetailRowNew{
@@ -740,8 +745,8 @@ Base{
                     labelName: qsTr('BNI Active')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: (globalScreenType == '1') ? 22 : 15
-                    globalWidth:  (globalScreenType == '1') ? 400 : 200
+                    labelSize: (globalScreenType == '1') ? 20 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
 
@@ -770,19 +775,19 @@ Base{
             }
             Column{
                 id: col_summary3
-                width: (globalScreenType == '1') ? 300 : 200
+                width: parent.width - 28
                 anchors.left: parent.left
                 anchors.leftMargin: 14
                 anchors.top: parent.top
                 anchors.topMargin: 80
-                spacing: 25
+                spacing: (globalScreenType == '1') ? 25 : 15
                 TextDetailRowNew{
                     id: _total_cash_available
                     labelName: qsTr('Total Cash')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: (globalScreenType == '1') ? 22 : 15
-                    globalWidth:  (globalScreenType == '1') ? 400 : 200
+                    labelSize: (globalScreenType == '1') ? 20 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
                 NextButton{
@@ -790,7 +795,7 @@ Base{
                    width: 110
                    height: 40
                    anchors.right: _total_cash_available.right
-                   anchors.rightMargin: 80
+                   anchors.rightMargin: 0
                    fontSize: 15
                    modeRadius: false
                    button_text: 're-init grg'
@@ -820,19 +825,19 @@ Base{
                     labelName: qsTr('Total EDC')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: (globalScreenType == '1') ? 22 : 15
-                    globalWidth:  (globalScreenType == '1') ? 400 : 200
+                    labelSize: (globalScreenType == '1') ? 20 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
                 NextButton{
                    id: button_settle_edc
-                   width: 80
+                   width: 110
                    height: 40
                    anchors.right: _total_edc_available.right
-                   anchors.rightMargin:  (globalScreenType == '1') ? 100 : 50
+                   anchors.rightMargin: 0
                    fontSize: 15
                    modeRadius: false
-                   button_text: 'settle'
+                   button_text: 'settle edc'
                    modeReverse: true
                    MouseArea{
                        anchors.fill: parent
@@ -853,107 +858,182 @@ Base{
                        }
                    }
                 }
+
                 TextDetailRowNew{
                     id: _total_stock_101
                     labelName: qsTr('COM 1 Stock')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: (globalScreenType == '1') ? 22 : 15
-                    globalWidth:  (globalScreenType == '1') ? 400 : 200
+                    labelSize: (globalScreenType == '1') ? 20 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
-                NextButton{
-                   id: button_update_stock1
-                   enabled: (_total_stock_101!='---') ? true : false
-                   button_text: 'update'
-                   width: 80
-                   height: 40
-                   anchors.right: _total_stock_101.right
-                   anchors.rightMargin:  (globalScreenType == '1') ? 100 : 50
-                   fontSize: 15
-                   modeRadius: false
-                   modeReverse: true
-                   MouseArea{
-                       anchors.fill: parent
-                       onClicked: {
-                           _SLOT.user_action_log('Admin Page "Update Slot 1"');
-                           console.log('Update Stock Button 1 is Pressed..!')
-                           if (userData.isAbleCollect==1){
-                               popup_update_stock.selectedSlot = '101'
-                               popup_update_stock.open();
-                           } else {
-                               false_notif('Mohon Maaf|User Anda Tidak Diperkenankan, Hubungi Master Admin')
+                Row{
+                    spacing: 10
+                    width: parent.width
+                    layoutDirection: Qt.RightToLeft
+
+                    NextButton{
+                       id: button_test_slot1
+                       visible: row_data.visible
+                       enabled: (_total_stock_101!='---') ? true : false
+                       button_text: 'test'
+                       width: 80
+                       height: 40
+                       fontSize: 15
+                       modeRadius: false
+                       modeReverse: true
+                       MouseArea{
+                           anchors.fill: parent
+                           onClicked: {
+                               _SLOT.user_action_log('Admin Page "Test Slot 1"');
+                               console.log('Test Slot 1 Button is Pressed..!');
+                               _SLOT.start_multiple_eject('101', '1');
                            }
                        }
-                   }
+                    }
+
+                    NextButton{
+                       id: button_update_stock1
+                       enabled: (_total_stock_101!='---') ? true : false
+                       button_text: 'update'
+                       width: 80
+                       height: 40
+                       fontSize: 15
+                       modeRadius: false
+                       modeReverse: true
+                       MouseArea{
+                           anchors.fill: parent
+                           onClicked: {
+                               _SLOT.user_action_log('Admin Page "Update Slot 1"');
+                               console.log('Update Stock Button 1 is Pressed..!')
+                               if (userData.isAbleCollect==1){
+                                   popup_update_stock.selectedSlot = '101'
+                                   popup_update_stock.open();
+                               } else {
+                                   false_notif('Mohon Maaf|User Anda Tidak Diperkenankan, Hubungi Master Admin')
+                               }
+                           }
+                       }
+                    }
+
                 }
+
+
                 TextDetailRowNew{
                     id: _total_stock_102
                     labelName: qsTr('COM 2 Stock')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: (globalScreenType == '1') ? 22 : 15
-                    globalWidth:  (globalScreenType == '1') ? 400 : 200
+                    labelSize: (globalScreenType == '1') ? 20 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
-                NextButton{
-                   id: button_update_stock2
-                   enabled: (_total_stock_102!='---') ? true : false
-                   button_text: 'update'
-                   width: 80
-                   height: 40
-                   anchors.right: _total_stock_102.right
-                   anchors.rightMargin:  (globalScreenType == '1') ? 100 : 50
-                   fontSize: 15
-                   modeRadius: false
-                   modeReverse: true
-                   MouseArea{
-                       anchors.fill: parent
-                       onClicked: {
-                           _SLOT.user_action_log('Admin Page "Update Slot 2"');
-                           console.log('Update Stock Button 2 is Pressed..!')
-                           if (userData.isAbleCollect==1){
-                               popup_update_stock.selectedSlot = '102'
-                               popup_update_stock.open();
-                           } else {
-                               false_notif('Mohon Maaf|User Anda Tidak Diperkenankan, Hubungi Master Admin')
+                Row{
+                    spacing: 10
+                    width: parent.width
+                    layoutDirection: Qt.RightToLeft
+                    NextButton{
+                       id: button_test_slot2
+                       visible: row_data.visible
+                       enabled: (_total_stock_102!='---') ? true : false
+                       button_text: 'test'
+                       width: 80
+                       height: 40
+                       fontSize: 15
+                       modeRadius: false
+                       modeReverse: true
+                       MouseArea{
+                           anchors.fill: parent
+                           onClicked: {
+                               _SLOT.user_action_log('Admin Page "Test Slot 2"');
+                               console.log('Test Slot 2 Button is Pressed..!');
+                               _SLOT.start_multiple_eject('102', '1');
                            }
                        }
-                   }
+                    }
+                    NextButton{
+                       id: button_update_stock2
+                       enabled: (_total_stock_102!='---') ? true : false
+                       button_text: 'update'
+                       width: 80
+                       height: 40
+                       fontSize: 15
+                       modeRadius: false
+                       modeReverse: true
+                       MouseArea{
+                           anchors.fill: parent
+                           onClicked: {
+                               _SLOT.user_action_log('Admin Page "Update Slot 2"');
+                               console.log('Update Stock Button 2 is Pressed..!')
+                               if (userData.isAbleCollect==1){
+                                   popup_update_stock.selectedSlot = '102'
+                                   popup_update_stock.open();
+                               } else {
+                                   false_notif('Mohon Maaf|User Anda Tidak Diperkenankan, Hubungi Master Admin')
+                               }
+                           }
+                       }
+                    }
                 }
                 TextDetailRowNew{
                     id: _total_stock_103
                     labelName: qsTr('COM 3 Stock')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: (globalScreenType == '1') ? 22 : 15
-                    globalWidth:  (globalScreenType == '1') ? 400 : 200
+                    labelSize: (globalScreenType == '1') ? 20 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
-                NextButton{
-                   id: button_update_stock3
-                   enabled: (_total_stock_103!='---') ? true : false
-                   button_text: 'update'
-                   width: 80
-                   height: 40
-                   anchors.right: _total_stock_103.right
-                   anchors.rightMargin:  (globalScreenType == '1') ? 100 : 50
-                   fontSize: 15
-                   modeRadius: false
-                   modeReverse: true
-                   MouseArea{
-                       anchors.fill: parent
-                       onClicked: {
-                           _SLOT.user_action_log('Admin Page "Update Slot 3"');
-                           console.log('Update Stock Button 3 is Pressed..!')
-                           if (userData.isAbleCollect==1){
-                               popup_update_stock.selectedSlot = '103'
-                               popup_update_stock.open();
-                           } else {
-                               false_notif('Mohon Maaf|User Anda Tidak Diperkenankan, Hubungi Master Admin')
+                Row{
+                    spacing: 10
+                    width: parent.width
+                    layoutDirection: Qt.RightToLeft
+                    NextButton{
+                       id: button_test_slot3
+                       visible: row_data.visible
+                       enabled: (_total_stock_103!='---') ? true : false
+                       button_text: 'test'
+                       width: 80
+                       height: 40
+                       fontSize: 15
+                       modeRadius: false
+                       modeReverse: true
+                       MouseArea{
+                           anchors.fill: parent
+                           onClicked: {
+                               _SLOT.user_action_log('Admin Page "Test Slot 3"');
+                               console.log('Test Slot 3 Button is Pressed..!');
+                               _SLOT.start_multiple_eject('103', '1');
                            }
                        }
-                   }
+                    }
+
+                    NextButton{
+                       id: button_update_stock3
+                       enabled: (_total_stock_103!='---') ? true : false
+                       button_text: 'update'
+                       width: 80
+                       height: 40
+                       anchors.right: _total_stock_103.right
+                       anchors.rightMargin:  (globalScreenType == '1') ? 100 : 50
+                       fontSize: 15
+                       modeRadius: false
+                       modeReverse: true
+                       MouseArea{
+                           anchors.fill: parent
+                           onClicked: {
+                               _SLOT.user_action_log('Admin Page "Update Slot 3"');
+                               console.log('Update Stock Button 3 is Pressed..!')
+                               if (userData.isAbleCollect==1){
+                                   popup_update_stock.selectedSlot = '103'
+                                   popup_update_stock.open();
+                               } else {
+                                   false_notif('Mohon Maaf|User Anda Tidak Diperkenankan, Hubungi Master Admin')
+                               }
+                           }
+                       }
+                    }
                 }
             }
 
@@ -980,19 +1060,19 @@ Base{
             }
             Column{
                 id: col_summary4
-                width: (globalScreenType == '1') ? 300 : 200
+                width: parent.width - 28
                 anchors.left: parent.left
                 anchors.leftMargin: 14
                 anchors.top: parent.top
                 anchors.topMargin: 80
-                spacing: 25
+                spacing: (globalScreenType == '1') ? 25 : 15
                 TextDetailRowNew{
                     id: _edc_error
                     labelName: qsTr('EDC UPT')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: (globalScreenType == '1') ? 22 : 15
-                    globalWidth:  (globalScreenType == '1') ? 400 : 200
+                    labelSize: (globalScreenType == '1') ? 20 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
                 TextDetailRowNew{
@@ -1000,8 +1080,8 @@ Base{
                     labelName: qsTr('Prepaid Reader')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: (globalScreenType == '1') ? 22 : 15
-                    globalWidth:  (globalScreenType == '1') ? 400 : 200
+                    labelSize: (globalScreenType == '1') ? 20 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
                 TextDetailRowNew{
@@ -1009,8 +1089,8 @@ Base{
                     labelName: qsTr('Bill Validator')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: (globalScreenType == '1') ? 22 : 15
-                    globalWidth:  (globalScreenType == '1') ? 400 : 200
+                    labelSize: (globalScreenType == '1') ? 20 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
                 TextDetailRowNew{
@@ -1018,8 +1098,8 @@ Base{
                     labelName: qsTr('Scanner Reader')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: (globalScreenType == '1') ? 22 : 15
-                    globalWidth:  (globalScreenType == '1') ? 400 : 200
+                    labelSize: (globalScreenType == '1') ? 20 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
                 TextDetailRowNew{
@@ -1027,8 +1107,8 @@ Base{
                     labelName: qsTr('Webcam')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: (globalScreenType == '1') ? 22 : 15
-                    globalWidth:  (globalScreenType == '1') ? 400 : 200
+                    labelSize: (globalScreenType == '1') ? 20 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
                 TextDetailRowNew{
@@ -1036,8 +1116,8 @@ Base{
                     labelName: qsTr('Card Disp 1')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: (globalScreenType == '1') ? 22 : 15
-                    globalWidth:  (globalScreenType == '1') ? 400 : 200
+                    labelSize: (globalScreenType == '1') ? 20 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
                 TextDetailRowNew{
@@ -1045,8 +1125,8 @@ Base{
                     labelName: qsTr('Card Disp 2')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: (globalScreenType == '1') ? 22 : 15
-                    globalWidth:  (globalScreenType == '1') ? 400 : 200
+                    labelSize: (globalScreenType == '1') ? 20 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
                 TextDetailRowNew{
@@ -1054,8 +1134,8 @@ Base{
                     labelName: qsTr('Card Disp 3')
                     contentSize: (globalScreenType == '1') ? 30 : 20
                     labelContent: '---'
-                    labelSize: (globalScreenType == '1') ? 22 : 15
-                    globalWidth:  (globalScreenType == '1') ? 400 : 200
+                    labelSize: (globalScreenType == '1') ? 20 : 15
+                    globalWidth:  (globalScreenType == '1') ? 400 : 270
                     theme: 'white'
                 }
 
@@ -1065,71 +1145,9 @@ Base{
 
     }
 
-    NextButton{
-       id: button_test_slot1
-       x: 1293
-       y: 665
-       visible: row_data.visible
-       enabled: (_total_stock_101!='---') ? true : false
-       button_text: 'test'
-       width: 80
-       height: 40
-       fontSize: 15
-       modeRadius: false
-       modeReverse: true
-       MouseArea{
-           anchors.fill: parent
-           onClicked: {
-               _SLOT.user_action_log('Admin Page "Test Slot 1"');
-               console.log('Test Slot 1 Button is Pressed..!');
-               _SLOT.start_multiple_eject('101', '1');
-           }
-       }
-    }
 
-    NextButton{
-       id: button_test_slot2
-       x: 1293
-       y: 825
-       visible: row_data.visible
-       enabled: (_total_stock_102!='---') ? true : false
-       button_text: 'test'
-       width: 80
-       height: 40
-       fontSize: 15
-       modeRadius: false
-       modeReverse: true
-       MouseArea{
-           anchors.fill: parent
-           onClicked: {
-               _SLOT.user_action_log('Admin Page "Test Slot 2"');
-               console.log('Test Slot 2 Button is Pressed..!');
-               _SLOT.start_multiple_eject('102', '1');
-           }
-       }
-    }
 
-    NextButton{
-       id: button_test_slot3
-       x: 1293
-       y: 985
-       visible: row_data.visible
-       enabled: (_total_stock_103!='---') ? true : false
-       button_text: 'test'
-       width: 80
-       height: 40
-       fontSize: 15
-       modeRadius: false
-       modeReverse: true
-       MouseArea{
-           anchors.fill: parent
-           onClicked: {
-               _SLOT.user_action_log('Admin Page "Test Slot 3"');
-               console.log('Test Slot 3 Button is Pressed..!');
-               _SLOT.start_multiple_eject('103', '1');
-           }
-       }
-    }
+
 
     function false_notif(param, button){
         press = '0';

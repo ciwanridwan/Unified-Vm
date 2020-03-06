@@ -3,16 +3,16 @@ import QtQuick 2.0
 Rectangle{
     id: rectangle1
     property var labelName: 'Name'
+    property int globalWidth: 400
     property int labelSize: 20
     property var labelContent: 'ABCDEFGHIJKLMN1234567890'
-    property var contentSize: 30
+    property var contentSize: (globalWidth==400) ? 30 : 20
     property int heightCell: 35
     property int paddingLeft: 10
-    property int separatorPoint: 125
+    property int separatorPoint: (globalWidth==400) ? 125 : 75
     property bool withBackground: false
     property var theme: 'white'
-    property int globalWidth: 400
-    property int leftMargin: 20
+    property int leftMargin: (globalWidth==400) ? 20 : 10
 
     color: 'transparent'
     width: globalWidth
@@ -20,9 +20,10 @@ Rectangle{
 
     Text{
         id: label_text
-        width: 120
+        width: (globalWidth==400) ? 120 : 70
         height: parent.height
         text: labelName
+        verticalAlignment: Text.AlignVCenter
         style: Text.Raised
         anchors.left: parent.left
         anchors.leftMargin: paddingLeft
@@ -31,7 +32,6 @@ Rectangle{
         font.pixelSize: contentSize
         font.family: 'Microsoft YaHei'
         color: theme
-
     }
 
     Rectangle{

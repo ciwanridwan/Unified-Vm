@@ -1,6 +1,6 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.3
-import QtGraphicalEffects 1.0
+//import QtGraphicalEffects 1.0
 import "base_function.js" as FUNC
 import "screen.js" as SCREEN
 import "config.js" as CONF
@@ -8,6 +8,10 @@ import "config.js" as CONF
 
 Base{
     id: general_payment_process
+
+                property var globalScreenType: '2'
+                height: (globalScreenType=='2') ? 1024 : 1080
+                width: (globalScreenType=='2') ? 1280 : 1920
     property int timer_value: 300
     property var press: '0'
     property var details

@@ -19,6 +19,9 @@ Rectangle {
 
     //Type 1 : var size = { "width": 1920, "height": 1080};
     //Type 2 : var size = { "width": 1280, "height": 1024};
+    //    property var globalScreenType: '2'
+    //    height: (globalScreenType=='2') ? 1024 : 1080
+    //    width: (globalScreenType=='2') ? 1280 : 1920
 
 
     //==================================================================================================//

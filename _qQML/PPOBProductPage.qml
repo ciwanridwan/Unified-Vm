@@ -4,6 +4,9 @@ import "base_function.js" as FUNC
 
 Base{
     id: ppob_product
+//        property var globalScreenType: '1'
+//        height: (globalScreenType=='2') ? 1024 : 1080
+//        width: (globalScreenType=='2') ? 1280 : 1920
     property int timer_value: 60*5
     isPanelActive: false
     isHeaderActive: true
@@ -170,9 +173,9 @@ Base{
 
     Item  {
         id: flickable_items
-        width: (globalScreenType == '1') ? 1100 : 900
+        width: (globalScreenType == '1') ? 1100 : 950
         height: 800
-        anchors.verticalCenterOffset: 100
+        anchors.verticalCenterOffset: (globalScreenType == '1') ? 100 : 0
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
 
@@ -218,6 +221,7 @@ Base{
                 id: item_ppob;
                 text_: ppob_name;
                 text2_: ppob_desc;
+                itemWidth :  (globalScreenType == '1') ? 1000 : 780
                 MouseArea{
                     anchors.fill: parent;
                     onClicked: {
@@ -241,9 +245,9 @@ Base{
 
     Image{
         id: sign_scroll
-        scale: 0.75
+        scale: (globalScreenType == '1') ? 0.75 : 0.5
         anchors.right: parent.right
-        anchors.rightMargin: (globalScreenType == '1') ? 50 : 25
+        anchors.rightMargin: (globalScreenType == '1') ? 50 : -50
         anchors.verticalCenter: parent.verticalCenter
         source: 'source/scroll_sign.png'
     }

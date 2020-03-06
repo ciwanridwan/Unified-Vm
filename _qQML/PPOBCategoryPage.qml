@@ -4,6 +4,11 @@ import "base_function.js" as FUNC
 
 Base{
     id: ppob_category
+
+//    property var globalScreenType: '2'
+//    height: (globalScreenType=='2') ? 1024 : 1080
+//    width: (globalScreenType=='2') ? 1280 : 1920
+
     property int timer_value: 60*5
     isPanelActive: false
     isHeaderActive: true
@@ -62,7 +67,6 @@ Base{
         popup_loading.close();
     }
 
-
     function false_notif(closeMode, textSlave){
         if (closeMode==undefined) closeMode = 'backToMain';
         if (textSlave==undefined) textSlave = '';
@@ -99,7 +103,6 @@ Base{
         global_frame.withTimer = false;
         global_frame.open();
     }
-
 
 
     Rectangle{
@@ -169,7 +172,7 @@ Base{
         id: flickable_items
         width: (globalScreenType == '1') ? 1550 : parent.width
         height: 800
-        anchors.verticalCenterOffset: 120
+        anchors.verticalCenterOffset: (globalScreenType == '1') ? 120 : 0
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
 

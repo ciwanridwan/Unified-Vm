@@ -7,6 +7,10 @@ import "config.js" as CONF
 
 Base{
     id: check_prepaid_balance
+
+//            property var globalScreenType: '2'
+//            height: (globalScreenType=='2') ? 1024 : 1080
+//            width: (globalScreenType=='2') ? 1280 : 1920
     property int timer_value: 300
     property var press: '0'
     property var cardNo: ''
@@ -338,12 +342,12 @@ Base{
         anchors.top: parent.top
         anchors.topMargin: 375
         anchors.left: parent.left
-        anchors.leftMargin: 350
+        anchors.leftMargin: (globalScreenType=='1') ? 350 : 100
         wrapMode: Text.WordWrap
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
         font.family:"Ubuntu"
-        font.pixelSize: 50
+        font.pixelSize: (globalScreenType=='1') ? 50 : 40
         visible: !popup_loading.visible && !preload_check_card.visible
     }
 
@@ -353,14 +357,14 @@ Base{
         color: "white"
         text: (cardNo==undefined) ? '' : cardNo
         anchors.right: parent.right
-        anchors.rightMargin: 350
+        anchors.rightMargin: (globalScreenType=='1') ? 350 : 100
         anchors.top: parent.top
         anchors.topMargin: 375
         wrapMode: Text.WordWrap
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignRight
         font.family:"Ubuntu"
-        font.pixelSize: 50
+        font.pixelSize: (globalScreenType=='1') ? 50 : 40
         visible: !popup_loading.visible && !preload_check_card.visible
     }
 
@@ -371,12 +375,12 @@ Base{
         anchors.top: parent.top
         anchors.topMargin: 500
         anchors.left: parent.left
-        anchors.leftMargin: 350
+        anchors.leftMargin: (globalScreenType=='1') ? 350 : 100
         wrapMode: Text.WordWrap
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
         font.family:"Ubuntu"
-        font.pixelSize: 50
+        font.pixelSize: (globalScreenType=='1') ? 50 : 40
         visible: !popup_loading.visible && !preload_check_card.visible
     }
 
@@ -386,14 +390,14 @@ Base{
         color: "white"
         text: (balance=='0') ? 'Rp 0' : 'Rp ' + FUNC.insert_dot(balance)
         anchors.right: parent.right
-        anchors.rightMargin: 350
+        anchors.rightMargin: (globalScreenType=='1') ? 350 : 100
         anchors.top: parent.top
         anchors.topMargin: 500
         wrapMode: Text.WordWrap
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignRight
         font.family:"Ubuntu"
-        font.pixelSize: 50
+        font.pixelSize: (globalScreenType=='1') ? 50 : 40
         visible: !popup_loading.visible && !preload_check_card.visible
     }
 
@@ -404,12 +408,12 @@ Base{
         anchors.top: parent.top
         anchors.topMargin: 250
         anchors.left: parent.left
-        anchors.leftMargin: 350
+        anchors.leftMargin: (globalScreenType=='1') ? 350 : 100
         wrapMode: Text.WordWrap
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
         font.family:"Ubuntu"
-        font.pixelSize: 50
+        font.pixelSize: (globalScreenType=='1') ? 50 : 40
         visible: !popup_loading.visible && !preload_check_card.visible
     }
 
@@ -419,14 +423,14 @@ Base{
         color: "white"
         text: (bankName==undefined) ? '' : bankName
         anchors.right: parent.right
-        anchors.rightMargin: 350
+        anchors.rightMargin: (globalScreenType=='1') ? 350 : 100
         anchors.top: parent.top
         anchors.topMargin: 250
         wrapMode: Text.WordWrap
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignRight
         font.family:"Ubuntu"
-        font.pixelSize: 50
+        font.pixelSize: (globalScreenType=='1') ? 50 : 40
         visible: !popup_loading.visible && !preload_check_card.visible
     }
 

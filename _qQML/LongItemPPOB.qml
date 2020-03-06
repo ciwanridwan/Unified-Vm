@@ -8,7 +8,8 @@ Rectangle {
     property var color_: (modeReverse) ? "black" : "white"
     property var text_:"Data 25.000"
     property var text2_:"Kuota Reguler 270-750MB + 2GB Video Max. Berlaku selama 30 hari"
-    width: 1000
+    property var itemWidth: 1000
+    width: itemWidth
     height: 150
     color: 'transparent'
     visible: true

@@ -5,6 +5,10 @@ import "base_function.js" as FUNC
 
 Base{
     id: prepaid_topup_denom
+
+//        property var globalScreenType: '2'
+//        height: (globalScreenType=='2') ? 1024 : 1080
+//        width: (globalScreenType=='2') ? 1280 : 1920
     property int timer_value: 120
     property var press: '0'
     idx_bg: 0
@@ -711,14 +715,14 @@ Base{
         color: "white"
         text: "Saldo Anda sekarang"
         anchors.top: parent.top
-        anchors.topMargin: 250
+        anchors.topMargin: (globalScreenType=='1') ? 250 : 200
         anchors.left: parent.left
-        anchors.leftMargin: 350
+        anchors.leftMargin: (globalScreenType=='1') ? 350 : 150
         wrapMode: Text.WordWrap
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
         font.family:"Ubuntu"
-        font.pixelSize: 50
+        font.pixelSize:(globalScreenType=='1') ? 50 : 40
         visible: mainVisible
     }
 
@@ -727,14 +731,14 @@ Base{
         color: "white"
         text: (cardBalance==0) ? 'Rp 0' : 'Rp ' + FUNC.insert_dot(cardBalance.toString())
         anchors.right: parent.right
-        anchors.rightMargin: 350
+        anchors.rightMargin: (globalScreenType=='1') ? 350 : 150
         anchors.top: parent.top
         anchors.topMargin: label_current_balance.anchors.topMargin
         wrapMode: Text.WordWrap
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignRight
         font.family:"Ubuntu"
-        font.pixelSize: 50
+        font.pixelSize: (globalScreenType=='1') ? 50 : 40
         visible: mainVisible
     }
 
@@ -811,9 +815,9 @@ Base{
         id: denom_button
         width: parent.width
         height: 200
-        anchors.horizontalCenterOffset: 20
+        anchors.horizontalCenterOffset:(globalScreenType == '1') ? 20 : 0
         anchors.top: parent.top
-        anchors.topMargin: (globalScreenType == '1') ? 350 : 300
+        anchors.topMargin: (globalScreenType == '1') ? 350 : 320
         anchors.horizontalCenter: parent.horizontalCenter
         spacing: (globalScreenType == '1') ? 50 : 30
         visible: mainVisible
@@ -876,7 +880,7 @@ Base{
     SelectPaymentInline{
         id: select_payment
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 125
+        anchors.bottomMargin: (globalScreenType=='1') ? 125 : 100
         anchors.horizontalCenter: parent.horizontalCenter
         visible: (selectedDenom > 0)
 //        visible: true
