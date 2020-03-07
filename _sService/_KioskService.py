@@ -29,7 +29,8 @@ class KioskSignalHandler(QObject):
     SIGNAL_GET_GUI_VERSION = pyqtSignal(str)
     SIGNAL_GET_KIOSK_NAME = pyqtSignal(str)
     SIGNAL_GET_FILE_LIST = pyqtSignal(str)
-    SIGNAL_GET_DEVICE_STAT = pyqtSignal(str)
+    SIGNAL_GET_PAYMENTS = pyqtSignal(str)
+    SIGNAL_GET_REFUNDS = pyqtSignal(str)
     SIGNAL_GENERAL = pyqtSignal(str)
     SIGNAL_GET_KIOSK_STATUS = pyqtSignal(str)
     SIGNAL_PRICE_SETTING = pyqtSignal(str)
@@ -44,7 +45,7 @@ class KioskSignalHandler(QObject):
     SIGNAL_GET_TOPUP_AMOUNT = pyqtSignal(str)
     SIGNAL_STORE_TOPUP = pyqtSignal(str)
     SIGNAL_GET_MACHINE_SUMMARY = pyqtSignal(str)
-    SIGNAL_GET_PAYMENT_METHOD = pyqtSignal(str)
+    SIGNAL_GET_PAYMENT_SETTING = pyqtSignal(str)
     SIGNAL_SYNC_ADS_CONTENT = pyqtSignal(str)
     SIGNAL_ADMIN_GET_PRODUCT_STOCK = pyqtSignal(str)
 
@@ -93,6 +94,7 @@ def update_kiosk_status(r):
             _Global.TOPUP_AMOUNT_SETTING = load_from_temp_data('topup-amount-setting', 'json')
             _Global.FEATURE_SETTING = load_from_temp_data('feature-setting', 'json')
             _Global.PAYMENT_SETTING = load_from_temp_data('payment-setting', 'json')
+            _Global.REFUND_SETTING = load_from_temp_data('refund-setting', 'json')
             _Global.THEME_SETTING = load_from_temp_data('theme-setting', 'json')
             _Global.ADS_SETTING = load_from_temp_data('ads-setting', 'json')
         else:
@@ -100,6 +102,10 @@ def update_kiosk_status(r):
             _Global.KIOSK_NAME = _Global.KIOSK_SETTING['name']
             _Global.KIOSK_MARGIN = int(_Global.KIOSK_SETTING['defaultMargin'])
             _Global.KIOSK_ADMIN = int(_Global.KIOSK_SETTING['defaultAdmin'])
+            # TODO: Check New Refund Data Setting
+            if not _Global.empty(r['data']['refund']):
+                _Global.REFUND_SETTING = r['data']['refund']
+                _Global.store_to_temp_data('refund-setting', json.dumps(r['data']['refund']))
             _Global.PAYMENT_SETTING = r['data']['payment']
             define_device_port_setting(_Global.PAYMENT_SETTING)
             _Global.store_to_temp_data('payment-setting', json.dumps(r['data']['payment']))
@@ -620,13 +626,20 @@ def send_tvc_log(media, count, media_code=None):
         LOGGER.warning((media, str(count), str(e)))
 
 
-def start_get_device_status():
-    _Helper.get_pool().apply_async(get_device_status)
+def start_get_payments():
+    _Helper.get_pool().apply_async(get_payments)
 
 
-def get_device_status():
-    devices = _Global.get_devices_status()
-    K_SIGNDLER.SIGNAL_GET_DEVICE_STAT.emit(json.dumps(devices))
+def get_payments():
+    K_SIGNDLER.SIGNAL_GET_PAYMENTS.emit(json.dumps(_Global.get_payments()))
+
+
+def start_get_refunds():
+    _Helper.get_pool().apply_async(get_refunds)
+
+
+def get_refunds():
+    K_SIGNDLER.SIGNAL_GET_REFUNDS.emit(json.dumps(_Global.get_refunds()))
 
 
 FIRST_RUN_FLAG = True
@@ -1080,13 +1093,13 @@ def kiosk_get_topup_amount():
     K_SIGNDLER.SIGNAL_GET_TOPUP_AMOUNT.emit(json.dumps(_Global.TOPUP_AMOUNT_SETTING))
 
 
-def start_kiosk_get_payment_method():
-    _Helper.get_pool().apply_async(kiosk_get_payment_method)
+def start_kiosk_get_payment_setting():
+    _Helper.get_pool().apply_async(kiosk_get_payment_setting)
 
 
-def kiosk_get_payment_method():
-    LOGGER.info((str(_Global.PAYMENT_SETTING)))
-    K_SIGNDLER.SIGNAL_GET_PAYMENT_METHOD.emit(json.dumps(_Global.PAYMENT_SETTING))
+def kiosk_get_payment_setting():
+    # LOGGER.info((str(_Global.PAYMENT_SETTING)))
+    K_SIGNDLER.SIGNAL_GET_PAYMENT_SETTING.emit(json.dumps(_Global.PAYMENT_SETTING))
 
 
 def start_store_topup_transaction(param):

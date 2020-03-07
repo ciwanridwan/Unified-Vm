@@ -54,7 +54,7 @@ Base{
             cdReadiness = undefined;
             popup_loading.open();
             _SLOT.kiosk_get_cd_readiness();
-            _SLOT.start_get_device_status();
+            _SLOT.start_get_payments();
 //            _SLOT.start_get_multiple_eject_status();
             if (cart != undefined) {
                 console.log('cart', JSON.stringify(cart));
@@ -86,7 +86,7 @@ Base{
     Component.onCompleted:{
         set_confirmation.connect(do_set_confirm);
         get_payment_method_signal.connect(process_selected_payment);
-        base.result_get_device.connect(get_device_status);
+        base.result_get_payment.connect(get_payments);
         base.result_balance_qprox.connect(get_balance);
         base.result_multiple_eject.connect(get_status_multiple);
         base.result_cd_readiness.connect(get_cd_readiness);
@@ -95,7 +95,7 @@ Base{
     Component.onDestruction:{
         set_confirmation.disconnect(do_set_confirm);
         get_payment_method_signal.disconnect(process_selected_payment);
-        base.result_get_device.disconnect(get_device_status);
+        base.result_get_payment.disconnect(get_payments);
         base.result_balance_qprox.disconnect(get_balance);
         base.result_multiple_eject.disconnect(get_status_multiple);
         base.result_cd_readiness.disconnect(get_cd_readiness);
@@ -121,9 +121,9 @@ Base{
         }
     }
 
-    function get_device_status(s){
+    function get_payments(s){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-        console.log('get_device_status', s, now);
+        console.log('get_payments', s, now);
         var device = JSON.parse(s);
         if (device.MEI == 'AVAILABLE' || device.GRG == 'AVAILABLE'){
             cashEnable = true;

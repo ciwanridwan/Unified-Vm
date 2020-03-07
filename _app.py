@@ -115,9 +115,9 @@ class SlotHandler(QObject):
         _EDC.create_sale_edc(amount=amount)
     create_sale_edc = pyqtSlot(str)(create_sale_edc)
 
-    def start_get_device_status(self):
-        _KioskService.start_get_device_status()
-    start_get_device_status = pyqtSlot()(start_get_device_status)
+    def start_get_payments(self):
+        _KioskService.start_get_payments()
+    start_get_payments = pyqtSlot()(start_get_payments)
 
     def start_confirm_schedule(self):
         _Tibox.start_confirm_schedule()
@@ -488,9 +488,9 @@ class SlotHandler(QObject):
         _PPOBService.start_get_ppob_product()
     start_get_ppob_product = pyqtSlot()(start_get_ppob_product)
 
-    def start_kiosk_get_payment_method(self):
-        _KioskService.start_kiosk_get_payment_method()
-    start_kiosk_get_payment_method = pyqtSlot()(start_kiosk_get_payment_method)
+    def start_kiosk_get_payment_setting(self):
+        _KioskService.start_kiosk_get_payment_setting()
+    start_kiosk_get_payment_setting = pyqtSlot()(start_kiosk_get_payment_setting)
 
     def start_define_ads(self):
         _KioskService.start_define_ads()
@@ -626,7 +626,8 @@ def s_handler():
     _Tibox.T_SIGNDLER.SIGNAL_CREATE_PRINT.connect(view.rootObject().result_create_print)
     _Tibox.T_SIGNDLER.SIGNAL_CLEAR_PERSON.connect(view.rootObject().result_clear_person)
     _EDC.E_SIGNDLER.SIGNAL_SALE_EDC.connect(view.rootObject().result_sale_edc)
-    _KioskService.K_SIGNDLER.SIGNAL_GET_DEVICE_STAT.connect(view.rootObject().result_get_device)
+    _KioskService.K_SIGNDLER.SIGNAL_GET_PAYMENTS.connect(view.rootObject().result_get_payment)
+    _KioskService.K_SIGNDLER.SIGNAL_GET_REFUNDS.connect(view.rootObject().result_get_refund)
     _Tibox.T_SIGNDLER.SIGNAL_CONFIRM_SCHEDULE.connect(view.rootObject().result_confirm_schedule)
     _MEI.M_SIGNDLER.SIGNAL_ACCEPT_MEI.connect(view.rootObject().result_accept_mei)
     _MEI.M_SIGNDLER.SIGNAL_DIS_ACCEPT_MEI.connect(view.rootObject().result_dis_accept_mei)
@@ -694,7 +695,7 @@ def s_handler():
     _SettlementService.ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.connect(view.rootObject().result_mandiri_settlement)
     _UpdateAppService.UPDATEAPP_SIGNDLER.SIGNAL_UPDATE_APP.connect(view.rootObject().result_update_app)
     _PPOBService.PPOB_SIGNDLER.SIGNAL_GET_PRODUCTS.connect(view.rootObject().result_get_ppob_product)
-    _KioskService.K_SIGNDLER.SIGNAL_GET_PAYMENT_METHOD.connect(view.rootObject().result_get_payment_method)
+    _KioskService.K_SIGNDLER.SIGNAL_GET_PAYMENT_SETTING.connect(view.rootObject().result_get_payment_setting)
     _KioskService.K_SIGNDLER.SIGNAL_SYNC_ADS_CONTENT.connect(view.rootObject().result_sync_ads)
     _PPOBService.PPOB_SIGNDLER.SIGNAL_CHECK_PPOB.connect(view.rootObject().result_check_ppob)
     _PPOBService.PPOB_SIGNDLER.SIGNAL_TRX_PPOB.connect(view.rootObject().result_trx_ppob)

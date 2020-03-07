@@ -78,12 +78,15 @@ CREATE TABLE Transactions
   sale            BIGINT,
   cardNo          VARCHAR(100),
   paymentType     VARCHAR(150),
-  paymentNotes    VARCHAR(255),
+  paymentNotes    TEXT,
   createdAt       BIGINT,
   syncFlag        INT,
   bankMid         VARCHAR(100),
-  bankTid         VARCHAR(100)
+  bankTid         VARCHAR(100),
+  pidStock        VARCHAR(100),
+  isCollected     INT DEFAULT 0
 );
+
 
 DROP TABLE IF EXISTS TransactionType;
 CREATE TABLE TransactionType 
@@ -97,11 +100,11 @@ DROP TABLE IF EXISTS AirportTerminal;
 CREATE TABLE AirportTerminal
 (
   no	            INT(11) PRIMARY KEY NOT NULL,
-  flight_no	    VARCHAR(100),
+  flight_no	      VARCHAR(100),
   flight_name	    VARCHAR(100),
   origin	        VARCHAR(10),
-  destination 	VARCHAR(10),
-  terminal	    VARCHAR(10)
+  destination 	  VARCHAR(10),
+  terminal	      VARCHAR(10)
 );
 
 DROP TABLE IF EXISTS Receipts;
@@ -208,10 +211,6 @@ CREATE TABLE TransactionFailure
   syncFlag        INT,
   remarks         TEXT
 );
-
-
-ALTER TABLE Transactions ADD COLUMN pidStock VARCHAR(100);
-ALTER TABLE Transactions ADD COLUMN isCollected INT DEFAULT 0;
 
 
 CREATE UNIQUE INDEX UK_airpref001a ON Airport(prefix);

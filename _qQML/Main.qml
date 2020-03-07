@@ -37,7 +37,7 @@ Rectangle {
     signal result_create_print(string str)
     signal result_clear_person(string str)
     signal result_sale_edc(string str)
-    signal result_get_device(string str)
+    signal result_get_payment(string str)
     signal result_confirm_schedule(string str)
     signal result_accept_mei(string str)
     signal result_dis_accept_mei(string str)
@@ -105,7 +105,7 @@ Rectangle {
     signal result_mandiri_settlement(string str)
     signal result_update_app(string str)
     signal result_get_ppob_product(string str)
-    signal result_get_payment_method(string str)
+    signal result_get_payment_setting(string str)
     signal result_sync_ads(string str)
     signal result_check_ppob(string str)
     signal result_trx_ppob(string str)
@@ -121,6 +121,7 @@ Rectangle {
     signal result_update_balance_online(string str)
     signal result_admin_sync_stock(string str)
     signal result_init_check_cd(string str)
+    signal result_get_refund(string str)
 
 
     //==================================================================================================//

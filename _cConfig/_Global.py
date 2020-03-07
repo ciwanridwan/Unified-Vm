@@ -105,6 +105,7 @@ def load_from_temp_data(temp, mode='text'):
 TOPUP_AMOUNT_SETTING = None
 FEATURE_SETTING = None
 PAYMENT_SETTING = None
+REFUND_SETTING = None
 THEME_SETTING = None
 ADS_SETTING = load_from_temp_data('ads-setting', 'json')
 THEME_NAME = _ConfigParser.get_set_value('TEMPORARY', 'theme^name', '---')
@@ -489,7 +490,7 @@ def get_devices():
     return {"QPROX": QPROX, "EDC": EDC, "MEI": MEI, "CD": CD, "GRG": GRG}
 
 
-def get_devices_status():
+def get_payments():
     return {
         "QPROX": "AVAILABLE" if QPROX["status"] is True else "NOT_AVAILABLE",
         "EDC": "AVAILABLE" if (EDC["status"] is True and check_payment('card') is True) else "NOT_AVAILABLE",
@@ -500,7 +501,28 @@ def get_devices_status():
         "QR_DANA": "AVAILABLE" if check_payment('dana') is True else "NOT_AVAILABLE",
         "QR_GOPAY": "AVAILABLE" if check_payment('gopay') is True else "NOT_AVAILABLE",
         "QR_LINKAJA": "AVAILABLE" if check_payment('linkaja') is True else "NOT_AVAILABLE",
+        "QR_SHOPEE": "AVAILABLE" if check_payment('shopee') is True else "NOT_AVAILABLE",
     }
+
+
+def get_refunds():
+    return {
+        "MANUAL": "AVAILABLE",
+        "DUWIT": "AVAILABLE" if check_refund('duwit') is True else "NOT_AVAILABLE",
+        "LINKAJA": "AVAILABLE" if check_refund('linkaja') is True else "NOT_AVAILABLE",
+        "OVO": "AVAILABLE" if check_refund('ovo') is True else "NOT_AVAILABLE",
+        "GOPAY": "AVAILABLE" if check_refund('gopay') is True else "NOT_AVAILABLE",
+        "DANA": "AVAILABLE" if check_refund('dana') is True else "NOT_AVAILABLE",
+    }
+
+
+def check_refund(name='ovo'):
+    if len(REFUND_SETTING) == 0 or empty(REFUND_SETTING):
+        return False
+    for x in range(len(REFUND_SETTING)):
+        if REFUND_SETTING[x]['name'].lower() == name:
+            return True
+    return False
 
 
 def check_payment(name='ovo'):
@@ -526,12 +548,13 @@ def upload_device_state(device, status):
             "state": status
         }
         status, response = _NetworkAccess.post_to_url(BACKEND_URL + 'change/device-state', param)
-        LOGGER.info(("upload_device_state : ", response, str(param)))
+        LOGGER.info((response, str(param)))
         if status == 200 and response['result'] == 'OK':
             return True
-        return False
+        else:
+            return False
     except Exception as e:
-        LOGGER.warning(("upload_device_state : ", e))
+        LOGGER.warning((e))
         return False
 
 
@@ -552,13 +575,13 @@ def upload_mandiri_wallet():
             "card_no_2": MANDIRI_NO_2
         }
         status, response = _NetworkAccess.post_to_url(BACKEND_URL + 'update/wallet-state', param)
-        LOGGER.info(("upload_mandiri_wallet : ", response, str(param)))
+        LOGGER.info((response, str(param)))
         if status == 200 and response['result'] == 'OK':
             return True
         else:
             return False
     except Exception as e:
-        LOGGER.warning(("upload_mandiri_wallet : ", e))
+        LOGGER.warning((e))
         return False
 
 
@@ -579,13 +602,13 @@ def upload_bni_wallet():
             "card_no_2": BNI_SAM_2_NO
         }
         status, response = _NetworkAccess.post_to_url(BACKEND_URL + 'update/wallet-state', param)
-        LOGGER.info(("upload_bni_wallet : ", response, str(param)))
+        LOGGER.info((response, str(param)))
         if status == 200 and response['result'] == 'OK':
             return True
         else:
             return False
     except Exception as e:
-        LOGGER.warning(("upload_bni_wallet : ", e))
+        LOGGER.warning((e))
         return False
 
 
@@ -610,7 +633,7 @@ def store_upload_failed_trx(trxid, pid='', amount=0, failure_type='', payment_me
         if len(check_trx) == 0:
             _DAO.insert_transaction_failure(__param)
         status, response = _NetworkAccess.post_to_url(BACKEND_URL + 'sync/transaction-failure', __param)
-        LOGGER.info(("store_upload_failed_trx : ", response, str(__param)))
+        LOGGER.info((response, str(__param)))
         if status == 200 and response['result'] == 'OK':
             __param['key'] = __param['trxid']
             _DAO.mark_sync(param=__param, _table='TransactionFailure', _key='trxid')
@@ -618,7 +641,7 @@ def store_upload_failed_trx(trxid, pid='', amount=0, failure_type='', payment_me
         else:
             return False
     except Exception as e:
-        LOGGER.warning(("store_upload_failed_trx : ", e))
+        LOGGER.warning((e))
         return False
 
 
@@ -638,13 +661,14 @@ def upload_admin_access(aid, username, cash_collection='', edc_settlement='', ca
             'remarks': remarks,
         }
         status, response = _NetworkAccess.post_to_url(BACKEND_URL + 'sync/access-report', param)
-        LOGGER.info(("upload_admin_access : ", response, str(param)))
+        LOGGER.info((response, str(param)))
         if status == 200 and response['result'] == 'OK':
             return True
         else:
+            log_request(name=_Helper.whoami, url=BACKEND_URL + 'sync/access-report', payload=param)
             return False
     except Exception as e:
-        LOGGER.warning(("upload_admin_access : ", e))
+        LOGGER.warning((e))
         return False
 
 
@@ -659,13 +683,13 @@ def upload_topup_error(__slot, __type):
             'type': __type
         }
         status, response = _NetworkAccess.post_to_url(BACKEND_URL + 'update/topup-state', param)
-        LOGGER.info(("upload_topup_error : ", response, str(param)))
+        LOGGER.info((response, str(param)))
         if status == 200 and response['result'] == 'OK':
             return True
         else:
             return False
     except Exception as e:
-        LOGGER.warning(("upload_topup_error : ", e))
+        LOGGER.warning((e))
         return False
 
 
@@ -687,7 +711,7 @@ def store_upload_sam_audit(param):
         }
         _DAO.insert_sam_audit(param)
         status, response = _NetworkAccess.post_to_url(BACKEND_URL + 'sync/sam-audit', param)
-        LOGGER.info(("store_upload_sam_audit : ", response, str(param)))
+        LOGGER.info((response, str(param)))
         if status == 200 and response['result'] == 'OK':
             param['key'] = param['lid']
             _DAO.mark_sync(param=param, _table=_table_, _key='lid')
@@ -695,7 +719,7 @@ def store_upload_sam_audit(param):
         else:
             return False
     except Exception as e:
-        LOGGER.warning(("store_upload_sam_audit : ", e))
+        LOGGER.warning((e))
         return False
 
 

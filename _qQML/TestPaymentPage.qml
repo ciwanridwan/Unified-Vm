@@ -24,7 +24,7 @@ Base{
 
     Stack.onStatusChanged:{
         if(Stack.status==Stack.Activating){
-            _SLOT.start_get_device_status();
+            _SLOT.start_get_payments();
             abc.counter = timer_value;
             my_timer.start()
             press = "0"
@@ -44,7 +44,7 @@ Base{
     Component.onCompleted:{
         releaseButton.connect(free_button);
         abortPayment.connect(abort_payment);
-        base.result_get_device.connect(define_device);
+        base.result_get_payment.connect(define_device);
         base.result_sale_edc.connect(edc_payment_result);
         base.result_accept_mei.connect(mei_payment_result);
         base.result_dis_accept_mei.connect(mei_payment_result);
@@ -72,7 +72,7 @@ Base{
     Component.onDestruction:{
         releaseButton.disconnect(free_button);
         abortPayment.disconnect(abort_payment);
-        base.result_get_device.disconnect(define_device);
+        base.result_get_payment.disconnect(define_device);
         base.result_sale_edc.disconnect(edc_payment_result);
         base.result_accept_mei.disconnect(mei_payment_result);
         base.result_dis_accept_mei.disconnect(mei_payment_result);

@@ -70,7 +70,7 @@ Base{
         if(Stack.status==Stack.Activating){
             abc.counter = timer_value;
             my_timer.start();
-            _SLOT.start_get_device_status();
+            _SLOT.start_get_payments();
             _SLOT.get_kiosk_price_setting();
             mainVisible = false;
             press = '0';
@@ -95,7 +95,7 @@ Base{
         set_confirmation.connect(do_set_confirm);
         get_payment_method_signal.connect(process_selected_payment);
         topup_denom_signal.connect(set_selected_denom);
-        base.result_get_device.connect(get_device_status);
+        base.result_get_payment.connect(get_payments);
         base.result_balance_qprox.connect(get_balance);
         base.result_topup_readiness.connect(topup_readiness);
         base.result_price_setting.connect(define_price);
@@ -105,16 +105,16 @@ Base{
         set_confirmation.disconnect(do_set_confirm);
         get_payment_method_signal.disconnect(process_selected_payment);
         topup_denom_signal.disconnect(set_selected_denom);
-        base.result_get_device.disconnect(get_device_status);
+        base.result_get_payment.disconnect(get_payments);
         base.result_balance_qprox.disconnect(get_balance);
         base.result_topup_readiness.disconnect(topup_readiness);
         base.result_price_setting.disconnect(define_price);
 
     }
 
-    function get_device_status(s){
+    function get_payments(s){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-        console.log('get_device_status', s, now);
+        console.log('get_payments', s, now);
         var device = JSON.parse(s);
         if (device.MEI == 'AVAILABLE' || device.GRG == 'AVAILABLE'){
             cashEnable = true;
