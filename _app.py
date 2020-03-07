@@ -768,21 +768,21 @@ def get_screen_resolution():
         import ctypes
         user32 = ctypes.windll.user32
         # user32.SetProcessDPIAware()
-        _RES = [user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)]
-        LOGGER.info(('get_screen_resolution : ', str(_RES)))
+        resolution = [user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)]
+        LOGGER.info(('get_screen_resolution : ', str(resolution)))
         screen_js = sys.path[0] + '/_qQml/screen.js'
-        GLOBAL_WIDTH = _RES[0]
-        GLOBAL_HEIGHT = _RES[1]
-        content_js = 'var size = { "width": ' + str(_RES[0]) + ', "height": ' + str(_RES[1]) + '};'
+        GLOBAL_WIDTH = resolution[0]
+        GLOBAL_HEIGHT = resolution[1]
+        content_js = 'var size = { "width": ' + str(resolution[0]) + ', "height": ' + str(resolution[1]) + '};'
         with open(screen_js, 'w+') as s:
             s.write(content_js)
             s.close()
         LOGGER.info(('write_screen_resolution : ', screen_js, content_js))
     except Exception as e:
-        _RES = [0, 0]
+        resolution = [0, 0]
         LOGGER.warning(('get_screen_resolution : ', e))
     # print(res)
-    return _RES
+    return resolution
 
 
 def process_exist(processname):

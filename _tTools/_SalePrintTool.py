@@ -358,7 +358,7 @@ def print_topup_trx(p, t, ext='.pdf'):
             # Send Failure To Backend
             _Global.store_upload_failed_trx(trxid, p.get('pid', ''), cash, failure, p.get('payment', 'cash'),
                                             json.dumps(p))
-        save_receipt_local(trxid[-6:], json.dumps(p), 'CUSTOMER_TOPUP_TRX')
+        # save_receipt_local(trxid[-6:], json.dumps(p), 'CUSTOMER_TOPUP_TRX')
         if p['payment'].upper() == 'DEBIT' and _Global.LAST_EDC_TRX_RECEIPT is not None:
             print__ = _Printer.do_printout(_Global.LAST_EDC_TRX_RECEIPT)
             print("pyt : sending pdf to default printer : {}".format(str(print__)))
@@ -500,7 +500,7 @@ def print_shop_trx(p, t, ext='.pdf'):
             # Send Failure To Backend
             _Global.store_upload_failed_trx(trxid, p.get('pid', ''), cash, failure, p.get('payment', 'cash'),
                                             json.dumps(p))
-        save_receipt_local(trxid[-6:], json.dumps(p), 'CUSTOMER_SHOP_TRX')
+        # save_receipt_local(trxid[-6:], json.dumps(p), 'CUSTOMER_SHOP_TRX')
         if p['payment'].upper() == 'DEBIT' and _Global.LAST_EDC_TRX_RECEIPT is not None:
             print__ = _Printer.do_printout(_Global.LAST_EDC_TRX_RECEIPT)
             print("pyt : sending pdf to default printer : {}".format(str(print__)))
@@ -641,7 +641,7 @@ def print_ppob_trx(p, t, ext='.pdf'):
         LOGGER.warning(str(e))
         SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
     finally:
-        save_receipt_local(trxid[-6:], json.dumps(p), 'CUSTOMER_PPOB_TRX')
+        # save_receipt_local(trxid[-6:], json.dumps(p), 'CUSTOMER_PPOB_TRX')
         if p['payment'].upper() == 'DEBIT' and _Global.LAST_EDC_TRX_RECEIPT is not None:
             print__ = _Printer.do_printout(_Global.LAST_EDC_TRX_RECEIPT)
             print("pyt : sending pdf to default printer : {}".format(str(print__)))
@@ -805,7 +805,7 @@ def save_receipt_local(__id, __data, __type):
         _DAO.insert_receipt(param_receipt)
         return True
     except Exception as e:
-        LOGGER.warning(('save_receipt_local', str(e)))
+        LOGGER.warning((e))
         return False
 
 
@@ -954,7 +954,7 @@ def admin_print_global(struct_id, ext='.pdf'):
         SPRINTTOOL_SIGNDLER.SIGNAL_ADMIN_PRINT_GLOBAL.emit('ADMIN_PRINT|ERROR')
     finally:
         mark_sync_collected_data(s)
-        save_receipt_local(struct_id, json.dumps(s), 'ACCESS_REPORT')
+        # save_receipt_local(struct_id, json.dumps(s), 'ACCESS_REPORT')
         _ProductService.LAST_UPDATED_STOCK = []
         del pdf
 
