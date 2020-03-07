@@ -513,6 +513,7 @@ def get_refunds():
         "OVO": "AVAILABLE" if check_refund('ovo') is True else "NOT_AVAILABLE",
         "GOPAY": "AVAILABLE" if check_refund('gopay') is True else "NOT_AVAILABLE",
         "DANA": "AVAILABLE" if check_refund('dana') is True else "NOT_AVAILABLE",
+        "SHOPEE": "AVAILABLE" if check_refund('shopee') is True else "NOT_AVAILABLE",
     }
 
 
