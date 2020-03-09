@@ -323,7 +323,7 @@ if not os.path.exists(JOB_PATH):
 
 def log_request(name='', url='', payload=''):
     if empty(name) is True or empty(url) is True or empty(payload) is True:
-        print('pyt: Missing Parameter in Logging Request..! : ' + _Helper.whoami())
+        print('pyt: Missing Parameter in Logging Request..! ' + _Helper.time_string() + ' : ' + _Helper.whoami())
         return
     filename = _Helper.time_string(f='%Y%m%d%H%M%S___') + name
     log = {
@@ -331,12 +331,13 @@ def log_request(name='', url='', payload=''):
         'payload': payload
     }
     LOGGER.debug((filename, str(log)))
+    print('pyt: Logging Request..!' + _Helper.time_string() + ' : ' + filename)
     log_to_file(content=log, path=JOB_PATH, filename=filename)
 
 
 def log_to_file(content='', path='', filename='', default_ext='.request'):
     if empty(content) is True or empty(filename) is True:
-        print('pyt: Missing Parameter in Logging File..! : ' + _Helper.whoami())
+        print('pyt: Missing Parameter in Logging File..! ' + _Helper.time_string() + ' : ' + _Helper.whoami())
         return
     if empty(path) is True:
         path = TEMP_FOLDER

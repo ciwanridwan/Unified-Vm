@@ -86,7 +86,7 @@ def update_kiosk_status(r):
     try:
         # _Global.PRINTER_STATUS = get_printer_status_v2()
         # LOGGER.info(("get_printer_status : ", _Global.PRINTER_STATUS))
-        if 'data' not in r.keys() or _Global.empty(r['data']):
+        if 'data' not in r.keys() or _Global.empty(r['data']) or r['result'] != 'OK':
             _Global.KIOSK_SETTING = _DAO.init_kiosk()[0]
             _Global.KIOSK_ADMIN = int(_Global.KIOSK_SETTING['defaultAdmin'])
             _Global.KIOSK_MARGIN = int(_Global.KIOSK_SETTING['defaultMargin'])
@@ -116,8 +116,7 @@ def update_kiosk_status(r):
             if 'refund' in r['data'].keys():
                 _Global.REFUND_SETTING = r['data']['refund']
                 _Global.store_to_temp_data('refund-setting', json.dumps(r['data']['refund']))
-            if r['result'] == 'OK':
-                _Global.KIOSK_STATUS = 'ONLINE'
+            _Global.KIOSK_STATUS = 'ONLINE'
             _DAO.flush_table('Terminal')
             # _DAO.flush_table('Transactions', ' tid <> "' + KIOSK_SETTING['tid'] + '"')
             _DAO.update_kiosk_data(_Global.KIOSK_SETTING)
