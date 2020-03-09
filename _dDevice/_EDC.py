@@ -670,11 +670,11 @@ def post_mark_settlement(l, t):
 
 def upload_edc_settlement_data(param):
     try:
-        status, response = _NetworkAccess.post_to_url(_KioskService.BACKEND_URL + 'settlement/mark-direct', param)
+        status, response = _NetworkAccess.post_to_url(_Global.BACKEND_URL + 'settlement/mark-direct', param)
         if status == 200 and response['result'] == 'OK':
             LOGGER.info((status, response))
         else:
-            _Global.log_request(name=_Helper.whoami, url=_KioskService.BACKEND_URL + 'settlement/mark-direct', payload=param)
+            _Global.log_request(name=_Helper.whoami, url=_Global.BACKEND_URL + 'settlement/mark-direct', payload=param)
     except Exception as e:
         LOGGER.warning((e))
 

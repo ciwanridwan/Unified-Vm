@@ -1158,7 +1158,7 @@ def save_cash_local(amount, mode='normal'):
 
 
 def reset_db_record():
-    LOGGER.info(('START'))
+    LOGGER.info(('START_RESET_DB_RECORDS'))
     try:
         # _DAO.flush_table('TopUpRecords', ' tid <> "'+_Global.TID+'" ')
         # time.sleep(1)
@@ -1166,8 +1166,7 @@ def reset_db_record():
         time.sleep(1)
         _DAO.flush_table('Settlement', ' tid <> "'+_Global.TID+'" AND status NOT LIKE "%EDC%" ')
         time.sleep(1)
-        _DAO.custom_update(' UPDATE Settlement SET status = "EDC|VOID" '
-                           'WHERE status LIKE "%EDC%" AND tid <> "'+_Global.TID+'" ')
+        _DAO.custom_update('UPDATE Settlement SET status = "EDC|VOID" WHERE status LIKE "%EDC%" AND tid <> "'+_Global.TID+'" ')
         time.sleep(1)
         _DAO.flush_table('Cash', ' tid <> "'+_Global.TID+'" ')
         # time.sleep(1)
@@ -1176,9 +1175,9 @@ def reset_db_record():
         _DAO.flush_table('Transactions', ' tid <> "'+_Global.TID+'" ')
         time.sleep(1)
         _DAO.flush_table('TransactionFailure', ' tid <> "'+_Global.TID+'" ')
-        # # Add Data HouseKeeping Which Older Than n Months
+        # Add Data HouseKeeping Which Older Than n Months
         # house_keeping(age_month=3)
-        LOGGER.info(('FINISH'))
+        LOGGER.info(('FINISH_RESET_DB_RECORDS'))
         return 'FIRST_INIT_CLEANUP_SUCCESS'
     except Exception as e:
         LOGGER.warning((str(e)))

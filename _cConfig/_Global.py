@@ -173,6 +173,7 @@ BID = {
 ADJUST_AMOUNT_MINIMUM = 0
 TRIGGER_MANUAL_TOPUP = True
 ALLOW_DO_TOPUP = True
+EDC_SETTLEMENT_RUNNING = False
 
 MID_MAN = _ConfigParser.get_set_value('QPROX', 'mid^man', '---')
 TID_MAN = _ConfigParser.get_set_value('QPROX', 'tid^man', '---')
@@ -331,7 +332,7 @@ def log_request(name='', url='', payload=''):
         'payload': payload
     }
     LOGGER.debug((filename, str(log)))
-    print('pyt: Logging Request..!' + _Helper.time_string() + ' : ' + filename)
+    print('pyt: Logging Request..! ' + _Helper.time_string() + ' : ' + filename)
     log_to_file(content=log, path=JOB_PATH, filename=filename)
 
 

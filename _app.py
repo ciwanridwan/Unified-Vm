@@ -756,7 +756,7 @@ def get_disk_info():
         for physical_disk in c.Win32_DiskDrive():
             encrypt_str = encrypt_str + physical_disk.SerialNumber.strip()
     except Exception as e:
-        LOGGER.warning(('get_disk_info : ', e))
+        LOGGER.warning((e))
     disk_info.append(encrypt_str)
     _NetworkAccess.DISK_SERIAL_NUMBER = disk_info[0]
     return disk_info[0] if disk_info[0] is not None else "N/A"

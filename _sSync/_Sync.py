@@ -130,7 +130,10 @@ def do_pending_job():
                     LOGGER.debug((p, __url, __param))
                     status, response = _NetworkAccess.post_to_url(url=__url, param=__param)
                     if status == 200 and response['result'] == 'OK':
-                        os.remove(jobs_path)
+                        jobs_path_rename = jobs_path.replace('.request', '.done')
+                        os.rename(jobs_path, jobs_path_rename)
+                        print('pyt: jobs_done rename : ' + jobs_path + ' ' + jobs_path_rename)
+                        LOGGER.debug((jobs_path, jobs_path_rename))
                         continue
             except Exception as e:
                 LOGGER.warning(e)
