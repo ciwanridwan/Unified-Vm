@@ -85,7 +85,7 @@ def update_kiosk_status(r):
     # _Global.KIOSK_STATUS = 'UNAUTHORIZED'
     try:
         # _Global.PRINTER_STATUS = get_printer_status_v2()
-        LOGGER.info(("get_printer_status : ", _Global.PRINTER_STATUS))
+        # LOGGER.info(("get_printer_status : ", _Global.PRINTER_STATUS))
         if _Global.empty(r['data']):
             _Global.KIOSK_SETTING = _DAO.init_kiosk()[0]
             _Global.KIOSK_ADMIN = int(_Global.KIOSK_SETTING['defaultAdmin'])
@@ -102,10 +102,6 @@ def update_kiosk_status(r):
             _Global.KIOSK_NAME = _Global.KIOSK_SETTING['name']
             _Global.KIOSK_MARGIN = int(_Global.KIOSK_SETTING['defaultMargin'])
             _Global.KIOSK_ADMIN = int(_Global.KIOSK_SETTING['defaultAdmin'])
-            # TODO: Check New Refund Data Setting
-            if not _Global.empty(r['data']['refund']):
-                _Global.REFUND_SETTING = r['data']['refund']
-                _Global.store_to_temp_data('refund-setting', json.dumps(r['data']['refund']))
             _Global.PAYMENT_SETTING = r['data']['payment']
             define_device_port_setting(_Global.PAYMENT_SETTING)
             _Global.store_to_temp_data('payment-setting', json.dumps(r['data']['payment']))
@@ -115,8 +111,11 @@ def update_kiosk_status(r):
             define_feature(_Global.FEATURE_SETTING)
             _Global.ADS_SETTING = r['data']['ads']
             _Global.store_to_temp_data('ads-setting', json.dumps(r['data']['ads']))
-            # define_ads(_Global.ADS_SETTING)
-            if r['result'] == 'OK' and _Global.PRINTER_STATUS == "NORMAL":
+            # TODO: Check New Refund Data Setting
+            if not _Global.empty(r['data']['refund']):
+                _Global.REFUND_SETTING = r['data']['refund']
+                _Global.store_to_temp_data('refund-setting', json.dumps(r['data']['refund']))
+            if r['result'] == 'OK':
                 _Global.KIOSK_STATUS = 'ONLINE'
             _DAO.flush_table('Terminal')
             # _DAO.flush_table('Transactions', ' tid <> "' + KIOSK_SETTING['tid'] + '"')
