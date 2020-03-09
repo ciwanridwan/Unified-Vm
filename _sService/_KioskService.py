@@ -1051,30 +1051,27 @@ def store_transaction_global(param, retry=False):
             'isCollected': 0,
             'pidStock': PID_STOCK_SALE if GLOBAL_TRANSACTION_DATA['shop_type'] == 'shop' else ''
         }
-        attempt = 0
         GLOBAL_TRANSACTION_DATA['pid'] = PID_SALE
         GLOBAL_TRANSACTION_DATA['trxid'] = _trxid
-        while True:
-            attempt += 1
-            check_trx = _DAO.check_trx(_trxid)
-            if len(check_trx) == 0:
-                _DAO.insert_transaction(__param)
-                K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|STORE_TRX-' + _trxid)
-                __param['createdAt'] = _Helper.now()
-                status, response = _NetworkAccess.post_to_url(url=_Global.BACKEND_URL + 'sync/transaction-topup', param=__param)
-                if status == 200 and response['id'] == __param['trxid']:
-                    __param['key'] = __param['trxid']
-                    _DAO.mark_sync(param=__param, _table='Transactions', _key='trxid')
-                    K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|UPLOAD_TRX-' + _trxid)
-                    break
-                else:
-                    K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('PENDING|UPLOAD_TRX-' + _trxid)
-                    break
-            if attempt == 3:
-                LOGGER.warning(('max_attempt', str(attempt)))
-                K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('FAILED|STORE_TRX-' + _trxid)
-                break
-            sleep(1)
+        check_trx = _DAO.check_trx(_trxid)
+        if len(check_trx) == 0:
+            _DAO.insert_transaction(__param)
+            K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|STORE_TRX-' + _trxid)
+            __param['createdAt'] = _Helper.now()
+            status, response = _NetworkAccess.post_to_url(url=_Global.BACKEND_URL + 'sync/transaction-topup', param=__param)
+            if status == 200 and response['id'] == __param['trxid']:
+                __param['key'] = __param['trxid']
+                _DAO.mark_sync(param=__param, _table='Transactions', _key='trxid')
+                K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|UPLOAD_TRX-' + _trxid)
+            else:
+                K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('PENDING|UPLOAD_TRX-' + _trxid)
+        # while True:
+        #     attempt += 1
+        #     if attempt == 3:
+        #         LOGGER.warning(('max_attempt', str(attempt)))
+        #         K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('FAILED|STORE_TRX-' + _trxid)
+        #         break
+        #     sleep(1)
     except Exception as e:
         LOGGER.warning((str(retry), str(e)))
         K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('ERROR')

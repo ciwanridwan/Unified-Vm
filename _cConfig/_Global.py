@@ -305,6 +305,7 @@ EDC_PRINT_ON_LAST = True if _ConfigParser.get_set_value('EDC', 'print^last', '1'
 LAST_EDC_TRX_RECEIPT = None
 
 ALLOWED_SYNC_TASK = [
+    'sync_product_data',
     'sync_pending_refund',
     'sync_task',
     'sync_settlement_data',
