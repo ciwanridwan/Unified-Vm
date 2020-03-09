@@ -123,6 +123,7 @@ def update_kiosk_status(r):
     except Exception as e:
         LOGGER.warning((e))
     finally:
+        sleep(10)
         kiosk_status()
     #     pprint(_Global.KIOSK_SETTING)
 
