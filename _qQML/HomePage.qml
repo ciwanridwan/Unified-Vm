@@ -428,7 +428,7 @@ Base{
                 //EDC Auto Settlement Timer Trigger
                 if (edc_settlement_schedule != undefined){
                     var hm = Qt.formatDateTime(new Date(), "HH:mm");
-                    if (hm == edc_settlement_schedule && counter%5==0) {
+                    if (hm == edc_settlement_schedule && tvc_loading.counter%5==0) {
                         console.log('EDC_SETTLEMENT_SCHEDULE_IDLE', hm, edc_settlement_schedule);
                         _SLOT.start_trigger_edc_settlement();
                     }
@@ -445,7 +445,10 @@ Base{
                     if (!mediaOnPlaying) {
                         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
                         console.log("starting tvc player...", now);
-                        my_layer.push(media_page, {mode: 'mediaPlayer', mandiri_update_schedule: mandiri_update_schedule});
+                        my_layer.push(media_page, {mode: 'mediaPlayer',
+                                          mandiri_update_schedule: mandiri_update_schedule,
+                                          edc_settlement_schedule: edc_settlement_schedule
+                                      });
                     }
 //                    _SLOT.set_tvc_player('START')
                     tvc_loading.counter = tvc_timeout;

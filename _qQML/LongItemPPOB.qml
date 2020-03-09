@@ -30,7 +30,7 @@ Rectangle {
         anchors.topMargin: 25
         anchors.left: parent.left
         anchors.leftMargin: 25
-        font.pixelSize: (text_.length > 35) ? 30 : 40
+        font.pixelSize: (itemWidth==1000) ? 35 : 25
         wrapMode: Text.WordWrap
         style: Text.Sunken
         anchors.horizontalCenterOffset: 0
@@ -49,7 +49,7 @@ Rectangle {
         anchors.rightMargin: 25
         anchors.top: parent.top
         anchors.topMargin: 25
-        font.pixelSize: 40
+        font.pixelSize: (itemWidth==1000) ? 35 : 25
         wrapMode: Text.WordWrap
         anchors.horizontalCenterOffset: 0
         anchors.horizontalCenter: parent.horizontalCenter
@@ -74,7 +74,7 @@ Rectangle {
         text: text2_.toUpperCase()
         anchors.left: parent.left
         anchors.leftMargin: 25
-        font.pixelSize: 23
+        font.pixelSize: (itemWidth==1000) ? 25 : 23
         anchors.bottomMargin: 25
         anchors.horizontalCenterOffset: 0
         anchors.horizontalCenter: parent.horizontalCenter
