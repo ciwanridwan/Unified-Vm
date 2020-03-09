@@ -86,7 +86,7 @@ def update_kiosk_status(r):
     try:
         # _Global.PRINTER_STATUS = get_printer_status_v2()
         # LOGGER.info(("get_printer_status : ", _Global.PRINTER_STATUS))
-        if _Global.empty(r['data']):
+        if 'data' not in r.keys() or _Global.empty(r['data']):
             _Global.KIOSK_SETTING = _DAO.init_kiosk()[0]
             _Global.KIOSK_ADMIN = int(_Global.KIOSK_SETTING['defaultAdmin'])
             _Global.KIOSK_MARGIN = int(_Global.KIOSK_SETTING['defaultMargin'])
