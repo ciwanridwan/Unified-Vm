@@ -97,6 +97,7 @@ def update_kiosk_status(r):
             _Global.REFUND_SETTING = load_from_temp_data('refund-setting', 'json')
             _Global.THEME_SETTING = load_from_temp_data('theme-setting', 'json')
             _Global.ADS_SETTING = load_from_temp_data('ads-setting', 'json')
+            _Global.KIOSK_STATUS = 'OFFLINE'
         else:
             _Global.KIOSK_SETTING = r['data']['kiosk']
             _Global.KIOSK_NAME = _Global.KIOSK_SETTING['name']
