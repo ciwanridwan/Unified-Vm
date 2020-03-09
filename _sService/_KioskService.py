@@ -59,12 +59,12 @@ def get_kiosk_status():
 
 
 def kiosk_status():
-    if _Helper.is_online(source='kiosk_status') is False:
-        _Global.KIOSK_SETTING = _DAO.init_kiosk()[0]
-        _Global.KIOSK_ADMIN = _Global.KIOSK_SETTING['defaultAdmin']
-        _Global.KIOSK_MARGIN = _Global.KIOSK_SETTING['defaultMargin']
-        _Global.KIOSK_NAME = _Global.KIOSK_SETTING['name']
-        _Global.KIOSK_REAL_STATUS = 'OFFLINE'
+    # if _Helper.is_online(source='kiosk_status') is False:
+    #     _Global.KIOSK_SETTING = _DAO.init_kiosk()[0]
+    #     _Global.KIOSK_ADMIN = _Global.KIOSK_SETTING['defaultAdmin']
+    #     _Global.KIOSK_MARGIN = _Global.KIOSK_SETTING['defaultMargin']
+    #     _Global.KIOSK_NAME = _Global.KIOSK_SETTING['name']
+    #     _Global.KIOSK_REAL_STATUS = 'OFFLINE'
     K_SIGNDLER.SIGNAL_GET_KIOSK_STATUS.emit(json.dumps({
         'name': _Global.KIOSK_NAME,
         'version': _Global.VERSION,
@@ -122,8 +122,8 @@ def update_kiosk_status(r):
             _DAO.update_kiosk_data(_Global.KIOSK_SETTING)
     except Exception as e:
         LOGGER.warning((e))
-    # finally:
-    #     # kiosk_status()
+    finally:
+        kiosk_status()
     #     pprint(_Global.KIOSK_SETTING)
 
 
