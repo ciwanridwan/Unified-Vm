@@ -26,7 +26,6 @@ Base{
     property var bniTopupWallet: 0
     property bool kalogButton: false
     property bool withSlider: true
-    property bool first_run: true
     property var mandiri_update_schedule: CONF.mandiri_update_schedule
     property var edc_settlement_schedule: CONF.edc_settlement_schedule
     property var last_money_insert: 'N/A'
@@ -37,8 +36,8 @@ Base{
     Stack.onStatusChanged:{
         if(Stack.status == Stack.Activating){
             _SLOT.start_idle_mode();
-            if (first_run) _SLOT.get_kiosk_status();
             _SLOT.kiosk_get_product_stock();
+            _SLOT.get_kiosk_status();
             press = "0";
             resetMediaTimer();
             kalogButton = false;
@@ -153,10 +152,8 @@ Base{
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log("get_kiosk_status", now, r);
 
-        first_run = false;
-
         var kiosk = JSON.parse(r);
-        base.globalBoxName = kiosk.name;
+        globalBoxName = kiosk.name;
         box_version.text = kiosk.version;
         box_tid.text = kiosk.tid;
         last_money_insert = kiosk.last_money_inserted;
@@ -849,7 +846,7 @@ Base{
                     preload_whatasapp_voucher.close();
                     _SLOT.start_idle_mode();
                     _SLOT.kiosk_get_product_stock();
-                    if (first_run) _SLOT.get_kiosk_status();
+                    _SLOT.get_kiosk_status();
         //            _SLOT.start_get_topup_readiness();
                     press = "0";
                     resetMediaTimer();

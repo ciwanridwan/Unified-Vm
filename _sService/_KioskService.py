@@ -81,24 +81,27 @@ def load_from_temp_data(section, selected_mode):
     return _Global.load_from_temp_data(temp=section, mode=selected_mode)
 
 
+def load_previous_kiosk_status():
+    _Global.KIOSK_SETTING = _DAO.init_kiosk()[0]
+    _Global.KIOSK_ADMIN = int(_Global.KIOSK_SETTING['defaultAdmin'])
+    _Global.KIOSK_MARGIN = int(_Global.KIOSK_SETTING['defaultMargin'])
+    _Global.KIOSK_NAME = _Global.KIOSK_SETTING['name']
+    _Global.TOPUP_AMOUNT_SETTING = load_from_temp_data('topup-amount-setting', 'json')
+    _Global.FEATURE_SETTING = load_from_temp_data('feature-setting', 'json')
+    _Global.PAYMENT_SETTING = load_from_temp_data('payment-setting', 'json')
+    _Global.REFUND_SETTING = load_from_temp_data('refund-setting', 'json')
+    _Global.THEME_SETTING = load_from_temp_data('theme-setting', 'json')
+    _Global.ADS_SETTING = load_from_temp_data('ads-setting', 'json')
+    _Global.KIOSK_STATUS = 'OFFLINE'
+
+
 def update_kiosk_status(r):
     # _Global.KIOSK_STATUS = 'UNAUTHORIZED'
     try:
         # _Global.PRINTER_STATUS = get_printer_status_v2()
         # LOGGER.info(("get_printer_status : ", _Global.PRINTER_STATUS))
-        if 'data' not in r.keys() or _Global.empty(r['data']) or r['result'] != 'OK':
-            _Global.KIOSK_SETTING = _DAO.init_kiosk()[0]
-            _Global.KIOSK_ADMIN = int(_Global.KIOSK_SETTING['defaultAdmin'])
-            _Global.KIOSK_MARGIN = int(_Global.KIOSK_SETTING['defaultMargin'])
-            _Global.KIOSK_NAME = _Global.KIOSK_SETTING['name']
-            _Global.TOPUP_AMOUNT_SETTING = load_from_temp_data('topup-amount-setting', 'json')
-            _Global.FEATURE_SETTING = load_from_temp_data('feature-setting', 'json')
-            _Global.PAYMENT_SETTING = load_from_temp_data('payment-setting', 'json')
-            _Global.REFUND_SETTING = load_from_temp_data('refund-setting', 'json')
-            _Global.THEME_SETTING = load_from_temp_data('theme-setting', 'json')
-            _Global.ADS_SETTING = load_from_temp_data('ads-setting', 'json')
-            _Global.KIOSK_STATUS = 'OFFLINE'
-        else:
+        # Double Check the r Parameter
+        if 'data' in r.keys() and not _Global.empty(r['data']) and r['result'] == 'OK':
             _Global.KIOSK_SETTING = r['data']['kiosk']
             _Global.KIOSK_NAME = _Global.KIOSK_SETTING['name']
             _Global.KIOSK_MARGIN = int(_Global.KIOSK_SETTING['defaultMargin'])
@@ -122,9 +125,10 @@ def update_kiosk_status(r):
             _DAO.update_kiosk_data(_Global.KIOSK_SETTING)
     except Exception as e:
         LOGGER.warning((e))
-    finally:
-        sleep(10)
-        kiosk_status()
+        load_previous_kiosk_status() 
+    # finally:
+    #     sleep(10)
+    #     kiosk_status()
     #     pprint(_Global.KIOSK_SETTING)
 
 

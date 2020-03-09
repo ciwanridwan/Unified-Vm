@@ -34,29 +34,25 @@ def check_connection(url, param):
     SETTING_PARAM = param
     modulus = 0
     while True:
-        if _Helper.is_online(source='check_connection') is True and IDLE_MODE is True:
-            modulus += 1
-            try:
-                status, response = _NetworkAccess.get_from_url(url=url)
-                if status == 200:
-                    print('pyt: check_connection ' + _Helper.time_string() + ' Connected To Backend')
-                    _KioskService.KIOSK_STATUS = 'ONLINE'
-                    _KioskService.KIOSK_REAL_STATUS = 'ONLINE'
-                else:
-                    # _KioskService.KIOSK_STATUS = 'OFFLINE'
-                    _KioskService.KIOSK_REAL_STATUS = 'OFFLINE'
-                    print('pyt: check_connection ' + _Helper.time_string() + ' Disconnected From Backend')
-                _KioskService.LAST_SYNC = _Helper.time_string()
-                if modulus == 1:
-                    print('pyt: check_connection ' + _Helper.time_string() + ' Setting Initiation From Backend')
-                    s, r = _NetworkAccess.post_to_url(url=_Global.BACKEND_URL + 'get/setting', param=SETTING_PARAM)
-                    if s == 200 and r['result'] == 'OK':
-                        _KioskService.update_kiosk_status(r)
+        modulus += 1
+        try:
+            status, response = _NetworkAccess.get_from_url(url=url)
+            if status == 200:
+                print('pyt: check_connection ' + _Helper.time_string() + ' Connected To Backend')
+                _Global.KIOSK_STATUS = 'ONLINE'
+            else:
+                print('pyt: check_connection ' + _Helper.time_string() + ' Disconnected From Backend')
+                _Global.KIOSK_STATUS = 'OFFLINE'
+            _KioskService.LAST_SYNC = _Helper.time_string()
+            if modulus == 1:
+                print('pyt: check_connection ' + _Helper.time_string() + ' Setting Initiation From Backend')
+                s, r = _NetworkAccess.post_to_url(url=_Global.BACKEND_URL + 'get/setting', param=SETTING_PARAM)
+                if s == 200 and r['result'] == 'OK':
+                    _KioskService.update_kiosk_status(r)
                     # start_sync_machine_status()
-                    # sleep(10)
-                # _KioskService.kiosk_status()
-            except Exception as e:
-                LOGGER.debug(e)
+                    # _KioskService.kiosk_status()
+        except Exception as e:
+            LOGGER.debug(e)            
         sleep(61.7)
 
 
