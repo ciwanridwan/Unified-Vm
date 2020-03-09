@@ -112,7 +112,7 @@ def update_kiosk_status(r):
             _Global.ADS_SETTING = r['data']['ads']
             _Global.store_to_temp_data('ads-setting', json.dumps(r['data']['ads']))
             # TODO: Check New Refund Data Setting
-            if not _Global.empty(r['data']['refund']):
+            if 'refund' in r['data'].keys():
                 _Global.REFUND_SETTING = r['data']['refund']
                 _Global.store_to_temp_data('refund-setting', json.dumps(r['data']['refund']))
             if r['result'] == 'OK':
@@ -121,7 +121,7 @@ def update_kiosk_status(r):
             # _DAO.flush_table('Transactions', ' tid <> "' + KIOSK_SETTING['tid'] + '"')
             _DAO.update_kiosk_data(_Global.KIOSK_SETTING)
     except Exception as e:
-        LOGGER.warning(("update_kiosk_status : ", str(e)))
+        LOGGER.warning((e))
     # finally:
     #     # kiosk_status()
     #     pprint(_Global.KIOSK_SETTING)
