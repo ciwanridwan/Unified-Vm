@@ -95,34 +95,31 @@ def load_previous_kiosk_status():
     _Global.KIOSK_STATUS = 'OFFLINE'
 
 
-def update_kiosk_status(r):
-    # _Global.KIOSK_STATUS = 'UNAUTHORIZED'
+def update_kiosk_status(s=400, r=None):
     try:
-        # _Global.PRINTER_STATUS = get_printer_status_v2()
-        # LOGGER.info(("get_printer_status : ", _Global.PRINTER_STATUS))
-        # Double Check the r Parameter
-        if 'data' in r.keys() and not _Global.empty(r['data']) and r['result'] == 'OK':
-            _Global.KIOSK_SETTING = r['data']['kiosk']
-            _Global.KIOSK_NAME = _Global.KIOSK_SETTING['name']
-            _Global.KIOSK_MARGIN = int(_Global.KIOSK_SETTING['defaultMargin'])
-            _Global.KIOSK_ADMIN = int(_Global.KIOSK_SETTING['defaultAdmin'])
-            _Global.PAYMENT_SETTING = r['data']['payment']
-            define_device_port_setting(_Global.PAYMENT_SETTING)
-            _Global.store_to_temp_data('payment-setting', json.dumps(r['data']['payment']))
-            _Global.THEME_SETTING = r['data']['theme']
-            define_theme(_Global.THEME_SETTING)
-            _Global.FEATURE_SETTING = r['data']['feature']
-            define_feature(_Global.FEATURE_SETTING)
-            _Global.ADS_SETTING = r['data']['ads']
-            _Global.store_to_temp_data('ads-setting', json.dumps(r['data']['ads']))
-            # TODO: Check New Refund Data Setting
-            if 'refund' in r['data'].keys():
-                _Global.REFUND_SETTING = r['data']['refund']
-                _Global.store_to_temp_data('refund-setting', json.dumps(r['data']['refund']))
-            _Global.KIOSK_STATUS = 'ONLINE'
-            _DAO.flush_table('Terminal')
-            # _DAO.flush_table('Transactions', ' tid <> "' + KIOSK_SETTING['tid'] + '"')
-            _DAO.update_kiosk_data(_Global.KIOSK_SETTING)
+        if s == 200 and r['result'] == 'OK':
+            if 'data' in r.keys() and not _Global.empty(r['data']):
+                _Global.KIOSK_SETTING = r['data']['kiosk']
+                _Global.KIOSK_NAME = _Global.KIOSK_SETTING['name']
+                _Global.KIOSK_MARGIN = int(_Global.KIOSK_SETTING['defaultMargin'])
+                _Global.KIOSK_ADMIN = int(_Global.KIOSK_SETTING['defaultAdmin'])
+                _Global.PAYMENT_SETTING = r['data']['payment']
+                define_device_port_setting(_Global.PAYMENT_SETTING)
+                _Global.store_to_temp_data('payment-setting', json.dumps(r['data']['payment']))
+                _Global.THEME_SETTING = r['data']['theme']
+                define_theme(_Global.THEME_SETTING)
+                _Global.FEATURE_SETTING = r['data']['feature']
+                define_feature(_Global.FEATURE_SETTING)
+                _Global.ADS_SETTING = r['data']['ads']
+                _Global.store_to_temp_data('ads-setting', json.dumps(r['data']['ads']))
+                # TODO: Check New Refund Data Setting
+                if 'refund' in r['data'].keys():
+                    _Global.REFUND_SETTING = r['data']['refund']
+                    _Global.store_to_temp_data('refund-setting', json.dumps(r['data']['refund']))
+                _Global.KIOSK_STATUS = 'ONLINE'
+                _DAO.flush_table('Terminal')
+                # _DAO.flush_table('Transactions', ' tid <> "' + KIOSK_SETTING['tid'] + '"')
+                _DAO.update_kiosk_data(_Global.KIOSK_SETTING)
     except Exception as e:
         LOGGER.warning((e))
         load_previous_kiosk_status() 

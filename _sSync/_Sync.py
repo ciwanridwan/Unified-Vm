@@ -47,10 +47,9 @@ def check_connection(url, param):
             if modulus == 1:
                 print('pyt: check_connection ' + _Helper.time_string() + ' Setting Initiation From Backend')
                 s, r = _NetworkAccess.post_to_url(url=_Global.BACKEND_URL + 'get/setting', param=SETTING_PARAM)
-                if s == 200 and r['result'] == 'OK':
-                    _KioskService.update_kiosk_status(r)
-                    # start_sync_machine_status()
-                    # _KioskService.kiosk_status()
+                _KioskService.update_kiosk_status(s, r)
+                # start_sync_machine_status()
+                # _KioskService.kiosk_status()
         except Exception as e:
             LOGGER.debug(e)            
         sleep(61.7)
@@ -527,8 +526,8 @@ def handle_tasks(tasks):
             _url = _Global.BACKEND_URL + 'get/setting'
             LOGGER.info((_url, str(SETTING_PARAM)))
             s, r = _NetworkAccess.post_to_url(url=_url, param=SETTING_PARAM)
-            if s == 200 and r['result'] == 'OK':
-                _KioskService.update_kiosk_status(r)
+            # if s == 200 and r['result'] == 'OK':
+            _KioskService.update_kiosk_status(s, r)
         if 'RESET_OFFLINE_USER|' in task['taskName']:
             __hash = task['taskName'].split('|')[1]
             result = _UserService.reset_offline_user(__hash)
