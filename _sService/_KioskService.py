@@ -243,7 +243,8 @@ def define_ads(a):
     __current_list = []
     __all_file = os.listdir(__tvc_path)
     for file in __all_file:
-        if file.endswith('.mp4') or file.endswith('.wmv') or file.endswith('.avi') or file.endswith('.mpeg'):
+        extentions = ('.mp4', '.mov', '.avi', '.mpg', '.mpeg')
+        if file.endswith(extentions):
             __current_list.append(file)
     __must_backup = list(set(__current_list) - set(__playlist))
     LOGGER.debug(("current list : ", str(__current_list)))
