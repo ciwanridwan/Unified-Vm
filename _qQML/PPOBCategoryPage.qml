@@ -144,6 +144,7 @@ Base{
         anchors.bottomMargin: 30
         button_text: 'BATAL'
         modeReverse: true
+        z: 10
         MouseArea{
             anchors.fill: parent
             onClicked: {

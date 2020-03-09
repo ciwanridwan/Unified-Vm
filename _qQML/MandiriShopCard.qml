@@ -296,7 +296,7 @@ Base{
     CircleButton{
         id:back_button
         anchors.left: parent.left
-        anchors.leftMargin: 50
+        anchors.leftMargin: 30
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 30
         button_text: 'BATAL'
@@ -313,7 +313,7 @@ Base{
     CircleButton{
         id: next_button
         anchors.right: parent.right
-        anchors.rightMargin: 50
+        anchors.rightMargin: 30
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 30
         button_text: 'LANJUT'
@@ -772,9 +772,9 @@ Base{
         CircleButton{
             id: cancel_button_global
             anchors.left: parent.left
-            anchors.leftMargin: 100
+            anchors.leftMargin: 30
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 50
+            anchors.bottomMargin: 30
             button_text: 'BATAL'
             modeReverse: true
             visible: frameWithButton
@@ -790,9 +790,9 @@ Base{
         CircleButton{
             id: next_button_global
             anchors.right: parent.right
-            anchors.rightMargin: 100
+            anchors.rightMargin: 30
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 50
+            anchors.bottomMargin: 30
             button_text: 'LANJUT'
             modeReverse: true
             visible: frameWithButton
@@ -817,9 +817,9 @@ Base{
         CircleButton{
             id: cancel_button_preload
             anchors.left: parent.left
-            anchors.leftMargin: 100
+            anchors.leftMargin: 30
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 50
+            anchors.bottomMargin: 30
             button_text: 'BATAL'
             modeReverse: true
             MouseArea{
@@ -834,9 +834,9 @@ Base{
         CircleButton{
             id: next_button_preload
             anchors.right: parent.right
-            anchors.rightMargin: 100
+            anchors.rightMargin: 30
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 50
+            anchors.bottomMargin: 30
             button_text: 'LANJUT'
             modeReverse: true
             MouseArea{

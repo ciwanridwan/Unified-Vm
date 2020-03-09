@@ -382,7 +382,7 @@ Base{
     CircleButton{
         id:back_button
         anchors.left: parent.left
-        anchors.leftMargin: 50
+        anchors.leftMargin: 30
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 30
         button_text: 'BATAL'
@@ -401,9 +401,9 @@ Base{
     CircleButton{
         id: next_button
         anchors.right: parent.right
-        anchors.rightMargin: 100
+        anchors.rightMargin: 30
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 50
+        anchors.bottomMargin: 30
         button_text: 'LANJUT'
         visible: (selectedDenom > 0 && selectedPayment != undefined)
         modeReverse: true

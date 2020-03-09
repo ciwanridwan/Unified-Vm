@@ -499,7 +499,7 @@ Base{
         anchors.rightMargin: (globalScreenType == '1') ? -15 : -5
         anchors.top: parent.top
         anchors.topMargin: 200
-        width: 100
+        width: (globalScreenType == '1') ? 100 : 85
         height: (globalScreenType == '1') ? 300 : 225
         visible: false
         Text{
@@ -549,7 +549,7 @@ Base{
         anchors.bottomMargin: 200
         anchors.right: parent.right
         anchors.rightMargin:  (globalScreenType == '1') ? -15 : -5
-        width: 100
+        width: (globalScreenType == '1') ? 100 : 85
         height: (globalScreenType == '1') ? 300 : 225
         visible: false
         Text{
@@ -622,7 +622,7 @@ Base{
                 verticalAlignment: Text.AlignVCenter
                 color: 'black'
                 text: last_money_insert
-                font.pixelSize: 15
+                font.pixelSize: 14
                 font.family:"Ubuntu"
             }
         }
@@ -834,9 +834,9 @@ Base{
         CircleButton{
             id: cancel_button_preload
             anchors.left: parent.left
-            anchors.leftMargin: 100
+            anchors.leftMargin: 30
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 50
+            anchors.bottomMargin: 30
             button_text: 'BATAL'
             modeReverse: true
             MouseArea{
@@ -857,9 +857,9 @@ Base{
         CircleButton{
             id: next_button_preload
             anchors.right: parent.right
-            anchors.rightMargin: 100
+            anchors.rightMargin: 30
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 50
+            anchors.bottomMargin: 30
             button_text: 'LANJUT'
             modeReverse: true
             MouseArea{

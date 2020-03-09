@@ -221,7 +221,7 @@ Base{
     CircleButton{
         id:back_button
         anchors.left: parent.left
-        anchors.leftMargin: 50
+        anchors.leftMargin: 30
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 30
         button_text: 'BATAL'
@@ -239,7 +239,7 @@ Base{
     CircleButtonBig{
         id: update_online_button
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 50
+        anchors.bottomMargin: 30
         anchors.horizontalCenter: parent.horizontalCenter
         button_text: 'UPDATE SALDO'
         modeReverse: true
@@ -257,7 +257,7 @@ Base{
     CircleButton{
         id: next_button
         anchors.right: parent.right
-        anchors.rightMargin: 50
+        anchors.rightMargin: 30
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 30
         button_text: 'ISI SALDO'
