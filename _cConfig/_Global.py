@@ -320,7 +320,7 @@ ALLOWED_SYNC_TASK = [
 
 JOB_PATH = os.path.join(sys.path[0], '_jJob')
 if not os.path.exists(JOB_PATH):
-        os.makedirs(JOB_PATH)
+    os.makedirs(JOB_PATH)
 
 
 def log_request(name='', url='', payload=''):
@@ -351,6 +351,7 @@ def log_to_file(content='', path='', filename='', default_ext='.request'):
     if type(content) != str:
         content = json.dumps(content)
     with open(log_file, 'w+') as file_logging:
+        print('pyt: Create Logging File..! ' + _Helper.time_string() + ' : ' + log_file)
         file_logging.write(content)
         file_logging.close()
 
