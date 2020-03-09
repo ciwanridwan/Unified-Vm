@@ -672,7 +672,7 @@ def upload_admin_access(aid, username, cash_collection='', edc_settlement='', ca
         if status == 200 and response['result'] == 'OK':
             return True
         else:
-            log_request(name=_Helper.whoami, url=BACKEND_URL + 'sync/access-report', payload=param)
+            log_request(name=_Helper.whoami(), url=BACKEND_URL + 'sync/access-report', payload=param)
             return False
     except Exception as e:
         LOGGER.warning((e))

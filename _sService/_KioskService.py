@@ -726,7 +726,7 @@ def post_cash_collection(l, t):
             LOGGER.info(("SUCCESS", response))
         else:
             # LOG REQUEST
-            _Global.log_request(name=_Helper.whoami, url=_Global.BACKEND_URL + 'collect/cash', payload=param)
+            _Global.log_request(name=_Helper.whoami(), url=_Global.BACKEND_URL + 'collect/cash', payload=param)
     except Exception as e:
         LOGGER.warning(("FAILED", str(e)))
 
