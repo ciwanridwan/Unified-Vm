@@ -62,9 +62,6 @@ def start_get_qr_global(payload):
 
 def do_get_qr(payload, mode, serialize=True):
     payload = json.loads(payload)
-    print('pyt: ' + str(_Helper.whoami()))
-    print('pyt: ' + str(payload))
-    print('pyt: ' + mode)
     # if mode in ['GOPAY', 'DANA', 'SHOPEEPAY']:
     #     LOGGER.warning((str(payload), mode, 'NOT_AVAILABLE'))
     #     QR_SIGNDLER.SIGNAL_GET_QR.emit('GET_QR|'+mode+'|NOT_AVAILABLE')
@@ -77,13 +74,13 @@ def do_get_qr(payload, mode, serialize=True):
         LOGGER.warning((str(payload), mode, 'MISSING_TRX_ID'))
         QR_SIGNDLER.SIGNAL_GET_QR.emit('GET_QR|'+mode+'|MISSING_TRX_ID')
         return
-    if _Global.empty(payload['reff_no']) and mode in ['DANA', 'SHOPEEPAY']:
+    if  mode in ['DANA', 'SHOPEEPAY']:
         payload['reff_no'] = payload['trx_id']
     if serialize is True:
         param = serialize_payload(payload)
-    # if _Global.TEST_MODE is True:
-    #     amount = int(int(param['amount']) / 1000)
-    #     param['amount'] = str(amount)
+    # print('pyt: ' + str(_Helper.whoami()))
+    # print('pyt: ' + str(payload))
+    # print('pyt: ' + mode)
     try:
         url = _Global.QR_HOST+mode.lower()+'/get-qr'
         s, r = _NetworkAccess.post_to_url(url=url, param=param)
