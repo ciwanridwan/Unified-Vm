@@ -612,6 +612,10 @@ class SlotHandler(QObject):
         _SettlementService.start_trigger_edc_settlement()
     start_trigger_edc_settlement = pyqtSlot()(start_trigger_edc_settlement)
 
+    def start_cancel_qr_global(self, trx_id):
+        _QRPaymentService.start_cancel_qr_global(trx_id)
+    start_cancel_qr_global = pyqtSlot(str)(start_cancel_qr_global)
+
 
 def s_handler():
     _KioskService.K_SIGNDLER.SIGNAL_GET_FILE_LIST.connect(view.rootObject().result_get_file_list)

@@ -120,6 +120,9 @@ QR_HOST = _ConfigParser.get_set_value('QR', 'qr^host', 'http://apiv2.mdd.co.id:1
 QR_TOKEN = _ConfigParser.get_set_value('QR', 'qr^token', 'e6f092a0fa88d9cac8dac3d2162f1450')
 QR_MID = _ConfigParser.get_set_value('QR', 'qr^mid', '000972721511382bf739669cce165808')
 
+QR_NON_DIRECT_PAY = ['GOPAY', 'DANA', 'LINKAJA', 'SHOPEEPAY']
+QR_DIRECT_PAY = ['OVO']
+
 # APIV2 Credentials For Topup
 TOPUP_URL = 'http://apiv2.mdd.co.id:10107/'
 TOPUP_TOKEN = 'ab247c99e983d0c0d0772246ccb465e8'

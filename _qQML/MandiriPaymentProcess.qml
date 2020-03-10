@@ -689,7 +689,7 @@ Base{
         var epoch_string = details.epoch.toString();
         uniqueCode = epoch_string.substring(epoch_string.length-6);
         _SLOT.start_set_payment(details.payment);
-        if (['ovo', 'gopay', 'dana', 'linkaja'].indexOf(details.payment) > -1){
+        if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay'].indexOf(details.payment) > -1){
             console.log('generating_qr', now, details.payment);
             var msg = 'Persiapkan Aplikasi ' + details.payment.toUpperCase() + ' Pada Gawai Anda!';
             open_preload_notif(msg, 'source/phone_qr.png');
@@ -977,9 +977,9 @@ Base{
         CircleButton{
             id: cancel_button_global
             anchors.left: parent.left
-            anchors.leftMargin: 100
+            anchors.leftMargin: 30
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 50
+            anchors.bottomMargin: 30
             button_text: 'BATAL'
             modeReverse: true
             z:99
@@ -1013,9 +1013,9 @@ Base{
         CircleButton{
             id: next_button_global
             anchors.right: parent.right
-            anchors.rightMargin: (centerOnlyButton) ? 825 : 100
+            anchors.rightMargin: (centerOnlyButton) ? 825 : 30
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: (centerOnlyButton) ? 100 : 50
+            anchors.bottomMargin: 30
             button_text: 'LANJUT'
             modeReverse: true
             visible: frameWithButton || centerOnlyButton
@@ -1063,9 +1063,9 @@ Base{
         CircleButton{
             id: cancel_button_qr
             anchors.left: parent.left
-            anchors.leftMargin: 100
+            anchors.leftMargin: 30
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 50
+            anchors.bottomMargin: 30
             button_text: 'BATAL'
             modeReverse: true
             visible: parent.visible
@@ -1074,6 +1074,7 @@ Base{
                 onClicked: {
                     _SLOT.user_action_log('Press "BATAL" in QR Payment Frame');
                     if (press != '0') return;
+                    _SLOT.start_cancel_qr_global(details.shop_type+details.epoch.toString())
                     press = '1';
                     my_timer.stop();
                     my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
@@ -1109,9 +1110,9 @@ Base{
         CircleButton{
             id: cancel_button_input_number
             anchors.left: parent.left
-            anchors.leftMargin: 100
+            anchors.leftMargin: 30
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 50
+            anchors.bottomMargin: 30
             button_text: 'TIDAK\nPUNYA'
             modeReverse: true
             forceColorButton: 'orange'
@@ -1142,9 +1143,9 @@ Base{
         CircleButton{
             id: next_button_input_number
             anchors.right: parent.right
-            anchors.rightMargin: 100
+            anchors.rightMargin: 30
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 50
+            anchors.bottomMargin: 30
             button_text: 'SETUJU'
             modeReverse: true
             visible: false

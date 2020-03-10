@@ -46,6 +46,17 @@ def start_get_qr_linkaja(payload):
     _Helper.get_pool().apply_async(do_get_qr, (payload, mode,))
 
 
+CANCELLED_TRX = []
+
+
+def start_cancel_qr_global(trx_id):
+    global CANCELLED_TRX
+    trx_id = trx_id + '-' + _Global.TID
+    if trx_id not in CANCELLED_TRX:
+        CANCELLED_TRX.append(trx_id)
+        LOGGER.info(('CANCELLING_QR_PAYMENT', trx_id))
+
+
 def start_get_qr_global(payload):
     payload = json.loads(payload)
     mode = 'N/A'
@@ -60,18 +71,20 @@ def start_get_qr_global(payload):
 
 def do_get_qr(payload, mode, serialize=True):
     payload = json.loads(payload)
-    if mode in ['GOPAY', 'DANA']:
-        LOGGER.warning((str(payload), mode, 'NOT_AVAILABLE'))
-        QR_SIGNDLER.SIGNAL_GET_QR.emit('GET_QR|'+mode+'|NOT_AVAILABLE')
-        return
-    if _Global.empty(payload['amount']) and mode in ['LINKAJA', 'GOJEK']:
+    # if mode in ['GOPAY', 'DANA', 'SHOPEEPAY']:
+    #     LOGGER.warning((str(payload), mode, 'NOT_AVAILABLE'))
+    #     QR_SIGNDLER.SIGNAL_GET_QR.emit('GET_QR|'+mode+'|NOT_AVAILABLE')
+    #     return
+    if _Global.empty(payload['amount']) and mode in _Global.QR_NON_DIRECT_PAY:
         LOGGER.warning((str(payload), mode, 'MISSING_AMOUNT'))
         QR_SIGNDLER.SIGNAL_GET_QR.emit('GET_QR|'+mode+'|MISSING_AMOUNT')
         return
-    if _Global.empty(payload['trx_id']) and mode == 'GOJEK':
+    if _Global.empty(payload['trx_id']):
         LOGGER.warning((str(payload), mode, 'MISSING_TRX_ID'))
         QR_SIGNDLER.SIGNAL_GET_QR.emit('GET_QR|'+mode+'|MISSING_TRX_ID')
         return
+    if _Global.empty(payload['reff_no']) and mode in ['DANA', 'SHOPEEPAY']:
+        payload['reff_no'] = payload['trx_id']
     if serialize is True:
         param = serialize_payload(payload)
     # if _Global.TEST_MODE is True:
@@ -84,7 +97,7 @@ def do_get_qr(payload, mode, serialize=True):
             if '10107' in url:
                 r['data']['qr'] = r['data']['qr'].replace('https', 'http')
             QR_SIGNDLER.SIGNAL_GET_QR.emit('GET_QR|'+mode+'|' + json.dumps(r['data']))
-            if mode in ['LINKAJA']:
+            if mode in ['LINKAJA', 'DANA', 'SHOPEEPAY']:
                 param['refference'] = param['trx_id']
                 param['trx_id'] = r['data']['trx_id']
             LOGGER.debug((str(param), str(r)))
@@ -98,9 +111,9 @@ def do_get_qr(payload, mode, serialize=True):
 
 
 def handle_check_process(param, mode):
-    if mode in ['LINKAJA', 'GOPAY']:
+    if mode in _Global.QR_NON_DIRECT_PAY:
         do_check_qr(param, mode, False)
-    if mode in ['OVO']:
+    if mode in _Global.QR_DIRECT_PAY:
         sleep(5)
         do_pay_qr(param, mode)
     LOGGER.debug((str(param), mode))
@@ -116,6 +129,11 @@ def start_do_check_dana_qr(payload):
     _Helper.get_pool().apply_async(do_check_qr, (payload, mode,))
 
 
+def start_do_check_shopee_qr(payload):
+    mode = 'SHOPEEPAY'
+    _Helper.get_pool().apply_async(do_check_qr, (payload, mode,))
+
+
 def start_do_check_ovo_qr(payload):
     mode = 'OVO'
     _Helper.get_pool().apply_async(do_check_qr, (payload, mode,))
@@ -128,7 +146,7 @@ def start_do_check_linkaja_qr(payload):
 
 def do_check_qr(payload, mode, serialize=True):
     payload = json.loads(payload)
-    if mode in ['GOPAY', 'OVO', 'DANA']:
+    if mode in _Global.QR_DIRECT_PAY:
         LOGGER.warning((str(payload), mode, 'NOT_AVAILABLE'))
         QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|NOT_AVAILABLE')
         return
@@ -143,6 +161,10 @@ def do_check_qr(payload, mode, serialize=True):
     success = False
     while not success:
         try:
+            # Handle QR Payment Cancellation Realtime Abort
+            if payload['trx_id'] in CANCELLED_TRX:
+                LOGGER.debug(('[BREAKING-LOOP]', 'QR CHECK STATUS', mode, payload['trx_id']))
+                break
             attempt += 1
             _Helper.dump([success, attempt])
             url = _Global.QR_HOST+mode.lower()+'/status-payment'
@@ -176,6 +198,8 @@ def check_payment_result(result, mode):
         return True
     if mode in ['GOPAY'] and result['status'] == 'SETTLEMENT':
         return True
+    if mode in ['DANA', 'SHOPEEPAY'] and result['status'] == 'SUCCESS':
+        return True
     return False
 
 
@@ -187,7 +211,7 @@ def start_do_pay_ovo_qr(payload):
 
 def do_pay_qr(payload, mode, serialize=True):
     payload = json.loads(payload)
-    if mode in ['GOPAY', 'DANA', 'LINKAJA']:
+    if mode not in _Global.QR_DIRECT_PAY:
         LOGGER.warning((str(payload), mode, 'NOT_AVAILABLE'))
         QR_SIGNDLER.SIGNAL_PAY_QR.emit('PAY_QR|'+mode+'|NOT_AVAILABLE')
         return
@@ -217,7 +241,7 @@ def do_pay_qr(payload, mode, serialize=True):
 
 
 def handle_confirm_process(payload, mode):
-    if mode in ['OVO']:
+    if mode in _Global.QR_DIRECT_PAY:
         do_confirm_qr(payload, mode, False)
     LOGGER.debug((str(payload), mode))
 
@@ -229,7 +253,7 @@ def start_confirm_ovo_qr(payload):
 
 def do_confirm_qr(payload, mode, serialize=True):
     payload = json.loads(payload)
-    if mode in ['GOPAY', 'DANA', 'LINKAJA']:
+    if mode not in _Global.QR_DIRECT_PAY:
         LOGGER.warning((str(payload), mode, 'NOT_AVAILABLE'))
         QR_SIGNDLER.SIGNAL_CONFIRM_QR.emit('CONFIRM_QR|'+mode+'|NOT_AVAILABLE')
         return
