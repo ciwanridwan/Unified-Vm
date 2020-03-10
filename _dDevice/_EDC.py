@@ -600,22 +600,30 @@ def mark_settlement_data(printout=True, mode='DEBIT CARD'):
 
     n = 0
     list_settlement = []
-
     __now = datetime.now()
+
+    # if (!empty($request->input('b_mid'))) $b_mid = $request->input('b_mid');
+    # if (!empty($request->input('b_tid'))) $b_tid = $request->input('b_tid');
+    # if (!empty($request->input('row_debit'))) $row_debit = $request->input('row_debit');
+    # if (!empty($request->input('row_credit'))) $row_credit = $request->input('row_credit');
+    # if (!empty($request->input('amount_credit'))) $amount_credit = $request->input('amount_credit');
+    # if (!empty($request->input('amount_debit'))) $amount_debit = $request->input('amount_debit');
 
     SETTLEMENT_PARAM['b_tid'] = tid_settle
     SETTLEMENT_PARAM['b_mid'] = mid_settle
-    SETTLEMENT_PARAM['host_date'] = __now.strftime('%m%d')
-    SETTLEMENT_PARAM['host_time'] = __now.strftime('%H%M%S')
+    SETTLEMENT_PARAM['row_debit'] = 0
+    SETTLEMENT_PARAM['row_credit'] = 0
+    SETTLEMENT_PARAM['amount_credit'] = 0
+    SETTLEMENT_PARAM['amount_debit'] = 0
+    # SETTLEMENT_PARAM['host_date'] = __now.strftime('%m%d')
+    # SETTLEMENT_PARAM['host_time'] = __now.strftime('%H%M%S')
 
     if mode == 'DEBIT':
         __data_to_settle = SETTLEMENT_DEBIT
-        SETTLEMENT_PARAM['acq_name'] = 'BNI_DEBIT'
-        # send_edc_server(SETTLEMENT_PARAM, 'SETTLEMENT')
+        SETTLEMENT_PARAM['row_debit'] = len(SETTLEMENT_DEBIT)
     elif mode == 'CREDIT':
-        SETTLEMENT_PARAM['acq_name'] = 'BNI_CREDIT'
         __data_to_settle = SETTLEMENT_CREDIT
-        # send_edc_server(SETTLEMENT_PARAM, 'SETTLEMENT')
+        SETTLEMENT_PARAM['row_credit'] = len(SETTLEMENT_CREDIT)
     else:
         __data_to_settle = SETTLEMENTS_DATA
 
@@ -628,6 +636,10 @@ def mark_settlement_data(printout=True, mode='DEBIT CARD'):
         }
         LOGGER.info(("[UPDATE STATUS] mark_settlement_data", str(mode), str(__data_to_settle)))
         SETTLEMENTS_TXT += ('   '+str(n)+'|'+settle['bid']+'|'+str(settle['amount'])+'\r\n')
+        if mode == 'DEBIT':
+            SETTLEMENT_PARAM['amount_debit'] += int(settle['amount'])
+        if mode == 'CREDIT':
+            SETTLEMENT_PARAM['amount_credit'] += int(settle['amount'])
         _DAO.update_settlement(param_settle)
 
     SETTLEMENTS_TXT += '\r\n'
@@ -639,12 +651,10 @@ def mark_settlement_data(printout=True, mode='DEBIT CARD'):
     if printout is True:
         _PrintTool.print_global(input_text=SETTLEMENTS_TXT, use_for='EDC_SETTLEMENT')
 
-    # Post Update Settlement - DISABLED
+    # Post Update Settlement Old - DISABLED
     # post_mark_settlement(list_settlement, _Helper.now())
-    sleep(1)
+    # sleep(1)
     if SETTLEMENT_TYPE_COUNT == 1:
-        # SETTLEMENT_PARAM['b_tid'] = tid_settle
-        # SETTLEMENT_PARAM['b_mid'] = mid_settle
         upload_edc_settlement_data(SETTLEMENT_PARAM)
         E_SIGNDLER.SIGNAL_PROCESS_SETTLEMENT_EDC.emit('SUCCESS')
         sleep(2)

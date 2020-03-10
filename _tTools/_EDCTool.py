@@ -123,7 +123,7 @@ def get_type(card_no):
     card_type = 'CREDIT CARD'
     try:
         card_type = CARD_TYPE[card_no[:4]]
-        LOGGER.info(('Card Type Found!', card_no, card_type))
+        # LOGGER.info(('Card Type Found!', card_no, card_type))
     except (KeyError, ValueError, IndexError):
         LOGGER.warning(('Card Type Not Found!', card_no))
     finally:
