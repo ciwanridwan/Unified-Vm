@@ -21,6 +21,8 @@ class QRSignalHandler(QObject):
 QR_SIGNDLER = QRSignalHandler()
 LOGGER = logging.getLogger()
 
+CANCELLED_TRX = []
+
 
 def serialize_payload(data, specification='MDD_CORE_API'):
     return _Global.serialize_payload(data, specification)
@@ -46,17 +48,6 @@ def start_get_qr_linkaja(payload):
     _Helper.get_pool().apply_async(do_get_qr, (payload, mode,))
 
 
-CANCELLED_TRX = []
-
-
-def start_cancel_qr_global(trx_id):
-    global CANCELLED_TRX
-    trx_id = trx_id + '-' + _Global.TID
-    if trx_id not in CANCELLED_TRX:
-        CANCELLED_TRX.append(trx_id)
-        LOGGER.info(('CANCELLING_QR_PAYMENT', trx_id))
-
-
 def start_get_qr_global(payload):
     payload = json.loads(payload)
     mode = 'N/A'
@@ -71,6 +62,9 @@ def start_get_qr_global(payload):
 
 def do_get_qr(payload, mode, serialize=True):
     payload = json.loads(payload)
+    print('pyt: ' + str(_Helper.whoami()))
+    print('pyt: ' + str(payload))
+    print('pyt: ' + mode)
     # if mode in ['GOPAY', 'DANA', 'SHOPEEPAY']:
     #     LOGGER.warning((str(payload), mode, 'NOT_AVAILABLE'))
     #     QR_SIGNDLER.SIGNAL_GET_QR.emit('GET_QR|'+mode+'|NOT_AVAILABLE')
@@ -275,3 +269,11 @@ def do_confirm_qr(payload, mode, serialize=True):
     except Exception as e:
         LOGGER.warning((str(payload), str(e)))
         QR_SIGNDLER.SIGNAL_CONFIRM_QR.emit('CONFIRM_QR|'+mode+'|ERROR')
+
+
+def start_cancel_qr_global(trx_id):
+    global CANCELLED_TRX
+    trx_id = trx_id + '-' + _Global.TID
+    if trx_id not in CANCELLED_TRX:
+        CANCELLED_TRX.append(trx_id)
+        LOGGER.info(('CANCELLING_QR_PAYMENT', trx_id))
