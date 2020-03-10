@@ -117,7 +117,7 @@ Rectangle {
     signal result_check_voucher(string str)
     signal result_use_voucher(string str)
     signal result_diva_balance_check(string str)
-    signal result_diva_transfer_balance(string str)
+    signal result_global_refund_balance(string str)
     signal result_update_balance_online(string str)
     signal result_admin_sync_stock(string str)
     signal result_init_check_cd(string str)

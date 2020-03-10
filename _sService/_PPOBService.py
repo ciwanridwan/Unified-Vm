@@ -246,8 +246,8 @@ def check_diva_balance(username):
         PPOB_SIGNDLER.SIGNAL_CHECK_BALANCE.emit('BALANCE_CHECK|ERROR')
 
 
-def start_transfer_balance(payload):
-    _Helper.get_pool().apply_async(diva_transfer_balance, (payload,))
+def start_global_refund_balance(payload):
+    _Helper.get_pool().apply_async(global_refund_balance, (payload,))
 
 
 LAST_TRANSFER_REFF_NO = ''
@@ -255,10 +255,10 @@ LAST_TRANSFER_REFF_NO = ''
 
 def start_store_pending_balance(payload):
     store_only = True
-    _Helper.get_pool().apply_async(diva_transfer_balance, (payload, store_only,))
+    _Helper.get_pool().apply_async(global_refund_balance, (payload, store_only,))
 
 
-def diva_transfer_balance(payload, store_only=False):
+def global_refund_balance(payload, store_only=False):
     global LAST_TRANSFER_REFF_NO
     payload = json.loads(payload)
     if _Global.empty(payload['reff_no']):
@@ -280,9 +280,14 @@ def diva_transfer_balance(payload, store_only=False):
         if not store_only:
             PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|MISSING_AMOUNT')
         return
+    if _Global.empty(payload['channel']):
+        LOGGER.warning((str(payload), 'MISSING_CHANNEL'))
+        if not store_only:
+            PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|MISSING_CHANNEL')
+        return
     payload['customer_login'] = payload['customer']
     try:
-        url = _Global.BACKEND_URL+'diva/transfer'
+        url = _Global.BACKEND_URL+'refund/global'
         s, r = _NetworkAccess.post_to_url(url=url, param=payload)
         if s == 200 and r['data'] is not None:
             if r['result'] == 'OK':

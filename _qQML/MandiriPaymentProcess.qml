@@ -42,6 +42,8 @@ Base{
     property var notifTitle: ''
     property var notifMessage: ''
 
+    property var refundChannel: ''
+
     signal framingSignal(string str)
 
     idx_bg: 0
@@ -87,7 +89,7 @@ Base{
         base.result_check_qr.connect(qr_check_result);
         base.result_trx_ppob.connect(ppob_trx_result);
         base.result_pay_qr.connect(qr_check_result);
-        base.result_diva_transfer_balance.connect(transfer_balance_result)
+        base.result_global_refund_balance.connect(transfer_balance_result)
         framingSignal.connect(get_signal_frame)
     }
 
@@ -111,7 +113,7 @@ Base{
         base.result_check_qr.disconnect(qr_check_result);
         base.result_trx_ppob.disconnect(ppob_trx_result);
         base.result_pay_qr.disconnect(qr_check_result);
-        base.result_diva_transfer_balance.disconnect(transfer_balance_result)
+        base.result_global_refund_balance.disconnect(transfer_balance_result)
         framingSignal.disconnect(get_signal_frame)
 
     }
@@ -210,7 +212,7 @@ Base{
         if (title!=undefined) notifTitle = title;
         if (message!=undefined) notifMessage = message;
         console.log('release_print_with_refund', now, JSON.stringify(refundPayload));
-        _SLOT.start_transfer_balance(JSON.stringify(refundPayload))
+        _SLOT.start_global_refund_balance(JSON.stringify(refundPayload))
     }
 
     function transfer_balance_result(transfer){
@@ -218,7 +220,7 @@ Base{
         console.log('transfer_balance_result', now, transfer);
         popup_loading.close();
         var result = transfer.split('|')[1];
-        if (['MISSING_REFF_NO','MISSING_AMOUNT','MISSING_CUSTOMER', 'ERROR', 'PENDING'].indexOf(result) > -1){
+        if (['MISSING_REFF_NO','MISSING_AMOUNT','MISSING_CUSTOMER', 'ERROR', 'PENDING', 'MISSING_CHANNEL'].indexOf(result) > -1){
             details.refund_status = 'PENDING';
         }
         if (result=='SUCCESS'){
@@ -692,7 +694,7 @@ Base{
         if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay'].indexOf(details.payment) > -1){
             console.log('generating_qr', now, details.payment);
             var msg = 'Persiapkan Aplikasi ' + details.payment.toUpperCase() + ' Pada Gawai Anda!';
-            open_preload_notif(msg, 'source/phone_qr.png');
+            open_preload_notif_qr(msg, 'source/phone_qr.png');
 //            getDenom = parseInt(details.value) * parseInt(details.qty);
 //            totalPrice = getDenom + adminFee;
             qrPayload = {
@@ -817,6 +819,14 @@ Base{
         if (msg==undefined) msg = 'Masukkan Uang Anda Pada Bill Acceptor';
         if (img==undefined) img = 'source/insert_money.png';
         switch_frame(img, msg, 'Lembar Uang Yang Diterima', 'closeWindow', false )
+        return;
+    }
+
+    function open_preload_notif_qr(msg, img){
+        press = '0';
+        if (msg==undefined) msg = 'Masukkan Uang Anda Pada Bill Acceptor';
+        if (img==undefined) img = 'source/insert_money.png';
+        switch_frame(img, msg, '', 'closeWindow', false )
         return;
     }
 
@@ -1074,8 +1084,8 @@ Base{
                 onClicked: {
                     _SLOT.user_action_log('Press "BATAL" in QR Payment Frame');
                     if (press != '0') return;
-                    _SLOT.start_cancel_qr_global(details.shop_type+details.epoch.toString())
                     press = '1';
+                    _SLOT.start_cancel_qr_global(details.shop_type+details.epoch.toString())
                     my_timer.stop();
                     my_layer.pop(my_layer.find(function(item){if(item.Stack.index === 0) return true }));
                 }
