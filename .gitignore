@@ -5,6 +5,7 @@
 *.log
 /venv
 /_pPDF/
+/_jJob/
 /_rRemoteFiles/
 /_dDB/kiosk.db
 setting.ini

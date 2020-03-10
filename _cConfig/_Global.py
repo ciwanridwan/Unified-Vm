@@ -329,8 +329,8 @@ def log_request(name='', url='', payload=''):
         return
     filename = _Helper.time_string(f='%Y%m%d%H%M%S___') + name
     log = {
-        'url': url,
-        'payload': payload
+        'url'       : url,
+        'payload'   : payload
     }
     LOGGER.debug((filename, str(log)))
     print('pyt: Logging Request..! ' + _Helper.time_string() + ' : ' + filename)

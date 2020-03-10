@@ -14,10 +14,10 @@ def is_online_old(host="8.8.8.8", port=53, timeout=3, source=''):
         socket.setdefaulttimeout(timeout)
         socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, port))
         if source != '':
-            LOGGER.debug(('is_online', 'source', source))
+            LOGGER.debug(('source', source))
         return True
     except Exception as e:
-        LOGGER.warning(('is_online', str(e), 'source', source))
+        LOGGER.debug((str(e), 'source', source))
         return False
 
 
@@ -32,7 +32,7 @@ def is_online(host="www.google.com", timeout=1, source=''):
     try:
         if LAST_REQUEST != 0:
             if int(time.time()) < (LAST_REQUEST + WAITING_TIME_ONLINE):
-                LOGGER.debug(('previous state', source, IS_ONLINE))
+                LOGGER.debug(('previous_state', source, IS_ONLINE))
                 return IS_ONLINE
         socket.create_connection((socket.gethostbyname(host), 80), timeout)
         IS_ONLINE = True
@@ -40,7 +40,7 @@ def is_online(host="www.google.com", timeout=1, source=''):
             LOGGER.debug((source, IS_ONLINE))
     except Exception as e:
         IS_ONLINE = False
-        LOGGER.warning((str(e), source, IS_ONLINE))
+        LOGGER.debug((str(e), source, IS_ONLINE))
     finally:
         LAST_REQUEST = int(time.time())
         return IS_ONLINE

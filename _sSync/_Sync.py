@@ -132,7 +132,7 @@ def do_pending_job():
                         continue
             except Exception as e:
                 LOGGER.warning(e)
-        sleep(3.33)
+        sleep(5.55)
 
 
 def start_kiosk_sync():
