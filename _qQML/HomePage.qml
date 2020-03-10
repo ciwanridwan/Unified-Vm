@@ -177,6 +177,8 @@ Base{
             box_connection.color = 'red';
             kioskStatus = false;
         }
+
+        main_title.show_text = 'Selamat Datang, Silakan Pilih Menu Berikut : ';
 //        _SLOT.start_get_topup_readiness();
     }
 
@@ -235,10 +237,11 @@ Base{
 //    }
 
     MainTitle{
+        id: main_title
         anchors.top: parent.top
         anchors.topMargin: (globalScreenType == '1') ? 350 : 300
         anchors.horizontalCenter: parent.horizontalCenter
-        show_text: 'Selamat Datang, Silakan Pilih Menu Berikut : '
+        show_text: ""
         visible: !popup_loading.visible
         size_: (globalScreenType == '1') ? 50 : 40
         color_: "white"
@@ -414,6 +417,7 @@ Base{
             running:false
             triggeredOnStart:true
             onTriggered:{
+                if (globalBoxName=="") _SLOT.get_kiosk_status();
                 //Mandiri Auto Settlement Timer Trigger
                 if (mandiri_update_schedule != undefined){
                     var hm = Qt.formatDateTime(new Date(), "HH:mm");

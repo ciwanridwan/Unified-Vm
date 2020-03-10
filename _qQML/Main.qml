@@ -8,7 +8,7 @@ Rectangle {
     color: 'transparent'
     property var top_color: "#f03838"
     property var language: "INA"
-    property var globalBoxName: 'VM01 - Box Name'
+    property var globalBoxName: ""
     property bool mediaOnPlaying: false
     property int globalWidth: parseInt(SCREEN.size.width)
     property int globalHeight: parseInt(SCREEN.size.height)
