@@ -46,7 +46,7 @@ def delete_row(sql):
     try:
         LOCK.acquire()
         LOGGER.info(sql)
-        print('pyt: ' + str(sql) + ' ' + _Helper.time_string())
+        print('pyt: [WARNING] ' + str(sql) + ' ' + _Helper.time_string())
         conn__ = sqlite3.connect(sys.path[0] + '/_dDB/' + DB)
         conn__.cursor().execute(sql)
         conn__.commit()
