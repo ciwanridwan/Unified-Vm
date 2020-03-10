@@ -6,6 +6,7 @@ import os
 import threading
 from _cConfig import _ConfigParser
 import sqlite3
+from _tTools import _Helper
 
 LOCK = threading.Lock()
 LOGGER = logging.getLogger()
@@ -45,6 +46,7 @@ def delete_row(sql):
     try:
         LOCK.acquire()
         LOGGER.info(sql)
+        print('pyt: DELETE ROW : ' + str(sql) + ' ' + _Helper.time_string())
         conn__ = sqlite3.connect(sys.path[0] + '/_dDB/' + DB)
         conn__.cursor().execute(sql)
         conn__.commit()
