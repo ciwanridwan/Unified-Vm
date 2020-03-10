@@ -111,6 +111,8 @@ def sale_edc(amount, trxid=None):
                 param = result.split('|')
                 EDC_PAYMENT_RESULT['raw'] = result
                 EDC_PAYMENT_RESULT['card_type'] = _EDCTool.get_type(param[6])
+                if _Global.EDC_DEBIT_ONLY is True:
+                    EDC_PAYMENT_RESULT['card_type'] = 'DEBIT CARD'
                 if trxid is None:
                     EDC_PAYMENT_RESULT['struck_id'] = _Helper.get_uuid()[:12]
                 else:
@@ -222,6 +224,8 @@ def handling_card(amount, trxid=None):
                 param = result.split('|')
                 EDC_PAYMENT_RESULT['raw'] = result
                 EDC_PAYMENT_RESULT['card_type'] = _EDCTool.get_type(param[6])
+                if _Global.EDC_DEBIT_ONLY is True:
+                    EDC_PAYMENT_RESULT['card_type'] = 'DEBIT CARD'
                 if trxid is None:
                     EDC_PAYMENT_RESULT['struck_id'] = _Helper.get_uuid()[:12]
                 else:
@@ -532,16 +536,20 @@ def card_type_count():
     type_count = []
     if SETTLEMENTS_DATA is None:
         return SETTLEMENT_TYPE_COUNT
-    for settle in SETTLEMENTS_DATA:
-        card_no = settle['filename'].split('|')[6]
-        card_type = _EDCTool.get_type(card_no)
-        if card_type == 'CREDIT CARD':
-            SETTLEMENT_CREDIT.append(settle)
-        if card_type == 'DEBIT CARD':
-            SETTLEMENT_DEBIT.append(settle)
-        if card_type not in type_count:
-            type_count.append(card_type)
-    SETTLEMENT_TYPE_COUNT = len(type_count)
+    if _Global.EDC_DEBIT_ONLY is True:
+        SETTLEMENT_DEBIT = SETTLEMENTS_DATA
+        SETTLEMENT_TYPE_COUNT = 1
+    else:
+        for settle in SETTLEMENTS_DATA:
+            card_no = settle['filename'].split('|')[6]
+            card_type = _EDCTool.get_type(card_no)
+            if card_type == 'CREDIT CARD':
+                SETTLEMENT_CREDIT.append(settle)
+            if card_type == 'DEBIT CARD':
+                SETTLEMENT_DEBIT.append(settle)
+            if card_type not in type_count:
+                type_count.append(card_type)
+        SETTLEMENT_TYPE_COUNT = len(type_count)
     return SETTLEMENT_TYPE_COUNT
 
 
@@ -549,11 +557,14 @@ def card_type_settle():
     type_count = []
     if SETTLEMENTS_DATA is None:
         return type_count
-    for settle in SETTLEMENTS_DATA:
-        card_no = settle['filename'].split('|')[6]
-        card_type = _EDCTool.get_type(card_no)
-        if card_type not in type_count:
-            type_count.append(card_type)
+    if _Global.EDC_DEBIT_ONLY is True:
+        type_count.append('DEBIT CARD')
+    else:
+        for settle in SETTLEMENTS_DATA:
+            card_no = settle['filename'].split('|')[6]
+            card_type = _EDCTool.get_type(card_no)
+            if card_type not in type_count:
+                type_count.append(card_type)
     return type_count
 
 

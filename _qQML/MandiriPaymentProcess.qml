@@ -248,7 +248,7 @@ Base{
         console.log('ppob_trx_result', now, p);
         popup_loading.close();
         var result = p.split('|')[1]
-        if (['ovo', 'gopay', 'dana', 'linkaja'].indexOf(details.payment) > -1) qr_payment_frame.close();
+        if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay'].indexOf(details.payment) > -1) qr_payment_frame.close();
         if (['MISSING_MSISDN', 'MISSING_PRODUCT_ID','MISSING_AMOUNT','MISSING_OPERATOR', 'MISSING_PAYMENT_TYPE', 'MISSING_PRODUCT_CATEGORY', 'MISSING_REFF_NO', 'ERROR'].indexOf(result) > -1){
             details.process_error = 1;
             validate_release_refund('ppob_error');
@@ -322,7 +322,7 @@ Base{
         console.log('topup_result', now, t);
         global_frame.close();
         popup_loading.close();
-        if (['ovo', 'gopay', 'dana', 'linkaja'].indexOf(details.payment) > -1) qr_payment_frame.close();
+        if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay'].indexOf(details.payment) > -1) qr_payment_frame.close();
         abc.counter = 30;
         my_timer.restart();
         if (t==undefined||t.indexOf('ERROR') > -1||t=='TOPUP_ERROR'||t=='MANDIRI_SAM_BALANCE_EXPIRED'||t.indexOf('BNI_SAM_BALANCE_NOT_SUFFICIENT')> -1){
@@ -395,7 +395,7 @@ Base{
         console.log('card_eject_result', now, r);
         global_frame.close();
         popup_loading.close();
-        if (['ovo', 'gopay', 'dana', 'linkaja'].indexOf(details.payment) > -1) qr_payment_frame.close();
+        if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay'].indexOf(details.payment) > -1) qr_payment_frame.close();
         abc.counter = 30;
         my_timer.restart();
         if (r=='EJECT|PARTIAL'){

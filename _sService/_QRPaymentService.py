@@ -83,6 +83,8 @@ def do_get_qr(payload, mode, serialize=True):
     # print('pyt: ' + mode)
     try:
         url = _Global.QR_HOST+mode.lower()+'/get-qr'
+        if not _Global.QR_PROD_STATE[mode]:
+            url = 'http://apidev.mdd.co.id:28194/v1/'+mode.lower()+'/get-qr'
         s, r = _NetworkAccess.post_to_url(url=url, param=param)
         if s == 200 and r['response']['code'] == 200:
             if '10107' in url:
@@ -159,6 +161,8 @@ def do_check_qr(payload, mode, serialize=True):
             attempt += 1
             _Helper.dump([success, attempt])
             url = _Global.QR_HOST+mode.lower()+'/status-payment'
+            if not _Global.QR_PROD_STATE[mode]:
+                url = 'http://apidev.mdd.co.id:28194/v1/'+mode.lower()+'/status-payment'
             s, r = _NetworkAccess.post_to_url(url=url, param=payload)
             if s == 200 and r['response']['code'] == 200:
                 success = check_payment_result(r['data'], mode)
@@ -218,6 +222,8 @@ def do_pay_qr(payload, mode, serialize=True):
         payload = serialize_payload(payload)
     try:
         url = _Global.QR_HOST+mode.lower()+'/pay-qr'
+        if not _Global.QR_PROD_STATE[mode]:
+            url = 'http://apidev.mdd.co.id:28194/v1/'+mode.lower()+'/pay-qr'
         s, r = _NetworkAccess.post_to_url(url=url, param=payload)
         if s == 200 and r['response']['code'] == 200:
             QR_SIGNDLER.SIGNAL_PAY_QR.emit('PAY_QR|'+mode+'|SUCCESS|' + json.dumps(r['data']))
@@ -256,6 +262,8 @@ def do_confirm_qr(payload, mode, serialize=True):
         payload = serialize_payload(payload)
     try:
         url = _Global.QR_HOST+mode.lower()+'/trx-confirm'
+        if not _Global.QR_PROD_STATE[mode]:
+            url = 'http://apidev.mdd.co.id:28194/v1/'+mode.lower()+'/trx-confirm'
         s, r = _NetworkAccess.post_to_url(url=url, param=payload)
         if s == 200 and r['response']['code'] == 200:
             QR_SIGNDLER.SIGNAL_CONFIRM_QR.emit('CONFIRM_QR|'+mode+'|SUCCESS|' + json.dumps(r['data']))

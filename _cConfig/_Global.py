@@ -28,6 +28,7 @@ BACKEND_URL = _ConfigParser.get_set_value('TERMINAL', 'backend^server', '---')
 QPROX_PORT = _ConfigParser.get_set_value('QPROX', 'port', 'COM')
 EDC_PORT = get_config_value('port', 'EDC')
 EDC_TYPE = _ConfigParser.get_set_value('EDC', 'type', 'UPT-IUR')
+EDC_DEBIT_ONLY = True if _ConfigParser.get_set_value('EDC', 'debit^only', '1') == '1' else False
 MEI_PORT = get_config_value('port', 'MEI')
 GRG_PORT = get_config_value('port', 'GRG')
 CD_PORT1 = _ConfigParser.get_set_value('CD', 'port1', 'COM')
@@ -122,6 +123,14 @@ QR_MID = _ConfigParser.get_set_value('QR', 'qr^mid', '000972721511382bf739669cce
 
 QR_NON_DIRECT_PAY = ['GOPAY', 'DANA', 'LINKAJA', 'SHOPEEPAY']
 QR_DIRECT_PAY = ['OVO']
+# Hardcoded Env Status
+QR_PROD_STATE = {
+    'GOPAY': True,
+    'DANA': False,
+    'LINKAJA': True,
+    'SHOPEEPAY': False,
+    'OVO': True
+}
 
 # APIV2 Credentials For Topup
 TOPUP_URL = 'http://apiv2.mdd.co.id:10107/'
@@ -510,7 +519,7 @@ def get_payments():
         "QR_DANA": "AVAILABLE" if check_payment('dana') is True else "NOT_AVAILABLE",
         "QR_GOPAY": "AVAILABLE" if check_payment('gopay') is True else "NOT_AVAILABLE",
         "QR_LINKAJA": "AVAILABLE" if check_payment('linkaja') is True else "NOT_AVAILABLE",
-        "QR_SHOPEE": "AVAILABLE" if check_payment('shopee') is True else "NOT_AVAILABLE",
+        "QR_SHOPEEPAY": "AVAILABLE" if check_payment('shopeepay') is True else "NOT_AVAILABLE",
     }
 
 
@@ -522,7 +531,7 @@ def get_refunds():
         "OVO": "AVAILABLE" if check_refund('ovo') is True else "NOT_AVAILABLE",
         "GOPAY": "AVAILABLE" if check_refund('gopay') is True else "NOT_AVAILABLE",
         "DANA": "AVAILABLE" if check_refund('dana') is True else "NOT_AVAILABLE",
-        "SHOPEE": "AVAILABLE" if check_refund('shopee') is True else "NOT_AVAILABLE",
+        "SHOPEEPAY": "AVAILABLE" if check_refund('shopeepay') is True else "NOT_AVAILABLE",
     }
 
 
