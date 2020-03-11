@@ -157,7 +157,7 @@ Rectangle{
             height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/qr_linkaja.png"
-            itemName: "QR LinkAja"
+            itemName: "QRIS LinkAja"
             modeReverse: true
             visible: _qrLinkAjaEnable
             MouseArea{
@@ -192,7 +192,7 @@ Rectangle{
             height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/qr_gopay.png"
-            itemName: "QR Gopay"
+            itemName: "QRIS Gopay"
             modeReverse: true
             visible: _qrGopayEnable
             MouseArea{
@@ -227,7 +227,7 @@ Rectangle{
             height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/qr_dana.png"
-            itemName: "QR Dana"
+            itemName: "QRIS Dana"
             modeReverse: true
             visible: _qrDanaEnable
             MouseArea{
@@ -262,7 +262,7 @@ Rectangle{
             height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/qr_shopeepay.png"
-            itemName: "QR ShopeePay"
+            itemName: "QRIS ShopeePay"
             modeReverse: true
             visible: _qrShopeeEnable
             MouseArea{
