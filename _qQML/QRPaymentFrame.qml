@@ -15,7 +15,7 @@ Base{
     property bool smallerSlaveSize: true
     property bool withTimer: true
     property int textSize: (globalScreenType == '1') ? 40 : 35
-    property int timerDuration: 90
+    property int timerDuration: 300
     property int waitAfterSuccess: 10
     property int showDuration: timerDuration
     property var closeMode: 'backToMain' // 'closeWindow', 'backToMain', 'backToPrev'
