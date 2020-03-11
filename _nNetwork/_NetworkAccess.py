@@ -117,15 +117,15 @@ def get_from_url(url, param=None, header=None, log=True):
 
 
 def post_to_url(url, param=None, header=None, log=True):
-    # if is_online(source=url) is False and ('apiv2.mdd.co.id' not in url or 'v2/diva/' not in url):
-    #     return -1, NO_INTERNET
+    if is_online(source=url) is False and ('apidev.mdd.co.id' not in url or 'apiv2.mdd.co.id' not in url or 'v2/diva/' not in url):
+        return -1, NO_INTERNET
     if header is None:
         header = HEADER
     try:
         s = requests.session()
         s.keep_alive = False
         # s.headers['Connection'] = 'close'
-        if 'http://apiv2.mdd.co.id:10107' in url:
+        if 'http://apiv2.mdd.co.id:10107' in url or 'http://apidev.mdd.co.id:28194' in url:
             r = requests.post(url, headers=header, json=param, timeout=180)
         else:
             r = requests.post(url, headers=header, json=param, timeout=GLOBAL_TIMEOUT)

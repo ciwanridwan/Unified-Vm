@@ -166,16 +166,16 @@ def do_check_qr(payload, mode, serialize=True):
             s, r = _NetworkAccess.post_to_url(url=url, param=payload)
             if s == 200 and r['response']['code'] == 200:
                 success = check_payment_result(r['data'], mode)
-                QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|' + json.dumps(r['data']))
-                LOGGER.debug((str(payload), str(r)))
-            else:
-                QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|ERROR')
-                LOGGER.warning((str(payload), str(r)))
-                break;
+                # QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|' + json.dumps(r['data']))
+                # LOGGER.debug((str(payload), str(r)))
+            # else:
+            #     QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|ERROR')
+            #     LOGGER.warning((str(payload), str(r)))
+            #     break;
         except Exception as e:
             LOGGER.warning((str(payload), str(e)))
-            QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|ERROR')
-            break;
+            # QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|ERROR')
+            # break;
         if success is True:
             QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|SUCCESS|' + json.dumps(r['data']))
             break
@@ -183,7 +183,7 @@ def do_check_qr(payload, mode, serialize=True):
             LOGGER.warning((str(payload), 'TIMEOUT', str(attempt*3)))
             QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|TIMEOUT')
             break
-        sleep(3)
+        sleep(5)
 
 
 def check_payment_result(result, mode):
