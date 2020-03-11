@@ -301,6 +301,7 @@ Rectangle{
         button_linkaja.do_release();
         button_gopay.do_release();
         button_dana.do_release();
+        button_shopeepay.do_release();
         id.set_active();
     }
 
