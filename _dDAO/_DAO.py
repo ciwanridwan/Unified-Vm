@@ -333,6 +333,10 @@ def adjust_table(_path):
     _Database.adjust_db(db=_path)
 
 
+def direct_adjust_table(script):
+    return _Database.adjust_db_direct(script)
+
+
 def insert_receipt(param):
     param['syncFlag'] = 0
     '''
@@ -482,6 +486,7 @@ def insert_pending_refund(param):
     trxid           VARCHAR(100),
     amount          BIGINT,
     customer        VARCHAR(100),
+    channel         VARCHAR(100),
     refundType      VARCHAR(100),
     paymentType     VARCHAR(100),
     remarks         TEXT,
@@ -490,8 +495,8 @@ def insert_pending_refund(param):
     param['id'] = _Helper.uuid()
     param['isSuccess'] = 0
     param['createdAt'] = _Helper.now()
-    sql = "INSERT INTO PendingRefund(id, tid, trxid, amount, customer, refundType, paymentType, remarks, isSuccess, createdAt ) " \
-          "VALUES(:id, :tid, :trxid, :amount, :customer, :refundType, :paymentType, :remarks, :isSuccess, :createdAt )"
+    sql = "INSERT INTO PendingRefund(id, tid, trxid, amount, customer, channel, refundType, paymentType, remarks, isSuccess, createdAt ) " \
+          "VALUES(:id, :tid, :trxid, :amount, :customer, :channel, :refundType, :paymentType, :remarks, :isSuccess, :createdAt )"
     _Database.insert_update(sql=sql, parameter=param)
 
 def update_pending_refund(param):

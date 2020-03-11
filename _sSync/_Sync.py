@@ -418,7 +418,7 @@ def start_sync_pending_refund():
 
 
 def sync_pending_refund():
-    _url = _Global.BACKEND_URL + 'diva/transfer'
+    _url = _Global.BACKEND_URL + 'refund/global'
     while True:
         try:
             pendings = _DAO.get_pending_refund()
@@ -428,6 +428,7 @@ def sync_pending_refund():
                         'customer_login'    : p['customer'],
                         'amount'            : str(p['amount']),
                         'reff_no'           : p['trxid'],
+                        'channel'           : p['channel'],
                         'remarks'           : json.loads(p['remarks'])
                     } 
                     s, r = _NetworkAccess.post_to_url(url=_url, param=_param)

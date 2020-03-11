@@ -42,7 +42,7 @@ Base{
     property var notifTitle: ''
     property var notifMessage: ''
 
-    property var refundChannel: ''
+    property var refundChannel: 'DIVA'
 
     signal framingSignal(string str)
 
@@ -206,6 +206,7 @@ Base{
             customer: customerPhone,
             reff_no: details.shop_type + details.epoch.toString(),
             remarks: details,
+            channel: refundChannel,
             mode: refundMode,
             payment: details.payment
         }
@@ -373,11 +374,11 @@ Base{
         }
     }
 
-    function print_failed_transaction(channel, issue){
+    function print_failed_transaction(channelPayment, issue){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-        console.log('print_failed_transaction', now, channel, issue, receivedCash, customerPhone, JSON.stringify(details));
+        console.log('print_failed_transaction', now, channelPayment, issue, receivedCash, customerPhone, JSON.stringify(details));
         if (issue==undefined) issue = 'GRG_ERROR';
-        if (channel=='cash'){
+        if (channelPayment=='cash'){
             details.payment_error = issue;
             details.payment_received = receivedCash.toString();
             if (customerPhone!=''){
@@ -1140,6 +1141,7 @@ Base{
                         customer: 'NO_PHONE_NUMBER',
                         reff_no: details.shop_type + details.epoch.toString(),
                         remarks: details,
+                        channel: 'MANUAL',
                         mode: 'not_having_phone_no_for_refund',
                         payment: details.payment
                     }

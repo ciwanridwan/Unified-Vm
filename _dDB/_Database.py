@@ -84,6 +84,18 @@ def adjust_db(db):
         ___CONN.cursor().executescript(d.read())
 
 
+def adjust_db_direct(script):
+    if DEBUG is True:
+        LOGGER.info(('[DIRECT_DB_ADJUSTMENT] : ', str(script)))
+    try:
+        ___CONN = sqlite3.connect(sys.path[0] + '/_dDB/' + DB)
+        ___CONN.cursor().executescript(script)
+        return True
+    except Exception as e:
+        LOGGER.warning((e))
+        return False
+
+
 if __name__ == '__main__':
     __CONN = sqlite3.connect(sys.path[0] + '/_dDB/' + DB)
     with open('_KioskDB.sql') as f:

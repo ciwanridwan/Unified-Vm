@@ -280,7 +280,7 @@ def global_refund_balance(payload, store_only=False):
         if not store_only:
             PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|MISSING_AMOUNT')
         return
-    if _Global.empty(payload['channel']):
+    if 'channel' not in payload.keys():
         LOGGER.warning((str(payload), 'MISSING_CHANNEL'))
         if not store_only:
             PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|MISSING_CHANNEL')
@@ -321,6 +321,7 @@ def store_pending_refund(payload):
         'amount'        : int(payload['amount']),
         'customer'      : payload['customer'],
         'refundType'    : str(payload['mode']),
+        'channel'       : payload['channel'],
         'paymentType'   : payload['payment'],
         'remarks'       : json.dumps(payload['remarks'])
         })

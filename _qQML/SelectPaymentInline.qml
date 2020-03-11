@@ -270,7 +270,7 @@ Rectangle{
                 onClicked: {
                     _SLOT.user_action_log('choose "SHOPEEPAY" Payment Method');
                     var payment = 'shopeepay';
-                    do_release_all_set_active(button_dana);
+                    do_release_all_set_active(button_shopeepay);
                     if (calledFrom=='prepaid_topup_denom'){
                         if (prepaid_topup_denom.press != '0') return;
                         prepaid_topup_denom.press = '1';

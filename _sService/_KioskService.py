@@ -755,6 +755,24 @@ def alter_table(a):
         LOGGER.debug(('FAILED', str(e)))
 
 
+def start_direct_alter_table(s):
+    _Helper.get_pool().apply_async(direct_alter_table, (s,))
+
+
+def direct_alter_table(scripts):
+    result = []
+    if _Global.empty(scripts):
+        LOGGER.warning(('EMPTY ADJUSTMENT SCRIPT'))
+        return
+    if type(scripts) == list and len(scripts) > 0:
+        for script in scripts:
+            result.append({'script': script, 'result': _DAO.direct_adjust_table(script=script)})
+    else:
+        result.append({'script': scripts, 'result': _DAO.direct_adjust_table(script=scripts)})
+    LOGGER.info(('RESULT', str(result)))
+    return result
+
+
 PREV_RECEIPT_RAW_DATA = None
 PREV_BOOKING_CODE = None
 PREV_PARAM_DATA = None
