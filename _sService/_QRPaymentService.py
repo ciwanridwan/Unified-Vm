@@ -172,6 +172,7 @@ def do_check_qr(payload, mode, serialize=True):
                 'payload'   : payload,
                 'mode'      : mode
             }
+            LOGGER.info(('SET CANCEL_PARAM', str(CANCEL_PARAM)))
             s, r = _NetworkAccess.post_to_url(url=url, param=payload)
             if s == 200 and r['response']['code'] == 200:
                 success = check_payment_result(r['data'], mode)
