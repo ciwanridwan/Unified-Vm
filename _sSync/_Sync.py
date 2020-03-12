@@ -124,12 +124,13 @@ def do_pending_job():
                     print('pyt: do_pending_job ' + _Helper.time_string() + ' ' + p)
                     LOGGER.debug((p, __url, __param))
                     status, response = _NetworkAccess.post_to_url(url=__url, param=__param)
-                    if status == 200 and response['result'] == 'OK':
-                        jobs_path_rename = jobs_path.replace('.request', '.done')
-                        os.rename(jobs_path, jobs_path_rename)
-                        print('pyt: jobs_done rename : ' + jobs_path + ' ' + jobs_path_rename)
-                        LOGGER.debug((jobs_path, jobs_path_rename))
-                        continue
+                    if status == 200:
+                        if 'refund/global' in __url or response['result'] == 'OK':
+                            jobs_path_rename = jobs_path.replace('.request', '.done')
+                            os.rename(jobs_path, jobs_path_rename)
+                            print('pyt: jobs_done rename : ' + jobs_path + ' ' + jobs_path_rename)
+                            LOGGER.debug((jobs_path, jobs_path_rename))
+                            continue
             except Exception as e:
                 LOGGER.warning(e)
         sleep(5.55)
@@ -422,7 +423,7 @@ def sync_pending_refund():
     while True:
         try:
             pendings = _DAO.get_pending_refund()
-            if _Helper.is_online(source='sync_pending_refund') is True and len(pendings) > 0:
+            if len(pendings) > 0:
                 for p in pendings:
                     _param = {
                         'customer_login'    : p['customer'],
