@@ -188,8 +188,8 @@ def do_check_qr(payload, mode, serialize=True):
         if success is True:
             QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|SUCCESS|' + json.dumps(r['data']))
             break
-        if attempt == 30:
-            LOGGER.warning((str(payload), 'TIMEOUT', str(attempt*3)))
+        if attempt == 60:
+            LOGGER.warning((str(payload), 'TIMEOUT', str(attempt*5)))
             QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|TIMEOUT')
             break
         sleep(5)
