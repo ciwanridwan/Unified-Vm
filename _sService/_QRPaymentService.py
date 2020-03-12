@@ -21,7 +21,7 @@ class QRSignalHandler(QObject):
 QR_SIGNDLER = QRSignalHandler()
 LOGGER = logging.getLogger()
 
-CANCELLED_TRX = []
+CANCELLING_QR_FLAG = False
 
 
 def serialize_payload(data, specification='MDD_CORE_API'):
@@ -141,7 +141,7 @@ CANCEL_PARAM = None
 
 
 def do_check_qr(payload, mode, serialize=True):
-    global CANCEL_PARAM
+    global CANCEL_PARAM, CANCELLING_QR_FLAG
     payload = json.loads(payload)
     if mode in _Global.QR_DIRECT_PAY:
         LOGGER.warning((str(payload), mode, 'NOT_AVAILABLE'))
@@ -159,20 +159,22 @@ def do_check_qr(payload, mode, serialize=True):
     while not success:
         try:
             # Handle QR Payment Cancellation Realtime Abort
-            if payload['trx_id'] in CANCELLED_TRX:
+            if CANCELLING_QR_FLAG is True:
                 LOGGER.debug(('[BREAKING-LOOP]', 'QR CHECK STATUS', mode, payload['trx_id']))
+                CANCELLING_QR_FLAG = False
                 break
             attempt += 1
-            _Helper.dump([success, attempt])
+            # _Helper.dump([success, attempt])
             url = _Global.QR_HOST+mode.lower()+'/status-payment'
             if not _Global.QR_PROD_STATE[mode]:
                 url = 'http://apidev.mdd.co.id:28194/v1/'+mode.lower()+'/status-payment'
-            CANCEL_PARAM = {
-                'url'       : url.replace('status-payment', 'cancel-payment'),
-                'payload'   : payload,
-                'mode'      : mode
-            }
-            LOGGER.info(('SET CANCEL_PARAM', str(CANCEL_PARAM)))
+            if CANCEL_PARAM is None:
+                CANCEL_PARAM = {
+                    'url'       : url.replace('status-payment', 'cancel-payment'),
+                    'payload'   : payload,
+                    'mode'      : mode
+                }
+                LOGGER.info(('SET CANCEL_PARAM', str(CANCEL_PARAM)))
             s, r = _NetworkAccess.post_to_url(url=url, param=payload)
             if s == 200 and r['response']['code'] == 200:
                 success = check_payment_result(r['data'], mode)
@@ -288,17 +290,17 @@ def do_confirm_qr(payload, mode, serialize=True):
 
 
 def start_cancel_qr_global(trx_id):
-    global CANCELLED_TRX
-    trx_id = trx_id + '-' + _Global.TID
-    if trx_id not in CANCELLED_TRX:
-        CANCELLED_TRX.append(trx_id)
-        LOGGER.info(('CANCELLING_QR_PAYMENT', trx_id))
-    if CANCEL_PARAM is not None:
-        _Helper.get_pool().apply_async(cancel_qr_global, )
+    _Helper.get_pool().apply_async(cancel_qr_global, (trx_id, ) )
 
 
-def cancel_qr_global():
-    global CANCEL_PARAM
+def cancel_qr_global(trx_id):
+    global CANCEL_PARAM, CANCELLING_QR_FLAG
+    if not CANCELLING_QR_FLAG:
+        CANCELLING_QR_FLAG = True
+        LOGGER.info((trx_id, 'CANCELLING_QR_PAYMENT'))
+    if CANCEL_PARAM is None:
+        LOGGER.debug((trx_id, 'CANCEL_PARAM EMPTY, NO AVAIL TO REQUEST QR CANCELLATION'))
+        return
     url = CANCEL_PARAM['url']
     payload = CANCEL_PARAM['payload']
     mode = CANCEL_PARAM['mode']
