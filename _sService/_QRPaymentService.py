@@ -160,7 +160,9 @@ def do_check_qr(payload, mode, serialize=True):
         try:
             # Handle QR Payment Cancellation Realtime Abort
             if CANCELLING_QR_FLAG is True:
-                LOGGER.debug(('[BREAKING-LOOP]', 'QR CHECK STATUS', mode, payload['trx_id']))
+                LOGGER.debug(('[BREAKING-LOOP]', 'QR CHECK STATUS', mode, payload['trx_id'], str(CANCEL_PARAM)))
+                if CANCEL_PARAM is not None:
+                    cancel_qr_global(CANCEL_PARAM)
                 CANCELLING_QR_FLAG = False
                 break
             attempt += 1
@@ -290,27 +292,27 @@ def do_confirm_qr(payload, mode, serialize=True):
 
 
 def start_cancel_qr_global(trx_id):
-    _Helper.get_pool().apply_async(cancel_qr_global, (trx_id, ) )
-
-
-def cancel_qr_global(trx_id):
-    global CANCEL_PARAM, CANCELLING_QR_FLAG
+    global CANCELLING_QR_FLAG
     if not CANCELLING_QR_FLAG:
         CANCELLING_QR_FLAG = True
         LOGGER.info((trx_id, 'CANCELLING_QR_PAYMENT'))
-    if CANCEL_PARAM is None:
-        LOGGER.debug((trx_id, 'CANCEL_PARAM EMPTY, NO AVAIL TO REQUEST QR CANCELLATION'))
+    # _Helper.get_pool().apply_async(cancel_qr_global, (trx_id, ) )
+
+
+def cancel_qr_global(data):
+    if _Global.empty(data) is True:
+        LOGGER.debug(('EMPTY DATA TO REQUEST QR CANCELLATION'))
         return
-    url = CANCEL_PARAM['url']
-    payload = CANCEL_PARAM['payload']
-    mode = CANCEL_PARAM['mode']
+    url = data['url']
+    payload = data['payload']
+    mode = data['mode']
     if mode not in ['GOPAY', 'DANA', 'SHOPEEPAY']:
         LOGGER.debug((mode, 'NO AVAIL TO REQUEST QR CANCELLATION'))
         return
     try:
         s, r = _NetworkAccess.post_to_url(url=url, param=payload)
-        if s == 200 and r['response']['code'] == 200:
-            CANCEL_PARAM = None
+        # if s == 200 and r['response']['code'] == 200:
+        #     CANCEL_PARAM = None
         LOGGER.debug(mode, (str(payload), str(r)))
     except Exception as e:
         LOGGER.warning((mode, str(e)))
