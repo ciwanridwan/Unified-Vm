@@ -137,11 +137,9 @@ def start_do_check_linkaja_qr(payload):
     _Helper.get_pool().apply_async(do_check_qr, (payload, mode,))
 
 
-CANCEL_PARAM = None
-
 
 def do_check_qr(payload, mode, serialize=True):
-    global CANCEL_PARAM, CANCELLING_QR_FLAG
+    global CANCELLING_QR_FLAG
     payload = json.loads(payload)
     if mode in _Global.QR_DIRECT_PAY:
         LOGGER.warning((str(payload), mode, 'NOT_AVAILABLE'))
@@ -158,29 +156,25 @@ def do_check_qr(payload, mode, serialize=True):
     success = False
     while not success:
         try:
-            # Handle QR Payment Cancellation Realtime Abort
-            if CANCELLING_QR_FLAG is True:
-                LOGGER.debug(('[BREAKING-LOOP]', 'QR CHECK STATUS', mode, payload['trx_id'], str(CANCEL_PARAM)))
-                if CANCEL_PARAM is not None:
-                    cancel_qr_global(CANCEL_PARAM)
-                CANCELLING_QR_FLAG = False
-                break
-            attempt += 1
-            # _Helper.dump([success, attempt])
             url = _Global.QR_HOST+mode.lower()+'/status-payment'
             if not _Global.QR_PROD_STATE[mode]:
                 url = 'http://apidev.mdd.co.id:28194/v1/'+mode.lower()+'/status-payment'
-            if CANCEL_PARAM is None:
-                CANCEL_PARAM = {
+            # Handle QR Payment Cancellation Realtime Abort
+            if CANCELLING_QR_FLAG is True:
+                cancel_param = {
                     'url'       : url.replace('status-payment', 'cancel-payment'),
                     'payload'   : payload,
                     'mode'      : mode
                 }
-                LOGGER.info(('SET CANCEL_PARAM', str(CANCEL_PARAM)))
+                LOGGER.debug(('[BREAKING-LOOP]', 'QR CHECK STATUS', mode, payload['trx_id'], str(cancel_param)))
+                cancel_qr_global(cancel_param)
+                CANCELLING_QR_FLAG = False
+                break
+            attempt += 1
+            # _Helper.dump([success, attempt])
             s, r = _NetworkAccess.post_to_url(url=url, param=payload)
             if s == 200 and r['response']['code'] == 200:
                 success = check_payment_result(r['data'], mode)
-                CANCEL_PARAM = None
                 # QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|' + json.dumps(r['data']))
                 # LOGGER.debug((str(payload), str(r)))
             # else:
