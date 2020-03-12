@@ -315,7 +315,9 @@ def global_refund_balance(payload, store_only=False):
 
 
 def store_pending_refund(payload):
-    _DAO.insert_pending_refund({
+    if _Global.empty(payload) is True:
+        return
+    data = {
         'tid'           : _Global.TID,
         'trxid'         : payload['reff_no'],
         'amount'        : int(payload['amount']),
@@ -324,4 +326,5 @@ def store_pending_refund(payload):
         'channel'       : payload['channel'],
         'paymentType'   : payload['payment'],
         'remarks'       : json.dumps(payload['remarks'])
-        })
+        }
+    _DAO.insert_pending_refund(data)

@@ -495,9 +495,9 @@ def insert_pending_refund(param):
     param['id'] = _Helper.uuid()
     param['isSuccess'] = 0
     param['createdAt'] = _Helper.now()
-    sql = "INSERT INTO PendingRefund(id, tid, trxid, amount, customer, channel, refundType, paymentType, remarks, isSuccess, createdAt ) " \
-          "VALUES(:id, :tid, :trxid, :amount, :customer, :channel, :refundType, :paymentType, :remarks, :isSuccess, :createdAt )"
-    _Database.insert_update(sql=sql, parameter=param)
+    sql = " INSERT INTO PendingRefund(id, tid, trxid, amount, customer, channel, refundType, paymentType, remarks, isSuccess, createdAt ) " \
+          "VALUES(:id, :tid, :trxid, :amount, :customer, :channel, :refundType, :paymentType, :remarks, :isSuccess, :createdAt ) "
+    return _Database.insert_update(sql=sql, parameter=param)
 
 def update_pending_refund(param):
     '''
