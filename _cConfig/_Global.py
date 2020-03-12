@@ -120,6 +120,11 @@ COLOR_BACK = _ConfigParser.get_set_value('TEMPORARY', 'color^back', 'black')
 QR_HOST = _ConfigParser.get_set_value('QR', 'qr^host', 'http://apiv2.mdd.co.id:10107/v1/')
 QR_TOKEN = _ConfigParser.get_set_value('QR', 'qr^token', 'e6f092a0fa88d9cac8dac3d2162f1450')
 QR_MID = _ConfigParser.get_set_value('QR', 'qr^mid', '000972721511382bf739669cce165808')
+STORE_QR_TO_LOCAL = True if _ConfigParser.get_set_value('QR', 'store^local', '1') == '1' else False
+QR_STORE_PATH = os.path.join(sys.path[0], '_qQr')
+if not os.path.exists(QR_STORE_PATH):
+    os.makedirs(QR_STORE_PATH)
+
 
 QR_NON_DIRECT_PAY = ['GOPAY', 'DANA', 'LINKAJA', 'SHOPEEPAY']
 QR_DIRECT_PAY = ['OVO']
@@ -335,7 +340,7 @@ if not os.path.exists(JOB_PATH):
     os.makedirs(JOB_PATH)
 
 
-def log_request(name='', url='', payload=''):
+def store_request_to_job(name='', url='', payload=''):
     if empty(name) is True or empty(url) is True or empty(payload) is True:
         print('pyt: Missing Parameter in Logging Request..! ' + _Helper.time_string() + ' : ' + _Helper.whoami())
         return
@@ -684,7 +689,7 @@ def upload_admin_access(aid, username, cash_collection='', edc_settlement='', ca
         if status == 200 and response['result'] == 'OK':
             return True
         else:
-            log_request(name=_Helper.whoami(), url=BACKEND_URL + 'sync/access-report', payload=param)
+            store_request_to_job(name=_Helper.whoami(), url=BACKEND_URL + 'sync/access-report', payload=param)
             return False
     except Exception as e:
         LOGGER.warning((e))

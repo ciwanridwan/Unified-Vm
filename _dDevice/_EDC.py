@@ -695,7 +695,7 @@ def upload_edc_settlement_data(param):
         if status == 200 and response['result'] == 'OK':
             LOGGER.info((status, response))
         else:
-            _Global.log_request(name=_Helper.whoami(), url=_Global.BACKEND_URL + 'settlement/mark-direct', payload=param)
+            _Global.store_request_to_job(name=_Helper.whoami(), url=_Global.BACKEND_URL + 'settlement/mark-direct', payload=param)
     except Exception as e:
         LOGGER.warning((e))
 

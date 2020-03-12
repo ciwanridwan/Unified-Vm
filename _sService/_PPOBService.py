@@ -305,7 +305,7 @@ def global_refund_balance(payload, store_only=False):
             # mode: refundMode,
             # payment: details.payment
             # store_pending_refund(payload)
-            _Global.log_request(name=_Helper.whoami(), url=url, payload=payload)
+            _Global.store_request_to_job(name=_Helper.whoami(), url=url, payload=payload)
             if not store_only:
                 PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|ERROR')
         LOGGER.debug((str(payload), str(r)))

@@ -89,6 +89,8 @@ def do_get_qr(payload, mode, serialize=True):
         if s == 200 and r['response']['code'] == 200:
             if '10107' in url:
                 r['data']['qr'] = r['data']['qr'].replace('https', 'http')
+            if _Global.STORE_QR_TO_LOCAL is True:
+                r['data']['qr'] = serialize_qr(r['data']['qr'], payload['trx_id'])
             QR_SIGNDLER.SIGNAL_GET_QR.emit('GET_QR|'+mode+'|' + json.dumps(r['data']))
             if mode in ['LINKAJA', 'DANA', 'SHOPEEPAY']:
                 param['refference'] = param['trx_id']
@@ -101,6 +103,15 @@ def do_get_qr(payload, mode, serialize=True):
     except Exception as e:
         LOGGER.warning((str(param), str(e)))
         QR_SIGNDLER.SIGNAL_GET_QR.emit('GET_QR|'+mode+'|ERROR')
+
+
+def serialize_qr(qr_url, name, ext='.png'):
+    if ext not in name:
+        name = name+ext
+    store, new_source = _NetworkAccess.item_download(qr_url, _Global.QR_STORE_PATH, name)
+    if store is True:
+        qr_url = '../_qQr/'+new_source
+    return qr_url
 
 
 def handle_check_process(param, mode):
@@ -310,4 +321,4 @@ def cancel_qr_global(data):
         LOGGER.debug(mode, (str(payload), str(r)))
     except Exception as e:
         LOGGER.warning((mode, str(e)))
-        _Global.log_request(name=_Helper.whoami(), url=url, payload=payload)
+        _Global.store_request_to_job(name=_Helper.whoami(), url=url, payload=payload)

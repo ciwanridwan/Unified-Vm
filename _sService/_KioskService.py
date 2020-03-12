@@ -723,7 +723,7 @@ def post_cash_collection(l, t):
             LOGGER.info(("SUCCESS", response))
         else:
             # LOG REQUEST
-            _Global.log_request(name=_Helper.whoami(), url=_Global.BACKEND_URL + 'collect/cash', payload=param)
+            _Global.store_request_to_job(name=_Helper.whoami(), url=_Global.BACKEND_URL + 'collect/cash', payload=param)
     except Exception as e:
         LOGGER.warning(("FAILED", str(e)))
 
@@ -1219,7 +1219,7 @@ def house_keeping(age_month=1, mode='DATA_FILES'):
                             key='createdAt',
                             age_month=age_month)
     expired = time.time() - (age_month * 30 * 24 * 60 * 60)
-    paths = ['_pPDF', '_lLog']
+    paths = ['_pPDF', '_lLog', '_qQr']
     LOGGER.info(('START FILES HOUSE_KEEPING', paths, expired, mode, _Helper.time_string()))
     print('pyt: START FILES HOUSE_KEEPING ' + str(paths) + ' ' + str(expired) + ' ' + mode + ' ' + _Helper.time_string())
     for path in paths:
