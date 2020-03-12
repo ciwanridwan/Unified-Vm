@@ -137,7 +137,11 @@ def start_do_check_linkaja_qr(payload):
     _Helper.get_pool().apply_async(do_check_qr, (payload, mode,))
 
 
+CANCEL_PARAM = None
+
+
 def do_check_qr(payload, mode, serialize=True):
+    global CANCEL_PARAM
     payload = json.loads(payload)
     if mode in _Global.QR_DIRECT_PAY:
         LOGGER.warning((str(payload), mode, 'NOT_AVAILABLE'))
@@ -163,9 +167,15 @@ def do_check_qr(payload, mode, serialize=True):
             url = _Global.QR_HOST+mode.lower()+'/status-payment'
             if not _Global.QR_PROD_STATE[mode]:
                 url = 'http://apidev.mdd.co.id:28194/v1/'+mode.lower()+'/status-payment'
+            CANCEL_PARAM = {
+                'url'       : url.replace('status-payment', 'cancel-payment'),
+                'payload'   : payload,
+                'mode'      : mode
+            }
             s, r = _NetworkAccess.post_to_url(url=url, param=payload)
             if s == 200 and r['response']['code'] == 200:
                 success = check_payment_result(r['data'], mode)
+                CANCEL_PARAM = None
                 # QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|' + json.dumps(r['data']))
                 # LOGGER.debug((str(payload), str(r)))
             # else:
@@ -282,3 +292,23 @@ def start_cancel_qr_global(trx_id):
     if trx_id not in CANCELLED_TRX:
         CANCELLED_TRX.append(trx_id)
         LOGGER.info(('CANCELLING_QR_PAYMENT', trx_id))
+    if CANCEL_PARAM is not None:
+        _Helper.get_pool().apply_async(cancel_qr_global, )
+
+
+def cancel_qr_global():
+    global CANCEL_PARAM
+    url = CANCEL_PARAM['url']
+    payload = CANCEL_PARAM['payload']
+    mode = CANCEL_PARAM['mode']
+    if mode not in ['GOPAY', 'DANA', 'SHOPEEPAY']:
+        LOGGER.debug((mode, 'NO AVAIL TO REQUEST QR CANCELLATION'))
+        return
+    try:
+        s, r = _NetworkAccess.post_to_url(url=url, param=payload)
+        if s == 200 and r['response']['code'] == 200:
+            CANCEL_PARAM = None
+        LOGGER.debug(mode, (str(payload), str(r)))
+    except Exception as e:
+        LOGGER.warning((mode, str(e)))
+        _Global.log_request(name=_Helper.whoami(), url=url, payload=payload)
