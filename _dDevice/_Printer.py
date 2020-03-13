@@ -6,12 +6,12 @@ import sys
 # import win32print, win32api, win32con
 # from escpos.connections import getSerialPrinter
 from _tTools import _Helper
-from _cConfig import _Global
+from _cConfig import _Common
 import subprocess
 
 LOGGER = logging.getLogger()
-PRINTER_PORT = _Global.PRINTER_PORT
-PRINTER_BAUDRATE = _Global.PRINTER_BAUDRATE
+PRINTER_PORT = _Common.PRINTER_PORT
+PRINTER_BAUDRATE = _Common.PRINTER_BAUDRATE
 
 PRINTER = dict(PORT=PRINTER_PORT, BAUDRATE=int(PRINTER_BAUDRATE), STATUS=True if PRINTER_PORT is not None else False)
 _PRINTER = None
@@ -68,11 +68,11 @@ def default_print(path):
         #                              + DEFAULT_PRINTER +'"' + PDF_FILE, '.', 0)
         _print = subprocess.Popen([GSPRINT_PATH, PDF_FILE], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         result, error = _print.communicate()
-        _Global.update_receipt_count()
+        _Common.update_receipt_count()
         LOGGER.debug(('[DEBUG] default print : ', str(result), str(error)))
         return result, error
     except Exception as e:
-        _Global.PRINTER_ERROR = 'FAILED_TO_EXECUTE_DEFAULT_PRINT'
+        _Common.PRINTER_ERROR = 'FAILED_TO_EXECUTE_DEFAULT_PRINT'
         LOGGER.warning(('[ERROR] default print : ', e))
         return '[ERROR] {}'.format(str(e))
 
@@ -90,11 +90,11 @@ def do_printout(path):
         #                              + DEFAULT_PRINTER +'"' + PDF_FILE, '.', 0)
         _print = subprocess.Popen(_command, shell=True, stdout=subprocess.PIPE)
         _result = _print.communicate()[0].decode('utf-8').strip().split("\r\n")
-        _Global.update_receipt_count()
+        _Common.update_receipt_count()
         # LOGGER.debug(('[DEBUG] default print : ', _result))
         return _result
     except Exception as e:
-        _Global.PRINTER_ERROR = 'FAILED_TO_EXECUTE_do_printout'
+        _Common.PRINTER_ERROR = 'FAILED_TO_EXECUTE_do_printout'
         LOGGER.warning(('[ERROR] default print : ', e))
         return '[ERROR] {}'.format(str(e))
 

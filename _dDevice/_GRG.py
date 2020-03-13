@@ -5,7 +5,7 @@ from PyQt5.QtCore import QObject, pyqtSignal
 import logging
 from _dDAO import _DAO
 import json
-from _cConfig import _Global
+from _cConfig import _Common
 from _tTools import _Helper
 from time import sleep
 import sys
@@ -15,7 +15,7 @@ import subprocess
 
 LOGGER = logging.getLogger()
 COLLECTED_CASH = 0
-TEST_MODE = _Global.TEST_MODE
+TEST_MODE = _Common.TEST_MODE
 
 CONFIG_GRG = os.path.join(sys.path[0], '_lLib', 'grg', 'GRGDTATM_CommCfg.ini')
 EXEC_GRG = os.path.join(sys.path[0], '_lLib', 'grg', 'bill.exe')
@@ -32,7 +32,7 @@ GRG = {
     "GET_STATE": "507"
 }
 
-GRG_PORT = _Global.GRG_PORT
+GRG_PORT = _Common.GRG_PORT
 
 
 class GRGSignalHandler(QObject):
@@ -78,14 +78,14 @@ def init_grg():
     global OPEN_STATUS
     if GRG_PORT is None:
         LOGGER.debug(("init_grg port : ", GRG_PORT))
-        _Global.BILL_ERROR = 'GRG_PORT_NOT_DEFINED'
+        _Common.BILL_ERROR = 'GRG_PORT_NOT_DEFINED'
         return False
     param = GRG["SET"] + '|' + GRG_PORT.replace('COM', '')
     response, result = _Command.send_request(param=param, output=None)
     if response == 0:
         OPEN_STATUS = True
     else:
-         _Global.BILL_ERROR = 'FAILED_INIT_GRG'
+         _Common.BILL_ERROR = 'FAILED_INIT_GRG'
     LOGGER.info(("Starting GRG in Standby_Mode : ", str(OPEN_STATUS)))
     GRG_SIGNDLER.SIGNAL_GRG_INIT.emit('INIT_GRG|DONE')
     return OPEN_STATUS
@@ -171,7 +171,7 @@ def start_receive_note():
             _Helper.dump([_response, _result])
             if _response == 0 and KEY_RECEIVED in _result:
                 cash_in = _result.split('|')[1].split('=')[1]
-                _Global.log_to_config('GRG', 'last^money^inserted', str(cash_in))
+                _Common.log_to_config('GRG', 'last^money^inserted', str(cash_in))
                 if cash_in in SMALL_NOTES_NOT_ALLOWED:
                     sleep(.25)
                     param = GRG["REJECT"] + '|'
@@ -208,20 +208,20 @@ def start_receive_note():
                 #     param = GRG["RECEIVE"] + '|'
                 #     _Command.send_request(param=param, output=None)
             if TIMEOUT_BAD_NOTES in _result or UNKNOWN_ITEM in _result:
-                _Global.log_to_config('GRG', 'last^money^inserted', 'UNKNOWN')
+                _Common.log_to_config('GRG', 'last^money^inserted', 'UNKNOWN')
                 if TIMEOUT_BAD_NOTES in _result:
                     _Command.send_request(param=GRG["STOP"]+'|', output=None)
                 GRG_SIGNDLER.SIGNAL_GRG_RECEIVE.emit('RECEIVE_GRG|BAD_NOTES')
                 break
             if CODE_JAM in _result:
-                _Global.log_to_config('GRG', 'last^money^inserted', 'UNKNOWN')
-                _Global.BILL_ERROR = 'GRG_DEVICE_JAM'
+                _Common.log_to_config('GRG', 'last^money^inserted', 'UNKNOWN')
+                _Common.BILL_ERROR = 'GRG_DEVICE_JAM'
                 GRG_SIGNDLER.SIGNAL_GRG_RECEIVE.emit('RECEIVE_GRG|JAMMED')
                 LOGGER.warning(('GRG Jammed Detected :', json.dumps({'HISTORY': CASH_HISTORY,
                                                                      'COLLECTED': COLLECTED_CASH,
                                                                      'TARGET': DIRECT_PRICE_AMOUNT})))
                 # Call API To Force Update Into Server
-                _Global.upload_device_state('mei', _Global.BILL_ERROR)
+                _Common.upload_device_state('mei', _Common.BILL_ERROR)
                 sleep(1)
                 init_grg()
                 break
@@ -235,14 +235,14 @@ def start_receive_note():
                 break
             sleep(1)
     except Exception as e:
-        _Global.log_to_config('GRG', 'last^money^inserted', 'UNKNOWN')
-        _Global.BILL_ERROR = 'FAILED_RECEIVE_GRG'
+        _Common.log_to_config('GRG', 'last^money^inserted', 'UNKNOWN')
+        _Common.BILL_ERROR = 'FAILED_RECEIVE_GRG'
         GRG_SIGNDLER.SIGNAL_GRG_RECEIVE.emit('RECEIVE_GRG|ERROR')
         LOGGER.warning(e)
 
 
 def is_exceed_payment(target, value_in, current_value):
-    if _Global.ALLOW_EXCEED_PAYMENT is True:
+    if _Common.ALLOW_EXCEED_PAYMENT is True:
         return False
     actual = int(value_in) + int(current_value)
     if actual > int(target):
@@ -275,7 +275,7 @@ def stop_receive_note():
         COLLECTED_CASH = 0
         CASH_HISTORY = []
     except Exception as e:
-        _Global.BILL_ERROR = 'FAILED_STOP_GRG'
+        _Common.BILL_ERROR = 'FAILED_STOP_GRG'
         GRG_SIGNDLER.SIGNAL_GRG_STOP.emit('STOP_GRG|ERROR')
         LOGGER.warning(e)
 
@@ -295,7 +295,7 @@ def get_status_grg():
             GRG_SIGNDLER.SIGNAL_GRG_STATUS.emit('STATUS_GRG|ERROR')
             LOGGER.warning(('get_status_grg', str(response), str(result)))
     except Exception as e:
-        _Global.BILL_ERROR = 'FAILED_STATUS_GRG'
+        _Common.BILL_ERROR = 'FAILED_STATUS_GRG'
         GRG_SIGNDLER.SIGNAL_GRG_STATUS.emit('STATUS_GRG|ERROR')
         LOGGER.warning(e)
 
@@ -308,7 +308,7 @@ def log_book_cash(pid, amount):
     param = {
         'csid': pid[::-1],
         'pid': pid,
-        'tid': _Global.TID,
+        'tid': _Common.TID,
         'amount': amount
     }
     try:

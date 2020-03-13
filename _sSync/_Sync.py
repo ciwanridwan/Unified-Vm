@@ -4,7 +4,7 @@ import sys
 from _tTools import _Helper
 from _dDAO import _DAO
 from time import sleep
-from _cConfig import _ConfigParser, _Global
+from _cConfig import _ConfigParser, _Common
 from _nNetwork import _NetworkAccess
 import logging
 from _sService import _KioskService
@@ -39,14 +39,14 @@ def check_connection(url, param):
             status, response = _NetworkAccess.get_from_url(url=url)
             if status == 200:
                 print('pyt: check_connection ' + _Helper.time_string() + ' Connected To Backend')
-                _Global.KIOSK_STATUS = 'ONLINE'
+                _Common.KIOSK_STATUS = 'ONLINE'
             else:
                 print('pyt: check_connection ' + _Helper.time_string() + ' Disconnected From Backend')
-                _Global.KIOSK_STATUS = 'OFFLINE'
+                _Common.KIOSK_STATUS = 'OFFLINE'
             _KioskService.LAST_SYNC = _Helper.time_string()
             if modulus == 1:
                 print('pyt: check_connection ' + _Helper.time_string() + ' Setting Initiation From Backend')
-                s, r = _NetworkAccess.post_to_url(url=_Global.BACKEND_URL + 'get/setting', param=SETTING_PARAM)
+                s, r = _NetworkAccess.post_to_url(url=_Common.BACKEND_URL + 'get/setting', param=SETTING_PARAM)
                 _KioskService.update_kiosk_status(s, r)
                 # start_sync_machine_status()
                 # _KioskService.kiosk_status()
@@ -80,7 +80,7 @@ def start_sync_machine_status():
 
 
 def sync_machine_status():
-    __url = _Global.BACKEND_URL + 'kiosk/status'
+    __url = _Common.BACKEND_URL + 'kiosk/status'
     __param = dict()
     while True:
         try:
@@ -95,7 +95,7 @@ def sync_machine_status():
         except Exception as e:
             LOGGER.warning(e)
         finally:
-            if _Helper.whoami() not in _Global.ALLOWED_SYNC_TASK:
+            if _Helper.whoami() not in _Common.ALLOWED_SYNC_TASK:
                 LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
                 break
         sleep(25.5)
@@ -107,15 +107,15 @@ def start_do_pending_job():
 
 def do_pending_job():
     while True:
-        pending_jobs = [f for f in os.listdir(_Global.JOB_PATH) if f.endswith('.request')]
+        pending_jobs = [f for f in os.listdir(_Common.JOB_PATH) if f.endswith('.request')]
         print('pyt: count pending_jobs : ' + str(len(pending_jobs)))
         LOGGER.info(('count', len(pending_jobs)))
         if len(pending_jobs) > 0:
             try:
                 for p in pending_jobs:
-                    jobs_path = os.path.join(_Global.JOB_PATH, p)
+                    jobs_path = os.path.join(_Common.JOB_PATH, p)
                     content = open(jobs_path, 'r').read().strip()
-                    if len(_Global.clean_white_space(content)) == 0:
+                    if len(_Common.clean_white_space(content)) == 0:
                         os.remove(jobs_path)
                         continue
                     job = json.loads(content)
@@ -196,7 +196,7 @@ def start_sync_topup_records():
 
 
 def sync_topup_records():
-    url = _Global.BACKEND_URL + 'sync/topup-records'
+    url = _Common.BACKEND_URL + 'sync/topup-records'
     _table_ = 'TopUpRecords'
     while True:
         try:
@@ -216,7 +216,7 @@ def sync_topup_records():
         except Exception as e:
             LOGGER.warning(e)
         finally:
-            if _Helper.whoami() not in _Global.ALLOWED_SYNC_TASK:
+            if _Helper.whoami() not in _Common.ALLOWED_SYNC_TASK:
                 LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
                 break
         sleep(44.5)
@@ -227,7 +227,7 @@ def start_sync_data_transaction():
 
 
 def sync_data_transaction():
-    url = _Global.BACKEND_URL + 'sync/transaction-topup'
+    url = _Common.BACKEND_URL + 'sync/transaction-topup'
     _table_ = 'Transactions'
     while True:
         try:
@@ -247,7 +247,7 @@ def sync_data_transaction():
         except Exception as e:
             LOGGER.warning(e)
         finally:
-            if _Helper.whoami() not in _Global.ALLOWED_SYNC_TASK:
+            if _Helper.whoami() not in _Common.ALLOWED_SYNC_TASK:
                 LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
                 break
         sleep(99.9)
@@ -258,7 +258,7 @@ def start_sync_data_transaction_failure():
 
 
 def sync_data_transaction_failure():
-    url = _Global.BACKEND_URL + 'sync/transaction-failure'
+    url = _Common.BACKEND_URL + 'sync/transaction-failure'
     _table_ = 'TransactionFailure'
     while True:
         try:
@@ -277,7 +277,7 @@ def sync_data_transaction_failure():
         except Exception as e:
             LOGGER.warning(e)
         finally:
-            if _Helper.whoami() not in _Global.ALLOWED_SYNC_TASK:
+            if _Helper.whoami() not in _Common.ALLOWED_SYNC_TASK:
                 LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
                 break
         sleep(99.9)
@@ -288,7 +288,7 @@ def start_sync_product_data():
 
 
 def sync_product_data():
-    url = _Global.BACKEND_URL + 'sync/product'
+    url = _Common.BACKEND_URL + 'sync/product'
     _table_ = 'Product'
     while True:
         try:
@@ -307,7 +307,7 @@ def sync_product_data():
         except Exception as e:
             LOGGER.warning(e)
         finally:
-            if _Helper.whoami() not in _Global.ALLOWED_SYNC_TASK:
+            if _Helper.whoami() not in _Common.ALLOWED_SYNC_TASK:
                 LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
                 break
         sleep(55.5)
@@ -318,7 +318,7 @@ def start_sync_sam_audit():
 
 
 def sync_sam_audit():
-    url = _Global.BACKEND_URL + 'sync/sam-audit'
+    url = _Common.BACKEND_URL + 'sync/sam-audit'
     _table_ = 'SAMAudit'
     while True:
         try:
@@ -337,7 +337,7 @@ def sync_sam_audit():
         except Exception as e:
             LOGGER.warning(e)
         finally:
-            if _Helper.whoami() not in _Global.ALLOWED_SYNC_TASK:
+            if _Helper.whoami() not in _Common.ALLOWED_SYNC_TASK:
                 LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
                 break
         sleep(77.7)
@@ -349,7 +349,7 @@ def start_sync_settlement_bni():
 
 
 def sync_settlement_data(bank):
-    _url = _Global.SMT_CONFIG['full_url']
+    _url = _Common.SMT_CONFIG['full_url']
     # Do BNI Settlement Creation Every +- 15 Minutes
     _SettlementService.start_do_bni_topup_settlement()
     _table_ = 'Settlement'
@@ -362,15 +362,15 @@ def sync_settlement_data(bank):
                     print('pyt: sync_settlement_data ' + _Helper.time_string() + ' Re-Sync Settlement Data...')
                     for s in settlements:
                         _param = {
-                            'mid': _Global.SMT_CONFIG['mid'],
-                            'token': _Global.SMT_CONFIG['token'],
-                            'tid': 'MDD-VM'+_Global.TID,
+                            'mid': _Common.SMT_CONFIG['mid'],
+                            'token': _Common.SMT_CONFIG['token'],
+                            'tid': 'MDD-VM'+_Common.TID,
                             'path_file': os.path.join(sys.path[0], '_rRemoteFiles', s['filename']),
                             'filename': s['filename'],
                             'row': s['row'],
                             'amount': s['amount'],
                             'bank': bank,
-                            'bid': _Global.BID[bank],
+                            'bid': _Common.BID[bank],
                             'settlement_created_at': datetime.fromtimestamp(s['createdAt']).strftime('%Y-%m-%d %H:%M:%S')
                         }
                         status, response = _NetworkAccess.post_to_url(url=_url, param=_param)
@@ -382,7 +382,7 @@ def sync_settlement_data(bank):
         except Exception as e:
             LOGGER.warning(e)
         finally:
-            if _Helper.whoami() not in _Global.ALLOWED_SYNC_TASK:
+            if _Helper.whoami() not in _Common.ALLOWED_SYNC_TASK:
                 LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
                 break
         sleep(888.8)
@@ -393,7 +393,7 @@ def start_sync_task():
 
 
 def sync_task():
-    _url = _Global.BACKEND_URL + 'task/check'
+    _url = _Common.BACKEND_URL + 'task/check'
     while True:
         try:
             if _Helper.is_online(source='sync_task') is True and IDLE_MODE is True:
@@ -408,7 +408,7 @@ def sync_task():
         except Exception as e:
             LOGGER.warning(e)
         finally:
-            if _Helper.whoami() not in _Global.ALLOWED_SYNC_TASK:
+            if _Helper.whoami() not in _Common.ALLOWED_SYNC_TASK:
                 LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
                 break
         sleep(33.3)
@@ -419,7 +419,7 @@ def start_sync_pending_refund():
 
 
 def sync_pending_refund():
-    _url = _Global.BACKEND_URL + 'refund/global'
+    _url = _Common.BACKEND_URL + 'refund/global'
     while True:
         try:
             pendings = _DAO.get_pending_refund()
@@ -449,7 +449,7 @@ def sync_pending_refund():
         except Exception as e:
             LOGGER.warning(e)
         finally:
-            if _Helper.whoami() not in _Global.ALLOWED_SYNC_TASK:
+            if _Helper.whoami() not in _Common.ALLOWED_SYNC_TASK:
                 LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
                 break
         sleep(15.15)
@@ -510,7 +510,7 @@ def handle_tasks(tasks):
             update_task(task, result)
         if 'SAM_TO_SLOT_' in task['taskName']:
             _slot = task['taskName'][-1]
-            result = _Global.sam_to_slot(_slot)
+            result = _Common.sam_to_slot(_slot)
             update_task(task, result)
         if task['taskName'] == 'APP_UPDATE':
             result = _UpdateAppService.start_do_update()
@@ -525,7 +525,7 @@ def handle_tasks(tasks):
             update_task(task, result)
         if task['taskName'] == 'UPDATE_KIOSK':
             update_task(task)
-            _url = _Global.BACKEND_URL + 'get/setting'
+            _url = _Common.BACKEND_URL + 'get/setting'
             LOGGER.info((_url, str(SETTING_PARAM)))
             s, r = _NetworkAccess.post_to_url(url=_url, param=SETTING_PARAM)
             # if s == 200 and r['result'] == 'OK':
@@ -540,14 +540,14 @@ def handle_tasks(tasks):
             update_task(task, result)
         if task['taskName'] == 'REFRESH_PPOB_PRODUCT':
             result = 'TRIGGERED_INTO_SYSTEM'
-            _Global.log_to_temp_config('last^get^ppob', '0')
+            _Common.log_to_temp_config('last^get^ppob', '0')
             update_task(task, result)
 
     # TODO Add Another TaskType
 
 
 def update_task(task, result='TRIGGERED_TO_SYSTEM'):
-    _url = _Global.BACKEND_URL + 'task/finish'
+    _url = _Common.BACKEND_URL + 'task/finish'
     task['result'] = result
     while True:
         status, response = _NetworkAccess.post_to_url(url=_url, param=task)
@@ -561,7 +561,7 @@ def start_sync_product_stock():
 
 
 def sync_product_stock():
-    _url = _Global.BACKEND_URL + 'get/product-stock'
+    _url = _Common.BACKEND_URL + 'get/product-stock'
     if _Helper.is_online(source='start_sync_product_stock') is True:
         s, r = _NetworkAccess.get_from_url(url=_url)
         if s == 200 and r['result'] == 'OK':
@@ -594,14 +594,14 @@ def start_sync_topup_amount():
 
 
 def sync_topup_amount():
-    _url = _Global.BACKEND_URL + 'get/topup-amount'
+    _url = _Common.BACKEND_URL + 'get/topup-amount'
     while True:
         if _Helper.is_online(source='sync_topup_amount') is True and IDLE_MODE is True:
             s, r = _NetworkAccess.get_from_url(url=_url)
             if s == 200 and r['result'] == 'OK':
-                _Global.TOPUP_AMOUNT_SETTING = r['data']
-                _Global.store_to_temp_data('topup-amount-setting', json.dumps(r['data']))
-        if _Helper.whoami() not in _Global.ALLOWED_SYNC_TASK:
+                _Common.TOPUP_AMOUNT_SETTING = r['data']
+                _Common.store_to_temp_data('topup-amount-setting', json.dumps(r['data']))
+        if _Helper.whoami() not in _Common.ALLOWED_SYNC_TASK:
             LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
             break
         sleep(333.3)
@@ -624,17 +624,17 @@ def sync_topup_amount():
 #             if provider == topups[x]['name']:
 #                 _new_item['name'] = provider
 #                 if topups[x]['sell_price'] == list_amount[0]:
-#                     if _Global.TID == '110322':
+#                     if _Common.TID == '110322':
 #                         _new_item['bigDenom'] = 270
 #                     else:
 #                         _new_item['bigDenom'] = topups[x]['sell_price']
 #                 if topups[x]['sell_price'] == list_amount[1]:
-#                     if _Global.TID == '110322':
+#                     if _Common.TID == '110322':
 #                         _new_item['smallDenom'] = 170
 #                     else:
 #                         _new_item['smallDenom'] = topups[x]['sell_price']
 #                 if topups[x]['sell_price'] == list_amount[2]:
-#                     if _Global.TID == '110322':
+#                     if _Common.TID == '110322':
 #                         _new_item['tinyDenom'] = 17
 #                     else:
 #                         _new_item['tinyDenom'] = topups[x]['sell_price']
@@ -660,17 +660,17 @@ def get_amount(idx, listx):
 #     while True:
 #         if IDLE_MODE is True and _Tools.is_online(source='automate_topup_bni') is True:
 #             _QPROX.get_bni_wallet_status()
-#             if _Global.BNI_SAM_1_WALLET <= _Global.MINIMUM_AMOUNT:
+#             if _Common.BNI_SAM_1_WALLET <= _Common.MINIMUM_AMOUNT:
 #                 _TopupService.TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_1')
 #                 _TopupService.do_topup_bni(slot=1)
-#                 LOGGER.debug(('manual_topup_bni 1', str(_Global.BNI_SAM_1_WALLET), 'swap_to_slot 2'))
-#                 _Global.BNI_ACTIVE = 2
-#             if _Global.BNI_SAM_2_WALLET <= _Global.MINIMUM_AMOUNT:
+#                 LOGGER.debug(('manual_topup_bni 1', str(_Common.BNI_SAM_1_WALLET), 'swap_to_slot 2'))
+#                 _Common.BNI_ACTIVE = 2
+#             if _Common.BNI_SAM_2_WALLET <= _Common.MINIMUM_AMOUNT:
 #                 _TopupService.TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_2')
 #                 _TopupService.do_topup_bni(slot=2)
-#                 LOGGER.debug(('manual_topup_bni 2', str(_Global.BNI_SAM_2_WALLET), 'swap_to_slot 1'))
-#                 _Global.BNI_ACTIVE = 1
-#             _Global.save_sam_config()
+#                 LOGGER.debug(('manual_topup_bni 2', str(_Common.BNI_SAM_2_WALLET), 'swap_to_slot 1'))
+#                 _Common.BNI_ACTIVE = 1
+#             _Common.save_sam_config()
 #         sleep(900)
 
 
@@ -680,21 +680,21 @@ def get_amount(idx, listx):
 #
 # def manual_trigger_topup_bni():
 #     while True:
-#         if _Global.TRIGGER_MANUAL_TOPUP is True:
-#             _Global.TRIGGER_MANUAL_TOPUP = False
+#         if _Common.TRIGGER_MANUAL_TOPUP is True:
+#             _Common.TRIGGER_MANUAL_TOPUP = False
 #             if IDLE_MODE is True:
 #                 _QPROX.get_bni_wallet_status()
-#             if _Global.BNI_SAM_1_WALLET <= _Global.MINIMUM_AMOUNT:
+#             if _Common.BNI_SAM_1_WALLET <= _Common.MINIMUM_AMOUNT:
 #                 _TopupService.TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_1')
 #                 _TopupService.do_topup_bni(slot=1)
-#                 LOGGER.debug(('manual_topup_bni 1', str(_Global.BNI_SAM_1_WALLET), 'swap_to_slot 2'))
-#                 _Global.BNI_ACTIVE = 2
-#             if _Global.BNI_SAM_2_WALLET <= _Global.MINIMUM_AMOUNT:
+#                 LOGGER.debug(('manual_topup_bni 1', str(_Common.BNI_SAM_1_WALLET), 'swap_to_slot 2'))
+#                 _Common.BNI_ACTIVE = 2
+#             if _Common.BNI_SAM_2_WALLET <= _Common.MINIMUM_AMOUNT:
 #                 _TopupService.TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_2')
 #                 _TopupService.do_topup_bni(slot=2)
-#                 LOGGER.debug(('manual_topup_bni 2', str(_Global.BNI_SAM_2_WALLET), 'swap_to_slot 1'))
-#                 _Global.BNI_ACTIVE = 1
-#             _Global.save_sam_config()
+#                 LOGGER.debug(('manual_topup_bni 2', str(_Common.BNI_SAM_2_WALLET), 'swap_to_slot 1'))
+#                 _Common.BNI_ACTIVE = 1
+#             _Common.save_sam_config()
 #         sleep(3.3)
 
 
@@ -704,21 +704,21 @@ def start_do_bni_topup_by_trx():
 
 # TODO Add This Trigger In Every Topup BNI Trx
 def do_bni_topup_by_trx():
-    if _Global.BNI_SAM_1_WALLET <= _Global.MINIMUM_AMOUNT:
+    if _Common.BNI_SAM_1_WALLET <= _Common.MINIMUM_AMOUNT:
         _TopupService.TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_1')
         _TopupService.do_topup_bni(slot=1)
-        if not _Global.BNI_SINGLE_SAM:
-            LOGGER.debug(('topup_sam_bni 1', str(_Global.BNI_SAM_1_WALLET), str(_Global.MINIMUM_AMOUNT), '1 >>> 2'))
-            _Global.BNI_ACTIVE = 2
+        if not _Common.BNI_SINGLE_SAM:
+            LOGGER.debug(('topup_sam_bni 1', str(_Common.BNI_SAM_1_WALLET), str(_Common.MINIMUM_AMOUNT), '1 >>> 2'))
+            _Common.BNI_ACTIVE = 2
         else:
-            LOGGER.debug(('topup_sam_bni 1', str(_Global.BNI_SAM_1_WALLET), str(_Global.MINIMUM_AMOUNT)))
-    elif _Global.BNI_SAM_2_WALLET <= _Global.MINIMUM_AMOUNT:
+            LOGGER.debug(('topup_sam_bni 1', str(_Common.BNI_SAM_1_WALLET), str(_Common.MINIMUM_AMOUNT)))
+    elif _Common.BNI_SAM_2_WALLET <= _Common.MINIMUM_AMOUNT:
         _TopupService.TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_2')
         _TopupService.do_topup_bni(slot=2)
-        if not _Global.BNI_SINGLE_SAM:
-            LOGGER.debug(('topup_sam_bni 2', str(_Global.BNI_SAM_2_WALLET), str(_Global.MINIMUM_AMOUNT), '2 >>> 1'))
-            _Global.BNI_ACTIVE = 1
+        if not _Common.BNI_SINGLE_SAM:
+            LOGGER.debug(('topup_sam_bni 2', str(_Common.BNI_SAM_2_WALLET), str(_Common.MINIMUM_AMOUNT), '2 >>> 1'))
+            _Common.BNI_ACTIVE = 1
         else:
-            LOGGER.debug(('topup_sam_bni 2', str(_Global.BNI_SAM_2_WALLET), str(_Global.MINIMUM_AMOUNT)))
-    _Global.save_sam_config()
+            LOGGER.debug(('topup_sam_bni 2', str(_Common.BNI_SAM_2_WALLET), str(_Common.MINIMUM_AMOUNT)))
+    _Common.save_sam_config()
 

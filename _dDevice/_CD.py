@@ -1,7 +1,7 @@
 __author__ = 'fitrah.wahyudi.imam@gmail.com'
 
 
-from _cConfig import _ConfigParser, _Global
+from _cConfig import _ConfigParser, _Common
 from _cCommand import _Command
 from PyQt5.QtCore import QObject, pyqtSignal
 import logging
@@ -14,9 +14,9 @@ import json
 
 
 LOGGER = logging.getLogger()
-CD_PORT1 = _Global.CD_PORT1
-CD_PORT2 = _Global.CD_PORT2
-CD_PORT3 = _Global.CD_PORT3
+CD_PORT1 = _Common.CD_PORT1
+CD_PORT2 = _Common.CD_PORT2
+CD_PORT3 = _Common.CD_PORT3
 CD_MID = ''
 CD_TID = ''
 
@@ -33,7 +33,7 @@ CD = {
     "STOP": "105"
 }
 
-CD_PORT_LIST = _Global.CD_PORT_LIST
+CD_PORT_LIST = _Common.CD_PORT_LIST
 
 class CDSignalHandler(QObject):
     __qualname__ = 'CDSignalHandler'
@@ -67,7 +67,7 @@ def reinit_v2_config():
 def open_card_disp():
     if CD_PORT1 is None:
         LOGGER.debug(("[ERROR] open_card_disp port : ", CD_PORT1))
-        _Global.CD1_ERROR = 'PORT_NOT_OPENED'
+        _Common.CD1_ERROR = 'PORT_NOT_OPENED'
         return False
     param = CD["OPEN"] + "|" + CD_PORT1
     response, result = _Command.send_request(param=param, output=None)
@@ -119,9 +119,9 @@ def simply_eject(attempt, multiply):
     #     LOGGER.warning(('Failed to Select CD Port', attempt))
     #     CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|ERROR')
     #     return
-    # if _Global.TEST_MODE is True:
+    # if _Common.TEST_MODE is True:
     #     CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|SUCCESS')
-    #     LOGGER.debug(('ByPassing Mode', str(_Global.TEST_MODE), attempt, multiply))
+    #     LOGGER.debug(('ByPassing Mode', str(_Common.TEST_MODE), attempt, multiply))
     #     return
     try:
         # command = CD_EXEC + " hold " + selected_port
@@ -197,16 +197,16 @@ def eject_full_round(attempt):
 
 def set_false_output(attempt, error_message, method='eject_full_round'):
     if attempt == '101':
-        _Global.CD1_ERROR = error_message
-        _Global.upload_device_state('cd1', _Global.CD1_ERROR)
+        _Common.CD1_ERROR = error_message
+        _Common.upload_device_state('cd1', _Common.CD1_ERROR)
 
     if attempt == '102':
-        _Global.CD2_ERROR = error_message
-        _Global.upload_device_state('cd2', _Global.CD2_ERROR)
+        _Common.CD2_ERROR = error_message
+        _Common.upload_device_state('cd2', _Common.CD2_ERROR)
 
     if attempt == '103':
-        _Global.CD3_ERROR = error_message
-        _Global.upload_device_state('cd3', _Global.CD3_ERROR)
+        _Common.CD3_ERROR = error_message
+        _Common.upload_device_state('cd3', _Common.CD3_ERROR)
 
     LOGGER.warning((method, str(attempt), error_message))
     CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|ERROR')
@@ -215,7 +215,7 @@ def set_false_output(attempt, error_message, method='eject_full_round'):
 def move_card_disp(attempt):
     if INIT_STATUS is not True:
         CD_SIGNDLER.SIGNAL_CD_MOVE.emit('ERROR')
-        _Global.CD1_ERROR = 'DEVICE_NOT_INIT'
+        _Common.CD1_ERROR = 'DEVICE_NOT_INIT'
         return
     param = CD["HOLD"] + "|"
     if MULTIPLE_EJECT is True:
@@ -227,7 +227,7 @@ def move_card_disp(attempt):
             if response == 0:
                 CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|SUCCESS-' + str(x))
             else:
-                _Global.CD1_ERROR = 'FAILED_TO_EJECT'
+                _Common.CD1_ERROR = 'FAILED_TO_EJECT'
                 CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|ERROR-' + str(x))
         else:
             continue
@@ -241,7 +241,7 @@ def start_hold_card_disp():
 def hold_card_disp():
     if INIT_STATUS is not True:
         CD_SIGNDLER.SIGNAL_CD_HOLD.emit('ERROR')
-        _Global.CD1_ERROR = 'DEVICE_NOT_INIT'
+        _Common.CD1_ERROR = 'DEVICE_NOT_INIT'
         return
     param = CD["HOLD"] + "|"
     response, result = _Command.send_request(param=param, output=None)
@@ -249,7 +249,7 @@ def hold_card_disp():
     if response == 0:
         CD_SIGNDLER.SIGNAL_CD_HOLD.emit('SUCCESS')
     else:
-        _Global.CD1_ERROR = 'FAILED_TO_HOLD_EJECT'
+        _Common.CD1_ERROR = 'FAILED_TO_HOLD_EJECT'
         CD_SIGNDLER.SIGNAL_CD_HOLD.emit('ERROR')
 
 
@@ -260,7 +260,7 @@ def start_stop_card_disp():
 def stop_card_disp():
     if INIT_STATUS is not True:
         CD_SIGNDLER.SIGNAL_CD_STOP.emit('ERROR')
-        _Global.CD1_ERROR = 'DEVICE_NOT_INIT'
+        _Common.CD1_ERROR = 'DEVICE_NOT_INIT'
         return
     param = CD["STOP"] + "|"
     response, result = _Command.send_request(param=param, output=None)
@@ -268,7 +268,7 @@ def stop_card_disp():
     if response == 0:
         CD_SIGNDLER.SIGNAL_CD_STOP.emit('SUCCESS')
     else:
-        _Global.CD1_ERROR = 'DEVICE_NOT_STOP'
+        _Common.CD1_ERROR = 'DEVICE_NOT_STOP'
         CD_SIGNDLER.SIGNAL_CD_STOP.emit('ERROR')
 
 
@@ -291,11 +291,11 @@ def kiosk_get_cd_readiness():
 
 
 def get_cd_readiness():
-    if _Global.digit_in(_Global.CD_PORT1) is True:
-        _Global.CD_READINESS['port1'] = 'AVAILABLE' if init_cd(_Global.CD_PORT1) is True else 'N/A'
-    if _Global.digit_in(_Global.CD_PORT2) is True:
-        _Global.CD_READINESS['port2'] = 'AVAILABLE' if init_cd(_Global.CD_PORT2) is True else 'N/A'
-    if _Global.digit_in(_Global.CD_PORT3) is True:
-        _Global.CD_READINESS['port3'] = 'AVAILABLE' if init_cd(_Global.CD_PORT3) is True else 'N/A'
-    CD_SIGNDLER.SIGNAL_CD_READINESS.emit(json.dumps(_Global.CD_READINESS))
-    LOGGER.debug(('get_cd_readiness', json.dumps(_Global.CD_READINESS)))
+    if _Common.digit_in(_Common.CD_PORT1) is True:
+        _Common.CD_READINESS['port1'] = 'AVAILABLE' if init_cd(_Common.CD_PORT1) is True else 'N/A'
+    if _Common.digit_in(_Common.CD_PORT2) is True:
+        _Common.CD_READINESS['port2'] = 'AVAILABLE' if init_cd(_Common.CD_PORT2) is True else 'N/A'
+    if _Common.digit_in(_Common.CD_PORT3) is True:
+        _Common.CD_READINESS['port3'] = 'AVAILABLE' if init_cd(_Common.CD_PORT3) is True else 'N/A'
+    CD_SIGNDLER.SIGNAL_CD_READINESS.emit(json.dumps(_Common.CD_READINESS))
+    LOGGER.debug(('get_cd_readiness', json.dumps(_Common.CD_READINESS)))

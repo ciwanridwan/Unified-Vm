@@ -8,7 +8,7 @@ from _tTools import _PrintTool
 from _tTools import _EDCTool
 from _dDAO import _DAO
 from _sService import _KioskService
-from _cConfig import _ConfigParser, _Global
+from _cConfig import _ConfigParser, _Common
 from _nNetwork import _NetworkAccess
 from time import sleep, time
 import json
@@ -16,7 +16,7 @@ import re
 from datetime import datetime
 
 LOGGER = logging.getLogger()
-EDC_PORT = _Global.EDC_PORT
+EDC_PORT = _Common.EDC_PORT
 EDC = {
     "OPEN": "201",
     "SALE": "202",
@@ -28,7 +28,7 @@ EDC = {
     "GET_STATE": "208"
 }
 
-TEST_MODE = _Global.TEST_MODE
+TEST_MODE = _Common.TEST_MODE
 
 
 class EDCSignalHandler(QObject):
@@ -50,7 +50,7 @@ def init_edc_with_handle():
     global OPEN_STATUS
     if EDC_PORT is None:
         LOGGER.debug(("[ERROR] init_edc port : ", EDC_PORT))
-        _Global.EDC_ERROR = 'PORT_NOT_OPENED'
+        _Common.EDC_ERROR = 'PORT_NOT_OPENED'
         return False
     param = EDC["OPEN"] + "|" + re.sub("\D", "", EDC_PORT)
     response, result = _Command.send_request(param=param, output=None)
@@ -88,7 +88,7 @@ def sale_edc(amount, trxid=None):
                                                      output=_Command.MO_REPORT,
                                                      flushing=_Command.MO_REPORT)
             LOGGER.debug((response, result))
-            if _Global.TEST_MODE is True and _Global.empty(result):
+            if _Common.TEST_MODE is True and _Common.empty(result):
                 result = '02||00|'+str(amount)+'||000001|6011********9999|2612|20161003125804|123456|12345678|123456789012345|111111|000001'
             if response == 0 and ('|00|' + amount) in result:
                 '''
@@ -111,7 +111,7 @@ def sale_edc(amount, trxid=None):
                 param = result.split('|')
                 EDC_PAYMENT_RESULT['raw'] = result
                 EDC_PAYMENT_RESULT['card_type'] = _EDCTool.get_type(param[6])
-                if _Global.EDC_DEBIT_ONLY is True:
+                if _Common.EDC_DEBIT_ONLY is True:
                     EDC_PAYMENT_RESULT['card_type'] = 'DEBIT CARD'
                 if trxid is None:
                     EDC_PAYMENT_RESULT['struck_id'] = _Helper.get_uuid()[:12]
@@ -142,14 +142,14 @@ def sale_edc(amount, trxid=None):
                 store_settlement()
                 # send_edc_server(EDC_PAYMENT_RESULT)
             else:
-                _Global.EDC_ERROR = 'SALE_ERROR'
+                _Common.EDC_ERROR = 'SALE_ERROR'
                 E_SIGNDLER.SIGNAL_SALE_EDC.emit('SALE|ERROR')
         else:
-            _Global.EDC_ERROR = 'PORT_NOT_OPENED'
+            _Common.EDC_ERROR = 'PORT_NOT_OPENED'
             E_SIGNDLER.SIGNAL_SALE_EDC.emit('SALE|ERROR')
             LOGGER.warning(("OPEN_STATUS", str(OPEN_STATUS)))
     except Exception as e:
-        _Global.EDC_ERROR = 'SALE_ERROR'
+        _Common.EDC_ERROR = 'SALE_ERROR'
         E_SIGNDLER.SIGNAL_SALE_EDC.emit('SALE|ERROR')
         LOGGER.warning(str(e))
 
@@ -224,7 +224,7 @@ def handling_card(amount, trxid=None):
                 param = result.split('|')
                 EDC_PAYMENT_RESULT['raw'] = result
                 EDC_PAYMENT_RESULT['card_type'] = _EDCTool.get_type(param[6])
-                if _Global.EDC_DEBIT_ONLY is True:
+                if _Common.EDC_DEBIT_ONLY is True:
                     EDC_PAYMENT_RESULT['card_type'] = 'DEBIT CARD'
                 if trxid is None:
                     EDC_PAYMENT_RESULT['struck_id'] = _Helper.get_uuid()[:12]
@@ -305,13 +305,13 @@ def disconnect_edc():
                 IS_CANCELLED = False
                 LOGGER.info(("disconnect_edc : ", str(response), result))
             else:
-                _Global.EDC_ERROR = 'FAILED_TO_DISCONNECT'
+                _Common.EDC_ERROR = 'FAILED_TO_DISCONNECT'
                 LOGGER.warning(("RESPONSE : ", str(response), result))
         else:
-            _Global.EDC_ERROR = 'FAILED_TO_STANDBY'
+            _Common.EDC_ERROR = 'FAILED_TO_STANDBY'
             LOGGER.debug(("Switch EDC to Standby Mode: ", STANDBY_MODE))
     except Exception as e:
-        _Global.EDC_ERROR = 'FAILED_TO_DISCONNECT'
+        _Common.EDC_ERROR = 'FAILED_TO_DISCONNECT'
         LOGGER.warning(str(e))
 
 
@@ -395,14 +395,14 @@ def edc_settlement():
                 LOGGER.info((str(response), result))
                 mark_settlement_data(printout=False, mode='DEBIT')
             else:
-                _Global.EDC_ERROR = 'FAILED_TO_DEBIT_SETTLEMENT'
+                _Common.EDC_ERROR = 'FAILED_TO_DEBIT_SETTLEMENT'
                 LOGGER.warning(("RESPONSE :", str(response), result))
         else:
-            _Global.EDC_ERROR = 'FAILED_TO_SETTLEMENT'
+            _Common.EDC_ERROR = 'FAILED_TO_SETTLEMENT'
             E_SIGNDLER.SIGNAL_PROCESS_SETTLEMENT_EDC.emit('EDC_SETTLEMENT|ERROR')
             LOGGER.warning(("OPEN_STATUS:", str(OPEN_STATUS)))
     except Exception as e:
-        _Global.EDC_ERROR = 'FAILED_TO_SETTLEMENT'
+        _Common.EDC_ERROR = 'FAILED_TO_SETTLEMENT'
         E_SIGNDLER.SIGNAL_PROCESS_SETTLEMENT_EDC.emit('EDC_SETTLEMENT|ERROR')
         LOGGER.warning(str(e))
 
@@ -426,14 +426,14 @@ def edc_settlement_credit():
                 LOGGER.info((str(response), result))
                 mark_settlement_data(printout=False, mode='CREDIT')
             else:
-                _Global.EDC_ERROR = 'FAILED_TO_CREDIT_SETTLEMENT'
+                _Common.EDC_ERROR = 'FAILED_TO_CREDIT_SETTLEMENT'
                 LOGGER.warning(("RESPONSE :", str(response), result))
         else:
-            _Global.EDC_ERROR = 'FAILED_TO_SETTLEMENT'
+            _Common.EDC_ERROR = 'FAILED_TO_SETTLEMENT'
             E_SIGNDLER.SIGNAL_PROCESS_SETTLEMENT_EDC.emit('EDC_SETTLEMENT|ERROR')
             LOGGER.warning(("OPEN_STATUS:", str(OPEN_STATUS)))
     except Exception as e:
-        _Global.EDC_ERROR = 'FAILED_TO_SETTLEMENT'
+        _Common.EDC_ERROR = 'FAILED_TO_SETTLEMENT'
         E_SIGNDLER.SIGNAL_PROCESS_SETTLEMENT_EDC.emit('EDC_SETTLEMENT|ERROR')
         LOGGER.warning(str(e))
 
@@ -536,7 +536,7 @@ def card_type_count():
     type_count = []
     if SETTLEMENTS_DATA is None:
         return SETTLEMENT_TYPE_COUNT
-    if _Global.EDC_DEBIT_ONLY is True:
+    if _Common.EDC_DEBIT_ONLY is True:
         SETTLEMENT_DEBIT = SETTLEMENTS_DATA
         SETTLEMENT_TYPE_COUNT = 1
     else:
@@ -557,7 +557,7 @@ def card_type_settle():
     type_count = []
     if SETTLEMENTS_DATA is None:
         return type_count
-    if _Global.EDC_DEBIT_ONLY is True:
+    if _Common.EDC_DEBIT_ONLY is True:
         type_count.append('DEBIT CARD')
     else:
         for settle in SETTLEMENTS_DATA:
@@ -691,11 +691,11 @@ def post_mark_settlement(l, t):
 
 def upload_edc_settlement_data(param):
     try:
-        status, response = _NetworkAccess.post_to_url(_Global.BACKEND_URL + 'settlement/mark-direct', param)
+        status, response = _NetworkAccess.post_to_url(_Common.BACKEND_URL + 'settlement/mark-direct', param)
         if status == 200 and response['result'] == 'OK':
             LOGGER.info((status, response))
         else:
-            _Global.store_request_to_job(name=_Helper.whoami(), url=_Global.BACKEND_URL + 'settlement/mark-direct', payload=param)
+            _Common.store_request_to_job(name=_Helper.whoami(), url=_Common.BACKEND_URL + 'settlement/mark-direct', payload=param)
     except Exception as e:
         LOGGER.warning((e))
 

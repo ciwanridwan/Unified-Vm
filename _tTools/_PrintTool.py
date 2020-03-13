@@ -11,7 +11,7 @@ from PyQt5.QtCore import QObject, pyqtSignal
 from _dDevice import _Printer
 from _tTools import _Tibox
 from _sService import _KioskService
-from _cConfig import _Global
+from _cConfig import _Common
 from pprint import pprint
 from time import sleep
 import re
@@ -28,7 +28,7 @@ class PrintToolSignalHandler(QObject):
 
 PRINTTOOL_SIGNDLER = PrintToolSignalHandler()
 PATH = os.path.join(sys.path[0], '_pPDF')
-LOGO_PATH = os.path.join(sys.path[0], '_rReceipts', _Global.RECEIPT_LOGO)
+LOGO_PATH = os.path.join(sys.path[0], '_rReceipts', _Common.RECEIPT_LOGO)
 
 
 def get_paper_size(ls=None):
