@@ -653,16 +653,17 @@ def store_upload_failed_trx(trxid, pid='', amount=0, failure_type='', payment_me
             'paymentMethod': payment_method,
             'remarks': remarks,
         }
-        check_trx = _DAO.check_trx_failure(trxid)
-        if len(check_trx) == 0:
-            _DAO.insert_transaction_failure(__param)
+        # check_trx = _DAO.check_trx_failure(trxid)
+        # if len(check_trx) == 0:
+        #     _DAO.insert_transaction_failure(__param)
         status, response = _NetworkAccess.post_to_url(BACKEND_URL + 'sync/transaction-failure', __param)
         LOGGER.info((response, str(__param)))
         if status == 200 and response['result'] == 'OK':
-            __param['key'] = __param['trxid']
-            _DAO.mark_sync(param=__param, _table='TransactionFailure', _key='trxid')
+            # __param['key'] = __param['trxid']
+            # _DAO.mark_sync(param=__param, _table='TransactionFailure', _key='trxid')
             return True
         else:
+            store_request_to_job(name=_Helper.whoami(), url=BACKEND_URL+'sync/transaction-failure', payload=__param)
             return False
     except Exception as e:
         LOGGER.warning((e))
@@ -684,12 +685,12 @@ def upload_admin_access(aid, username, cash_collection='', edc_settlement='', ca
             'card_adjustment': card_adjustment,
             'remarks': remarks,
         }
-        status, response = _NetworkAccess.post_to_url(BACKEND_URL + 'sync/access-report', param)
+        status, response = _NetworkAccess.post_to_url(BACKEND_URL+'sync/access-report', param)
         LOGGER.info((response, str(param)))
         if status == 200 and response['result'] == 'OK':
             return True
         else:
-            store_request_to_job(name=_Helper.whoami(), url=BACKEND_URL + 'sync/access-report', payload=param)
+            store_request_to_job(name=_Helper.whoami(), url=BACKEND_URL+'sync/access-report', payload=param)
             return False
     except Exception as e:
         LOGGER.warning((e))
@@ -706,11 +707,12 @@ def upload_topup_error(__slot, __type):
             'slot': __slot,
             'type': __type
         }
-        status, response = _NetworkAccess.post_to_url(BACKEND_URL + 'update/topup-state', param)
+        status, response = _NetworkAccess.post_to_url(BACKEND_URL+'update/topup-state', param)
         LOGGER.info((response, str(param)))
         if status == 200 and response['result'] == 'OK':
             return True
         else:
+            store_request_to_job(name=_Helper.whoami(), url=BACKEND_URL+'update/topup-state', payload=param)
             return False
     except Exception as e:
         LOGGER.warning((e))
@@ -733,14 +735,15 @@ def store_upload_sam_audit(param):
             'status': param['status'],
             'remarks': param['remarks'],
         }
-        _DAO.insert_sam_audit(param)
-        status, response = _NetworkAccess.post_to_url(BACKEND_URL + 'sync/sam-audit', param)
+        # _DAO.insert_sam_audit(param)
+        status, response = _NetworkAccess.post_to_url(BACKEND_URL+'sync/sam-audit', param)
         LOGGER.info((response, str(param)))
         if status == 200 and response['result'] == 'OK':
-            param['key'] = param['lid']
-            _DAO.mark_sync(param=param, _table=_table_, _key='lid')
+            # param['key'] = param['lid']
+            # _DAO.mark_sync(param=param, _table=_table_, _key='lid')
             return True
         else:
+            store_request_to_job(name=_Helper.whoami(), url=BACKEND_URL+'sync/sam-audit', payload=param)
             return False
     except Exception as e:
         LOGGER.warning((e))
