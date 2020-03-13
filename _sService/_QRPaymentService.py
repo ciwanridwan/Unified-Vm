@@ -48,7 +48,7 @@ def start_get_qr_linkaja(payload):
     _Helper.get_pool().apply_async(do_get_qr, (payload, mode,))
 
 
-def start_get_qr_Common(payload):
+def start_get_qr_global(payload):
     payload = json.loads(payload)
     mode = 'N/A'
     if _Common.empty(mode):
@@ -181,7 +181,7 @@ def do_check_qr(payload, mode, serialize=True):
                     'mode'      : mode
                 }
                 LOGGER.debug(('[BREAKING-LOOP]', 'QR CHECK STATUS', mode, payload['trx_id'], str(cancel_param)))
-                cancel_qr_Common(cancel_param)
+                cancel_qr_global(cancel_param)
                 CANCELLING_QR_FLAG = False
                 break
             attempt += 1
@@ -299,7 +299,7 @@ def do_confirm_qr(payload, mode, serialize=True):
         QR_SIGNDLER.SIGNAL_CONFIRM_QR.emit('CONFIRM_QR|'+mode+'|ERROR')
 
 
-def start_cancel_qr_Common(trx_id):
+def start_cancel_qr_global(trx_id):
     global CANCELLING_QR_FLAG
     if not CANCELLING_QR_FLAG:
         CANCELLING_QR_FLAG = True
@@ -307,7 +307,7 @@ def start_cancel_qr_Common(trx_id):
     # _Helper.get_pool().apply_async(cancel_qr_Common, (trx_id, ) )
 
 
-def cancel_qr_Common(data):
+def cancel_qr_global(data):
     if _Common.empty(data) is True:
         LOGGER.debug(('EMPTY DATA TO REQUEST QR CANCELLATION'))
         return
