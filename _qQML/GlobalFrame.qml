@@ -14,7 +14,7 @@ Base{
     property var imageSource: "source/insert_card_dc.png"
     property bool smallerSlaveSize: true
     property bool withTimer: true
-    property int textSize: (globalScreenType == '1') ? 40 : 30
+    property int textSize: (globalScreenType == '1') ? 40 : 35
     property int timerDuration: 5
     property int showDuration: timerDuration
     property var closeMode: 'closeWindow' // 'closeWindow', 'backToMain', 'backToPrev'
