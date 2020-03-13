@@ -246,7 +246,7 @@ def check_diva_balance(username):
         PPOB_SIGNDLER.SIGNAL_CHECK_BALANCE.emit('BALANCE_CHECK|ERROR')
 
 
-def start_Common_refund_balance(payload):
+def start_global_refund_balance(payload):
     _Helper.get_pool().apply_async(global_refund_balance, (payload,))
 
 
