@@ -2,7 +2,7 @@ __author__ = "fitrah.wahyudi.imam@gmail.com"
 
 import logging
 from PyQt5.QtCore import QObject, pyqtSignal
-from _cConfig import _Global
+from _cConfig import _Common
 from _tTools import _Helper
 import os
 from time import sleep
@@ -17,7 +17,7 @@ UPDATEAPP_SIGNDLER = UpdateAppSignalHandler()
 LOGGER = logging.getLogger()
 
 HOST = 'git.mdd.co.id:44195'
-REPO = 'https://{}:{}@{}/mdd_dev/mandiri-kiosk.git'.format(_Global.REPO_USERNAME, _Global.REPO_PASSWORD, HOST)
+REPO = 'https://{}:{}@{}/mdd_dev/mandiri-kiosk.git'.format(_Common.REPO_USERNAME, _Common.REPO_PASSWORD, HOST)
 
 
 def check_init():
@@ -51,7 +51,7 @@ ORIGIN = 'develop'
 
 def checkout_branch_by_app_env():
     global ORIGIN
-    if _Global.LIVE_MODE:
+    if _Common.LIVE_MODE:
         ORIGIN = 'master'
     UPDATEAPP_SIGNDLER.SIGNAL_UPDATE_APP.emit('APP_UPDATE|DEFINING_BRANCH_'+ORIGIN.upper())
     return _Helper.execute_console(" git stash && git checkout "+ORIGIN+" && git stash pop ")
@@ -99,10 +99,10 @@ def do_update():
     UPDATEAPP_SIGNDLER.SIGNAL_UPDATE_APP.emit('APP_UPDATE|DETECTING_VERSION')
     sleep(.5)
     __version = open(os.path.join(os.getcwd(), 'kiosk.ver'), 'r').read().strip()
-    _Global.VERSION = __version
+    _Common.VERSION = __version
     UPDATEAPP_SIGNDLER.SIGNAL_UPDATE_APP.emit('APP_UPDATE|VER. '+str(__version))
     sleep(1)
-    LOGGER.info(('APP_UPDATE|SUCCESS', _Global.VERSION))
+    LOGGER.info(('APP_UPDATE|SUCCESS', _Common.VERSION))
     UPDATEAPP_SIGNDLER.SIGNAL_UPDATE_APP.emit('APP_UPDATE|SUCCESS')
     return 'APP_UPDATE|SUCCESS'
 

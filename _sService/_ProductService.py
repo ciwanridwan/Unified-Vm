@@ -2,7 +2,7 @@ __author__ = "fitrah.wahyudi.imam@gmail.com"
 
 import logging
 from PyQt5.QtCore import QObject, pyqtSignal
-from _cConfig import _ConfigParser, _Global
+from _cConfig import _ConfigParser, _Common
 from _dDAO import _DAO
 from _tTools import _Helper
 from _nNetwork import _NetworkAccess
@@ -22,7 +22,7 @@ class ProductSignalHandler(QObject):
 
 PR_SIGNDLER = ProductSignalHandler()
 LOGGER = logging.getLogger()
-BACKEND_URL = _Global.BACKEND_URL
+BACKEND_URL = _Common.BACKEND_URL
 LAST_UPDATED_STOCK = []
 
 
@@ -58,7 +58,7 @@ def change_product_stock(port, stock):
             PR_SIGNDLER.SIGNAL_CHANGE_STOCK.emit('CHANGE_PRODUCT_STOCK|SUCCESS')
         else:
             # LOG REQUEST
-            _Global.store_request_to_job(name=_Helper.whoami(), url=BACKEND_URL + 'change/product-stock', payload=_param)
+            _Common.store_request_to_job(name=_Helper.whoami(), url=BACKEND_URL + 'change/product-stock', payload=_param)
             PR_SIGNDLER.SIGNAL_CHANGE_STOCK.emit('CHANGE_PRODUCT_STOCK|ERROR')
     except Exception as e:
         LOGGER.warning(('change_product_stock', e))
@@ -83,7 +83,7 @@ def start_check_voucher(voucher):
 
 
 def check_voucher(voucher):
-    if _Global.empty(voucher):
+    if _Common.empty(voucher):
         LOGGER.warning((str(voucher), 'MISSING_VOUCHER_NUMBER'))
         PR_SIGNDLER.SIGNAL_CHECK_VOUCHER.emit('CHECK_VOUCHER|MISSING_VOUCHER_NUMBER')
         return
@@ -91,7 +91,7 @@ def check_voucher(voucher):
         'vcode': voucher
     }
     try:
-        url = _Global.BACKEND_URL+'ppob/voucher/check'
+        url = _Common.BACKEND_URL+'ppob/voucher/check'
         s, r = _NetworkAccess.post_to_url(url=url, param=payload)
         if s == 200 and r['result'] == 'OK' and r['data']['Response'] == '0':
             product_id = r['data']['product']
@@ -121,11 +121,11 @@ def start_use_voucher(voucher, reff_no):
 
 
 def use_voucher(voucher, reff_no):
-    if _Global.empty(voucher):
+    if _Common.empty(voucher):
         LOGGER.warning((str(voucher), 'MISSING_VOUCHER_NUMBER'))
         PR_SIGNDLER.SIGNAL_USE_VOUCHER.emit('USE_VOUCHER|MISSING_VOUCHER_NUMBER')
         return
-    if _Global.empty(reff_no):
+    if _Common.empty(reff_no):
         LOGGER.warning((str(reff_no), 'MISSING_REFF_NO'))
         PR_SIGNDLER.SIGNAL_USE_VOUCHER.emit('USE_VOUCHER|MISSING_REFF_NO')
         return
@@ -138,10 +138,10 @@ def use_voucher(voucher, reff_no):
             })
     payload = {
         'vcode': voucher,
-        'note_ref': reff_no + '-' + _Global.TID
+        'note_ref': reff_no + '-' + _Common.TID
     }
     try:
-        url = _Global.BACKEND_URL+'ppob/voucher/use'
+        url = _Common.BACKEND_URL+'ppob/voucher/use'
         s, r = _NetworkAccess.post_to_url(url=url, param=payload)
         if s == 200 and r['result'] == 'OK' and r['data'] is not None:
             PR_SIGNDLER.SIGNAL_USE_VOUCHER.emit('USE_VOUCHER|' + json.dumps(r['data']))

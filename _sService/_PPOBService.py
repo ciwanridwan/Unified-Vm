@@ -3,7 +3,7 @@ __author__ = "fitrah.wahyudi.imam@gmail.com"
 import json
 import logging
 from PyQt5.QtCore import QObject, pyqtSignal
-from _cConfig import _Global
+from _cConfig import _Common
 from _tTools import _Helper
 from _nNetwork import _NetworkAccess
 import sys
@@ -37,19 +37,19 @@ def start_init_ppob_product():
 
 
 def get_ppob_product(signal=True):
-    _check_prev_ppob = _Global.load_from_temp_data(temp='ppob-product', mode='json')
-    _last_get_product = _Global.get_config_value('last^get^ppob', digit=True)
-    if ( _last_get_product + (60 * 60 * 1000)) > _Helper.now() and not _Global.empty(_check_prev_ppob):
+    _check_prev_ppob = _Common.load_from_temp_data(temp='ppob-product', mode='json')
+    _last_get_product = _Common.get_config_value('last^get^ppob', digit=True)
+    if ( _last_get_product + (60 * 60 * 1000)) > _Helper.now() and not _Common.empty(_check_prev_ppob):
         products = _check_prev_ppob
     else:
-        s, r = _NetworkAccess.get_from_url(url=_Global.BACKEND_URL+'get/product')
+        s, r = _NetworkAccess.get_from_url(url=_Common.BACKEND_URL+'get/product')
         if s == 200 and r['result'] == 'OK':
             products = r['data']
-            _Global.LAST_GET_PPOB = _Helper.now()
-            _Global.log_to_temp_config('last^get^ppob', _Global.LAST_GET_PPOB)
-            _Global.store_to_temp_data(temp='ppob-product', content=json.dumps(products))
+            _Common.LAST_GET_PPOB = _Helper.now()
+            _Common.log_to_temp_config('last^get^ppob', _Common.LAST_GET_PPOB)
+            _Common.store_to_temp_data(temp='ppob-product', content=json.dumps(products))
         else:
-            products = _Global.load_from_temp_data(temp='ppob-product', mode='json')
+            products = _Common.load_from_temp_data(temp='ppob-product', mode='json')
     # products = store_image_item(products)
     products = sorted(products, key=itemgetter('status'))
     if signal is True:
@@ -77,11 +77,11 @@ def start_check_ppob_product(msisdn, product_id):
 
 
 def check_ppob_product(msisdn='', product_id=''):
-    if _Global.empty(msisdn):
+    if _Common.empty(msisdn):
         LOGGER.warning((msisdn, product_id, 'MISSING_MSISDN'))
         PPOB_SIGNDLER.SIGNAL_CHECK_PPOB.emit('PPOB_CHECK|MISSING_MSISDN')
         return
-    if _Global.empty(product_id):
+    if _Common.empty(product_id):
         LOGGER.warning((msisdn, product_id, 'MISSING_PRODUCT_ID'))
         PPOB_SIGNDLER.SIGNAL_CHECK_PPOB.emit('PPOB_CHECK|MISSING_PRODUCT_ID')
         return
@@ -95,7 +95,7 @@ def check_ppob_product(msisdn='', product_id=''):
             'msisdn': msisdn,
             'product_id': product_id
         }
-        s, r = _NetworkAccess.post_to_url(url=_Global.BACKEND_URL+'ppob/check', param=param)
+        s, r = _NetworkAccess.post_to_url(url=_Common.BACKEND_URL+'ppob/check', param=param)
         if s == 200 and r['result'] == 'OK':
             output = r['data']
             customer_name = ''
@@ -151,39 +151,39 @@ def start_do_topup_ppob(payload):
 def do_trx_ppob(payload, mode='PAY'):
     # product_id,msisdn,amount,reff_no,payment_type,product_category,operator
     payload = json.loads(payload)
-    if _Global.empty(payload['msisdn']):
+    if _Common.empty(payload['msisdn']):
         LOGGER.warning((str(payload), 'MISSING_MSISDN'))
         PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|MISSING_MSISDN')
         return
-    if _Global.empty(payload['product_id']):
+    if _Common.empty(payload['product_id']):
         LOGGER.warning((str(payload), 'MISSING_PRODUCT_ID'))
         PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|MISSING_PRODUCT_ID')
         return
-    if _Global.empty(payload['amount']):
+    if _Common.empty(payload['amount']):
         LOGGER.warning((str(payload), 'MISSING_AMOUNT'))
         PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|MISSING_AMOUNT')
         return
-    if _Global.empty(payload['reff_no']):
+    if _Common.empty(payload['reff_no']):
         LOGGER.warning((str(payload), 'MISSING_REFF_NO'))
         PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|MISSING_REFF_NO')
         return
-    if _Global.empty(payload['product_category']):
+    if _Common.empty(payload['product_category']):
         LOGGER.warning((str(payload), 'MISSING_PRODUCT_CATEGORY'))
         PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|MISSING_PRODUCT_CATEGORY')
         return
-    if _Global.empty(payload['payment_type']):
+    if _Common.empty(payload['payment_type']):
         LOGGER.warning((str(payload), 'MISSING_PAYMENT_TYPE'))
         PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|MISSING_PAYMENT_TYPE')
         return
-    if _Global.empty(payload['operator']):
+    if _Common.empty(payload['operator']):
         LOGGER.warning((str(payload), 'MISSING_OPERATOR'))
         PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|MISSING_OPERATOR')
         return
     _Helper.dump(payload)
     try:
-        url = _Global.BACKEND_URL+'ppob/pay'
+        url = _Common.BACKEND_URL+'ppob/pay'
         if mode == 'TOPUP':
-            url = _Global.BACKEND_URL+'ppob/topup'
+            url = _Common.BACKEND_URL+'ppob/topup'
         s, r = _NetworkAccess.post_to_url(url=url, param=payload)
         if s == 200 and r['result'] == 'OK' and r['data'] is not None:
             PPOB_SIGNDLER.SIGNAL_TRX_PPOB.emit('PPOB_TRX|' + json.dumps(r['data']))
@@ -201,7 +201,7 @@ def start_check_trx_online(reff_no):
 
 
 def do_check_trx(reff_no):
-    if _Global.empty(reff_no):
+    if _Common.empty(reff_no):
         LOGGER.warning((str(reff_no), 'MISSING_REFF_NO'))
         PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|MISSING_REFF_NO')
         return
@@ -209,7 +209,7 @@ def do_check_trx(reff_no):
         'reff_no': reff_no
     }
     try:
-        url = _Global.BACKEND_URL+'ppob/trx/detail'
+        url = _Common.BACKEND_URL+'ppob/trx/detail'
         s, r = _NetworkAccess.post_to_url(url=url, param=payload)
         if s == 200 and r['result'] == 'OK' and r['data'] is not None:
             PPOB_SIGNDLER.SIGNAL_TRX_CHECK.emit('TRX_CHECK|' + json.dumps(r['data']))
@@ -226,7 +226,7 @@ def start_check_diva_balance(username):
 
 
 def check_diva_balance(username):
-    if _Global.empty(username):
+    if _Common.empty(username):
         LOGGER.warning((str(username), 'MISSING_USERNAME'))
         PPOB_SIGNDLER.SIGNAL_CHECK_BALANCE.emit('BALANCE_CHECK|MISSING_USERNAME')
         return
@@ -234,7 +234,7 @@ def check_diva_balance(username):
         'customer_login': username
     }
     try:
-        url = _Global.BACKEND_URL+'diva/inquiry'
+        url = _Common.BACKEND_URL+'diva/inquiry'
         s, r = _NetworkAccess.post_to_url(url=url, param=payload)
         if s == 200 and r['result'] == 'OK' and r['data'] is not None:
             PPOB_SIGNDLER.SIGNAL_CHECK_BALANCE.emit('BALANCE_CHECK|' + json.dumps(r['data']))
@@ -246,7 +246,7 @@ def check_diva_balance(username):
         PPOB_SIGNDLER.SIGNAL_CHECK_BALANCE.emit('BALANCE_CHECK|ERROR')
 
 
-def start_global_refund_balance(payload):
+def start_Common_refund_balance(payload):
     _Helper.get_pool().apply_async(global_refund_balance, (payload,))
 
 
@@ -261,7 +261,7 @@ def start_store_pending_balance(payload):
 def global_refund_balance(payload, store_only=False):
     global LAST_TRANSFER_REFF_NO
     payload = json.loads(payload)
-    if _Global.empty(payload['reff_no']):
+    if _Common.empty(payload['reff_no']):
         LOGGER.warning((str(payload), 'MISSING_REFF_NO'))
         if not store_only:
             PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|MISSING_REFF_NO')
@@ -270,12 +270,12 @@ def global_refund_balance(payload, store_only=False):
         LOGGER.warning((str(payload), LAST_TRANSFER_REFF_NO, 'DUPLICATE_REFF_NO'))
         # PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|DUPLICATE_REFF_NO')
         return
-    if _Global.empty(payload['customer']):
+    if _Common.empty(payload['customer']):
         LOGGER.warning((str(payload), 'MISSING_CUSTOMER'))
         if not store_only:
             PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|MISSING_CUSTOMER')
         return
-    if _Global.empty(payload['amount']):
+    if _Common.empty(payload['amount']):
         LOGGER.warning((str(payload), 'MISSING_AMOUNT'))
         if not store_only:
             PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|MISSING_AMOUNT')
@@ -287,7 +287,7 @@ def global_refund_balance(payload, store_only=False):
         return
     payload['customer_login'] = payload['customer']
     try:
-        url = _Global.BACKEND_URL+'refund/global'
+        url = _Common.BACKEND_URL+'refund/global'
         s, r = _NetworkAccess.post_to_url(url=url, param=payload)
         if s == 200 and r['data'] is not None:
             if r['result'] == 'OK':
@@ -305,7 +305,7 @@ def global_refund_balance(payload, store_only=False):
             # mode: refundMode,
             # payment: details.payment
             # store_pending_refund(payload)
-            _Global.store_request_to_job(name=_Helper.whoami(), url=url, payload=payload)
+            _Common.store_request_to_job(name=_Helper.whoami(), url=url, payload=payload)
             if not store_only:
                 PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.emit('TRANSFER_BALANCE|ERROR')
         LOGGER.debug((str(payload), str(r)))
@@ -316,10 +316,10 @@ def global_refund_balance(payload, store_only=False):
 
 
 def store_pending_refund(payload):
-    if _Global.empty(payload) is True:
+    if _Common.empty(payload) is True:
         return
     data = {
-        'tid'           : _Global.TID,
+        'tid'           : _Common.TID,
         'trxid'         : payload['reff_no'],
         'amount'        : int(payload['amount']),
         'customer'      : payload['customer'],

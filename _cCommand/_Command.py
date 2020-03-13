@@ -7,7 +7,7 @@ from time import sleep, time
 from _cConfig import _ConfigParser
 import win32file
 from _tTools import _Helper
-from _cConfig import _Global
+from _cConfig import _Common
 # import win32api
 # import pywintypes
 # import win32con
@@ -226,7 +226,7 @@ def send_command_with_handle(param=None, output=None, responding=True, flushing=
         return 0, param
 
 
-LOCAL_URL = _Global.SERVICE_URL
+LOCAL_URL = _Common.SERVICE_URL
 # http://localhost:9000/Service/GET?type=json&cmd=000&param=com4
 
 

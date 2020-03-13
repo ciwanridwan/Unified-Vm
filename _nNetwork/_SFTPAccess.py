@@ -4,15 +4,15 @@ import os
 import sys
 import logging
 import paramiko
-from _cConfig import _Global
+from _cConfig import _Common
 from time import sleep
 
 LOGGER = logging.getLogger()
-SFTP_SERVER = _Global.SFTP_MANDIRI['host']
-SFTP_USER = _Global.SFTP_MANDIRI['user']
-SFTP_PASS = _Global.SFTP_MANDIRI['pass']
-SFTP_PORT = _Global.SFTP_MANDIRI['port']
-REMOTE_PATH = _Global.SFTP_MANDIRI['path']
+SFTP_SERVER = _Common.SFTP_MANDIRI['host']
+SFTP_USER = _Common.SFTP_MANDIRI['user']
+SFTP_PASS = _Common.SFTP_MANDIRI['pass']
+SFTP_PORT = _Common.SFTP_MANDIRI['port']
+REMOTE_PATH = _Common.SFTP_MANDIRI['path']
 LOCAL_PATH = os.path.join(sys.path[0], '_rRemoteFiles')
 if not os.path.exists(sys.path[0] + '/_rRemoteFiles/'):
     os.makedirs(sys.path[0] + '/_rRemoteFiles/')
@@ -25,17 +25,17 @@ HOST_BID = 1
 def init_user_by_bid():
     global SFTP_SERVER, SFTP_USER, SFTP_PASS, SFTP_PORT, REMOTE_PATH
     if HOST_BID == 1:
-        SFTP_SERVER = _Global.SFTP_MANDIRI['host']
-        SFTP_USER = _Global.SFTP_MANDIRI['user']
-        SFTP_PASS = _Global.SFTP_MANDIRI['pass']
-        SFTP_PORT = _Global.SFTP_MANDIRI['port']
-        REMOTE_PATH = _Global.SFTP_MANDIRI['path']
+        SFTP_SERVER = _Common.SFTP_MANDIRI['host']
+        SFTP_USER = _Common.SFTP_MANDIRI['user']
+        SFTP_PASS = _Common.SFTP_MANDIRI['pass']
+        SFTP_PORT = _Common.SFTP_MANDIRI['port']
+        REMOTE_PATH = _Common.SFTP_MANDIRI['path']
     elif HOST_BID == 2:
-        SFTP_SERVER = _Global.SFTP_BNI['host']
-        SFTP_USER = _Global.SFTP_BNI['user']
-        SFTP_PASS = _Global.SFTP_BNI['pass']
-        SFTP_PORT = _Global.SFTP_BNI['port']
-        REMOTE_PATH = _Global.SFTP_BNI['path']
+        SFTP_SERVER = _Common.SFTP_BNI['host']
+        SFTP_USER = _Common.SFTP_BNI['user']
+        SFTP_PASS = _Common.SFTP_BNI['pass']
+        SFTP_PORT = _Common.SFTP_BNI['port']
+        REMOTE_PATH = _Common.SFTP_BNI['path']
 
 #   TODO ADD Another Host BID
 
@@ -74,9 +74,9 @@ def send_file(filename, local_path, remote_path=None):
     if remote_path is None:
         remote_path = REMOTE_PATH
     if '_DEV' in remote_path:
-        if _Global.LIVE_MODE is True:
+        if _Common.LIVE_MODE is True:
             remote_path = remote_path.replace('_DEV', '')
-        if 'TopUpOffline' in remote_path and _Global.MANDIRI_FORCE_PRODUCTION_SAM is True:
+        if 'TopUpOffline' in remote_path and _Common.MANDIRI_FORCE_PRODUCTION_SAM is True:
             remote_path = remote_path.replace('_DEV', '')
     try:
         if type(filename) == list:

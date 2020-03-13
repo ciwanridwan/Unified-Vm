@@ -9,7 +9,7 @@ import wmi
 import logging
 import logging.handlers
 import subprocess
-from _cConfig import _ConfigParser, _Global
+from _cConfig import _ConfigParser, _Common
 from _nNetwork import _NetworkAccess
 from _dDB import _Database
 from _sService import _KioskService
@@ -37,9 +37,9 @@ import json
 
 
 print("""
-    Kiosk Ver: """ + _Global.VERSION + """
+    Kiosk Ver: """ + _Common.VERSION + """
 Powered By: PT. MultiDaya Dinamika
-              -2019-
+              -2020-
 """)
 
 # Set Frame Size Here
@@ -413,7 +413,7 @@ class SlotHandler(QObject):
     start_init_grg = pyqtSlot()(start_init_grg)
 
     def start_upload_device_state(self, device, state):
-        _Global.start_upload_device_state(device, state)
+        _Common.start_upload_device_state(device, state)
     start_upload_device_state = pyqtSlot(str, str)(start_upload_device_state)
 
     def start_admin_print_global(self, struct_id):
@@ -605,7 +605,7 @@ class SlotHandler(QObject):
     start_mandiri_update_schedule = pyqtSlot()(start_mandiri_update_schedule)
 
     def start_reset_receipt_count(self, count):
-        _Global.start_reset_receipt_count(count)
+        _Common.start_reset_receipt_count(count)
     start_reset_receipt_count = pyqtSlot(str)(start_reset_receipt_count)
 
     def start_trigger_edc_settlement(self):
@@ -747,7 +747,7 @@ def config_log():
                             format='%(asctime)s %(levelname)s %(funcName)s:%(lineno)d: %(message)s',
                             datefmt='%d/%m %H:%M:%S')
         LOGGER = logging.getLogger()
-        _Global.init_temp_data()
+        _Common.init_temp_data()
     except Exception as e:
         print("pyt: Logging Configuration ERROR : ", e)
 
@@ -913,19 +913,19 @@ def init_setting():
             qml.write(TEMP_CONFIG_JS)
             qml.close()
         LOGGER.info(("CREATE INITIATION_QML_CONFIG ON ", qml_config))
-    INITIAL_SETTING['dev_mode'] = _Global.TEST_MODE
+    INITIAL_SETTING['dev_mode'] = _Common.TEST_MODE
     INITIAL_SETTING['db'] = _ConfigParser.get_value('TERMINAL', 'DB')
     INITIAL_SETTING['display'] = get_screen_resolution()
-    INITIAL_SETTING['devices'] = _Global.get_devices()
-    INITIAL_SETTING['tid'] = _Global.TID
+    INITIAL_SETTING['devices'] = _Common.get_devices()
+    INITIAL_SETTING['tid'] = _Common.TID
     # setting['prepaid'] = _QPROX.BANKS
-    INITIAL_SETTING['server'] = _Global.BACKEND_URL
-    INITIAL_SETTING['reloadService'] = _Global.RELOAD_SERVICE
-    INITIAL_SETTING['allowedSyncTask'] = _Global.ALLOWED_SYNC_TASK
-    # setting['sftpMandiri'] = _Global.SFTP_MANDIRI
-    # setting['ftp'] = _Global.FTP
-    # setting['bankConfig'] = _Global.BANKS
-    INITIAL_SETTING['serviceVersion'] = _Global.get_service_version()
+    INITIAL_SETTING['server'] = _Common.BACKEND_URL
+    INITIAL_SETTING['reloadService'] = _Common.RELOAD_SERVICE
+    INITIAL_SETTING['allowedSyncTask'] = _Common.ALLOWED_SYNC_TASK
+    # setting['sftpMandiri'] = _Common.SFTP_MANDIRI
+    # setting['ftp'] = _Common.FTP
+    # setting['bankConfig'] = _Common.BANKS
+    INITIAL_SETTING['serviceVersion'] = _Common.get_service_version()
     # pprint(setting)
 
 
@@ -990,7 +990,7 @@ if __name__ == '__main__':
     check_git_status()
     init_setting()
     disable_screensaver()
-    if _Global.LIVE_MODE:
+    if _Common.LIVE_MODE:
         kill_explorer()
     check_db(INITIAL_SETTING['db'])
     if os.name == 'nt':
@@ -1010,7 +1010,7 @@ if __name__ == '__main__':
     view.engine().quit.connect(app.quit)
     view.setSource(QUrl(path + 'Main.qml'))
     s_handler()
-    if _Global.LIVE_MODE:
+    if _Common.LIVE_MODE:
         app.setOverrideCursor(Qt.BlankCursor)
     view.setFlags(Qt.WindowFullscreenButtonHint)
     view.setFlags(Qt.FramelessWindowHint)
@@ -1058,15 +1058,15 @@ if __name__ == '__main__':
         sleep(.5)
         print("pyt: Restarting MDDTopUpService...")
         _KioskService.start_restart_mdd_service()
-    if _Global.GRG['status'] is True:
+    if _Common.GRG['status'] is True:
         sleep(1)
         print("pyt: Connecting to GRG Bill Acceptor...")
         _GRG.init_grg()
-    if _Global.MEI['status'] is True:
+    if _Common.MEI['status'] is True:
         sleep(1)
         print("pyt: Connecting to MEI Bill Acceptor...")
         _MEI.mei_standby_mode()
-    if _Global.QPROX['status'] is True:
+    if _Common.QPROX['status'] is True:
         print("pyt: Connecting Into Prepaid Reader...")
         sleep(1)
         if _QPROX.open_qprox() is True:
@@ -1074,7 +1074,7 @@ if __name__ == '__main__':
             _QPROX.init_qprox()
         else:
             print("pyt: [ERROR] Connect to Prepaid Reader...")
-    if _Global.CD['status'] is True:
+    if _Common.CD['status'] is True:
         sleep(.5)
         print("pyt: [INFO] Re-Init CD V2 Configuration...")
         _CD.reinit_v2_config()

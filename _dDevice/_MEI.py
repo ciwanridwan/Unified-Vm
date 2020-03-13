@@ -6,7 +6,7 @@ import logging
 from _dDAO import _DAO
 import json
 from _tTools import _Tibox
-from _cConfig import _Global
+from _cConfig import _Common
 from _tTools import _Helper
 from time import sleep
 from _sService import _KioskService
@@ -14,14 +14,14 @@ from _nNetwork import _NetworkAccess
 
 
 LOGGER = logging.getLogger()
-MEI_PORT = _Global.MEI_PORT
+MEI_PORT = _Common.MEI_PORT
 COLLECTED_CASH = 0
 AMOUNT = int(_Tibox.INIT_FARE)
 TYPE_POWER = '3'
 IS_SAVED = False
 IS_STANDBY_MODE = False
 WAITING_TIME = 1
-TEST_MODE = _Global.TEST_MODE
+TEST_MODE = _Common.TEST_MODE
 
 
 MEI = {
@@ -49,7 +49,7 @@ GRG = {
     "STATUS": "504"
 }
 
-GRG_PORT = _Global.GRG_PORT
+GRG_PORT = _Common.GRG_PORT
 
 
 class MEISignalHandler(QObject):
@@ -87,7 +87,7 @@ def init_mei():
     global OPEN_STATUS, IS_STANDBY_MODE
     if MEI_PORT is None:
         LOGGER.debug(("init_mei port : ", MEI_PORT))
-        _Global.BILL_ERROR = 'FAILED_OPEN_MEI'
+        _Common.BILL_ERROR = 'FAILED_OPEN_MEI'
         return False
     _Command.get_response_with_handle(out=_Command.MO_STATUS, module='MEI_Connection_Init', flush=True)
     param = MEI["OPEN"] + "|" + MEI_PORT + "|" + TYPE_POWER
@@ -100,7 +100,7 @@ def init_mei():
     if OPEN_STATUS is True:
         IS_STANDBY_MODE = True
     else:
-        _Global.BILL_ERROR = 'FAILED_OPEN_MEI'
+        _Common.BILL_ERROR = 'FAILED_OPEN_MEI'
     LOGGER.info(("Starting MEI in Standby_Mode : ", str(OPEN_STATUS)))
     return OPEN_STATUS
 
@@ -154,12 +154,12 @@ def disconnect_mei():
                     OPEN_STATUS = False
                     # LOGGER.info(("[INFO] disconnect_mei : ", result))
                 else:
-                    _Global.BILL_ERROR = 'FAILED_TO_DISCONNECT'
+                    _Common.BILL_ERROR = 'FAILED_TO_DISCONNECT'
                     LOGGER.warning((response, result))
             else:
                 LOGGER.warning("OPEN_STATUS")
         except Exception as e:
-            _Global.BILL_ERROR = 'FAILED_TO_DISCONNECT'
+            _Common.BILL_ERROR = 'FAILED_TO_DISCONNECT'
             LOGGER.warning(e)
 
 
@@ -211,14 +211,14 @@ def accept_mei(mode=None):
                     else:
                         handling_cash55()
                 else:
-                    _Global.BILL_ERROR = 'FAILED_TO_ACCEPT'
+                    _Common.BILL_ERROR = 'FAILED_TO_ACCEPT'
                     M_SIGNDLER.SIGNAL_ACCEPT_MEI.emit("ACCEPT|ERROR")
                     LOGGER.warning((str(response), str(result)))
             elif mode == 'RECONNECTING':
                 response, result = _Command.send_request(param=param)
                 print('pyt: reconnecting mei acceptance : ', result)
         else:
-            _Global.BILL_ERROR = 'FAILED_TO_ACCEPT'
+            _Common.BILL_ERROR = 'FAILED_TO_ACCEPT'
             M_SIGNDLER.SIGNAL_ACCEPT_MEI.emit("ACCEPT|ERROR")
             LOGGER.warning("OPEN_STATUS")
     except Exception as e:
@@ -236,11 +236,11 @@ def accept_mei(mode=None):
                     M_SIGNDLER.SIGNAL_STACK_MEI.emit('STACK|OSERROR')
                     LOGGER.warning((e, 'Please Check MDDTopUpService'))
                 else:
-                    _Global.BILL_ERROR = 'FAILED_TO_ACCEPT'
+                    _Common.BILL_ERROR = 'FAILED_TO_ACCEPT'
                     M_SIGNDLER.SIGNAL_ACCEPT_MEI.emit("ACCEPT|ERROR")
                     LOGGER.warning(e)
         else:
-            _Global.BILL_ERROR = 'FAILED_TO_ACCEPT'
+            _Common.BILL_ERROR = 'FAILED_TO_ACCEPT'
             M_SIGNDLER.SIGNAL_ACCEPT_MEI.emit("ACCEPT|ERROR")
             LOGGER.warning(e)
 
@@ -260,11 +260,11 @@ def retry_accept_mei():
             M_SIGNDLER.SIGNAL_ACCEPT_MEI.emit('ACCEPT|' + str(result))
             handling_cash2()
         else:
-            _Global.BILL_ERROR = 'FAILED_TO_ACCEPT'
+            _Common.BILL_ERROR = 'FAILED_TO_ACCEPT'
             M_SIGNDLER.SIGNAL_ACCEPT_MEI.emit("ACCEPT|ERROR")
             LOGGER.warning(("#2", response, result))
     except Exception as e:
-        _Global.BILL_ERROR = 'FAILED_TO_ACCEPT'
+        _Common.BILL_ERROR = 'FAILED_TO_ACCEPT'
         M_SIGNDLER.SIGNAL_ACCEPT_MEI.emit("ERROR")
         LOGGER.warning(("#2", e))
 
@@ -471,11 +471,11 @@ def dis_accept_mei():
                 IS_ACCEPTING = False
                 IS_STANDBY_MODE = True
             else:
-                _Global.BILL_ERROR = 'FAILED_TO_DISACCEPT'
+                _Common.BILL_ERROR = 'FAILED_TO_DISACCEPT'
                 LOGGER.warning((str(response), result))
                 M_SIGNDLER.SIGNAL_DIS_ACCEPT_MEI.emit("DIS_ACCEPT|ERROR")
         else:
-            _Global.BILL_ERROR = 'FAILED_TO_DISACCEPT'
+            _Common.BILL_ERROR = 'FAILED_TO_DISACCEPT'
             LOGGER.warning("OPEN_STATUS")
             M_SIGNDLER.SIGNAL_DIS_ACCEPT_MEI.emit("DIS_ACCEPT|ERROR")
     except Exception as e:
@@ -483,7 +483,7 @@ def dis_accept_mei():
             M_SIGNDLER.SIGNAL_STACK_MEI.emit('STACK|OSERROR')
             LOGGER.warning((e, 'Please Check MDDTopUpService'))
         else:
-            _Global.BILL_ERROR = 'FAILED_TO_DISACCEPT'
+            _Common.BILL_ERROR = 'FAILED_TO_DISACCEPT'
             M_SIGNDLER.SIGNAL_DIS_ACCEPT_MEI.emit("DIS_ACCEPT|ERROR")
             LOGGER.warning(e)
 
@@ -507,7 +507,7 @@ def stack_mei(file_output=_Command.MO_REPORT):
                 M_SIGNDLER.SIGNAL_STACK_MEI.emit('STACK|' + str(result))
                 LOGGER.warning((str(response), result))
         else:
-            _Global.BILL_ERROR = 'FAILED_TO_STACK'
+            _Common.BILL_ERROR = 'FAILED_TO_STACK'
             LOGGER.warning("OPEN_STATUS ")
             M_SIGNDLER.SIGNAL_STACK_MEI.emit("STACK|ERROR")
     except Exception as e:
@@ -515,7 +515,7 @@ def stack_mei(file_output=_Command.MO_REPORT):
             M_SIGNDLER.SIGNAL_STACK_MEI.emit('STACK|OSERROR')
             LOGGER.warning((e, 'Please Check MDDTopUpService'))
         else:
-            _Global.BILL_ERROR = 'FAILED_TO_STACK'
+            _Common.BILL_ERROR = 'FAILED_TO_STACK'
             M_SIGNDLER.SIGNAL_STACK_MEI.emit("STACK|ERROR")
             LOGGER.warning(e)
 
@@ -563,11 +563,11 @@ def return_mei(file_output=_Command.MO_REPORT):
                 LOGGER.warning((response, result))
                 M_SIGNDLER.SIGNAL_RETURN_MEI.emit("RETURN|ERROR")
         else:
-            _Global.BILL_ERROR = 'FAILED_TO_RETURN'
+            _Common.BILL_ERROR = 'FAILED_TO_RETURN'
             LOGGER.warning("OPEN_STATUS")
             M_SIGNDLER.SIGNAL_RETURN_MEI.emit("RETURN|ERROR")
     except Exception as e:
-        _Global.BILL_ERROR = 'FAILED_TO_RETURN'
+        _Common.BILL_ERROR = 'FAILED_TO_RETURN'
         M_SIGNDLER.SIGNAL_RETURN_MEI.emit("RETURN|ERROR")
         LOGGER.warning(e)
 
@@ -594,11 +594,11 @@ def store_es_mei():
             if response == 0:
                 handling_storing_cash()
             else:
-                _Global.BILL_ERROR = 'FAILED_TO_STORE_ES'
+                _Common.BILL_ERROR = 'FAILED_TO_STORE_ES'
                 LOGGER.warning((response, result))
                 M_SIGNDLER.SIGNAL_STORE_ES_MEI.emit("STORE_ES|ERROR")
         else:
-            _Global.BILL_ERROR = 'FAILED_TO_STORE_ES'
+            _Common.BILL_ERROR = 'FAILED_TO_STORE_ES'
             LOGGER.warning("OPEN_STATUS")
             M_SIGNDLER.SIGNAL_STORE_ES_MEI.emit("STORE_ES|ERROR")
     except Exception as e:
@@ -606,7 +606,7 @@ def store_es_mei():
             M_SIGNDLER.SIGNAL_STACK_MEI.emit('STACK|OSERROR')
             LOGGER.warning((e, 'Please Check MDDTopUpService'))
         else:
-            _Global.BILL_ERROR = 'FAILED_TO_STORE_ES'
+            _Common.BILL_ERROR = 'FAILED_TO_STORE_ES'
             M_SIGNDLER.SIGNAL_RETURN_MEI.emit("STORE_ES|ERROR")
             LOGGER.warning(e)
 
@@ -689,11 +689,11 @@ def return_es_mei():
                 # M_SIGNDLER.SIGNAL_RETURN_ES_MEI.emit('RETURN_ES|' + str(result))
                 handling_return_es()
             else:
-                _Global.BILL_ERROR = 'FAILED_TO_RETURN_ES'
+                _Common.BILL_ERROR = 'FAILED_TO_RETURN_ES'
                 LOGGER.warning((response, result))
                 M_SIGNDLER.SIGNAL_RETURN_ES_MEI.emit("RETURN_ES|ERROR")
         else:
-            _Global.BILL_ERROR = 'FAILED_TO_RETURN_ES'
+            _Common.BILL_ERROR = 'FAILED_TO_RETURN_ES'
             LOGGER.warning("OPEN_STATUS")
             M_SIGNDLER.SIGNAL_RETURN_ES_MEI.emit("RETURN_ES|ERROR")
     except Exception as e:
@@ -701,7 +701,7 @@ def return_es_mei():
             M_SIGNDLER.SIGNAL_STACK_MEI.emit('STACK|OSERROR')
             LOGGER.warning((e, 'Please Check MDDTopUpService'))
         else:
-            _Global.BILL_ERROR = 'FAILED_TO_RETURN_ES'
+            _Common.BILL_ERROR = 'FAILED_TO_RETURN_ES'
             M_SIGNDLER.SIGNAL_RETURN_ES_MEI.emit("RETURN_ES|ERROR")
             LOGGER.warning(e)
 
@@ -751,15 +751,15 @@ def dispense_cou_mei():
             if response == 0:
                 M_SIGNDLER.SIGNAL_DISPENSE_COU_MEI.emit('DISPENSE_COU|' + str(result))
             else:
-                _Global.BILL_ERROR = 'FAILED_TO_DISPENSE'
+                _Common.BILL_ERROR = 'FAILED_TO_DISPENSE'
                 LOGGER.warning((response, result))
                 M_SIGNDLER.SIGNAL_DISPENSE_COU_MEI.emit("DISPENSE_COU|ERROR")
         else:
-            _Global.BILL_ERROR = 'FAILED_TO_DISPENSE'
+            _Common.BILL_ERROR = 'FAILED_TO_DISPENSE'
             LOGGER.warning("OPEN_STATUS")
             M_SIGNDLER.SIGNAL_DISPENSE_COU_MEI.emit("DISPENSE_COU|ERROR")
     except Exception as e:
-        _Global.BILL_ERROR = 'FAILED_TO_DISPENSE'
+        _Common.BILL_ERROR = 'FAILED_TO_DISPENSE'
         M_SIGNDLER.SIGNAL_DISPENSE_COU_MEI.emit("DISPENSE_COU|ERROR")
         LOGGER.warning(e)
 
@@ -776,15 +776,15 @@ def float_down_cou_mei():
             if response == 0:
                 M_SIGNDLER.SIGNAL_FLOAT_DOWN_COU_MEI.emit('FLOAT_DOWN_COU|' + str(result))
             else:
-                _Global.BILL_ERROR = 'FAILED_TO_FLOAT_DOWN'
+                _Common.BILL_ERROR = 'FAILED_TO_FLOAT_DOWN'
                 LOGGER.warning((response, result))
                 M_SIGNDLER.SIGNAL_FLOAT_DOWN_COU_MEI.emit("FLOAT_DOWN_COU|ERROR")
         else:
-            _Global.BILL_ERROR = 'FAILED_TO_FLOAT_DOWN'
+            _Common.BILL_ERROR = 'FAILED_TO_FLOAT_DOWN'
             LOGGER.warning("OPEN_STATUS")
             M_SIGNDLER.SIGNAL_FLOAT_DOWN_COU_MEI.emit("FLOAT_DOWN_COU|ERROR")
     except Exception as e:
-        _Global.BILL_ERROR = 'FAILED_TO_FLOAT_DOWN'
+        _Common.BILL_ERROR = 'FAILED_TO_FLOAT_DOWN'
         M_SIGNDLER.SIGNAL_FLOAT_DOWN_COU_MEI.emit("FLOAT_DOWN_COU|ERROR")
         LOGGER.warning(e)
 
@@ -801,15 +801,15 @@ def dispense_val_mei(amount):
             if response == 0:
                 M_SIGNDLER.SIGNAL_DISPENSE_VAL_MEI.emit('DISPENSE_VAL|' + str(result))
             else:
-                _Global.BILL_ERROR = 'FAILED_TO_DISPENSE_VAL'
+                _Common.BILL_ERROR = 'FAILED_TO_DISPENSE_VAL'
                 LOGGER.warning((response, result))
                 M_SIGNDLER.SIGNAL_DISPENSE_VAL_MEI.emit("DISPENSE_VAL|ERROR")
         else:
-            _Global.BILL_ERROR = 'FAILED_TO_DISPENSE_VAL'
+            _Common.BILL_ERROR = 'FAILED_TO_DISPENSE_VAL'
             LOGGER.warning("OPEN_STATUS")
             M_SIGNDLER.SIGNAL_DISPENSE_VAL_MEI.emit("DISPENSE_VAL|ERROR")
     except Exception as e:
-        _Global.BILL_ERROR = 'FAILED_TO_DISPENSE_VAL'
+        _Common.BILL_ERROR = 'FAILED_TO_DISPENSE_VAL'
         M_SIGNDLER.SIGNAL_DISPENSE_VAL_MEI.emit("DISPENSE_VAL|ERROR")
         LOGGER.warning(e)
 
@@ -827,14 +827,14 @@ def float_down_all_mei():
                 M_SIGNDLER.SIGNAL_FLOAT_DOWN_ALL_MEI.emit('FLOAT_DOWN_ALL|' + str(result))
             else:
                 LOGGER.warning((response, result))
-                _Global.BILL_ERROR = 'FAILED_TO_FLOATDOWN_ALL'
+                _Common.BILL_ERROR = 'FAILED_TO_FLOATDOWN_ALL'
                 M_SIGNDLER.SIGNAL_FLOAT_DOWN_ALL_MEI.emit("FLOAT_DOWN_ALL|ERROR")
         else:
-            _Global.BILL_ERROR = 'FAILED_TO_FLOATDOWN_ALL'
+            _Common.BILL_ERROR = 'FAILED_TO_FLOATDOWN_ALL'
             LOGGER.warning("OPEN_STATUS")
             M_SIGNDLER.SIGNAL_FLOAT_DOWN_ALL_MEI.emit("FLOAT_DOWN_ALL|ERROR")
     except Exception as e:
-        _Global.BILL_ERROR = 'FAILED_TO_FLOATDOWN_ALL'
+        _Common.BILL_ERROR = 'FAILED_TO_FLOATDOWN_ALL'
         M_SIGNDLER.SIGNAL_FLOAT_DOWN_ALL_MEI.emit("FLOAT_DOWN_ALL|ERROR")
         LOGGER.warning(e)
 

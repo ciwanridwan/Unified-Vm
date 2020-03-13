@@ -10,7 +10,7 @@ from _tTools import _Helper
 from PyQt5.QtCore import QObject, pyqtSignal
 from _dDevice import _Printer
 from _sService import _KioskService
-from _cConfig import _Global
+from _cConfig import _Common
 from _sService import _UserService
 from _sService import _ProductService
 from _dDAO import _DAO
@@ -35,7 +35,7 @@ if not os.path.exists(PATH):
 FONT_PATH = os.path.join(sys.path[0], '_fFonts')
 if not os.path.exists(FONT_PATH):
     os.makedirs(FONT_PATH)
-LOGO_PATH = os.path.join(sys.path[0], '_rReceipts', _Global.RECEIPT_LOGO)
+LOGO_PATH = os.path.join(sys.path[0], '_rReceipts', _Common.RECEIPT_LOGO)
 
 
 def get_paper_size(ls=None):
@@ -67,9 +67,9 @@ class PDF(FPDF):
         # self.ln(SPACING)
         # self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE, HEADER_TEXT2, 0, 0, 'C')
         self.ln(SPACING)
-        self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE, 'TERMINAL : '+_Global.TID, 0, 0, 'C')
+        self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE, 'TERMINAL : '+_Common.TID, 0, 0, 'C')
         self.ln(SPACING)
-        self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE, 'LOKASI : '+_Global.KIOSK_NAME, 0, 1, 'C')
+        self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE, 'LOKASI : '+_Common.KIOSK_NAME, 0, 1, 'C')
 
     def footer(self):
         self.set_font(USED_FONT, '', GLOBAL_FONT_SIZE-1)
@@ -77,8 +77,8 @@ class PDF(FPDF):
         # self.cell(MARGIN_LEFT, HEADER_FONT_SIZE, 'Layanan Pelanggan Hubungi 0812-XXXX-XXXX', 0, 0, 'C')
         # self.cell(MARGIN_LEFT, FOOTER_FONT_SIZE, '-APP VER: ' + _KioskService.VERSION+'-', 0, 0, 'C')
         self.set_y(-20)
-        if len(_Global.CUSTOM_RECEIPT_TEXT) > 5:
-            for custom_text in _Global.CUSTOM_RECEIPT_TEXT.split('|'):
+        if len(_Common.CUSTOM_RECEIPT_TEXT) > 5:
+            for custom_text in _Common.CUSTOM_RECEIPT_TEXT.split('|'):
                 self.ln(SPACING-1)
                 self.cell(MARGIN_LEFT, GLOBAL_FONT_SIZE-1, custom_text, 0, 0, 'C')
         self.ln(SPACING-1)
@@ -91,9 +91,9 @@ class GeneralPDF(FPDF):
         self.ln(3*3)
         self.cell(MARGIN_LEFT, 7, 'COLLECTION REPORT', 0, 0, 'C')
         self.ln(3)
-        self.cell(MARGIN_LEFT, 7, 'VM ID : '+_Global.TID, 0, 0, 'C')
+        self.cell(MARGIN_LEFT, 7, 'VM ID : '+_Common.TID, 0, 0, 'C')
         self.ln(3)
-        self.cell(MARGIN_LEFT, 7, 'VM Name : '+_Global.KIOSK_NAME, 0, 1, 'C')
+        self.cell(MARGIN_LEFT, 7, 'VM Name : '+_Common.KIOSK_NAME, 0, 1, 'C')
 
     def footer(self):
         self.set_font(USED_FONT, '', 7)
@@ -179,7 +179,7 @@ def sale_print_global(ext='.pdf', use_last=False):
 
 def print_topup_trx(p, t, ext='.pdf'):
     global HEADER_TEXT1
-    if _Global.empty(p):
+    if _Common.empty(p):
         LOGGER.warning(('Cannot Generate Receipt Data', 'GLOBAL_TRANSACTION_DATA', 'None'))
         SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
         return
@@ -225,9 +225,9 @@ def print_topup_trx(p, t, ext='.pdf'):
                 # pdf.ln(small_space)
                 # pdf.set_font(USED_FONT, '', regular_space)
                 # if 'Mandiri' in p['provider']:
-                #     pdf.cell(padding_left, 0, 'TID : ' + _Global.TID_MAN, 0, 0, 'L')
+                #     pdf.cell(padding_left, 0, 'TID : ' + _Common.TID_MAN, 0, 0, 'L')
                 # else:
-                #     pdf.cell(padding_left, 0, 'TID : ' + _Global.TID_BNI, 0, 0, 'L')
+                #     pdf.cell(padding_left, 0, 'TID : ' + _Common.TID_BNI, 0, 0, 'L')
                 pdf.ln(small_space)
                 pdf.set_font(USED_FONT, '', regular_space)
                 pdf.cell(padding_left, 0, 'ISI ULANG  : Rp. ' + clean_number(p['denom']), 0, 0, 'L')
@@ -345,7 +345,7 @@ def print_topup_trx(p, t, ext='.pdf'):
         #     if p['shop_type'] == 'topup' and 'topup_details' not in p.keys():
         #         failure = 'TOPUP_FAILURE'
         #     # Send Failure To Backend
-        #     _Global.store_upload_failed_trx(trxid, p.get('pid', ''), cash, failure, p.get('payment', 'cash'),
+        #     _Common.store_upload_failed_trx(trxid, p.get('pid', ''), cash, failure, p.get('payment', 'cash'),
         #                                     json.dumps(p))
     except Exception as e:
         LOGGER.warning(str(e))
@@ -356,19 +356,19 @@ def print_topup_trx(p, t, ext='.pdf'):
             if p['shop_type'] == 'topup' and 'topup_details' not in p.keys():
                 failure = 'TOPUP_FAILURE'
             # Send Failure To Backend
-            _Global.store_upload_failed_trx(trxid, p.get('pid', ''), cash, failure, p.get('payment', 'cash'),
+            _Common.store_upload_failed_trx(trxid, p.get('pid', ''), cash, failure, p.get('payment', 'cash'),
                                             json.dumps(p))
         # save_receipt_local(trxid[-6:], json.dumps(p), 'CUSTOMER_TOPUP_TRX')
-        if p['payment'].upper() == 'DEBIT' and _Global.LAST_EDC_TRX_RECEIPT is not None:
-            print__ = _Printer.do_printout(_Global.LAST_EDC_TRX_RECEIPT)
+        if p['payment'].upper() == 'DEBIT' and _Common.LAST_EDC_TRX_RECEIPT is not None:
+            print__ = _Printer.do_printout(_Common.LAST_EDC_TRX_RECEIPT)
             print("pyt : sending pdf to default printer : {}".format(str(print__)))
-            _Global.LAST_EDC_TRX_RECEIPT = None
+            _Common.LAST_EDC_TRX_RECEIPT = None
         del pdf
 
 
 def print_shop_trx(p, t, ext='.pdf'):
     global HEADER_TEXT1
-    if _Global.empty(p):
+    if _Common.empty(p):
         LOGGER.warning(('Cannot Generate Receipt Data', 'GLOBAL_TRANSACTION_DATA', 'None'))
         SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
         return
@@ -487,7 +487,7 @@ def print_shop_trx(p, t, ext='.pdf'):
         #     if p['shop_type'] == 'topup' and 'topup_details' not in p.keys():
         #         failure = 'TOPUP_FAILURE'
         #     # Send Failure To Backend
-        #     _Global.store_upload_failed_trx(trxid, p.get('pid', ''), cash, failure, p.get('payment', 'cash'),
+        #     _Common.store_upload_failed_trx(trxid, p.get('pid', ''), cash, failure, p.get('payment', 'cash'),
         #                                     json.dumps(p))
     except Exception as e:
         LOGGER.warning(str(e))
@@ -498,19 +498,19 @@ def print_shop_trx(p, t, ext='.pdf'):
             if p['shop_type'] == 'topup' and 'topup_details' not in p.keys():
                 failure = 'TOPUP_FAILURE'
             # Send Failure To Backend
-            _Global.store_upload_failed_trx(trxid, p.get('pid', ''), cash, failure, p.get('payment', 'cash'),
+            _Common.store_upload_failed_trx(trxid, p.get('pid', ''), cash, failure, p.get('payment', 'cash'),
                                             json.dumps(p))
         # save_receipt_local(trxid[-6:], json.dumps(p), 'CUSTOMER_SHOP_TRX')
-        if p['payment'].upper() == 'DEBIT' and _Global.LAST_EDC_TRX_RECEIPT is not None:
-            print__ = _Printer.do_printout(_Global.LAST_EDC_TRX_RECEIPT)
+        if p['payment'].upper() == 'DEBIT' and _Common.LAST_EDC_TRX_RECEIPT is not None:
+            print__ = _Printer.do_printout(_Common.LAST_EDC_TRX_RECEIPT)
             print("pyt : sending pdf to default printer : {}".format(str(print__)))
-            _Global.LAST_EDC_TRX_RECEIPT = None
+            _Common.LAST_EDC_TRX_RECEIPT = None
         del pdf
 
 
 def print_ppob_trx(p, t, ext='.pdf'):
     global HEADER_TEXT1
-    if _Global.empty(p):
+    if _Common.empty(p):
         LOGGER.warning(('Cannot Generate Receipt Data', 'GLOBAL_TRANSACTION_DATA', 'None'))
         SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
         return
@@ -642,10 +642,10 @@ def print_ppob_trx(p, t, ext='.pdf'):
         SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
     finally:
         # save_receipt_local(trxid[-6:], json.dumps(p), 'CUSTOMER_PPOB_TRX')
-        if p['payment'].upper() == 'DEBIT' and _Global.LAST_EDC_TRX_RECEIPT is not None:
-            print__ = _Printer.do_printout(_Global.LAST_EDC_TRX_RECEIPT)
+        if p['payment'].upper() == 'DEBIT' and _Common.LAST_EDC_TRX_RECEIPT is not None:
+            print__ = _Printer.do_printout(_Common.LAST_EDC_TRX_RECEIPT)
             print("pyt : sending pdf to default printer : {}".format(str(print__)))
-            _Global.LAST_EDC_TRX_RECEIPT = None
+            _Common.LAST_EDC_TRX_RECEIPT = None
         del pdf
 
 
@@ -767,9 +767,9 @@ def get_admin_data():
             __notes.append(json.loads(money['note'])['history'])
         __data['notes_summary'] = '|'.join(__notes)
         # Status Bank BNI in Global
-        if _Global.BANKS[0]['STATUS'] is True:
-            __data['sam_1_balance'] = str(_Global.MANDIRI_ACTIVE_WALLET)
-            __data['sam_2_balance'] = str(_Global.BNI_ACTIVE_WALLET)
+        if _Common.BANKS[0]['STATUS'] is True:
+            __data['sam_1_balance'] = str(_Common.MANDIRI_ACTIVE_WALLET)
+            __data['sam_2_balance'] = str(_Common.BNI_ACTIVE_WALLET)
         if len(_ProductService.LAST_UPDATED_STOCK) > 0:
             CARD_ADJUSTMENT = json.dumps(_ProductService.LAST_UPDATED_STOCK)
             for update in _ProductService.LAST_UPDATED_STOCK:
@@ -797,7 +797,7 @@ def save_receipt_local(__id, __data, __type):
         param_receipt = {
             'rid': _Helper.get_uuid(),
             'bookingCode': __id,
-            'tid': _Global.TID,
+            'tid': _Common.TID,
             'receiptRaw': __type,
             'receiptData': __data,
             'createdAt': _Helper.now()
@@ -868,7 +868,7 @@ def admin_print_global(struct_id, ext='.pdf'):
         pdf.set_font(USED_FONT, '', line_size)
         pdf.cell(padding_left, 0, 'TOPUP', 0, 0, 'L')
         pdf.ln(tiny_space)
-        if not _Global.BANKS[0]['STATUS']:
+        if not _Common.BANKS[0]['STATUS']:
             pdf.set_font(USED_FONT, '', line_size)
             qty_t10k = s['trx_top10k']
             total_t10k = str(int(qty_t10k) * 10000)
@@ -892,7 +892,7 @@ def admin_print_global(struct_id, ext='.pdf'):
         total_t100k = str(int(qty_t100k) * 100000)
         pdf.cell(padding_left, 0,
                  '- 100K : '+str(qty_t100k)+' x 100.000 = Rp. '+clean_number(total_t100k), 0, 0, 'L')
-        if _Global.BANKS[0]['STATUS']:
+        if _Common.BANKS[0]['STATUS']:
             pdf.set_font(USED_FONT, '', line_size)
             qty_t200k = s['trx_top200k']
             total_t200k = str(int(qty_t200k) * 200000)
@@ -948,7 +948,7 @@ def admin_print_global(struct_id, ext='.pdf'):
             sleep(1)
         SPRINTTOOL_SIGNDLER.SIGNAL_ADMIN_PRINT_GLOBAL.emit('ADMIN_PRINT|DONE')
         # Send To Backend
-        _Global.upload_admin_access(struct_id, user, str(s['all_cash']), '0', CARD_ADJUSTMENT, json.dumps(s))
+        _Common.upload_admin_access(struct_id, user, str(s['all_cash']), '0', CARD_ADJUSTMENT, json.dumps(s))
     except Exception as e:
         LOGGER.warning(str(e))
         SPRINTTOOL_SIGNDLER.SIGNAL_ADMIN_PRINT_GLOBAL.emit('ADMIN_PRINT|ERROR')
@@ -960,7 +960,7 @@ def admin_print_global(struct_id, ext='.pdf'):
 
 
 def mark_sync_collected_data(s):
-    if not _Global.empty(s):
+    if not _Common.empty(s):
         _DAO.custom_update(' UPDATE Transactions SET isCollected = 1 WHERE isCollected = 0 ')
         operator = 'OPERATOR'
         if _UserService.USER is not None:

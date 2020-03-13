@@ -4,7 +4,7 @@ import logging
 from PyQt5.QtCore import QObject, pyqtSignal
 from _nNetwork import _NetworkAccess
 from _dDevice import _QPROX
-from _cConfig import _Global
+from _cConfig import _Common
 from _tTools import _Helper
 from time import sleep
 from _cCommand import _Command
@@ -18,11 +18,11 @@ class TopupSignalHandler(QObject):
 TP_SIGNDLER = TopupSignalHandler()
 LOGGER = logging.getLogger()
 
-TOPUP_URL = _Global.TOPUP_URL
-TOPUP_TOKEN = _Global.TOPUP_TOKEN
-TOPUP_MID = _Global.TOPUP_MID
+TOPUP_URL = _Common.TOPUP_URL
+TOPUP_TOKEN = _Common.TOPUP_TOKEN
+TOPUP_MID = _Common.TOPUP_MID
 # TOPUP_TID = '0123456789abcdefghijkl' -> Change Using Terminal ID
-TOPUP_TID = _Global.TID
+TOPUP_TID = _Common.TID
 # ==========================================================
 
 
@@ -36,12 +36,12 @@ BNI_UPDATE_BALANCE_PROCESS = False
 def define_topup_slot_bni():
     while True:
         if not BNI_UPDATE_BALANCE_PROCESS:
-            if _Global.BNI_SAM_1_WALLET <= _Global.MINIMUM_AMOUNT:
-                LOGGER.debug(('START_BNI_SAM_AUTO_UPDATE_SLOT_1', str(_Global.MINIMUM_AMOUNT), str(_Global.BNI_SAM_1_WALLET)))
+            if _Common.BNI_SAM_1_WALLET <= _Common.MINIMUM_AMOUNT:
+                LOGGER.debug(('START_BNI_SAM_AUTO_UPDATE_SLOT_1', str(_Common.MINIMUM_AMOUNT), str(_Common.BNI_SAM_1_WALLET)))
                 TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_1')
                 do_topup_bni(slot=1, force=True)
-            if _Global.BNI_SINGLE_SAM is False and _Global.BNI_SAM_2_WALLET <= _Global.MINIMUM_AMOUNT:
-                LOGGER.debug(('START_BNI_SAM_AUTO_UPDATE_SLOT_2', str(_Global.MINIMUM_AMOUNT), str(_Global.BNI_SAM_2_WALLET)))
+            if _Common.BNI_SINGLE_SAM is False and _Common.BNI_SAM_2_WALLET <= _Common.MINIMUM_AMOUNT:
+                LOGGER.debug(('START_BNI_SAM_AUTO_UPDATE_SLOT_2', str(_Common.MINIMUM_AMOUNT), str(_Common.BNI_SAM_2_WALLET)))
                 TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_2')
                 do_topup_bni(slot=2, force=True)
         sleep(5)
@@ -52,7 +52,7 @@ def start_do_topup_bni(slot):
 
 
 def start_do_force_topup_bni():
-    slot = _Global.BNI_ACTIVE
+    slot = _Common.BNI_ACTIVE
     force = True
     _Helper.get_pool().apply_async(do_topup_bni, (int(slot), force, ))
 
@@ -60,24 +60,24 @@ def start_do_force_topup_bni():
 def do_topup_bni(slot=1, force=False):
     global BNI_UPDATE_BALANCE_PROCESS
     try:
-        if force is False and _Global.ALLOW_DO_TOPUP is False:
-            LOGGER.warning(('do_topup_bni', slot, _Global.ALLOW_DO_TOPUP))
+        if force is False and _Common.ALLOW_DO_TOPUP is False:
+            LOGGER.warning(('do_topup_bni', slot, _Common.ALLOW_DO_TOPUP))
             return 'TOPUP_NOT_ALLOWED'
         _get_card_data = _QPROX.get_card_info(slot=slot)
         if _get_card_data is False:
             TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('FAILED_GET_CARD_INFO_BNI')
-            _Global.upload_topup_error(slot, 'ADD')
+            _Common.upload_topup_error(slot, 'ADD')
             return 'FAILED_GET_CARD_INFO_BNI'
         BNI_UPDATE_BALANCE_PROCESS = True
-        _Global.BNI_ACTIVE_WALLET = 0
+        _Common.BNI_ACTIVE_WALLET = 0
         _result_pending = pending_balance({
             'card_no': _get_card_data['card_no'],
-            'amount': _Global.BNI_TOPUP_AMOUNT,
-            'card_tid': _Global.TID_BNI
+            'amount': _Common.BNI_TOPUP_AMOUNT,
+            'card_tid': _Common.TID_BNI
         })
         if _result_pending is False:
             TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('FAILED_PENDING_BALANCE_BNI')
-            _Global.upload_topup_error(slot, 'ADD')
+            _Common.upload_topup_error(slot, 'ADD')
             return 'FAILED_PENDING_BALANCE_BNI'
         _result_ubal = update_balance({
             'card_no': _get_card_data['card_no'],
@@ -86,17 +86,17 @@ def do_topup_bni(slot=1, force=False):
         })
         if _result_ubal is False:
             TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('FAILED_UPDATE_BALANCE_BNI')
-            _Global.upload_topup_error(slot, 'ADD')
+            _Common.upload_topup_error(slot, 'ADD')
             return 'FAILED_UPDATE_BALANCE_BNI'
         _send_crypto = _QPROX.send_cryptogram(_get_card_data['card_info'], _result_ubal['dataToCard'], slot=slot)
         if _send_crypto is False:
             TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('FAILED_SEND_CRYPTOGRAM_BNI')
-            _Global.upload_topup_error(slot, 'ADD')
+            _Common.upload_topup_error(slot, 'ADD')
             return 'FAILED_SEND_CRYPTOGRAM_BNI'
         else:
             BNI_UPDATE_BALANCE_PROCESS = False
             TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('SUCCESS_TOPUP_BNI')
-            _Global.upload_topup_error(slot, 'RESET')
+            _Common.upload_topup_error(slot, 'RESET')
             return 'SUCCESS_TOPUP_BNI'
     except Exception as e:
         LOGGER.warning(('do_topup_bni', str(slot), str(e)))
@@ -121,11 +121,11 @@ def reset_pending_balance(slot=1):
         _result_pending = pending_balance({
             'card_no': _get_card_data['card_no'],
             'amount': '10',
-            'card_tid': _Global.TID_BNI,
+            'card_tid': _Common.TID_BNI,
             'activation': '1'
         })
         if _result_pending is False:
-            _Global.upload_topup_error(slot, 'ADD')
+            _Common.upload_topup_error(slot, 'ADD')
             return 'FAILED_PENDING_BALANCE_BNI'
         _result_ubal = update_balance({
             'card_no': _get_card_data['card_no'],
@@ -133,15 +133,15 @@ def reset_pending_balance(slot=1):
             'reff_no': _result_pending['reff_no']
         })
         if _result_ubal is False:
-            _Global.upload_topup_error(slot, 'ADD')
+            _Common.upload_topup_error(slot, 'ADD')
             return 'FAILED_UPDATE_BALANCE_BNI'
         _send_crypto = _QPROX.send_cryptogram(_get_card_data['card_info'], _result_ubal['dataToCard'], slot=slot)
         if _send_crypto is False:
-            _Global.upload_topup_error(slot, 'ADD')
+            _Common.upload_topup_error(slot, 'ADD')
             return 'FAILED_SEND_CRYPTOGRAM_BNI'
         else:
-            _Global.upload_topup_error(slot, 'RESET')
-            _Global.ALLOW_DO_TOPUP = True
+            _Common.upload_topup_error(slot, 'RESET')
+            _Common.ALLOW_DO_TOPUP = True
             return 'SUCCESS_RESET_PENDING_BNI'
     except Exception as e:
         LOGGER.warning(('reset_pending_balance', str(slot), str(e)))
@@ -219,10 +219,10 @@ def update_balance(_param, bank='BNI', mode='TOPUP'):
                 #   "auth_id":"164094",
                 #   "dataToCard":"06015F902D04C57100000000000000001C54522709845B42F240343E96F11041"
                 # }
-                # _Global.ALLOW_DO_TOPUP = True
+                # _Common.ALLOW_DO_TOPUP = True
                 return response['data']
             else:
-                _Global.ALLOW_DO_TOPUP = False
+                _Common.ALLOW_DO_TOPUP = False
                 return False
         except Exception as e:
             LOGGER.warning((bank, mode, e))
@@ -287,15 +287,15 @@ def refill_zero_bni(slot=1):
     param = _QPROX.QPROX['REFILL_ZERO'] + '|' + str(_slot) + '|' + _QPROX.TID_BNI
     response, result = _Command.send_request(param=param, output=None)
     if response == 0:
-        _Global.NFC_ERROR = ''
+        _Common.NFC_ERROR = ''
         _QPROX.QP_SIGNDLER.SIGNAL_REFILL_ZERO.emit('REFILL_ZERO|SUCCESS')
         sleep(2)
         reset_pending_balance(slot=slot)
     else:
         if slot == 1:
-            _Global.NFC_ERROR = 'REFILL_ZERO_SLOT_1_BNI_ERROR'
+            _Common.NFC_ERROR = 'REFILL_ZERO_SLOT_1_BNI_ERROR'
         if slot == 2:
-            _Global.NFC_ERROR = 'REFILL_ZERO_SLOT_2_BNI_ERROR'
+            _Common.NFC_ERROR = 'REFILL_ZERO_SLOT_2_BNI_ERROR'
         _QPROX.QP_SIGNDLER.SIGNAL_REFILL_ZERO.emit('REFILL_ZERO_ERROR')
 
 

@@ -4,13 +4,13 @@ import os
 import sys
 import logging
 import ftplib
-from _cConfig import _Global
+from _cConfig import _Common
 
 LOGGER = logging.getLogger()
-FTP_SERVER = _Global.FTP['host']
-FTP_USER = _Global.FTP['user']
-FTP_PASS = _Global.FTP['pass']
-FTP_PORT = _Global.FTP['port']
+FTP_SERVER = _Common.FTP['host']
+FTP_USER = _Common.FTP['user']
+FTP_PASS = _Common.FTP['pass']
+FTP_PORT = _Common.FTP['port']
 BUFFER = 1024
 REMOTE_PATH = '/home/tj-kiosk/topup/bni/'
 LOCAL_PATH = os.path.join(sys.path[0], '_rRemoteFiles')

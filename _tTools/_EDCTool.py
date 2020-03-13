@@ -7,14 +7,14 @@ import os
 from datetime import datetime
 from _dDevice import _Printer
 from _sService import _KioskService
-from _cConfig import _ConfigParser, _Global
+from _cConfig import _ConfigParser, _Common
 import re
 
 LOGGER = logging.getLogger()
 PDF_PATH = os.path.join(sys.path[0], '_pPDF')
 LOGO_PATH = os.path.join(sys.path[0], '_rReceipts', 'bni_logo.gif')
-VERSION = _Global.VERSION
-KIOSK_ID = _Global.TID
+VERSION = _Common.VERSION
+KIOSK_ID = _Common.TID
 FONT_PATH = os.path.join(os.getcwd(), '_fFonts')
 
 CARD_TYPE = {
@@ -159,7 +159,7 @@ class PDF(FPDF):
         self.ln(SPACING)
         self.cell(MARGIN_LEFT, HEADER_FONT_SIZE, 'ACQUIRED BY BNI', 0, 0, 'C')
         self.ln(SPACING)
-        self.cell(MARGIN_LEFT, HEADER_FONT_SIZE, _Global.KIOSK_NAME, 0, 0, 'C')
+        self.cell(MARGIN_LEFT, HEADER_FONT_SIZE, _Common.KIOSK_NAME, 0, 0, 'C')
         self.ln(SPACING)
         self.cell(MARGIN_LEFT, HEADER_FONT_SIZE, 'KIOSK ID : '+KIOSK_ID, 0, 0, 'C')
         self.ln(SPACING)
@@ -249,13 +249,13 @@ def generate_edc_receipt_old(trx):
         # Rendering
         pdf_file = get_path(file_name+'.pdf')
         pdf.output(pdf_file, 'F')
-        _Global.LAST_EDC_TRX_RECEIPT = pdf_file
+        _Common.LAST_EDC_TRX_RECEIPT = pdf_file
         LOGGER.debug(('pdf generate_edc_receipt : ', file_name))
     except Exception as e:
         LOGGER.warning(str(e))
     finally:
-        if not _Global.EDC_PRINT_ON_LAST:
-            print_ = _Printer.do_printout(_Global.LAST_EDC_TRX_RECEIPT)
+        if not _Common.EDC_PRINT_ON_LAST:
+            print_ = _Printer.do_printout(_Common.LAST_EDC_TRX_RECEIPT)
             print("pyt : sending edc_receipt to printer : {}".format(str(print_)))
         del pdf
 
@@ -326,12 +326,12 @@ def generate_edc_receipt(trx):
         # Rendering
         pdf_file = get_path(file_name+'.pdf')
         pdf.output(pdf_file, 'F')
-        _Global.LAST_EDC_TRX_RECEIPT = pdf_file
+        _Common.LAST_EDC_TRX_RECEIPT = pdf_file
         LOGGER.debug(('pdf generate_edc_receipt : ', file_name))
     except Exception as e:
         LOGGER.warning(str(e))
     finally:
-        if not _Global.EDC_PRINT_ON_LAST:
-            print_ = _Printer.do_printout(_Global.LAST_EDC_TRX_RECEIPT)
+        if not _Common.EDC_PRINT_ON_LAST:
+            print_ = _Printer.do_printout(_Common.LAST_EDC_TRX_RECEIPT)
             print("pyt : sending edc_receipt to printer : {}".format(str(print_)))
         del pdf
