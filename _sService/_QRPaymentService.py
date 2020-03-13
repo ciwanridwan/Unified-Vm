@@ -85,7 +85,7 @@ def do_get_qr(payload, mode, serialize=True):
         url = _Common.QR_HOST+mode.lower()+'/get-qr'
         if not _Common.QR_PROD_STATE[mode]:
             url = 'http://apidev.mdd.co.id:28194/v1/'+mode.lower()+'/get-qr'
-        s, r = _NetworkAccess.post_to_url(url=url, param=param)
+        s, r = _NetworkAccess.post_to_url(url=url, param=param, custom_timeout=60)
         if s == 200 and r['response']['code'] == 200:
             if '10107' in url:
                 r['data']['qr'] = r['data']['qr'].replace('https', 'http')
@@ -97,6 +97,9 @@ def do_get_qr(payload, mode, serialize=True):
                 param['trx_id'] = r['data']['trx_id']
             LOGGER.debug((str(param), str(r)))
             handle_check_process(json.dumps(param), mode)
+        elif s == -13:
+            QR_SIGNDLER.SIGNAL_GET_QR.emit('GET_QR|'+mode+'|TIMEOUT')
+            LOGGER.warning((str(param), str(r)))
         else:
             QR_SIGNDLER.SIGNAL_GET_QR.emit('GET_QR|'+mode+'|ERROR')
             LOGGER.warning((str(param), str(r)))

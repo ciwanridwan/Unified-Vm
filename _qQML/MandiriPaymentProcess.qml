@@ -304,6 +304,10 @@ Base{
             switch_frame('source/smiley_down.png', 'Terjadi Kesalahan', 'Silakan Coba Lagi Dalam Beberapa Saat', 'backToMain', true )
             return;
         }
+        if (['TIMEOUT'].indexOf(result) > -1){
+            switch_frame('source/smiley_down.png', 'Waktu Proses Pembuatan QR Habis', 'Silakan Coba Lagi Dalam Beberapa Saat', 'backToMain', true )
+            return;
+        }
         popup_loading.close();
         var info = JSON.parse(result);
         var qrMode = mode.toLowerCase();

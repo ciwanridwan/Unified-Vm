@@ -50,6 +50,10 @@ NO_INTERNET = {
     'statusCode': -1,
     'statusMessage': 'Not Internet'
 }
+TIMEOUT = {
+    'statusCode': -13,
+    'statusMessage': 'Read Timeout'
+}
 ERROR_RESPONSE = {
     'statusCode': -99,
     'statusMessage': 'Value Error'
@@ -116,7 +120,7 @@ def get_from_url(url, param=None, header=None, log=True):
     return r.status_code, response
 
 
-def post_to_url(url, param=None, header=None, log=True):
+def post_to_url(url, param=None, header=None, log=True, custom_timeout=None):
     if is_online(source=url) is False and ('apidev.mdd.co.id' not in url or 'apiv2.mdd.co.id' not in url or 'v2/diva/' not in url or 'refund/' not in url):
         return -1, NO_INTERNET
     if header is None:
@@ -126,9 +130,14 @@ def post_to_url(url, param=None, header=None, log=True):
         s.keep_alive = False
         # s.headers['Connection'] = 'close'
         if 'http://apiv2.mdd.co.id:10107' in url or 'http://apidev.mdd.co.id:28194' in url:
-            r = requests.post(url, headers=header, json=param, timeout=180)
+            if custom_timeout is None:
+                custom_timeout = 180
+            r = requests.post(url, headers=header, json=param, timeout=custom_timeout)
         else:
             r = requests.post(url, headers=header, json=param, timeout=GLOBAL_TIMEOUT)
+    except requests.exceptions.Timeout as t:
+        LOGGER.warning((url, TIMEOUT, t))
+        return -13, TIMEOUT
     except Exception as e:
         LOGGER.warning((url, NO_INTERNET, e))
         return -1, NO_INTERNET
