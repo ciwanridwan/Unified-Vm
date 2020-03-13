@@ -530,8 +530,8 @@ def get_payments():
 
 def get_refunds():
     return {
-        "MANUAL": "AVAILABLE",
-        "DUWIT": "AVAILABLE" if check_refund('duwit') is True else "NOT_AVAILABLE",
+        "MANUAL": "AVAILABLE" if check_refund('manual') is True else "NOT_AVAILABLE",
+        "DIVA": "AVAILABLE" if check_refund('diva') is True else "NOT_AVAILABLE",
         "LINKAJA": "AVAILABLE" if check_refund('linkaja') is True else "NOT_AVAILABLE",
         "OVO": "AVAILABLE" if check_refund('ovo') is True else "NOT_AVAILABLE",
         "GOPAY": "AVAILABLE" if check_refund('gopay') is True else "NOT_AVAILABLE",

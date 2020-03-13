@@ -3,6 +3,7 @@
 /_vVideo/
 /_tTmp/
 /_qQr/
+/_rReceipts/
 *.log
 /venv
 /_pPDF/
@@ -22,6 +23,7 @@ _sSync/__pycache__/
 _tTools/__pycache__/
 
 _qQML/config.js
+_qQML/screen.js
 _qQML/source/logo
 _qQML/source/background
 _qQML/source/card

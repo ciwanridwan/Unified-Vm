@@ -200,6 +200,7 @@ def do_check_qr(payload, mode, serialize=True):
             # QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|ERROR')
             # break;
         if success is True:
+            # trigger_success_qr_payment(mode, r['data'])
             QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|SUCCESS|' + json.dumps(r['data']))
             break
         if attempt == 60:
@@ -207,6 +208,26 @@ def do_check_qr(payload, mode, serialize=True):
             QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|TIMEOUT')
             break
         sleep(5)
+
+
+CONFIRM_SUCCESS_QR = False
+
+
+def start_confirm_qr_payment():
+    global CONFIRM_SUCCESS_QR
+    CONFIRM_SUCCESS_QR = True
+    LOGGER.debug(('SET CONFIRM_SUCCESS_QR', CONFIRM_SUCCESS_QR))
+
+
+def trigger_success_qr_payment(mode, data):
+    global CONFIRM_SUCCESS_QR
+    while True:
+        if CONFIRM_SUCCESS_QR is True:
+            LOGGER.debug(('[BREAKING-LOOP] CONFIRM_SUCCESS_QR', CONFIRM_SUCCESS_QR, mode, data))
+            CONFIRM_SUCCESS_QR = False
+            break
+        QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|SUCCESS|' + json.dumps(data))
+        sleep(1)
 
 
 def check_payment_result(result, mode):

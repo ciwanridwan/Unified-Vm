@@ -263,6 +263,7 @@ def check_product_stock(param):
     sql = " SELECT count(*) as count FROM ProductStock WHERE stid = :stid AND pid = :pid LIMIT 0,1 "
     return _Database.get_query(sql=sql, parameter=param)
 
+
 def check_product_status_by_pid(param):
     sql = " SELECT * FROM ProductStock WHERE pid = :pid LIMIT 0,1 "
     return _Database.get_query(sql=sql, parameter=param)
