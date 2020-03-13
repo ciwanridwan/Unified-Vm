@@ -204,7 +204,7 @@ def print_topup_trx(p, t, ext='.pdf'):
         pdf.cell(padding_left, 0, '_' * MAX_LENGTH, 0, 0, 'C')
         pdf.ln(small_space)
         pdf.set_font(USED_FONT, '', regular_space)
-        pdf.cell(padding_left, 0, 'Tanggal : '+datetime.strftime(datetime.now(), '%Y-%m-%d'), 0, 0, 'L')
+        pdf.cell(padding_left, 0, 'Tanggal : '+datetime.strftime(datetime.now(), '%d-%m-%Y'), 0, 0, 'L')
         pdf.cell(padding_left, 0, 'Jam : ' + datetime.strftime(datetime.now(), '%H:%M'), 0, 0, 'R')
         pdf.ln(small_space*2)
         pdf.set_font(USED_FONT, '', regular_space)
@@ -337,7 +337,7 @@ def print_topup_trx(p, t, ext='.pdf'):
         pdf.output(pdf_file, 'F')
         LOGGER.debug(('pdf sale_print_global : ', file_name))
         # Print-out to printer
-        print_ = _Printer.ghost_print(pdf_file)
+        print_ = _Printer.do_printout(pdf_file)
         print("pyt : sending pdf to default printer : {}".format(str(print_)))
         SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|DONE')
         # failure = 'USER_CANCELLATION'
@@ -358,7 +358,11 @@ def print_topup_trx(p, t, ext='.pdf'):
             # Send Failure To Backend
             _Global.store_upload_failed_trx(trxid, p.get('pid', ''), cash, failure, p.get('payment', 'cash'),
                                             json.dumps(p))
-        save_receipt_local(trxid[-6:], json.dumps(p), 'CUSTOMER_TOPUP_TRX')
+        # save_receipt_local(trxid[-6:], json.dumps(p), 'CUSTOMER_TOPUP_TRX')
+        if p['payment'].upper() == 'DEBIT' and _Global.LAST_EDC_TRX_RECEIPT is not None:
+            print__ = _Printer.do_printout(_Global.LAST_EDC_TRX_RECEIPT)
+            print("pyt : sending pdf to default printer : {}".format(str(print__)))
+            _Global.LAST_EDC_TRX_RECEIPT = None
         del pdf
 
 
@@ -389,7 +393,7 @@ def print_shop_trx(p, t, ext='.pdf'):
         pdf.cell(padding_left, 0, '_' * MAX_LENGTH, 0, 0, 'C')
         pdf.ln(small_space)
         pdf.set_font(USED_FONT, '', regular_space)
-        pdf.cell(padding_left, 0, 'Tanggal : '+datetime.strftime(datetime.now(), '%Y-%m-%d'), 0, 0, 'L')
+        pdf.cell(padding_left, 0, 'Tanggal : '+datetime.strftime(datetime.now(), '%d-%m-%Y'), 0, 0, 'L')
         pdf.cell(padding_left, 0, 'Jam : ' + datetime.strftime(datetime.now(), '%H:%M'), 0, 0, 'R')
         pdf.ln(small_space*2)
         pdf.set_font(USED_FONT, '', regular_space)
@@ -475,7 +479,7 @@ def print_shop_trx(p, t, ext='.pdf'):
         pdf.output(pdf_file, 'F')
         LOGGER.debug(('pdf sale_print_global : ', file_name))
         # Print-out to printer
-        print_ = _Printer.ghost_print(pdf_file)
+        print_ = _Printer.do_printout(pdf_file)
         print("pyt : sending pdf to default printer : {}".format(str(print_)))
         SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|DONE')
         # failure = 'USER_CANCELLATION'
@@ -496,7 +500,11 @@ def print_shop_trx(p, t, ext='.pdf'):
             # Send Failure To Backend
             _Global.store_upload_failed_trx(trxid, p.get('pid', ''), cash, failure, p.get('payment', 'cash'),
                                             json.dumps(p))
-        save_receipt_local(trxid[-6:], json.dumps(p), 'CUSTOMER_SHOP_TRX')
+        # save_receipt_local(trxid[-6:], json.dumps(p), 'CUSTOMER_SHOP_TRX')
+        if p['payment'].upper() == 'DEBIT' and _Global.LAST_EDC_TRX_RECEIPT is not None:
+            print__ = _Printer.do_printout(_Global.LAST_EDC_TRX_RECEIPT)
+            print("pyt : sending pdf to default printer : {}".format(str(print__)))
+            _Global.LAST_EDC_TRX_RECEIPT = None
         del pdf
 
 
@@ -527,7 +535,7 @@ def print_ppob_trx(p, t, ext='.pdf'):
         pdf.cell(padding_left, 0, '_' * MAX_LENGTH, 0, 0, 'C')
         pdf.ln(small_space)
         pdf.set_font(USED_FONT, '', regular_space)
-        pdf.cell(padding_left, 0, 'Tanggal : '+datetime.strftime(datetime.now(), '%Y-%m-%d'), 0, 0, 'L')
+        pdf.cell(padding_left, 0, 'Tanggal : '+datetime.strftime(datetime.now(), '%d-%m-%Y'), 0, 0, 'L')
         pdf.cell(padding_left, 0, 'Jam : ' + datetime.strftime(datetime.now(), '%H:%M'), 0, 0, 'R')
         pdf.ln(small_space*2)
         pdf.set_font(USED_FONT, '', regular_space)
@@ -626,14 +634,18 @@ def print_ppob_trx(p, t, ext='.pdf'):
         pdf.output(pdf_file, 'F')
         LOGGER.debug(('pdf sale_print_global : ', file_name))
         # Print-out to printer
-        print_ = _Printer.ghost_print(pdf_file)
+        print_ = _Printer.do_printout(pdf_file)
         print("pyt : sending pdf to default printer : {}".format(str(print_)))
         SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|DONE')
     except Exception as e:
         LOGGER.warning(str(e))
         SPRINTTOOL_SIGNDLER.SIGNAL_SALE_PRINT_GLOBAL.emit('SALEPRINT|ERROR')
     finally:
-        save_receipt_local(trxid[-6:], json.dumps(p), 'CUSTOMER_PPOB_TRX')
+        # save_receipt_local(trxid[-6:], json.dumps(p), 'CUSTOMER_PPOB_TRX')
+        if p['payment'].upper() == 'DEBIT' and _Global.LAST_EDC_TRX_RECEIPT is not None:
+            print__ = _Printer.do_printout(_Global.LAST_EDC_TRX_RECEIPT)
+            print("pyt : sending pdf to default printer : {}".format(str(print__)))
+            _Global.LAST_EDC_TRX_RECEIPT = None
         del pdf
 
 
@@ -652,7 +664,7 @@ def pdf_print(pdf_file, rotate=False):
     try:
         if rotate is True:
             pdf_file = rotate_pdf(pdf_file)
-        print_ = _Printer.ghost_print(pdf_file)
+        print_ = _Printer.do_printout(pdf_file)
         print("pyt : sending pdf to default printer : {}".format(str(print_)))
     except Exception as e:
         LOGGER.warning(str(e))
@@ -785,7 +797,7 @@ def save_receipt_local(__id, __data, __type):
         param_receipt = {
             'rid': _Helper.get_uuid(),
             'bookingCode': __id,
-            'tiboxId': _Global.TID,
+            'tid': _Global.TID,
             'receiptRaw': __type,
             'receiptData': __data,
             'createdAt': _Helper.now()
@@ -793,7 +805,7 @@ def save_receipt_local(__id, __data, __type):
         _DAO.insert_receipt(param_receipt)
         return True
     except Exception as e:
-        LOGGER.warning(('save_receipt_local', str(e)))
+        LOGGER.warning((e))
         return False
 
 
@@ -828,7 +840,7 @@ def admin_print_global(struct_id, ext='.pdf'):
         pdf.cell(padding_left, 0, '_' * MAX_LENGTH, 0, 0, 'C')
         pdf.ln(tiny_space)
         pdf.set_font(USED_FONT, '', line_size)
-        pdf.cell(padding_left, 0, 'Tanggal : '+datetime.strftime(datetime.now(), '%Y-%m-%d')+'  Jam : ' +
+        pdf.cell(padding_left, 0, 'Tanggal : '+datetime.strftime(datetime.now(), '%d-%m-%Y')+'  Jam : ' +
                  datetime.strftime(datetime.now(), '%H:%M:%S'), 0, 0, 'L')
         pdf.ln(tiny_space)
         pdf.set_font(USED_FONT, '', line_size)
@@ -928,7 +940,7 @@ def admin_print_global(struct_id, ext='.pdf'):
         LOGGER.debug(('pdf admin_print_global : ', file_name))
         # Print-out to printer
         for i in range(print_copy):
-            print_ = _Printer.ghost_print(pdf_file)
+            print_ = _Printer.do_printout(pdf_file)
             # LOGGER.debug(("pyt : ({}) Printing to Default Printer : {}".format(str(i), str(print_))))
             print("pyt : ({}) Printing to Default Printer : {}".format(str(i), str(print_)))
             if '[ERROR]' in print_:
@@ -942,7 +954,7 @@ def admin_print_global(struct_id, ext='.pdf'):
         SPRINTTOOL_SIGNDLER.SIGNAL_ADMIN_PRINT_GLOBAL.emit('ADMIN_PRINT|ERROR')
     finally:
         mark_sync_collected_data(s)
-        save_receipt_local(struct_id, json.dumps(s), 'ACCESS_REPORT')
+        # save_receipt_local(struct_id, json.dumps(s), 'ACCESS_REPORT')
         _ProductService.LAST_UPDATED_STOCK = []
         del pdf
 

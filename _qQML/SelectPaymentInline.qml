@@ -16,6 +16,7 @@ Rectangle{
     property bool _qrDanaEnable: false
     property bool _qrGopayEnable: false
     property bool _qrLinkAjaEnable: false
+    property bool _qrShopeeEnable: false
     property var totalEnable: 6
     visible: false
     color: 'transparent'
@@ -32,7 +33,7 @@ Rectangle{
         anchors.topMargin: 30
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: title_text
-        size_: 50
+        size_: (parent.width==1920) ? 50 : 40
         color_: CONF.text_color
     }
 
@@ -42,7 +43,7 @@ Rectangle{
         anchors.verticalCenter: parent.verticalCenter
         height: 300
         anchors.verticalCenterOffset: 50
-        spacing: 50
+        spacing: (parent.width==1920) ? 50 : 20
 
         SmallSimplyItem {
             id: button_cash
@@ -156,7 +157,7 @@ Rectangle{
             height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/qr_linkaja.png"
-            itemName: "QR LinkAja"
+            itemName: "QRIS LinkAja"
             modeReverse: true
             visible: _qrLinkAjaEnable
             MouseArea{
@@ -191,7 +192,7 @@ Rectangle{
             height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/qr_gopay.png"
-            itemName: "QR Gopay"
+            itemName: "QRIS Gopay"
             modeReverse: true
             visible: _qrGopayEnable
             MouseArea{
@@ -226,7 +227,7 @@ Rectangle{
             height: 183
             anchors.verticalCenter: parent.verticalCenter
             sourceImage: "source/qr_dana.png"
-            itemName: "QR Dana"
+            itemName: "QRIS Dana"
             modeReverse: true
             visible: _qrDanaEnable
             MouseArea{
@@ -235,6 +236,41 @@ Rectangle{
                     _SLOT.user_action_log('choose "DANA" Payment Method');
                     var payment = 'dana';
                     do_release_all_set_active(button_dana);
+                    if (calledFrom=='prepaid_topup_denom'){
+                        if (prepaid_topup_denom.press != '0') return;
+                        prepaid_topup_denom.press = '1';
+                        prepaid_topup_denom.get_payment_method_signal(payment);
+                    }
+                    if (calledFrom=='mandiri_shop_card'){
+                        if (mandiri_shop_card.press != '0') return;
+                        mandiri_shop_card.press = '1';
+                        mandiri_shop_card.get_payment_method_signal(payment);
+                    }
+                    if (calledFrom=='global_input_number'){
+                        if (global_input_number.press != '0') return;
+                        global_input_number.press = '1';
+                        global_input_number.get_payment_method_signal(payment);
+                    }
+
+                }
+            }
+        }
+
+        SmallSimplyItem {
+            id: button_shopeepay
+            width: 359
+            height: 183
+            anchors.verticalCenter: parent.verticalCenter
+            sourceImage: "source/qr_shopeepay.png"
+            itemName: "QRIS ShopeePay"
+            modeReverse: true
+            visible: _qrShopeeEnable
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    _SLOT.user_action_log('choose "SHOPEEPAY" Payment Method');
+                    var payment = 'shopeepay';
+                    do_release_all_set_active(button_shopeepay);
                     if (calledFrom=='prepaid_topup_denom'){
                         if (prepaid_topup_denom.press != '0') return;
                         prepaid_topup_denom.press = '1';
@@ -265,6 +301,7 @@ Rectangle{
         button_linkaja.do_release();
         button_gopay.do_release();
         button_dana.do_release();
+        button_shopeepay.do_release();
         id.set_active();
     }
 

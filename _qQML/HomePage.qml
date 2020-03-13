@@ -1,13 +1,16 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.2
-//import QtGraphicalEffects 1.0
+import QtGraphicalEffects 1.0
 import "screen.js" as SCREEN
 import "config.js" as CONF
+import "base_function.js" as FUNC
 
 Base{
     id: base_page
-    width: parseInt(SCREEN.size.width)
-    height: parseInt(SCREEN.size.height)
+
+//            property var globalScreenType: '2'
+//            height: (globalScreenType=='2') ? 1024 : 1080
+//            width: (globalScreenType=='2') ? 1280 : 1920
     property var press: "0"
     property int tvc_timeout: parseInt(CONF.tvc_waiting_time)
     property bool isMedia: true
@@ -23,15 +26,18 @@ Base{
     property var bniTopupWallet: 0
     property bool kalogButton: false
     property bool withSlider: true
-    property bool first_run: true
     property var mandiri_update_schedule: CONF.mandiri_update_schedule
+    property var edc_settlement_schedule: CONF.edc_settlement_schedule
+    property var last_money_insert: 'N/A'
+//    width: globalWidth
+//    height: globalHeight
     isPanelActive: false
 
     Stack.onStatusChanged:{
         if(Stack.status == Stack.Activating){
             _SLOT.start_idle_mode();
-            if (first_run) _SLOT.get_kiosk_status();
             _SLOT.kiosk_get_product_stock();
+            _SLOT.get_kiosk_status();
             press = "0";
             resetMediaTimer();
             kalogButton = false;
@@ -146,12 +152,12 @@ Base{
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log("get_kiosk_status", now, r);
 
-        first_run = false;
-
         var kiosk = JSON.parse(r);
-        base.globalBoxName = kiosk.name;
+        globalBoxName = kiosk.name;
         box_version.text = kiosk.version;
         box_tid.text = kiosk.tid;
+        last_money_insert = kiosk.last_money_inserted;
+        if (last_money_insert.indexOf('000') > -1) last_money_insert = FUNC.insert_dot(last_money_insert);
 
         //Handle Feature Button From Kiosk Status
         check_saldo_button.visible = (kiosk.feature.balance_check == 1)
@@ -171,6 +177,8 @@ Base{
             box_connection.color = 'red';
             kioskStatus = false;
         }
+
+        main_title.show_text = 'Selamat Datang, Silakan Pilih Menu Berikut : ';
 //        _SLOT.start_get_topup_readiness();
     }
 
@@ -229,12 +237,13 @@ Base{
 //    }
 
     MainTitle{
+        id: main_title
         anchors.top: parent.top
-        anchors.topMargin: 350
+        anchors.topMargin: (globalScreenType == '1') ? 350 : 300
         anchors.horizontalCenter: parent.horizontalCenter
-        show_text: 'Selamat Datang, Silakan Pilih Menu Berikut : '
+        show_text: ""
         visible: !popup_loading.visible
-        size_: 50
+        size_: (globalScreenType == '1') ? 50 : 40
         color_: "white"
 
     }
@@ -244,11 +253,12 @@ Base{
         anchors.verticalCenterOffset: 100
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
-        spacing: 60
+        spacing: (globalScreenType == '1') ? 60 : 30
         visible: (!standard_notif_view.visible && !kalogin_notif_view.visible && !popup_loading.visible) ? true : false;
 
         MasterButtonNew {
             id: check_saldo_button
+            size: (globalScreenType == '1') ? 350 : 250
             x: 150
             anchors.verticalCenter: parent.verticalCenter
             img_: "source/cek_saldo.png"
@@ -274,6 +284,7 @@ Base{
 
         MasterButtonNew {
             id: topup_saldo_button
+            size: (globalScreenType == '1') ? 350 : 250
             x: 150
             anchors.verticalCenter: parent.verticalCenter
             img_: "source/topup_kartu.png"
@@ -303,6 +314,7 @@ Base{
 
         MasterButtonNew {
             id: buy_card_button
+            size: (globalScreenType == '1') ? 350 : 250
             x: 150
             anchors.verticalCenter: parent.verticalCenter
             img_: "source/beli_kartu.png"
@@ -355,6 +367,7 @@ Base{
 
         MasterButtonNew {
             id: ppob_button
+            size: (globalScreenType == '1') ? 350 : 250
             x: 150
             anchors.verticalCenter: parent.verticalCenter
             img_: "source/shop_cart.png"
@@ -404,12 +417,21 @@ Base{
             running:false
             triggeredOnStart:true
             onTriggered:{
+                if (globalBoxName=="") _SLOT.get_kiosk_status();
                 //Mandiri Auto Settlement Timer Trigger
                 if (mandiri_update_schedule != undefined){
                     var hm = Qt.formatDateTime(new Date(), "HH:mm");
-                    if (hm == mandiri_update_schedule && tvc_loading.counter%10==0) {
-                        console.log('MANDIRI_UPDATE_SCHEDULE', hm, mandiri_update_schedule);
+                    if (hm == mandiri_update_schedule && tvc_loading.counter%5==0) {
+                        console.log('MANDIRI_UPDATE_SCHEDULE_IDLE', hm, mandiri_update_schedule);
                         _SLOT.start_mandiri_update_schedule();
+                    }
+                }
+                //EDC Auto Settlement Timer Trigger
+                if (edc_settlement_schedule != undefined){
+                    var hm = Qt.formatDateTime(new Date(), "HH:mm");
+                    if (hm == edc_settlement_schedule && tvc_loading.counter%5==0) {
+                        console.log('EDC_SETTLEMENT_SCHEDULE_IDLE', hm, edc_settlement_schedule);
+                        _SLOT.start_trigger_edc_settlement();
                     }
                 }
                 tvc_loading.counter -= 1
@@ -424,7 +446,10 @@ Base{
                     if (!mediaOnPlaying) {
                         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss");
                         console.log("starting tvc player...", now);
-                        my_layer.push(media_page, {mode: 'mediaPlayer'});
+                        my_layer.push(media_page, {mode: 'mediaPlayer',
+                                          mandiri_update_schedule: mandiri_update_schedule,
+                                          edc_settlement_schedule: edc_settlement_schedule
+                                      });
                     }
 //                    _SLOT.set_tvc_player('START')
                     tvc_loading.counter = tvc_timeout;
@@ -475,18 +500,18 @@ Base{
         color: 'white'
         radius: 20
         anchors.right: parent.right
-        anchors.rightMargin: -15
+        anchors.rightMargin: (globalScreenType == '1') ? -15 : -5
         anchors.top: parent.top
         anchors.topMargin: 200
-        width: 100
-        height: 300
+        width: (globalScreenType == '1') ? 100 : 85
+        height: (globalScreenType == '1') ? 300 : 225
         visible: false
         Text{
             text: 'CEK\nTRANSAKSI'
-            font.pixelSize: 30
+            font.pixelSize: (globalScreenType == '1') ? 30 : 20
             anchors.horizontalCenterOffset: -10
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 80
+            anchors.bottomMargin: (globalScreenType == '1') ? 80 : 50
             anchors.horizontalCenter: parent.horizontalCenter
             font.family:"Ubuntu"
             font.bold: true
@@ -505,7 +530,6 @@ Base{
             source: "source/find.png"
             fillMode: Image.PreserveAspectFit
         }
-
         MouseArea{
             anchors.fill: parent
             onClicked: {
@@ -526,18 +550,18 @@ Base{
         color: 'white'
         radius: 20
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 275
+        anchors.bottomMargin: 200
         anchors.right: parent.right
-        anchors.rightMargin: -15
-        width: 100
-        height: 300
+        anchors.rightMargin:  (globalScreenType == '1') ? -15 : -5
+        width: (globalScreenType == '1') ? 100 : 85
+        height: (globalScreenType == '1') ? 300 : 225
         visible: false
         Text{
             text: "WHATSAPP\nVOUCHER"
-            font.pixelSize: 28
+            font.pixelSize: (globalScreenType == '1') ? 28 : 20
             anchors.horizontalCenterOffset: -10
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 80
+            anchors.bottomMargin: (globalScreenType == '1') ? 80 : 50
             anchors.horizontalCenter: parent.horizontalCenter
             font.family:"Ubuntu"
             font.bold: true
@@ -569,6 +593,44 @@ Base{
                 preload_whatasapp_voucher.open()
             }
         }
+    }
+
+    Rectangle{
+        id: info_last_money
+        color: "#ffffff"
+        anchors.left: parent.left
+        anchors.leftMargin: 50
+        opacity: 0.75
+        border.width: 0
+        anchors.bottom: parent.bottom
+        anchors.bottomMargin: 0
+        width: 150
+        height: 30
+        Row{
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.top: parent.top
+            spacing: 20
+            Image{
+                id: img_money
+                height: parent.height
+                source: 'source/cash black.png'
+                fillMode: Image.PreserveAspectFit
+                scale: .8
+                verticalAlignment: Text.AlignVCenter
+            }
+            Text{
+                id: last_money_text
+                font.bold: true
+                height: parent.height
+                verticalAlignment: Text.AlignVCenter
+                color: 'black'
+                text: last_money_insert
+                font.pixelSize: 14
+                font.family:"Ubuntu"
+            }
+        }
+
     }
 
     Rectangle{
@@ -776,9 +838,9 @@ Base{
         CircleButton{
             id: cancel_button_preload
             anchors.left: parent.left
-            anchors.leftMargin: 100
+            anchors.leftMargin: 30
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 50
+            anchors.bottomMargin: 30
             button_text: 'BATAL'
             modeReverse: true
             MouseArea{
@@ -788,7 +850,7 @@ Base{
                     preload_whatasapp_voucher.close();
                     _SLOT.start_idle_mode();
                     _SLOT.kiosk_get_product_stock();
-                    if (first_run) _SLOT.get_kiosk_status();
+                    _SLOT.get_kiosk_status();
         //            _SLOT.start_get_topup_readiness();
                     press = "0";
                     resetMediaTimer();
@@ -799,9 +861,9 @@ Base{
         CircleButton{
             id: next_button_preload
             anchors.right: parent.right
-            anchors.rightMargin: 100
+            anchors.rightMargin: 30
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 50
+            anchors.bottomMargin: 30
             button_text: 'LANJUT'
             modeReverse: true
             MouseArea{

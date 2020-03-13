@@ -111,6 +111,8 @@ def sale_edc(amount, trxid=None):
                 param = result.split('|')
                 EDC_PAYMENT_RESULT['raw'] = result
                 EDC_PAYMENT_RESULT['card_type'] = _EDCTool.get_type(param[6])
+                if _Global.EDC_DEBIT_ONLY is True:
+                    EDC_PAYMENT_RESULT['card_type'] = 'DEBIT CARD'
                 if trxid is None:
                     EDC_PAYMENT_RESULT['struck_id'] = _Helper.get_uuid()[:12]
                 else:
@@ -222,6 +224,8 @@ def handling_card(amount, trxid=None):
                 param = result.split('|')
                 EDC_PAYMENT_RESULT['raw'] = result
                 EDC_PAYMENT_RESULT['card_type'] = _EDCTool.get_type(param[6])
+                if _Global.EDC_DEBIT_ONLY is True:
+                    EDC_PAYMENT_RESULT['card_type'] = 'DEBIT CARD'
                 if trxid is None:
                     EDC_PAYMENT_RESULT['struck_id'] = _Helper.get_uuid()[:12]
                 else:
@@ -355,15 +359,16 @@ def define_edc_settlement():
     global SETTLEMENT_TYPE_COUNT, SETTLEMENTS_DATA
     SETTLEMENTS_DATA = _DAO.check_settlement()
     SETTLEMENT_TYPE_COUNT = card_type_count()
-    settlement_method = card_type_settle()
-    LOGGER.debug(("define_edc_settlement [DATA, COUNT, TYPE]", str(SETTLEMENTS_DATA), str(SETTLEMENT_TYPE_COUNT),
-                 str(settlement_method)))
+    get_settlement = card_type_settle()
+    LOGGER.debug(("DATA, COUNT, TYPE", str(SETTLEMENTS_DATA), str(SETTLEMENT_TYPE_COUNT),
+                 str(get_settlement)))
     if SETTLEMENT_TYPE_COUNT == 0:
         E_SIGNDLER.SIGNAL_PROCESS_SETTLEMENT_EDC.emit('EDC_SETTLEMENT|ERROR')
+        LOGGER.warning(("NO EDC SETTLEMENT DETECTED", str(len(SETTLEMENT_TYPE_COUNT))))
         return
-    elif settlement_method[0] == 'DEBIT CARD':
+    elif get_settlement[0] == 'DEBIT CARD':
         edc_settlement()
-    elif settlement_method[0] == 'CREDIT CARD':
+    elif get_settlement[0] == 'CREDIT CARD':
         edc_settlement_credit()
 
 
@@ -387,7 +392,7 @@ def edc_settlement():
             if response == 0 or EDC_TESTING_MODE is True:
                 # handling_settlement('DEBIT')
                 E_SIGNDLER.SIGNAL_PROCESS_SETTLEMENT_EDC.emit('EDC_SETTLEMENT_DEBIT|PROCESSED')
-                LOGGER.info(("edc_settlement", str(response), result))
+                LOGGER.info((str(response), result))
                 mark_settlement_data(printout=False, mode='DEBIT')
             else:
                 _Global.EDC_ERROR = 'FAILED_TO_DEBIT_SETTLEMENT'
@@ -418,7 +423,7 @@ def edc_settlement_credit():
             if response == 0 or EDC_TESTING_MODE is True:
                 # handling_settlement('CREDIT')
                 E_SIGNDLER.SIGNAL_PROCESS_SETTLEMENT_EDC.emit('EDC_SETTLEMENT_CREDIT|PROCESSED')
-                LOGGER.info(("edc_settlement", str(response), result))
+                LOGGER.info((str(response), result))
                 mark_settlement_data(printout=False, mode='CREDIT')
             else:
                 _Global.EDC_ERROR = 'FAILED_TO_CREDIT_SETTLEMENT'
@@ -531,16 +536,20 @@ def card_type_count():
     type_count = []
     if SETTLEMENTS_DATA is None:
         return SETTLEMENT_TYPE_COUNT
-    for settle in SETTLEMENTS_DATA:
-        card_no = settle['filename'].split('|')[6]
-        card_type = _EDCTool.get_type(card_no)
-        if card_type == 'CREDIT CARD':
-            SETTLEMENT_CREDIT.append(settle)
-        if card_type == 'DEBIT CARD':
-            SETTLEMENT_DEBIT.append(settle)
-        if card_type not in type_count:
-            type_count.append(card_type)
-    SETTLEMENT_TYPE_COUNT = len(type_count)
+    if _Global.EDC_DEBIT_ONLY is True:
+        SETTLEMENT_DEBIT = SETTLEMENTS_DATA
+        SETTLEMENT_TYPE_COUNT = 1
+    else:
+        for settle in SETTLEMENTS_DATA:
+            card_no = settle['filename'].split('|')[6]
+            card_type = _EDCTool.get_type(card_no)
+            if card_type == 'CREDIT CARD':
+                SETTLEMENT_CREDIT.append(settle)
+            if card_type == 'DEBIT CARD':
+                SETTLEMENT_DEBIT.append(settle)
+            if card_type not in type_count:
+                type_count.append(card_type)
+        SETTLEMENT_TYPE_COUNT = len(type_count)
     return SETTLEMENT_TYPE_COUNT
 
 
@@ -548,11 +557,14 @@ def card_type_settle():
     type_count = []
     if SETTLEMENTS_DATA is None:
         return type_count
-    for settle in SETTLEMENTS_DATA:
-        card_no = settle['filename'].split('|')[6]
-        card_type = _EDCTool.get_type(card_no)
-        if card_type not in type_count:
-            type_count.append(card_type)
+    if _Global.EDC_DEBIT_ONLY is True:
+        type_count.append('DEBIT CARD')
+    else:
+        for settle in SETTLEMENTS_DATA:
+            card_no = settle['filename'].split('|')[6]
+            card_type = _EDCTool.get_type(card_no)
+            if card_type not in type_count:
+                type_count.append(card_type)
     return type_count
 
 
@@ -599,22 +611,30 @@ def mark_settlement_data(printout=True, mode='DEBIT CARD'):
 
     n = 0
     list_settlement = []
-
     __now = datetime.now()
+
+    # if (!empty($request->input('b_mid'))) $b_mid = $request->input('b_mid');
+    # if (!empty($request->input('b_tid'))) $b_tid = $request->input('b_tid');
+    # if (!empty($request->input('row_debit'))) $row_debit = $request->input('row_debit');
+    # if (!empty($request->input('row_credit'))) $row_credit = $request->input('row_credit');
+    # if (!empty($request->input('amount_credit'))) $amount_credit = $request->input('amount_credit');
+    # if (!empty($request->input('amount_debit'))) $amount_debit = $request->input('amount_debit');
 
     SETTLEMENT_PARAM['b_tid'] = tid_settle
     SETTLEMENT_PARAM['b_mid'] = mid_settle
-    SETTLEMENT_PARAM['host_date'] = __now.strftime('%m%d')
-    SETTLEMENT_PARAM['host_time'] = __now.strftime('%H%M%S')
+    SETTLEMENT_PARAM['row_debit'] = 0
+    SETTLEMENT_PARAM['row_credit'] = 0
+    SETTLEMENT_PARAM['amount_credit'] = 0
+    SETTLEMENT_PARAM['amount_debit'] = 0
+    # SETTLEMENT_PARAM['host_date'] = __now.strftime('%m%d')
+    # SETTLEMENT_PARAM['host_time'] = __now.strftime('%H%M%S')
 
     if mode == 'DEBIT':
         __data_to_settle = SETTLEMENT_DEBIT
-        SETTLEMENT_PARAM['acq_name'] = 'BNI_DEBIT'
-        # send_edc_server(SETTLEMENT_PARAM, 'SETTLEMENT')
+        SETTLEMENT_PARAM['row_debit'] = len(SETTLEMENT_DEBIT)
     elif mode == 'CREDIT':
-        SETTLEMENT_PARAM['acq_name'] = 'BNI_CREDIT'
         __data_to_settle = SETTLEMENT_CREDIT
-        # send_edc_server(SETTLEMENT_PARAM, 'SETTLEMENT')
+        SETTLEMENT_PARAM['row_credit'] = len(SETTLEMENT_CREDIT)
     else:
         __data_to_settle = SETTLEMENTS_DATA
 
@@ -627,6 +647,10 @@ def mark_settlement_data(printout=True, mode='DEBIT CARD'):
         }
         LOGGER.info(("[UPDATE STATUS] mark_settlement_data", str(mode), str(__data_to_settle)))
         SETTLEMENTS_TXT += ('   '+str(n)+'|'+settle['bid']+'|'+str(settle['amount'])+'\r\n')
+        if mode == 'DEBIT':
+            SETTLEMENT_PARAM['amount_debit'] += int(settle['amount'])
+        if mode == 'CREDIT':
+            SETTLEMENT_PARAM['amount_credit'] += int(settle['amount'])
         _DAO.update_settlement(param_settle)
 
     SETTLEMENTS_TXT += '\r\n'
@@ -638,13 +662,11 @@ def mark_settlement_data(printout=True, mode='DEBIT CARD'):
     if printout is True:
         _PrintTool.print_global(input_text=SETTLEMENTS_TXT, use_for='EDC_SETTLEMENT')
 
-    # Post Update Settlement - DISABLED
-    # post_mark_settlement(list_settlement, _Tools.now())
-    sleep(1)
+    # Post Update Settlement Old - DISABLED
+    # post_mark_settlement(list_settlement, _Helper.now())
+    # sleep(1)
     if SETTLEMENT_TYPE_COUNT == 1:
-        # SETTLEMENT_PARAM['b_tid'] = tid_settle
-        # SETTLEMENT_PARAM['b_mid'] = mid_settle
-        post_mark_settlement_direct(SETTLEMENT_PARAM)
+        upload_edc_settlement_data(SETTLEMENT_PARAM)
         E_SIGNDLER.SIGNAL_PROCESS_SETTLEMENT_EDC.emit('SUCCESS')
         sleep(2)
         E_SIGNDLER.SIGNAL_PROCESS_SETTLEMENT_EDC.emit('FINISH')
@@ -664,15 +686,18 @@ def post_mark_settlement(l, t):
         status, response = _NetworkAccess.post_to_url(_KioskService.BACKEND_URL + 'settlement/mark', param)
         LOGGER.info(("post_mark_settlement : ", response))
     except Exception as e:
-        LOGGER.warning(("post_mark_settlement : ", e))
+        LOGGER.warning((e))
 
 
-def post_mark_settlement_direct(param):
+def upload_edc_settlement_data(param):
     try:
-        status, response = _NetworkAccess.post_to_url(_KioskService.BACKEND_URL + 'settlement/mark-direct', param)
-        LOGGER.info(("post_mark_settlement : ", response))
+        status, response = _NetworkAccess.post_to_url(_Global.BACKEND_URL + 'settlement/mark-direct', param)
+        if status == 200 and response['result'] == 'OK':
+            LOGGER.info((status, response))
+        else:
+            _Global.store_request_to_job(name=_Helper.whoami(), url=_Global.BACKEND_URL + 'settlement/mark-direct', payload=param)
     except Exception as e:
-        LOGGER.warning(("post_mark_settlement : ", e))
+        LOGGER.warning((e))
 
 
 def start_void_data():

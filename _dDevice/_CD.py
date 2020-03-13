@@ -119,10 +119,10 @@ def simply_eject(attempt, multiply):
     #     LOGGER.warning(('Failed to Select CD Port', attempt))
     #     CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|ERROR')
     #     return
-    if _Global.TEST_MODE is True:
-        CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|SUCCESS')
-        LOGGER.debug(('ByPassing Mode', str(_Global.TEST_MODE), attempt, multiply))
-        return
+    # if _Global.TEST_MODE is True:
+    #     CD_SIGNDLER.SIGNAL_CD_MOVE.emit('EJECT|SUCCESS')
+    #     LOGGER.debug(('ByPassing Mode', str(_Global.TEST_MODE), attempt, multiply))
+    #     return
     try:
         # command = CD_EXEC + " hold " + selected_port
         # Switch To V2

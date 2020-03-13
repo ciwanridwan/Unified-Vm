@@ -403,7 +403,7 @@ def generate(use_case, store_receipt=True, receipt_text=template_test()):
     finally:
         if use_case != 'TEST':
             # Print-out to printer
-            print_ = _Printer.ghost_print(GLOBAL_PDF_FILE)
+            print_ = _Printer.do_printout(GLOBAL_PDF_FILE)
             print("pyt : sending pdf to default printer : {}".format(str(print_)))
         reset_param()
         del pdf
@@ -465,7 +465,7 @@ def reprint(new_status):
             if _trial_ == 3:
                 break
         # Print-out to printer
-        print_ = _Printer.ghost_print(pdf_file)
+        print_ = _Printer.do_printout(pdf_file)
         print("pyt : sending trx receipt to printer : {}".format(str(print_)))
         PDF_SIGNDLER.SIGNAL_REPRINT.emit('REPRINT|DONE')
     # Cleaning-out prev data
@@ -479,10 +479,9 @@ def reprint(new_status):
 
 
 def reset_param():
-    global PARAM, MODE_TEST, GET_PAYMENT_METHOD, GET_CARD_NO, GET_PAYMENT_NOTES, GET_TOTAL_NOTES, GLOBAL_PDF_FILE, \
+    global PARAM, GET_PAYMENT_METHOD, GET_CARD_NO, GET_PAYMENT_NOTES, GET_TOTAL_NOTES, GLOBAL_PDF_FILE, \
         GLOBAL_FILENAME, GET_STRUCK_ID
     PARAM = {}
-    MODE_TEST = False
     GET_PAYMENT_METHOD = None
     GET_CARD_NO = None
     GET_PAYMENT_NOTES = None
@@ -535,7 +534,7 @@ def print_global(input_text='\r\n', use_for='EDC_SETTLEMENT'):
         pdf.output(pdf_file, 'F')
         LOGGER.debug(('pdf print_global : ', file_name))
         # Print-out to printer
-        print_ = _Printer.ghost_print(pdf_file)
+        print_ = _Printer.do_printout(pdf_file)
         print("pyt : sending pdf to default printer : {}".format(str(print_)))
         PDF_SIGNDLER.SIGNAL_PRINT_GLOBAL.emit(use_for+'|DONE')
     except Exception as e:

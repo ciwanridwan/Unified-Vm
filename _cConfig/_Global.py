@@ -28,6 +28,7 @@ BACKEND_URL = _ConfigParser.get_set_value('TERMINAL', 'backend^server', '---')
 QPROX_PORT = _ConfigParser.get_set_value('QPROX', 'port', 'COM')
 EDC_PORT = get_config_value('port', 'EDC')
 EDC_TYPE = _ConfigParser.get_set_value('EDC', 'type', 'UPT-IUR')
+EDC_DEBIT_ONLY = True if _ConfigParser.get_set_value('EDC', 'debit^only', '1') == '1' else False
 MEI_PORT = get_config_value('port', 'MEI')
 GRG_PORT = get_config_value('port', 'GRG')
 CD_PORT1 = _ConfigParser.get_set_value('CD', 'port1', 'COM')
@@ -43,6 +44,7 @@ TID = _ConfigParser.get_set_value('TERMINAL', 'tid', '[TERMINAL_ID]')
 VERSION = open(os.path.join(os.getcwd(), 'kiosk.ver'), 'r').read().strip()
 KIOSK_NAME = "---"
 KIOSK_STATUS = 'ONLINE'
+KIOSK_REAL_STATUS = 'ONLINE'
 KIOSK_SETTING = []
 KIOSK_MARGIN = 3
 KIOSK_ADMIN = 1500
@@ -56,8 +58,10 @@ TEMP_FOLDER = sys.path[0] + '/_tTmp/'
 if not os.path.exists(TEMP_FOLDER):
     os.makedirs(TEMP_FOLDER)
 
-# Temporary Update Balance Config Hardcoded
-BANK_UBAL_ONLINE = ['MANDIRI']
+# Temporary Update Balance Config Hardcoded (Filled With Bank Name)
+ALLOWED_BANK_UBAL_ONLINE = ['MANDIRI', 'BNI']
+
+MANDIRI_FORCE_PRODUCTION_SAM = True if _ConfigParser.get_set_value('TERMINAL', 'mandiri^sam^production', '0') == '1' else False
 
 
 def clean_white_space(s):
@@ -103,21 +107,35 @@ def load_from_temp_data(temp, mode='text'):
 TOPUP_AMOUNT_SETTING = None
 FEATURE_SETTING = None
 PAYMENT_SETTING = None
+REFUND_SETTING = None
 THEME_SETTING = None
 ADS_SETTING = load_from_temp_data('ads-setting', 'json')
 THEME_NAME = _ConfigParser.get_set_value('TEMPORARY', 'theme^name', '---')
-KIOSK_REAL_STATUS = 'ONLINE'
-RECEIPT_LOGO = _ConfigParser.get_set_value('TEMPORARY', 'receipt^logo', 'mandiri_logo.gif')
 REPO_USERNAME = _ConfigParser.get_set_value('REPOSITORY', 'username', 'developer')
 REPO_PASSWORD = _ConfigParser.get_set_value('REPOSITORY', 'password', 'Mdd*123#')
 SERVICE_VERSION = _ConfigParser.get_set_value('TEMPORARY', 'service^version', '---')
-CUSTOM_RECEIPT_TEXT = _ConfigParser.get_set_value('TEMPORARY', 'receipt^custom^text', '')
 COLOR_TEXT = _ConfigParser.get_set_value('TEMPORARY', 'color^text', 'white')
 COLOR_BACK = _ConfigParser.get_set_value('TEMPORARY', 'color^back', 'black')
 
 QR_HOST = _ConfigParser.get_set_value('QR', 'qr^host', 'http://apiv2.mdd.co.id:10107/v1/')
 QR_TOKEN = _ConfigParser.get_set_value('QR', 'qr^token', 'e6f092a0fa88d9cac8dac3d2162f1450')
 QR_MID = _ConfigParser.get_set_value('QR', 'qr^mid', '000972721511382bf739669cce165808')
+STORE_QR_TO_LOCAL = True if _ConfigParser.get_set_value('QR', 'store^local', '1') == '1' else False
+QR_STORE_PATH = os.path.join(sys.path[0], '_qQr')
+if not os.path.exists(QR_STORE_PATH):
+    os.makedirs(QR_STORE_PATH)
+
+
+QR_NON_DIRECT_PAY = ['GOPAY', 'DANA', 'LINKAJA', 'SHOPEEPAY']
+QR_DIRECT_PAY = ['OVO']
+# Hardcoded Env Status
+QR_PROD_STATE = {
+    'GOPAY': True,
+    'DANA': False,
+    'LINKAJA': True,
+    'SHOPEEPAY': False,
+    'OVO': True
+}
 
 # APIV2 Credentials For Topup
 TOPUP_URL = 'http://apiv2.mdd.co.id:10107/'
@@ -172,6 +190,7 @@ BID = {
 ADJUST_AMOUNT_MINIMUM = 0
 TRIGGER_MANUAL_TOPUP = True
 ALLOW_DO_TOPUP = True
+EDC_SETTLEMENT_RUNNING = False
 
 MID_MAN = _ConfigParser.get_set_value('QPROX', 'mid^man', '---')
 TID_MAN = _ConfigParser.get_set_value('QPROX', 'tid^man', '---')
@@ -284,13 +303,74 @@ BNI_SAM_2_NO = _ConfigParser.get_set_value('QPROX', 'bni^sam^2^no', '---')
 
 EDC_ERROR = ''
 NFC_ERROR = ''
-MEI_ERROR = ''
+BILL_ERROR = ''
 PRINTER_ERROR = ''
 SCANNER_ERROR = ''
 WEBCAM_ERROR = ''
 CD1_ERROR = ''
 CD2_ERROR = ''
 CD3_ERROR = ''
+
+RECEIPT_PRINT_COUNT = int(_ConfigParser.get_set_value('PRINTER', 'receipt^print^count', '0'))
+RECEIPT_PRINT_LIMIT = int(_ConfigParser.get_set_value('PRINTER', 'receipt^print^limit', '1800'))
+if RECEIPT_PRINT_COUNT >= RECEIPT_PRINT_LIMIT:
+    PRINTER_ERROR = 'PAPER_ROLL_WARNING'
+RECEIPT_LOGO = _ConfigParser.get_set_value('PRINTER', 'receipt^logo', 'mandiri_logo.gif')
+CUSTOM_RECEIPT_TEXT = _ConfigParser.get_set_value('PRINTER', 'receipt^custom^text', '')
+
+EDC_PRINT_ON_LAST = True if _ConfigParser.get_set_value('EDC', 'print^last', '1') == '1' else False
+LAST_EDC_TRX_RECEIPT = None
+
+ALLOWED_SYNC_TASK = [
+    'sync_product_data',
+    'sync_pending_refund',
+    'sync_task',
+    'sync_settlement_data',
+    'sync_sam_audit',
+    'sync_data_transaction_failure',
+    'sync_data_transaction',
+    'sync_topup_records',
+    'sync_machine_status'
+
+]
+
+
+JOB_PATH = os.path.join(sys.path[0], '_jJob')
+if not os.path.exists(JOB_PATH):
+    os.makedirs(JOB_PATH)
+
+
+def store_request_to_job(name='', url='', payload=''):
+    if empty(name) is True or empty(url) is True or empty(payload) is True:
+        print('pyt: Missing Parameter in Logging Request..! ' + _Helper.time_string() + ' : ' + _Helper.whoami())
+        return
+    filename = _Helper.time_string(f='%Y%m%d%H%M%S___') + name
+    log = {
+        'url'       : url,
+        'payload'   : payload
+    }
+    LOGGER.debug((filename, str(log)))
+    print('pyt: Logging Request..! ' + _Helper.time_string() + ' : ' + filename)
+    log_to_file(content=log, path=JOB_PATH, filename=filename)
+
+
+def log_to_file(content='', path='', filename='', default_ext='.request'):
+    if empty(content) is True or empty(filename) is True:
+        print('pyt: Missing Parameter in Logging File..! ' + _Helper.time_string() + ' : ' + _Helper.whoami())
+        return
+    if empty(path) is True:
+        path = TEMP_FOLDER
+    if not os.path.exists(path):
+        os.makedirs(path)
+    if '.' not in filename:
+        filename = filename + default_ext
+    log_file = os.path.join(path, filename)
+    if type(content) != str:
+        content = json.dumps(content)
+    with open(log_file, 'w+') as file_logging:
+        print('pyt: Create Logging File..! ' + _Helper.time_string() + ' : ' + log_file)
+        file_logging.write(content)
+        file_logging.close()
 
 
 def log_to_temp_config(section='last^auth', content=''):
@@ -307,10 +387,46 @@ def log_to_temp_config(section='last^auth', content=''):
     _ConfigParser.set_value('TEMPORARY', section, content)
 
 
+def log_to_config(option='TEMPORARY', section='last^auth', content=''):
+    content = str(content)
+    _ConfigParser.set_value(option, section, content)
+
+
+def update_receipt_count():
+    global PRINTER_ERROR, RECEIPT_PRINT_COUNT
+    RECEIPT_PRINT_COUNT = RECEIPT_PRINT_COUNT + 1
+    log_to_config('PRINTER', 'receipt^print^count', str(RECEIPT_PRINT_COUNT))
+    if RECEIPT_PRINT_COUNT >= RECEIPT_PRINT_LIMIT:
+        PRINTER_ERROR = 'PAPER_ROLL_WARNING'
+
+
+def start_reset_receipt_count(count):
+    _Helper.get_pool().apply_async(reset_receipt_count, (count,))
+
+
+def reset_receipt_count(count):
+    global PRINTER_ERROR, RECEIPT_PRINT_COUNT
+    RECEIPT_PRINT_COUNT = int(count)
+    log_to_config('PRINTER', 'receipt^print^count', str(RECEIPT_PRINT_COUNT))
+    if RECEIPT_PRINT_COUNT >= RECEIPT_PRINT_LIMIT:
+        PRINTER_ERROR = 'PAPER_ROLL_WARNING'
+    else:
+        PRINTER_ERROR = ''
+
+
 def active_auth_session():
     if LAST_AUTH > 0:
         today = _Helper.today_time()
         current = (LAST_AUTH/1000)
+        return True if (today+86400) > current else False
+    else:
+        return False
+
+
+def last_update_attempt():
+    if LAST_UPDATE > 0:
+        today = _Helper.today_time()
+        current = (LAST_UPDATE/1000)
         return True if (today+86400) > current else False
     else:
         return False
@@ -368,7 +484,7 @@ GRG = {
 # Handling MEI VS GRG Duplicate Port Activation
 if GRG['status'] is True:
     MEI['status'] = False
-    MEI_PORT = _ConfigParser.set_value('port', 'MEI', 'COM')
+    MEI_PORT = _ConfigParser.set_value('MEI', 'port', 'COM')
     MEI['port'] = MEI_PORT
     
 CD = {
@@ -397,7 +513,7 @@ def get_devices():
     return {"QPROX": QPROX, "EDC": EDC, "MEI": MEI, "CD": CD, "GRG": GRG}
 
 
-def get_devices_status():
+def get_payments():
     return {
         "QPROX": "AVAILABLE" if QPROX["status"] is True else "NOT_AVAILABLE",
         "EDC": "AVAILABLE" if (EDC["status"] is True and check_payment('card') is True) else "NOT_AVAILABLE",
@@ -408,7 +524,29 @@ def get_devices_status():
         "QR_DANA": "AVAILABLE" if check_payment('dana') is True else "NOT_AVAILABLE",
         "QR_GOPAY": "AVAILABLE" if check_payment('gopay') is True else "NOT_AVAILABLE",
         "QR_LINKAJA": "AVAILABLE" if check_payment('linkaja') is True else "NOT_AVAILABLE",
+        "QR_SHOPEEPAY": "AVAILABLE" if check_payment('shopeepay') is True else "NOT_AVAILABLE",
     }
+
+
+def get_refunds():
+    return {
+        "MANUAL": "AVAILABLE",
+        "DUWIT": "AVAILABLE" if check_refund('duwit') is True else "NOT_AVAILABLE",
+        "LINKAJA": "AVAILABLE" if check_refund('linkaja') is True else "NOT_AVAILABLE",
+        "OVO": "AVAILABLE" if check_refund('ovo') is True else "NOT_AVAILABLE",
+        "GOPAY": "AVAILABLE" if check_refund('gopay') is True else "NOT_AVAILABLE",
+        "DANA": "AVAILABLE" if check_refund('dana') is True else "NOT_AVAILABLE",
+        "SHOPEEPAY": "AVAILABLE" if check_refund('shopeepay') is True else "NOT_AVAILABLE",
+    }
+
+
+def check_refund(name='ovo'):
+    if len(REFUND_SETTING) == 0 or empty(REFUND_SETTING):
+        return False
+    for x in range(len(REFUND_SETTING)):
+        if REFUND_SETTING[x]['name'].lower() == name:
+            return True
+    return False
 
 
 def check_payment(name='ovo'):
@@ -434,12 +572,13 @@ def upload_device_state(device, status):
             "state": status
         }
         status, response = _NetworkAccess.post_to_url(BACKEND_URL + 'change/device-state', param)
-        LOGGER.info(("upload_device_state : ", response, str(param)))
+        LOGGER.info((response, str(param)))
         if status == 200 and response['result'] == 'OK':
             return True
-        return False
+        else:
+            return False
     except Exception as e:
-        LOGGER.warning(("upload_device_state : ", e))
+        LOGGER.warning((e))
         return False
 
 
@@ -460,13 +599,13 @@ def upload_mandiri_wallet():
             "card_no_2": MANDIRI_NO_2
         }
         status, response = _NetworkAccess.post_to_url(BACKEND_URL + 'update/wallet-state', param)
-        LOGGER.info(("upload_mandiri_wallet : ", response, str(param)))
+        LOGGER.info((response, str(param)))
         if status == 200 and response['result'] == 'OK':
             return True
         else:
             return False
     except Exception as e:
-        LOGGER.warning(("upload_mandiri_wallet : ", e))
+        LOGGER.warning((e))
         return False
 
 
@@ -487,13 +626,13 @@ def upload_bni_wallet():
             "card_no_2": BNI_SAM_2_NO
         }
         status, response = _NetworkAccess.post_to_url(BACKEND_URL + 'update/wallet-state', param)
-        LOGGER.info(("upload_bni_wallet : ", response, str(param)))
+        LOGGER.info((response, str(param)))
         if status == 200 and response['result'] == 'OK':
             return True
         else:
             return False
     except Exception as e:
-        LOGGER.warning(("upload_bni_wallet : ", e))
+        LOGGER.warning((e))
         return False
 
 
@@ -514,19 +653,20 @@ def store_upload_failed_trx(trxid, pid='', amount=0, failure_type='', payment_me
             'paymentMethod': payment_method,
             'remarks': remarks,
         }
-        check_trx = _DAO.check_trx_failure(trxid)
-        if len(check_trx) == 0:
-            _DAO.insert_transaction_failure(__param)
+        # check_trx = _DAO.check_trx_failure(trxid)
+        # if len(check_trx) == 0:
+        #     _DAO.insert_transaction_failure(__param)
         status, response = _NetworkAccess.post_to_url(BACKEND_URL + 'sync/transaction-failure', __param)
-        LOGGER.info(("store_upload_failed_trx : ", response, str(__param)))
+        LOGGER.info((response, str(__param)))
         if status == 200 and response['result'] == 'OK':
-            __param['key'] = __param['trxid']
-            _DAO.mark_sync(param=__param, _table='TransactionFailure', _key='trxid')
+            # __param['key'] = __param['trxid']
+            # _DAO.mark_sync(param=__param, _table='TransactionFailure', _key='trxid')
             return True
         else:
+            store_request_to_job(name=_Helper.whoami(), url=BACKEND_URL+'sync/transaction-failure', payload=__param)
             return False
     except Exception as e:
-        LOGGER.warning(("store_upload_failed_trx : ", e))
+        LOGGER.warning((e))
         return False
 
 
@@ -545,14 +685,15 @@ def upload_admin_access(aid, username, cash_collection='', edc_settlement='', ca
             'card_adjustment': card_adjustment,
             'remarks': remarks,
         }
-        status, response = _NetworkAccess.post_to_url(BACKEND_URL + 'sync/access-report', param)
-        LOGGER.info(("upload_admin_access : ", response, str(param)))
+        status, response = _NetworkAccess.post_to_url(BACKEND_URL+'sync/access-report', param)
+        LOGGER.info((response, str(param)))
         if status == 200 and response['result'] == 'OK':
             return True
         else:
+            store_request_to_job(name=_Helper.whoami(), url=BACKEND_URL+'sync/access-report', payload=param)
             return False
     except Exception as e:
-        LOGGER.warning(("upload_admin_access : ", e))
+        LOGGER.warning((e))
         return False
 
 
@@ -566,14 +707,15 @@ def upload_topup_error(__slot, __type):
             'slot': __slot,
             'type': __type
         }
-        status, response = _NetworkAccess.post_to_url(BACKEND_URL + 'update/topup-state', param)
-        LOGGER.info(("upload_topup_error : ", response, str(param)))
+        status, response = _NetworkAccess.post_to_url(BACKEND_URL+'update/topup-state', param)
+        LOGGER.info((response, str(param)))
         if status == 200 and response['result'] == 'OK':
             return True
         else:
+            store_request_to_job(name=_Helper.whoami(), url=BACKEND_URL+'update/topup-state', payload=param)
             return False
     except Exception as e:
-        LOGGER.warning(("upload_topup_error : ", e))
+        LOGGER.warning((e))
         return False
 
 
@@ -593,17 +735,18 @@ def store_upload_sam_audit(param):
             'status': param['status'],
             'remarks': param['remarks'],
         }
-        _DAO.insert_sam_audit(param)
-        status, response = _NetworkAccess.post_to_url(BACKEND_URL + 'sync/sam-audit', param)
-        LOGGER.info(("store_upload_sam_audit : ", response, str(param)))
+        # _DAO.insert_sam_audit(param)
+        status, response = _NetworkAccess.post_to_url(BACKEND_URL+'sync/sam-audit', param)
+        LOGGER.info((response, str(param)))
         if status == 200 and response['result'] == 'OK':
-            param['key'] = param['lid']
-            _DAO.mark_sync(param=param, _table=_table_, _key='lid')
+            # param['key'] = param['lid']
+            # _DAO.mark_sync(param=param, _table=_table_, _key='lid')
             return True
         else:
+            store_request_to_job(name=_Helper.whoami(), url=BACKEND_URL+'sync/sam-audit', payload=param)
             return False
     except Exception as e:
-        LOGGER.warning(("store_upload_sam_audit : ", e))
+        LOGGER.warning((e))
         return False
 
 

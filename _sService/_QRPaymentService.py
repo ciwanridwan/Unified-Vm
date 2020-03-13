@@ -21,6 +21,8 @@ class QRSignalHandler(QObject):
 QR_SIGNDLER = QRSignalHandler()
 LOGGER = logging.getLogger()
 
+CANCELLING_QR_FLAG = False
+
 
 def serialize_payload(data, specification='MDD_CORE_API'):
     return _Global.serialize_payload(data, specification)
@@ -60,31 +62,37 @@ def start_get_qr_global(payload):
 
 def do_get_qr(payload, mode, serialize=True):
     payload = json.loads(payload)
-    if mode in ['GOPAY', 'DANA']:
-        LOGGER.warning((str(payload), mode, 'NOT_AVAILABLE'))
-        QR_SIGNDLER.SIGNAL_GET_QR.emit('GET_QR|'+mode+'|NOT_AVAILABLE')
-        return
-    if _Global.empty(payload['amount']) and mode in ['LINKAJA', 'GOJEK']:
+    # if mode in ['GOPAY', 'DANA', 'SHOPEEPAY']:
+    #     LOGGER.warning((str(payload), mode, 'NOT_AVAILABLE'))
+    #     QR_SIGNDLER.SIGNAL_GET_QR.emit('GET_QR|'+mode+'|NOT_AVAILABLE')
+    #     return
+    if _Global.empty(payload['amount']) and mode in _Global.QR_NON_DIRECT_PAY:
         LOGGER.warning((str(payload), mode, 'MISSING_AMOUNT'))
         QR_SIGNDLER.SIGNAL_GET_QR.emit('GET_QR|'+mode+'|MISSING_AMOUNT')
         return
-    if _Global.empty(payload['trx_id']) and mode == 'GOJEK':
+    if _Global.empty(payload['trx_id']):
         LOGGER.warning((str(payload), mode, 'MISSING_TRX_ID'))
         QR_SIGNDLER.SIGNAL_GET_QR.emit('GET_QR|'+mode+'|MISSING_TRX_ID')
         return
+    if  mode in ['DANA', 'SHOPEEPAY']:
+        payload['reff_no'] = payload['trx_id']
     if serialize is True:
         param = serialize_payload(payload)
-    # if _Global.TEST_MODE is True:
-    #     amount = int(int(param['amount']) / 1000)
-    #     param['amount'] = str(amount)
+    # print('pyt: ' + str(_Helper.whoami()))
+    # print('pyt: ' + str(payload))
+    # print('pyt: ' + mode)
     try:
         url = _Global.QR_HOST+mode.lower()+'/get-qr'
+        if not _Global.QR_PROD_STATE[mode]:
+            url = 'http://apidev.mdd.co.id:28194/v1/'+mode.lower()+'/get-qr'
         s, r = _NetworkAccess.post_to_url(url=url, param=param)
         if s == 200 and r['response']['code'] == 200:
             if '10107' in url:
                 r['data']['qr'] = r['data']['qr'].replace('https', 'http')
+            if _Global.STORE_QR_TO_LOCAL is True:
+                r['data']['qr'] = serialize_qr(r['data']['qr'], payload['trx_id'])
             QR_SIGNDLER.SIGNAL_GET_QR.emit('GET_QR|'+mode+'|' + json.dumps(r['data']))
-            if mode in ['LINKAJA']:
+            if mode in ['LINKAJA', 'DANA', 'SHOPEEPAY']:
                 param['refference'] = param['trx_id']
                 param['trx_id'] = r['data']['trx_id']
             LOGGER.debug((str(param), str(r)))
@@ -97,10 +105,19 @@ def do_get_qr(payload, mode, serialize=True):
         QR_SIGNDLER.SIGNAL_GET_QR.emit('GET_QR|'+mode+'|ERROR')
 
 
+def serialize_qr(qr_url, name, ext='.png'):
+    if ext not in name:
+        name = name+ext
+    store, new_source = _NetworkAccess.item_download(qr_url, _Global.QR_STORE_PATH, name)
+    if store is True:
+        qr_url = '../_qQr/'+new_source
+    return qr_url
+
+
 def handle_check_process(param, mode):
-    if mode in ['LINKAJA', 'GOPAY']:
+    if mode in _Global.QR_NON_DIRECT_PAY:
         do_check_qr(param, mode, False)
-    if mode in ['OVO']:
+    if mode in _Global.QR_DIRECT_PAY:
         sleep(5)
         do_pay_qr(param, mode)
     LOGGER.debug((str(param), mode))
@@ -116,6 +133,11 @@ def start_do_check_dana_qr(payload):
     _Helper.get_pool().apply_async(do_check_qr, (payload, mode,))
 
 
+def start_do_check_shopee_qr(payload):
+    mode = 'SHOPEEPAY'
+    _Helper.get_pool().apply_async(do_check_qr, (payload, mode,))
+
+
 def start_do_check_ovo_qr(payload):
     mode = 'OVO'
     _Helper.get_pool().apply_async(do_check_qr, (payload, mode,))
@@ -126,9 +148,11 @@ def start_do_check_linkaja_qr(payload):
     _Helper.get_pool().apply_async(do_check_qr, (payload, mode,))
 
 
+
 def do_check_qr(payload, mode, serialize=True):
+    global CANCELLING_QR_FLAG
     payload = json.loads(payload)
-    if mode in ['GOPAY', 'OVO', 'DANA']:
+    if mode in _Global.QR_DIRECT_PAY:
         LOGGER.warning((str(payload), mode, 'NOT_AVAILABLE'))
         QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|NOT_AVAILABLE')
         return
@@ -143,30 +167,43 @@ def do_check_qr(payload, mode, serialize=True):
     success = False
     while not success:
         try:
-            attempt += 1
-            _Helper.dump([success, attempt])
             url = _Global.QR_HOST+mode.lower()+'/status-payment'
+            if not _Global.QR_PROD_STATE[mode]:
+                url = 'http://apidev.mdd.co.id:28194/v1/'+mode.lower()+'/status-payment'
+            # Handle QR Payment Cancellation Realtime Abort
+            if CANCELLING_QR_FLAG is True:
+                cancel_param = {
+                    'url'       : url.replace('status-payment', 'cancel-payment'),
+                    'payload'   : payload,
+                    'mode'      : mode
+                }
+                LOGGER.debug(('[BREAKING-LOOP]', 'QR CHECK STATUS', mode, payload['trx_id'], str(cancel_param)))
+                cancel_qr_global(cancel_param)
+                CANCELLING_QR_FLAG = False
+                break
+            attempt += 1
+            # _Helper.dump([success, attempt])
             s, r = _NetworkAccess.post_to_url(url=url, param=payload)
             if s == 200 and r['response']['code'] == 200:
                 success = check_payment_result(r['data'], mode)
-                QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|' + json.dumps(r['data']))
-                LOGGER.debug((str(payload), str(r)))
-            else:
-                QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|ERROR')
-                LOGGER.warning((str(payload), str(r)))
-                break;
+                # QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|' + json.dumps(r['data']))
+                # LOGGER.debug((str(payload), str(r)))
+            # else:
+            #     QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|ERROR')
+            #     LOGGER.warning((str(payload), str(r)))
+            #     break;
         except Exception as e:
             LOGGER.warning((str(payload), str(e)))
-            QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|ERROR')
-            break;
+            # QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|ERROR')
+            # break;
         if success is True:
             QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|SUCCESS|' + json.dumps(r['data']))
             break
-        if attempt == 30:
-            LOGGER.warning((str(payload), 'TIMEOUT', str(attempt*3)))
+        if attempt == 60:
+            LOGGER.warning((str(payload), 'TIMEOUT', str(attempt*5)))
             QR_SIGNDLER.SIGNAL_CHECK_QR.emit('CHECK_QR|'+mode+'|TIMEOUT')
             break
-        sleep(3)
+        sleep(5)
 
 
 def check_payment_result(result, mode):
@@ -175,6 +212,8 @@ def check_payment_result(result, mode):
     if mode in ['LINKAJA'] and result['status'] == 'PAID':
         return True
     if mode in ['GOPAY'] and result['status'] == 'SETTLEMENT':
+        return True
+    if mode in ['DANA', 'SHOPEEPAY'] and result['status'] == 'SUCCESS':
         return True
     return False
 
@@ -187,7 +226,7 @@ def start_do_pay_ovo_qr(payload):
 
 def do_pay_qr(payload, mode, serialize=True):
     payload = json.loads(payload)
-    if mode in ['GOPAY', 'DANA', 'LINKAJA']:
+    if mode not in _Global.QR_DIRECT_PAY:
         LOGGER.warning((str(payload), mode, 'NOT_AVAILABLE'))
         QR_SIGNDLER.SIGNAL_PAY_QR.emit('PAY_QR|'+mode+'|NOT_AVAILABLE')
         return
@@ -203,6 +242,8 @@ def do_pay_qr(payload, mode, serialize=True):
         payload = serialize_payload(payload)
     try:
         url = _Global.QR_HOST+mode.lower()+'/pay-qr'
+        if not _Global.QR_PROD_STATE[mode]:
+            url = 'http://apidev.mdd.co.id:28194/v1/'+mode.lower()+'/pay-qr'
         s, r = _NetworkAccess.post_to_url(url=url, param=payload)
         if s == 200 and r['response']['code'] == 200:
             QR_SIGNDLER.SIGNAL_PAY_QR.emit('PAY_QR|'+mode+'|SUCCESS|' + json.dumps(r['data']))
@@ -217,7 +258,7 @@ def do_pay_qr(payload, mode, serialize=True):
 
 
 def handle_confirm_process(payload, mode):
-    if mode in ['OVO']:
+    if mode in _Global.QR_DIRECT_PAY:
         do_confirm_qr(payload, mode, False)
     LOGGER.debug((str(payload), mode))
 
@@ -229,7 +270,7 @@ def start_confirm_ovo_qr(payload):
 
 def do_confirm_qr(payload, mode, serialize=True):
     payload = json.loads(payload)
-    if mode in ['GOPAY', 'DANA', 'LINKAJA']:
+    if mode not in _Global.QR_DIRECT_PAY:
         LOGGER.warning((str(payload), mode, 'NOT_AVAILABLE'))
         QR_SIGNDLER.SIGNAL_CONFIRM_QR.emit('CONFIRM_QR|'+mode+'|NOT_AVAILABLE')
         return
@@ -241,6 +282,8 @@ def do_confirm_qr(payload, mode, serialize=True):
         payload = serialize_payload(payload)
     try:
         url = _Global.QR_HOST+mode.lower()+'/trx-confirm'
+        if not _Global.QR_PROD_STATE[mode]:
+            url = 'http://apidev.mdd.co.id:28194/v1/'+mode.lower()+'/trx-confirm'
         s, r = _NetworkAccess.post_to_url(url=url, param=payload)
         if s == 200 and r['response']['code'] == 200:
             QR_SIGNDLER.SIGNAL_CONFIRM_QR.emit('CONFIRM_QR|'+mode+'|SUCCESS|' + json.dumps(r['data']))
@@ -251,3 +294,31 @@ def do_confirm_qr(payload, mode, serialize=True):
     except Exception as e:
         LOGGER.warning((str(payload), str(e)))
         QR_SIGNDLER.SIGNAL_CONFIRM_QR.emit('CONFIRM_QR|'+mode+'|ERROR')
+
+
+def start_cancel_qr_global(trx_id):
+    global CANCELLING_QR_FLAG
+    if not CANCELLING_QR_FLAG:
+        CANCELLING_QR_FLAG = True
+        LOGGER.info((trx_id, 'CANCELLING_QR_PAYMENT'))
+    # _Helper.get_pool().apply_async(cancel_qr_global, (trx_id, ) )
+
+
+def cancel_qr_global(data):
+    if _Global.empty(data) is True:
+        LOGGER.debug(('EMPTY DATA TO REQUEST QR CANCELLATION'))
+        return
+    url = data['url']
+    payload = data['payload']
+    mode = data['mode']
+    if mode not in ['GOPAY', 'DANA', 'SHOPEEPAY']:
+        LOGGER.debug((mode, 'NO AVAIL TO REQUEST QR CANCELLATION'))
+        return
+    try:
+        s, r = _NetworkAccess.post_to_url(url=url, param=payload)
+        # if s == 200 and r['response']['code'] == 200:
+        #     CANCEL_PARAM = None
+        LOGGER.debug(mode, (str(payload), str(r)))
+    except Exception as e:
+        LOGGER.warning((mode, str(e)))
+        _Global.store_request_to_job(name=_Helper.whoami(), url=url, payload=payload)

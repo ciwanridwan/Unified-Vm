@@ -5,12 +5,16 @@ import QtGraphicalEffects 1.0
 Base{
     id:globalFrame
     isBoxNameActive: false
+//        property var globalScreenType: '1'
+//        height: (globalScreenType=='2') ? 1024 : 1080
+//        width: (globalScreenType=='2') ? 1280 : 1920
+
     property var textMain: 'Masukkan Kartu Debit dan PIN Anda Pada EDC'
     property var textSlave: 'Posisi Mesin EDC Tepat Di Tengah Bawah Layar'
     property var imageSource: "source/insert_card_dc.png"
     property bool smallerSlaveSize: true
     property bool withTimer: true
-    property int textSize: 40
+    property int textSize: (globalScreenType == '1') ? 40 : 30
     property int timerDuration: 5
     property int showDuration: timerDuration
     property var closeMode: 'closeWindow' // 'closeWindow', 'backToMain', 'backToPrev'
@@ -22,11 +26,11 @@ Base{
 
     Column{
         id: column
-        width: 1100
+        width: parent.width - 100
         height: 500
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        spacing: 30
+        spacing: (globalScreenType == '1') ? 30 : 25
         AnimatedImage  {
             id: original_image
             visible:  (imageSource!='source/insert_card_dc.png')
@@ -37,27 +41,32 @@ Base{
             source: imageSource
             fillMode: Image.PreserveAspectFit
         }
-        Row{
+        GroupBox{
             id: multiple_images_edc
-            scale: 1
+            flat: true
             width: parent.width
             height: 300
-            layoutDirection: Qt.LeftToRight
+            anchors.horizontalCenter: parent.horizontalCenter
             visible: (imageSource=='source/insert_card_dc.png')
-            spacing: 200
             Image{
-                scale: 1.5
-                source: "source/insert_card_realistic.jpg"
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.left: parent.left
+                anchors.leftMargin: (globalScreenType == '1') ? -50 : -200
+                scale: (globalScreenType == '1') ? 0.8 : 0.5
+                source: "source/insert_card_step01.png"
                 fillMode: Image.PreserveAspectFit
             }
-            AnimatedImage{
-                scale: 1
-                source: "source/arrow_down.gif"
-                fillMode: Image.PreserveAspectFit
-            }
+//            AnimatedImage{
+//                scale: 1
+//                source: "source/arrow_down.gif"
+//                fillMode: Image.PreserveAspectFit
+            //            }
             Image{
-                scale: 1.5
-                source: "source/input_card_pin_realistic.jpeg"
+                anchors.right: parent.right
+                anchors.rightMargin: (globalScreenType == '1') ? -50 : -200
+                anchors.verticalCenter: parent.verticalCenter
+                scale: (globalScreenType == '1') ? 0.8 : 0.5
+                source: "source/insert_pin_step02.png"
                 fillMode: Image.PreserveAspectFit
             }
         }
@@ -108,8 +117,9 @@ Base{
 //        }
         Row{
             id: group_acceptable_money
-            scale: 1
+            anchors.horizontalCenter: parent.horizontalCenter
             visible:  (imageSource=='source/insert_money.png')
+            scale: 1
             spacing: 16
             Image{
                 id: img_count_100
@@ -138,7 +148,6 @@ Base{
 
         }
     }
-
 
 
     Timer {

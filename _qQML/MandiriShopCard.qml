@@ -25,6 +25,8 @@ Base{
     property bool qrDanaEnable: false
     property bool qrGopayEnable: false
     property bool qrLinkajaEnable: false
+    property bool qrShopeeEnable: false
+
     property var cdReadiness: undefined
     property var totalPaymentEnable: 0
 
@@ -54,7 +56,7 @@ Base{
             cdReadiness = undefined;
             popup_loading.open();
             _SLOT.kiosk_get_cd_readiness();
-            _SLOT.start_get_device_status();
+            _SLOT.start_get_payments();
 //            _SLOT.start_get_multiple_eject_status();
             if (cart != undefined) {
                 console.log('cart', JSON.stringify(cart));
@@ -86,7 +88,7 @@ Base{
     Component.onCompleted:{
         set_confirmation.connect(do_set_confirm);
         get_payment_method_signal.connect(process_selected_payment);
-        base.result_get_device.connect(get_device_status);
+        base.result_get_payment.connect(get_payments);
         base.result_balance_qprox.connect(get_balance);
         base.result_multiple_eject.connect(get_status_multiple);
         base.result_cd_readiness.connect(get_cd_readiness);
@@ -95,7 +97,7 @@ Base{
     Component.onDestruction:{
         set_confirmation.disconnect(do_set_confirm);
         get_payment_method_signal.disconnect(process_selected_payment);
-        base.result_get_device.disconnect(get_device_status);
+        base.result_get_payment.disconnect(get_payments);
         base.result_balance_qprox.disconnect(get_balance);
         base.result_multiple_eject.disconnect(get_status_multiple);
         base.result_cd_readiness.disconnect(get_cd_readiness);
@@ -121,9 +123,9 @@ Base{
         }
     }
 
-    function get_device_status(s){
+    function get_payments(s){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-        console.log('get_device_status', s, now);
+        console.log('get_payments', s, now);
         var device = JSON.parse(s);
         if (device.MEI == 'AVAILABLE' || device.GRG == 'AVAILABLE'){
             cashEnable = true;
@@ -147,6 +149,10 @@ Base{
         }
         if (device.QR_OVO == 'AVAILABLE') {
             qrOvoEnable = true;
+            totalPaymentEnable += 1;
+        }
+        if (device.QR_SHOPEEPAY == 'AVAILABLE') {
+            qrShopeeEnable = true;
             totalPaymentEnable += 1;
         }
 
@@ -296,7 +302,7 @@ Base{
     CircleButton{
         id:back_button
         anchors.left: parent.left
-        anchors.leftMargin: 50
+        anchors.leftMargin: 30
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 30
         button_text: 'BATAL'
@@ -313,7 +319,7 @@ Base{
     CircleButton{
         id: next_button
         anchors.right: parent.right
-        anchors.rightMargin: 50
+        anchors.rightMargin: 30
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 30
         button_text: 'LANJUT'
@@ -376,10 +382,10 @@ Base{
     MainTitle{
         id: main_title
         anchors.top: parent.top
-        anchors.topMargin: 175
+        anchors.topMargin: (globalScreenType == '1') ? 175 : 150
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: 'Pilih Kartu Tersedia'
-        size_: 50
+        size_: (globalScreenType == '1') ? 50 : 45
         color_: "white"
         visible: !global_frame.visible && !popup_loading.visible && mainVisible
 
@@ -536,6 +542,7 @@ Base{
         _qrDanaEnable: qrDanaEnable
         _qrGopayEnable: qrGopayEnable
         _qrLinkAjaEnable: qrLinkajaEnable
+        _qrShopeeEnable: qrShopeeEnable
         totalEnable: totalPaymentEnable
     }
 
@@ -772,9 +779,9 @@ Base{
         CircleButton{
             id: cancel_button_global
             anchors.left: parent.left
-            anchors.leftMargin: 100
+            anchors.leftMargin: 30
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 50
+            anchors.bottomMargin: 30
             button_text: 'BATAL'
             modeReverse: true
             visible: frameWithButton
@@ -790,9 +797,9 @@ Base{
         CircleButton{
             id: next_button_global
             anchors.right: parent.right
-            anchors.rightMargin: 100
+            anchors.rightMargin: 30
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 50
+            anchors.bottomMargin: 30
             button_text: 'LANJUT'
             modeReverse: true
             visible: frameWithButton
@@ -817,9 +824,9 @@ Base{
         CircleButton{
             id: cancel_button_preload
             anchors.left: parent.left
-            anchors.leftMargin: 100
+            anchors.leftMargin: 30
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 50
+            anchors.bottomMargin: 30
             button_text: 'BATAL'
             modeReverse: true
             MouseArea{
@@ -834,9 +841,9 @@ Base{
         CircleButton{
             id: next_button_preload
             anchors.right: parent.right
-            anchors.rightMargin: 100
+            anchors.rightMargin: 30
             anchors.bottom: parent.bottom
-            anchors.bottomMargin: 50
+            anchors.bottomMargin: 30
             button_text: 'LANJUT'
             modeReverse: true
             MouseArea{

@@ -8,7 +8,8 @@ Rectangle {
     property var color_: (modeReverse) ? "black" : "white"
     property var text_:"Data 25.000"
     property var text2_:"Kuota Reguler 270-750MB + 2GB Video Max. Berlaku selama 30 hari"
-    width: 1000
+    property var itemWidth: 1000
+    width: itemWidth
     height: 150
     color: 'transparent'
     visible: true
@@ -29,7 +30,7 @@ Rectangle {
         anchors.topMargin: 25
         anchors.left: parent.left
         anchors.leftMargin: 25
-        font.pixelSize: (text_.length > 35) ? 30 : 40
+        font.pixelSize: (itemWidth==1000) ? 35 : 25
         wrapMode: Text.WordWrap
         style: Text.Sunken
         anchors.horizontalCenterOffset: 0
@@ -48,7 +49,7 @@ Rectangle {
         anchors.rightMargin: 25
         anchors.top: parent.top
         anchors.topMargin: 25
-        font.pixelSize: 40
+        font.pixelSize: (itemWidth==1000) ? 35 : 25
         wrapMode: Text.WordWrap
         anchors.horizontalCenterOffset: 0
         anchors.horizontalCenter: parent.horizontalCenter
@@ -73,7 +74,7 @@ Rectangle {
         text: text2_.toUpperCase()
         anchors.left: parent.left
         anchors.leftMargin: 25
-        font.pixelSize: 23
+        font.pixelSize: (itemWidth==1000) ? 25 : 23
         anchors.bottomMargin: 25
         anchors.horizontalCenterOffset: 0
         anchors.horizontalCenter: parent.horizontalCenter

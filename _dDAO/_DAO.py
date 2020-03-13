@@ -333,18 +333,22 @@ def adjust_table(_path):
     _Database.adjust_db(db=_path)
 
 
+def direct_adjust_table(script):
+    return _Database.adjust_db_direct(script)
+
+
 def insert_receipt(param):
     param['syncFlag'] = 0
     '''
     rid,
     bookingCode,
-    tiboxId,
+    tid,
     receiptRaw,
     receiptData,
     createdAt,
     '''
-    sql = "  INSERT INTO Receipts(rid, bookingCode, tiboxId, receiptRaw, receiptData, syncFlag, createdAt) " \
-          "VALUES(:rid, :bookingCode, :tiboxId, :receiptRaw, :receiptData, :syncFlag, :createdAt)  "
+    sql = "  INSERT INTO Receipts(rid, bookingCode, tid, receiptRaw, receiptData, syncFlag, createdAt) " \
+          "VALUES(:rid, :bookingCode, :tid, :receiptRaw, :receiptData, :syncFlag, :createdAt)  "
     return _Database.insert_update(sql=sql, parameter=param)
 
 
@@ -453,7 +457,7 @@ def clean_old_data(tables, key='', age_month=0):
         return False
     expired = _Helper.now()
     if age_month > 0:
-        expired = _Helper.now() - (age_month * 30 * 24 * 60 * 60)
+        expired = _Helper.now() - (age_month * 30 * 24 * 60 * 60 * 1000)
     for _table in tables:
         _where = str(key) + ' < ' + str(expired)
         flush_table(_table=_table, _where=_where)
@@ -482,6 +486,7 @@ def insert_pending_refund(param):
     trxid           VARCHAR(100),
     amount          BIGINT,
     customer        VARCHAR(100),
+    channel         VARCHAR(100),
     refundType      VARCHAR(100),
     paymentType     VARCHAR(100),
     remarks         TEXT,
@@ -490,9 +495,9 @@ def insert_pending_refund(param):
     param['id'] = _Helper.uuid()
     param['isSuccess'] = 0
     param['createdAt'] = _Helper.now()
-    sql = "INSERT INTO PendingRefund(id, tid, trxid, amount, customer, refundType, paymentType, remarks, isSuccess, createdAt ) " \
-          "VALUES(:id, :tid, :trxid, :amount, :customer, :refundType, :paymentType, :remarks, :isSuccess, :createdAt )"
-    _Database.insert_update(sql=sql, parameter=param)
+    sql = " INSERT INTO PendingRefund(id, tid, trxid, amount, customer, channel, refundType, paymentType, remarks, isSuccess, createdAt ) " \
+          "VALUES(:id, :tid, :trxid, :amount, :customer, :channel, :refundType, :paymentType, :remarks, :isSuccess, :createdAt ) "
+    return _Database.insert_update(sql=sql, parameter=param)
 
 def update_pending_refund(param):
     '''

@@ -9,9 +9,9 @@ Base{
     property var textSlave: '1. Pada smartphone Anda, unduh Aplikasi QR Reader/Pembaca QR'
     property var textRebel: '2. Buka Tautan yang terbaca pada Aplikasi tersebut (membuka aplikasi Whatsapp Anda)'
     property var textQuard: '3. Kirim text "START" pada Aplikasi Whatsapp Anda pada nomor tersebut.'
-    property var imageSource: "source/qr_transjakarta_register.jpeg"
+    property var imageSource: "source/qr_transjakarta_register_new.jpeg"
     property bool smallerSlaveSize: true
-    property int textSize: 40
+    property int textSize: (globalScreenType == '1') ? 40 : 35
     visible: false
     opacity: visible ? 1.0 : 0.0
     Behavior on opacity {
@@ -26,10 +26,10 @@ Base{
 
     MainTitle{
         anchors.top: parent.top
-        anchors.topMargin: 180
+        anchors.topMargin: (globalScreenType == '1') ? 175 : 150
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: 'Fitur Baru : Kemudahan Transaksi Dari Whatsapp'
-        size_: 50
+        size_: (globalScreenType == '1') ? 50 : 45
         color_: "yellow"
 
     }

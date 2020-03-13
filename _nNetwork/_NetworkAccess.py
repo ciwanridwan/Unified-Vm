@@ -14,16 +14,17 @@ def is_online_old(host="8.8.8.8", port=53, timeout=3, source=''):
         socket.setdefaulttimeout(timeout)
         socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect((host, port))
         if source != '':
-            LOGGER.debug(('is_online', 'source', source))
+            LOGGER.debug(('source', source))
         return True
     except Exception as e:
-        LOGGER.warning(('is_online', str(e), 'source', source))
+        LOGGER.debug((str(e), 'source', source))
         return False
 
 
 IS_ONLINE = False
 LAST_REQUEST = 0
-WAITING_TIME_ONLINE = 3
+# Set Previous Waiting Time Into 1 second only
+WAITING_TIME_ONLINE = 1 
 
 
 def is_online(host="www.google.com", timeout=1, source=''):
@@ -31,7 +32,7 @@ def is_online(host="www.google.com", timeout=1, source=''):
     try:
         if LAST_REQUEST != 0:
             if int(time.time()) < (LAST_REQUEST + WAITING_TIME_ONLINE):
-                LOGGER.debug(('previous state', source, IS_ONLINE))
+                LOGGER.debug(('previous_state', source, IS_ONLINE))
                 return IS_ONLINE
         socket.create_connection((socket.gethostbyname(host), 80), timeout)
         IS_ONLINE = True
@@ -39,7 +40,7 @@ def is_online(host="www.google.com", timeout=1, source=''):
             LOGGER.debug((source, IS_ONLINE))
     except Exception as e:
         IS_ONLINE = False
-        LOGGER.warning((str(e), source, IS_ONLINE))
+        LOGGER.debug((str(e), source, IS_ONLINE))
     finally:
         LAST_REQUEST = int(time.time())
         return IS_ONLINE
@@ -116,7 +117,7 @@ def get_from_url(url, param=None, header=None, log=True):
 
 
 def post_to_url(url, param=None, header=None, log=True):
-    if is_online(source=url) is False and ('apiv2.mdd.co.id' not in url or 'v2/diva/' not in url):
+    if is_online(source=url) is False and ('apidev.mdd.co.id' not in url or 'apiv2.mdd.co.id' not in url or 'v2/diva/' not in url or 'refund/' not in url):
         return -1, NO_INTERNET
     if header is None:
         header = HEADER
@@ -124,7 +125,7 @@ def post_to_url(url, param=None, header=None, log=True):
         s = requests.session()
         s.keep_alive = False
         # s.headers['Connection'] = 'close'
-        if 'http://apiv2.mdd.co.id:10107' in url:
+        if 'http://apiv2.mdd.co.id:10107' in url or 'http://apidev.mdd.co.id:28194' in url:
             r = requests.post(url, headers=header, json=param, timeout=180)
         else:
             r = requests.post(url, headers=header, json=param, timeout=GLOBAL_TIMEOUT)

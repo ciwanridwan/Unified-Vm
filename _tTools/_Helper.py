@@ -11,6 +11,7 @@ import binascii
 from _nNetwork import _NetworkAccess
 import subprocess
 from sys import _getframe as whois
+# import inspect
 
 LOGGER = logging.getLogger()
 POOL = ThreadPool(16)
@@ -89,6 +90,10 @@ def get_random_chars(length=3, chars='ABCDEFGHJKMNPQRSTUVWXYZ'):
     return __random
 
 
+def get_random_num(start=0, end=1):
+    return random.uniform(start, end)
+
+
 def file2crc32(filename):
     try:
         buf = open(filename, 'rb').read()
@@ -152,4 +157,16 @@ def os_command(command, key, reverse=False):
     else:
         return False
 
+
+def execute_console(command):
+    process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE)
+    response = process.communicate()[0].decode('utf-8').strip().split("\r\n")
+    LOGGER.debug((command, response))
+    dump(command)
+    dump(response)
+    return response
+
+
+def whoami():
+    return whois(1).f_code.co_name
 

@@ -10,18 +10,22 @@ Rectangle{
     id:popup_input_number
     width: parseInt(SCREEN.size.width)
     height: parseInt(SCREEN.size.height)
+//    property var globalScreenType: '1'
+//          height: (globalScreenType=='2') ? 1024 : 1080
+//          width: (globalScreenType=='2') ? 1280 : 1920
     color: 'transparent'
     property var escapeFunction: 'closeWindow' //['closeWindow', 'backToMain', 'backToPrevious']
     property int max_count: 15
     property var press: "0"
     property var numberInput: ""
-    property string mainTitle: "Terjadi Kegagalan Transaksi, Masukkan No WhatsApp Anda Untuk Pengembalian Dana"
+    property string mainTitle: "Terjadi Kegagalan Transaksi, Masukkan No HP Anda Untuk Pengembalian Dana"
     property var titleImage: "source/whatsapp_transparent_white.png"
     property bool withBackground: true
     property int min_count: 9
     property var pattern: '08'
     property var calledFrom
     property var handleButtonVisibility
+    property var providerTag: "*Dompet Digital Didukung Oleh DUWIT"
 
     visible: false
     scale: visible ? 1.0 : 0.1
@@ -46,28 +50,28 @@ Rectangle{
         anchors.verticalCenter: parent.verticalCenter
 
         MainTitle{
-            width: 1200
+            width: parent.width
             anchors.top: parent.top
             anchors.topMargin: 45
             anchors.horizontalCenter: parent.horizontalCenter
             show_text: mainTitle
-            size_: 50
+            size_: (popup_input_number.width==1920) ? 50 : 40
             color_: CONF.text_color
         }
 
         Text {
             color: CONF.text_color
-            text: "*Dompet Digital Didukung Oleh DUWIT"
-            anchors.verticalCenterOffset: 200
+            text: providerTag
+            anchors.verticalCenterOffset: (popup_input_number.width==1920) ? 200 : 400
             anchors.verticalCenter: parent.verticalCenter
             anchors.right: parent.right
-            anchors.rightMargin: 50
+            anchors.rightMargin: (popup_input_number.width==1920) ? 50 : 10
             font.bold: true
             font.italic: true
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignRight
             font.family:"Ubuntu"
-            font.pixelSize: 30
+            font.pixelSize: (popup_input_number.width==1920) ? 30 : 20
         }
 
         TextRectangle{
@@ -83,7 +87,7 @@ Rectangle{
         Image{
             width: 150
             height: 150
-            anchors.leftMargin: 200
+            anchors.leftMargin: (popup_input_number.width==1920) ? 200 : 0
             anchors.verticalCenter: parent.verticalCenter
             opacity: 0.6
             scale: 4
@@ -100,7 +104,7 @@ Rectangle{
             cursorVisible: true
             horizontalAlignment: Text.AlignLeft
             font.family: "Ubuntu"
-            font.pixelSize: 50
+            font.pixelSize: (popup_input_number.width==1920) ? 50 : 45
             color: CONF.text_color
             clip: true
             visible: true

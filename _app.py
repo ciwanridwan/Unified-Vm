@@ -115,9 +115,9 @@ class SlotHandler(QObject):
         _EDC.create_sale_edc(amount=amount)
     create_sale_edc = pyqtSlot(str)(create_sale_edc)
 
-    def start_get_device_status(self):
-        _KioskService.start_get_device_status()
-    start_get_device_status = pyqtSlot()(start_get_device_status)
+    def start_get_payments(self):
+        _KioskService.start_get_payments()
+    start_get_payments = pyqtSlot()(start_get_payments)
 
     def start_confirm_schedule(self):
         _Tibox.start_confirm_schedule()
@@ -488,9 +488,9 @@ class SlotHandler(QObject):
         _PPOBService.start_get_ppob_product()
     start_get_ppob_product = pyqtSlot()(start_get_ppob_product)
 
-    def start_kiosk_get_payment_method(self):
-        _KioskService.start_kiosk_get_payment_method()
-    start_kiosk_get_payment_method = pyqtSlot()(start_kiosk_get_payment_method)
+    def start_kiosk_get_payment_setting(self):
+        _KioskService.start_kiosk_get_payment_setting()
+    start_kiosk_get_payment_setting = pyqtSlot()(start_kiosk_get_payment_setting)
 
     def start_define_ads(self):
         _KioskService.start_define_ads()
@@ -572,9 +572,9 @@ class SlotHandler(QObject):
         _PPOBService.start_check_diva_balance(username)
     start_check_diva_balance = pyqtSlot(str)(start_check_diva_balance)
 
-    def start_transfer_balance(self, payload):
-        _PPOBService.start_transfer_balance(payload)
-    start_transfer_balance = pyqtSlot(str)(start_transfer_balance)
+    def start_global_refund_balance(self, payload):
+        _PPOBService.start_global_refund_balance(payload)
+    start_global_refund_balance = pyqtSlot(str)(start_global_refund_balance)
 
     def start_update_balance_online(self, bank):
         _QPROX.start_update_balance_online(bank)
@@ -604,6 +604,18 @@ class SlotHandler(QObject):
         _SettlementService.start_trigger_mandiri_sam_update()
     start_mandiri_update_schedule = pyqtSlot()(start_mandiri_update_schedule)
 
+    def start_reset_receipt_count(self, count):
+        _Global.start_reset_receipt_count(count)
+    start_reset_receipt_count = pyqtSlot(str)(start_reset_receipt_count)
+
+    def start_trigger_edc_settlement(self):
+        _SettlementService.start_trigger_edc_settlement()
+    start_trigger_edc_settlement = pyqtSlot()(start_trigger_edc_settlement)
+
+    def start_cancel_qr_global(self, trx_id):
+        _QRPaymentService.start_cancel_qr_global(trx_id)
+    start_cancel_qr_global = pyqtSlot(str)(start_cancel_qr_global)
+
 
 def s_handler():
     _KioskService.K_SIGNDLER.SIGNAL_GET_FILE_LIST.connect(view.rootObject().result_get_file_list)
@@ -618,7 +630,8 @@ def s_handler():
     _Tibox.T_SIGNDLER.SIGNAL_CREATE_PRINT.connect(view.rootObject().result_create_print)
     _Tibox.T_SIGNDLER.SIGNAL_CLEAR_PERSON.connect(view.rootObject().result_clear_person)
     _EDC.E_SIGNDLER.SIGNAL_SALE_EDC.connect(view.rootObject().result_sale_edc)
-    _KioskService.K_SIGNDLER.SIGNAL_GET_DEVICE_STAT.connect(view.rootObject().result_get_device)
+    _KioskService.K_SIGNDLER.SIGNAL_GET_PAYMENTS.connect(view.rootObject().result_get_payment)
+    _KioskService.K_SIGNDLER.SIGNAL_GET_REFUNDS.connect(view.rootObject().result_get_refund)
     _Tibox.T_SIGNDLER.SIGNAL_CONFIRM_SCHEDULE.connect(view.rootObject().result_confirm_schedule)
     _MEI.M_SIGNDLER.SIGNAL_ACCEPT_MEI.connect(view.rootObject().result_accept_mei)
     _MEI.M_SIGNDLER.SIGNAL_DIS_ACCEPT_MEI.connect(view.rootObject().result_dis_accept_mei)
@@ -686,7 +699,7 @@ def s_handler():
     _SettlementService.ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.connect(view.rootObject().result_mandiri_settlement)
     _UpdateAppService.UPDATEAPP_SIGNDLER.SIGNAL_UPDATE_APP.connect(view.rootObject().result_update_app)
     _PPOBService.PPOB_SIGNDLER.SIGNAL_GET_PRODUCTS.connect(view.rootObject().result_get_ppob_product)
-    _KioskService.K_SIGNDLER.SIGNAL_GET_PAYMENT_METHOD.connect(view.rootObject().result_get_payment_method)
+    _KioskService.K_SIGNDLER.SIGNAL_GET_PAYMENT_SETTING.connect(view.rootObject().result_get_payment_setting)
     _KioskService.K_SIGNDLER.SIGNAL_SYNC_ADS_CONTENT.connect(view.rootObject().result_sync_ads)
     _PPOBService.PPOB_SIGNDLER.SIGNAL_CHECK_PPOB.connect(view.rootObject().result_check_ppob)
     _PPOBService.PPOB_SIGNDLER.SIGNAL_TRX_PPOB.connect(view.rootObject().result_trx_ppob)
@@ -698,7 +711,7 @@ def s_handler():
     _ProductService.PR_SIGNDLER.SIGNAL_CHECK_VOUCHER.connect(view.rootObject().result_check_voucher)
     _ProductService.PR_SIGNDLER.SIGNAL_USE_VOUCHER.connect(view.rootObject().result_use_voucher)
     _PPOBService.PPOB_SIGNDLER.SIGNAL_CHECK_BALANCE.connect(view.rootObject().result_diva_balance_check)
-    _PPOBService.PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.connect(view.rootObject().result_diva_transfer_balance)
+    _PPOBService.PPOB_SIGNDLER.SIGNAL_TRANSFER_BALANCE.connect(view.rootObject().result_global_refund_balance)
     _QPROX.QP_SIGNDLER.SIGNAL_UPDATE_BALANCE_ONLINE.connect(view.rootObject().result_update_balance_online)
     _KioskService.K_SIGNDLER.SIGNAL_ADMIN_GET_PRODUCT_STOCK.connect(view.rootObject().result_admin_sync_stock)
     _CD.CD_SIGNDLER.SIGNAL_CD_PORT_INIT.connect(view.rootObject().result_init_check_cd)
@@ -747,7 +760,7 @@ def get_disk_info():
         for physical_disk in c.Win32_DiskDrive():
             encrypt_str = encrypt_str + physical_disk.SerialNumber.strip()
     except Exception as e:
-        LOGGER.warning(('get_disk_info : ', e))
+        LOGGER.warning((e))
     disk_info.append(encrypt_str)
     _NetworkAccess.DISK_SERIAL_NUMBER = disk_info[0]
     return disk_info[0] if disk_info[0] is not None else "N/A"
@@ -759,21 +772,21 @@ def get_screen_resolution():
         import ctypes
         user32 = ctypes.windll.user32
         # user32.SetProcessDPIAware()
-        _RES = [user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)]
-        LOGGER.info(('get_screen_resolution : ', str(_RES)))
+        resolution = [user32.GetSystemMetrics(0), user32.GetSystemMetrics(1)]
+        LOGGER.info(('get_screen_resolution : ', str(resolution)))
         screen_js = sys.path[0] + '/_qQml/screen.js'
-        GLOBAL_WIDTH = _RES[0]
-        GLOBAL_HEIGHT = _RES[1]
-        content_js = 'var size = { "width": ' + str(_RES[0]) + ', "height": ' + str(_RES[1]) + '};'
+        GLOBAL_WIDTH = resolution[0]
+        GLOBAL_HEIGHT = resolution[1]
+        content_js = 'var size = { "width": ' + str(resolution[0]) + ', "height": ' + str(resolution[1]) + '};'
         with open(screen_js, 'w+') as s:
             s.write(content_js)
             s.close()
         LOGGER.info(('write_screen_resolution : ', screen_js, content_js))
     except Exception as e:
-        _RES = [0, 0]
+        resolution = [0, 0]
         LOGGER.warning(('get_screen_resolution : ', e))
     # print(res)
-    return _RES
+    return resolution
 
 
 def process_exist(processname):
@@ -796,7 +809,7 @@ def check_db(data_name):
 
 
 def kill_explorer():
-    if setting['dev_mode'] is False:
+    if INITIAL_SETTING['dev_mode'] is False:
         # os.system('taskkill /f /im explorer.exe')
         pass
     else:
@@ -843,7 +856,6 @@ def check_path(new):
 
 
 def set_tvc_player(command):
-    global setting
     if command == "":
         return
     elif command == "STOP":
@@ -876,23 +888,44 @@ def set_ext_keyboard(command):
         return
 
 
-setting = dict()
+INITIAL_SETTING = dict()
+TEMP_CONFIG_JS = '''
+var mandiri_update_schedule = "02:00";
+var edc_settlement_schedule = "23:00";
+var bank_ubal_online = ["MANDIRI", "BNI"];
+var master_logo = ["20200226174450cs4c79p1DvSstTqxPV.png"];
+var partner_logos = ["202002261744501WN95z1DClnpPR6COJ.png", "20200226174450E1r8h3I4g2NDfMMgvM.png"];
+var backgrounds = ["202002261744502niSQy0MVpaktdm8z1.png"];
+var running_text = "Silahkan Tekan Layar Untuk Mulai Transaksi";
+var running_text_color = "steelblue";
+var text_color = "white";
+var frame_color = "steelblue";
+var background_color = "black";
+var tvc_waiting_time = 60;
+'''
 
 
 def init_setting():
-    global setting
-    setting['dev_mode'] = _Global.TEST_MODE
-    setting['db'] = _ConfigParser.get_value('TERMINAL', 'DB')
-    setting['display'] = get_screen_resolution()
-    setting['devices'] = _Global.get_devices()
-    setting['tid'] = _Global.TID
+    global INITIAL_SETTING
+    qml_config = sys.path[0] + '/_qQML/config.js'
+    if not os.path.exists(qml_config):
+        with open(sys.path[0] + '/_qQML/config.js', 'w+') as qml:
+            qml.write(TEMP_CONFIG_JS)
+            qml.close()
+        LOGGER.info(("CREATE INITIATION_QML_CONFIG ON ", qml_config))
+    INITIAL_SETTING['dev_mode'] = _Global.TEST_MODE
+    INITIAL_SETTING['db'] = _ConfigParser.get_value('TERMINAL', 'DB')
+    INITIAL_SETTING['display'] = get_screen_resolution()
+    INITIAL_SETTING['devices'] = _Global.get_devices()
+    INITIAL_SETTING['tid'] = _Global.TID
     # setting['prepaid'] = _QPROX.BANKS
-    setting['server'] = _Global.BACKEND_URL
-    setting['reloadService'] = _Global.RELOAD_SERVICE
+    INITIAL_SETTING['server'] = _Global.BACKEND_URL
+    INITIAL_SETTING['reloadService'] = _Global.RELOAD_SERVICE
+    INITIAL_SETTING['allowedSyncTask'] = _Global.ALLOWED_SYNC_TASK
     # setting['sftpMandiri'] = _Global.SFTP_MANDIRI
     # setting['ftp'] = _Global.FTP
     # setting['bankConfig'] = _Global.BANKS
-    setting['serviceVersion'] = _Global.get_service_version()
+    INITIAL_SETTING['serviceVersion'] = _Global.get_service_version()
     # pprint(setting)
 
 
@@ -959,7 +992,7 @@ if __name__ == '__main__':
     disable_screensaver()
     if _Global.LIVE_MODE:
         kill_explorer()
-    check_db(setting['db'])
+    check_db(INITIAL_SETTING['db'])
     if os.name == 'nt':
         path = '_qQML/'
     else:
@@ -970,7 +1003,7 @@ if __name__ == '__main__':
     context = view.rootContext()
     context.setContextProperty('_SLOT', SLOT_HANDLER)
     print("pyt: Checking Auth to Server...")
-    _Sync.start_check_connection(url=setting['server'].replace('v2/', '')+'ping', param=setting)
+    _Sync.start_check_connection(url=INITIAL_SETTING['server'].replace('v2/', '')+'ping', param=INITIAL_SETTING)
     translator = QTranslator()
     translator.load(path + 'INA.qm')
     app.installTranslator(translator)
@@ -982,49 +1015,46 @@ if __name__ == '__main__':
     view.setFlags(Qt.WindowFullscreenButtonHint)
     view.setFlags(Qt.FramelessWindowHint)
     view.resize(GLOBAL_WIDTH, GLOBAL_HEIGHT - 1)
-    # print("pyt: Adjusting Local Table...")
-    # _KioskService.adjust_table('_AdjustReceipts.sql')
-    # _KioskService.adjust_table('_TopUpRecords.sql', 'TopUpRecords')
-    # _KioskService.adjust_table('_SAMAudit.sql', 'SAMAudit')
-    # _KioskService.adjust_table('_PendingRefund.sql', 'PendingRefund')
-    # sleep(1)
-    # print("pyt: Update/Alter Local Table...")
-    # _KioskService.alter_table('_AlterTransactions.sql')
-    # sleep(1)
-    # print("pyt: Remove Improper Data...")
-    # _KioskService.reset_db_record()
-    # sleep(1)
-    print("pyt: HouseKeeping Old Local Data...")
-    _KioskService.house_keeping(age_month=2)
+    print("pyt: Table Adjustment...")
+    _KioskService.direct_alter_table(["ALTER TABLE PendingRefund ADD COLUMN channel VARCHAR(100) DEFAULT 'DIVA';"])
+    sleep(1)
+    print("pyt: HouseKeeping Old Local Data/Files...")
+    _KioskService.house_keeping(age_month=3)
     sleep(1)
     print("pyt: Syncing Remote Task...")
     _Sync.start_sync_task()
-    sleep(1)
-    print("pyt: Syncing Product Item...")
+    sleep(.5)
+    print("pyt: Syncing Offline Item Transaction...")
     _Sync.start_sync_product_data()
-    sleep(1)
-    print("pyt: Syncing PPOB Product...")
-    _PPOBService.start_init_ppob_product()
+    sleep(.5)
+    print("pyt: Syncing Product Stock...")
+    _Sync.start_sync_product_stock()
     sleep(.5)
     print("pyt: Syncing Transaction...")
     _Sync.start_sync_data_transaction()
+    sleep(.5)
+    print("pyt: Syncing Transaction Failure Data...")
+    _Sync.start_sync_data_transaction_failure()
     sleep(.5)
     print("pyt: Syncing Topup Records...")
     _Sync.start_sync_topup_records()
     sleep(.5)
     print("pyt: Syncing Topup Amount...")
-    _Sync.start_get_topup_amount()
+    _Sync.start_sync_topup_amount()
     sleep(.5)
-    print("pyt: Syncing SAM Audit...")
-    _Sync.start_sync_sam_audit()
+    # print("pyt: Syncing SAM Audit...")
+    # _Sync.start_sync_sam_audit()
+    # sleep(.5)
+    # print("pyt: Retrying Pending Refund...")
+    # _Sync.start_sync_pending_refund()
+    # sleep(.5)
+    print("pyt: Syncing PPOB Product...")
+    _PPOBService.start_init_ppob_product()
     sleep(.5)
-    print("pyt: Syncing Transaction Failure Data...")
-    _Sync.start_sync_data_transaction_failure()
+    print("pyt: Syncing Machine Status...")
+    _Sync.start_sync_machine_status()
     sleep(.5)
-    print("pyt: Retrying Pending Refund...")
-    _Sync.start_retry_pending_refund()
-    sleep(.5)
-    if setting['reloadService'] is True:
+    if INITIAL_SETTING['reloadService'] is True:
         sleep(.5)
         print("pyt: Restarting MDDTopUpService...")
         _KioskService.start_restart_mdd_service()
@@ -1037,27 +1067,34 @@ if __name__ == '__main__':
         print("pyt: Connecting to MEI Bill Acceptor...")
         _MEI.mei_standby_mode()
     if _Global.QPROX['status'] is True:
-        sleep(1)
         print("pyt: Connecting Into Prepaid Reader...")
+        sleep(1)
         if _QPROX.open_qprox() is True:
-            sleep(1)
             print("pyt: [INFO] Init Prepaid Reader...")
             _QPROX.init_qprox()
         else:
             print("pyt: [ERROR] Connect to Prepaid Reader...")
-    sleep(.5)
     if _Global.CD['status'] is True:
+        sleep(.5)
         print("pyt: [INFO] Re-Init CD V2 Configuration...")
         _CD.reinit_v2_config()
-    sleep(.5)
-    print("pyt: Triggering Mandiri Balance Validation...")
-    _SettlementService.start_validate_update_balance()
-    sleep(.5)
-    print("pyt: Triggering BNI Settlement Sync...")
-    _Sync.start_sync_settlement_bni()
+    if _QPROX.INIT_MANDIRI is True:
+        sleep(.5)
+        print("pyt: Triggering Mandiri Balance Validation...")
+        _SettlementService.start_validate_update_balance()
+    if _QPROX.INIT_BNI is True:
+        sleep(.5)
+        print("pyt: Triggering BNI Settlement Sync...")
+        _Sync.start_sync_settlement_bni()
+        sleep(.5)
+        print("pyt: Triggering BNI Balance Validation...")
+        _TopupService.start_define_topup_slot_bni()
     print("pyt: Syncing Ads Content...")
     sleep(.5)
     _KioskService.start_define_ads(3)
+    print("pyt: Do Pending Jobs...")
+    sleep(.5)
+    _Sync.start_do_pending_job()
     view.show()
     app.exec_()
     del view

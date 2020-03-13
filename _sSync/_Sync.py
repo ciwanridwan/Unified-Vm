@@ -34,29 +34,24 @@ def check_connection(url, param):
     SETTING_PARAM = param
     modulus = 0
     while True:
-        if _Helper.is_online(source='check_connection') is True and IDLE_MODE is True:
-            modulus += 1
-            try:
-                status, response = _NetworkAccess.get_from_url(url=url)
-                if status == 200:
-                    print('pyt: check_connection ' + _Helper.time_string() + ' Connected To Backend')
-                    _KioskService.KIOSK_STATUS = 'ONLINE'
-                    _KioskService.KIOSK_REAL_STATUS = 'ONLINE'
-                else:
-                    # _KioskService.KIOSK_STATUS = 'OFFLINE'
-                    _KioskService.KIOSK_REAL_STATUS = 'OFFLINE'
-                    print('pyt: check_connection ' + _Helper.time_string() + ' Disconnected From Backend')
-                _KioskService.LAST_SYNC = _Helper.time_string()
-                if modulus == 1:
-                    print('pyt: check_connection ' + _Helper.time_string() + ' Setting Initiation From Backend')
-                    s, r = _NetworkAccess.post_to_url(url=_Global.BACKEND_URL + 'get/setting', param=SETTING_PARAM)
-                    if s == 200 and r['result'] == 'OK':
-                        _KioskService.update_kiosk_status(r)
-                    start_sync_machine_status()
-                    sleep(10)
-                _KioskService.kiosk_status()
-            except Exception as e:
-                LOGGER.debug(e)
+        modulus += 1
+        try:
+            status, response = _NetworkAccess.get_from_url(url=url)
+            if status == 200:
+                print('pyt: check_connection ' + _Helper.time_string() + ' Connected To Backend')
+                _Global.KIOSK_STATUS = 'ONLINE'
+            else:
+                print('pyt: check_connection ' + _Helper.time_string() + ' Disconnected From Backend')
+                _Global.KIOSK_STATUS = 'OFFLINE'
+            _KioskService.LAST_SYNC = _Helper.time_string()
+            if modulus == 1:
+                print('pyt: check_connection ' + _Helper.time_string() + ' Setting Initiation From Backend')
+                s, r = _NetworkAccess.post_to_url(url=_Global.BACKEND_URL + 'get/setting', param=SETTING_PARAM)
+                _KioskService.update_kiosk_status(s, r)
+                # start_sync_machine_status()
+                # _KioskService.kiosk_status()
+        except Exception as e:
+            LOGGER.debug(e)            
         sleep(61.7)
 
 
@@ -99,20 +94,102 @@ def sync_machine_status():
                 LOGGER.debug(('Sending Kiosk Status : ', str(IDLE_MODE)))
         except Exception as e:
             LOGGER.warning(e)
+        finally:
+            if _Helper.whoami() not in _Global.ALLOWED_SYNC_TASK:
+                LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
+                break
         sleep(25.5)
+
+
+def start_do_pending_job():
+    _Helper.get_pool().apply_async(do_pending_job)
+
+
+def do_pending_job():
+    while True:
+        pending_jobs = [f for f in os.listdir(_Global.JOB_PATH) if f.endswith('.request')]
+        print('pyt: count pending_jobs : ' + str(len(pending_jobs)))
+        LOGGER.info(('count', len(pending_jobs)))
+        if len(pending_jobs) > 0:
+            try:
+                for p in pending_jobs:
+                    jobs_path = os.path.join(_Global.JOB_PATH, p)
+                    content = open(jobs_path, 'r').read().strip()
+                    if len(_Global.clean_white_space(content)) == 0:
+                        os.remove(jobs_path)
+                        continue
+                    job = json.loads(content)
+                    __url = job['url']
+                    __param = job['payload']
+                    print('pyt: do_pending_job ' + _Helper.time_string() + ' ' + p)
+                    LOGGER.debug((p, __url, __param))
+                    status, response = _NetworkAccess.post_to_url(url=__url, param=__param)
+                    if status == 200:
+                        if 'refund/global' in __url or response['result'] == 'OK':
+                            jobs_path_rename = jobs_path.replace('.request', '.done')
+                            os.rename(jobs_path, jobs_path_rename)
+                            print('pyt: jobs_done rename : ' + jobs_path + ' ' + jobs_path_rename)
+                            LOGGER.debug((jobs_path, jobs_path_rename))
+                            continue
+            except Exception as e:
+                LOGGER.warning(e)
+        sleep(5.55)
 
 
 def start_kiosk_sync():
     _Helper.get_pool().apply_async(kiosk_sync)
 
 
-def kiosk_sync():
-    sync_task()
+def start_kiosk_data_sync():
+    _Helper.get_pool().apply_async(kiosk_data_sync)
+
+
+def kiosk_data_sync():
+    print("pyt: Start Syncing Product Stock...")
+    sync_product_stock()
+    print("pyt: Start Syncing Product Data...")
     sync_product_data()
+    print("pyt: Start Syncing Shop Data Records ...")
     sync_data_transaction()
-    sync_machine_status()
+    print("pyt: Start Syncing Failed Shop Data Records ...")
+    sync_data_transaction_failure()
+
+
+def start_kiosk_topup_sync():
+    _Helper.get_pool().apply_async(kiosk_topup_sync)
+
+
+def kiosk_topup_sync():
+    print("pyt: Start Syncing SAM Audit Records ...")
+    sync_sam_audit()
+    print("pyt: Start Syncing Topup Amount...")
+    sync_topup_amount()
+    print("pyt: Start Syncing Topup Data Records...")
     sync_topup_records()
 
+
+
+def kiosk_sync():
+    print("pyt: Start Syncing Remote Task...")
+    sync_task()
+    print("pyt: Start Syncing Machine Status...")
+    sync_machine_status()
+    print("pyt: Start Syncing Pending Refund...")
+    sync_pending_refund()
+    print("pyt: Start Syncing Product Stock...")
+    sync_product_stock()
+    print("pyt: Start Syncing Product Data...")
+    sync_product_data()
+    print("pyt: Start Syncing Topup Amount...")
+    sync_topup_amount()
+    print("pyt: Start Syncing Topup Data Records...")
+    sync_topup_records()
+    print("pyt: Start Syncing Shop Data Records ...")
+    sync_data_transaction()
+    print("pyt: Start Syncing Failed Shop Data Records ...")
+    sync_data_transaction_failure()
+    print("pyt: Start Syncing SAM Audit Records ...")
+    sync_sam_audit()
 
 def start_sync_topup_records():
     _Helper.get_pool().apply_async(sync_topup_records)
@@ -138,6 +215,10 @@ def sync_topup_records():
                             LOGGER.warning(response)
         except Exception as e:
             LOGGER.warning(e)
+        finally:
+            if _Helper.whoami() not in _Global.ALLOWED_SYNC_TASK:
+                LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
+                break
         sleep(44.5)
 
 
@@ -165,6 +246,10 @@ def sync_data_transaction():
                             LOGGER.warning(response)
         except Exception as e:
             LOGGER.warning(e)
+        finally:
+            if _Helper.whoami() not in _Global.ALLOWED_SYNC_TASK:
+                LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
+                break
         sleep(99.9)
 
 
@@ -191,6 +276,10 @@ def sync_data_transaction_failure():
                             LOGGER.warning(response)
         except Exception as e:
             LOGGER.warning(e)
+        finally:
+            if _Helper.whoami() not in _Global.ALLOWED_SYNC_TASK:
+                LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
+                break
         sleep(99.9)
 
 
@@ -217,6 +306,10 @@ def sync_product_data():
                             LOGGER.warning(response)
         except Exception as e:
             LOGGER.warning(e)
+        finally:
+            if _Helper.whoami() not in _Global.ALLOWED_SYNC_TASK:
+                LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
+                break
         sleep(55.5)
 
 
@@ -243,6 +336,10 @@ def sync_sam_audit():
                             LOGGER.warning(response)
         except Exception as e:
             LOGGER.warning(e)
+        finally:
+            if _Helper.whoami() not in _Global.ALLOWED_SYNC_TASK:
+                LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
+                break
         sleep(77.7)
 
 
@@ -267,7 +364,7 @@ def sync_settlement_data(bank):
                         _param = {
                             'mid': _Global.SMT_CONFIG['mid'],
                             'token': _Global.SMT_CONFIG['token'],
-                            'tid': 'TJ-TOPUP-VM'+_Global.TID,
+                            'tid': 'MDD-VM'+_Global.TID,
                             'path_file': os.path.join(sys.path[0], '_rRemoteFiles', s['filename']),
                             'filename': s['filename'],
                             'row': s['row'],
@@ -277,13 +374,17 @@ def sync_settlement_data(bank):
                             'settlement_created_at': datetime.fromtimestamp(s['createdAt']).strftime('%Y-%m-%d %H:%M:%S')
                         }
                         status, response = _NetworkAccess.post_to_url(url=_url, param=_param)
-                        if status == 200:
+                        if status == 200 and response['response']['code'] == 200:
                             _DAO.update_settlement({'sid': s['sid'], 'status': 'TOPUP_PREPAID|CLOSED'})
                             LOGGER.info(response)
                         else:
                             LOGGER.warning(response)
         except Exception as e:
             LOGGER.warning(e)
+        finally:
+            if _Helper.whoami() not in _Global.ALLOWED_SYNC_TASK:
+                LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
+                break
         sleep(888.8)
 
 
@@ -306,24 +407,29 @@ def sync_task():
                     print('pyt: sync_task ' + _Helper.time_string() + ' Failed To Check Remote Task..!')
         except Exception as e:
             LOGGER.warning(e)
+        finally:
+            if _Helper.whoami() not in _Global.ALLOWED_SYNC_TASK:
+                LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
+                break
         sleep(33.3)
 
 
-def start_retry_pending_refund():
-    _Helper.get_pool().apply_async(retry_pending_refund)
+def start_sync_pending_refund():
+    _Helper.get_pool().apply_async(sync_pending_refund)
 
 
-def retry_pending_refund():
-    _url = _Global.BACKEND_URL + 'diva/transfer'
+def sync_pending_refund():
+    _url = _Global.BACKEND_URL + 'refund/global'
     while True:
         try:
             pendings = _DAO.get_pending_refund()
-            if _Helper.is_online(source='retry_pending_refund') is True and len(pendings) > 0:
+            if len(pendings) > 0:
                 for p in pendings:
                     _param = {
                         'customer_login'    : p['customer'],
                         'amount'            : str(p['amount']),
                         'reff_no'           : p['trxid'],
+                        'channel'           : p['channel'],
                         'remarks'           : json.loads(p['remarks'])
                     } 
                     s, r = _NetworkAccess.post_to_url(url=_url, param=_param)
@@ -333,15 +439,19 @@ def retry_pending_refund():
                             'remarks'       : json.dumps(r)
                         })                            
                         if r['result'] == 'OK': 
-                            print('pyt: retry_pending_refund ' + _Helper.time_string() + ' ['+p['trxid']+'] SUCCESS RELEASED')
+                            print('pyt: sync_pending_refund ' + _Helper.time_string() + ' ['+p['trxid']+'] SUCCESS RELEASED')
                         else:
-                            print('pyt: retry_pending_refund ' + _Helper.time_string() + ' ['+p['trxid']+'] TRIGGERED')
+                            print('pyt: sync_pending_refund ' + _Helper.time_string() + ' ['+p['trxid']+'] TRIGGERED')
                     else:
-                        print('pyt: retry_pending_refund ' + _Helper.time_string() + ' ['+p['trxid']+'] FAILED')
+                        print('pyt: sync_pending_refund ' + _Helper.time_string() + ' ['+p['trxid']+'] FAILED')
             else:
-                print('pyt: retry_pending_refund ' + _Helper.time_string() + ' NO PENDING')
+                print('pyt: sync_pending_refund ' + _Helper.time_string() + ' NO PENDING')
         except Exception as e:
             LOGGER.warning(e)
+        finally:
+            if _Helper.whoami() not in _Global.ALLOWED_SYNC_TASK:
+                LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
+                break
         sleep(15.15)
 
 
@@ -411,15 +521,15 @@ def handle_tasks(tasks):
             _DAO.clear_stock_product()
             update_task(task, 'RESET_STOCK_PRODUCT_SUCCESS')
         if task['taskName'] in ['UPDATE_STOCK_PRODUCT', 'REMOTE_UPDATE_STOCK']:
-            result = start_get_product_stock()
+            result = sync_product_stock()
             update_task(task, result)
         if task['taskName'] == 'UPDATE_KIOSK':
             update_task(task)
             _url = _Global.BACKEND_URL + 'get/setting'
             LOGGER.info((_url, str(SETTING_PARAM)))
             s, r = _NetworkAccess.post_to_url(url=_url, param=SETTING_PARAM)
-            if s == 200 and r['result'] == 'OK':
-                _KioskService.update_kiosk_status(r)
+            # if s == 200 and r['result'] == 'OK':
+            _KioskService.update_kiosk_status(s, r)
         if 'RESET_OFFLINE_USER|' in task['taskName']:
             __hash = task['taskName'].split('|')[1]
             result = _UserService.reset_offline_user(__hash)
@@ -447,12 +557,12 @@ def update_task(task, result='TRIGGERED_TO_SYSTEM'):
 
 
 def start_sync_product_stock():
-    _Helper.get_pool().apply_async(start_get_product_stock)
+    _Helper.get_pool().apply_async(sync_product_stock)
 
 
-def start_get_product_stock():
+def sync_product_stock():
     _url = _Global.BACKEND_URL + 'get/product-stock'
-    if _Helper.is_online(source='start_get_product_stock') is True:
+    if _Helper.is_online(source='start_sync_product_stock') is True:
         s, r = _NetworkAccess.get_from_url(url=_url)
         if s == 200 and r['result'] == 'OK':
             products = r['data']
@@ -479,18 +589,21 @@ def start_get_product_stock():
         return 'UPDATE_STOCK_FAILED_NO_CONNECTION'
 
 
-def start_get_topup_amount():
-    _Helper.get_pool().apply_async(get_topup_amount)
+def start_sync_topup_amount():
+    _Helper.get_pool().apply_async(sync_topup_amount)
 
 
-def get_topup_amount():
+def sync_topup_amount():
     _url = _Global.BACKEND_URL + 'get/topup-amount'
     while True:
-        if _Helper.is_online(source='get_topup_amount') is True and IDLE_MODE is True:
+        if _Helper.is_online(source='sync_topup_amount') is True and IDLE_MODE is True:
             s, r = _NetworkAccess.get_from_url(url=_url)
             if s == 200 and r['result'] == 'OK':
                 _Global.TOPUP_AMOUNT_SETTING = r['data']
                 _Global.store_to_temp_data('topup-amount-setting', json.dumps(r['data']))
+        if _Helper.whoami() not in _Global.ALLOWED_SYNC_TASK:
+            LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
+            break
         sleep(333.3)
 
 

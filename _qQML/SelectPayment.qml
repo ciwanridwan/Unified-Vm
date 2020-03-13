@@ -62,7 +62,7 @@ Base{
             reset_value();
 //            console.log("selected_chart : ", selectedChart)
             console.log("selected_price : ", selectedPrice)
-            _SLOT.start_get_device_status();
+            _SLOT.start_get_payments();
             _SLOT.get_kiosk_price_setting();
             _SLOT.start_get_admin_key();
             _SLOT.start_check_wallet('1');
@@ -88,7 +88,7 @@ Base{
     Component.onCompleted:{
         releaseButton.connect(free_button);
         abortPayment.connect(abort_payment);
-        base.result_get_device.connect(define_device);
+        base.result_get_payment.connect(define_device);
         base.result_sale_edc.connect(edc_payment_result);
         base.result_accept_mei.connect(mei_payment_result);
         base.result_dis_accept_mei.connect(mei_payment_result);
@@ -121,7 +121,7 @@ Base{
     Component.onDestruction:{
         releaseButton.disconnect(free_button);
         abortPayment.disconnect(abort_payment);
-        base.result_get_device.disconnect(define_device);
+        base.result_get_payment.disconnect(define_device);
         base.result_sale_edc.disconnect(edc_payment_result);
         base.result_accept_mei.disconnect(mei_payment_result);
         base.result_dis_accept_mei.disconnect(mei_payment_result);

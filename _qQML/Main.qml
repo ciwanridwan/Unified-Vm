@@ -5,13 +5,24 @@ import "screen.js" as SCREEN
 
 Rectangle {
     id:base
-    width: parseInt(SCREEN.size.width)
-    height: parseInt(SCREEN.size.height)
     color: 'transparent'
     property var top_color: "#f03838"
     property var language: "INA"
-    property var globalBoxName: 'VM01 - Box Name'
+    property var globalBoxName: ""
     property bool mediaOnPlaying: false
+    property int globalWidth: parseInt(SCREEN.size.width)
+    property int globalHeight: parseInt(SCREEN.size.height)
+    width: globalWidth
+    height: globalHeight
+
+    property var globalScreenType: (globalWidth==1920) ? '1' : '2'
+
+    //Type 1 : var size = { "width": 1920, "height": 1080};
+    //Type 2 : var size = { "width": 1280, "height": 1024};
+    //    property var globalScreenType: '2'
+    //    height: (globalScreenType=='2') ? 1024 : 1080
+    //    width: (globalScreenType=='2') ? 1280 : 1920
+
 
     //==================================================================================================//
     signal result_get_file_list(string str)
@@ -26,7 +37,7 @@ Rectangle {
     signal result_create_print(string str)
     signal result_clear_person(string str)
     signal result_sale_edc(string str)
-    signal result_get_device(string str)
+    signal result_get_payment(string str)
     signal result_confirm_schedule(string str)
     signal result_accept_mei(string str)
     signal result_dis_accept_mei(string str)
@@ -94,7 +105,7 @@ Rectangle {
     signal result_mandiri_settlement(string str)
     signal result_update_app(string str)
     signal result_get_ppob_product(string str)
-    signal result_get_payment_method(string str)
+    signal result_get_payment_setting(string str)
     signal result_sync_ads(string str)
     signal result_check_ppob(string str)
     signal result_trx_ppob(string str)
@@ -106,10 +117,11 @@ Rectangle {
     signal result_check_voucher(string str)
     signal result_use_voucher(string str)
     signal result_diva_balance_check(string str)
-    signal result_diva_transfer_balance(string str)
+    signal result_global_refund_balance(string str)
     signal result_update_balance_online(string str)
     signal result_admin_sync_stock(string str)
     signal result_init_check_cd(string str)
+    signal result_get_refund(string str)
 
 
     //==================================================================================================//

@@ -30,19 +30,21 @@ def start_define_topup_slot_bni():
     _Helper.get_pool().apply_async(define_topup_slot_bni)
 
 
+BNI_UPDATE_BALANCE_PROCESS = False
+
+
 def define_topup_slot_bni():
-    try:
-        if _Global.BNI_SAM_1_WALLET <= _Global.MINIMUM_AMOUNT:
-            LOGGER.debug(('define_topup_slot_bni 1', str(_Global.MINIMUM_AMOUNT), str(_Global.BNI_SAM_1_WALLET)))
-            TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_1')
-            do_topup_bni(slot=1)
-        if _Global.BNI_SAM_2_WALLET <= _Global.MINIMUM_AMOUNT:
-            LOGGER.debug(('define_topup_slot_bni 2', str(_Global.MINIMUM_AMOUNT), str(_Global.BNI_SAM_2_WALLET)))
-            TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_2')
-            do_topup_bni(slot=2)
-    except Exception as e:
-        LOGGER.warning(('define_topup_slot_bni', str(e)))
-        TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_ERROR')
+    while True:
+        if not BNI_UPDATE_BALANCE_PROCESS:
+            if _Global.BNI_SAM_1_WALLET <= _Global.MINIMUM_AMOUNT:
+                LOGGER.debug(('START_BNI_SAM_AUTO_UPDATE_SLOT_1', str(_Global.MINIMUM_AMOUNT), str(_Global.BNI_SAM_1_WALLET)))
+                TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_1')
+                do_topup_bni(slot=1, force=True)
+            if _Global.BNI_SINGLE_SAM is False and _Global.BNI_SAM_2_WALLET <= _Global.MINIMUM_AMOUNT:
+                LOGGER.debug(('START_BNI_SAM_AUTO_UPDATE_SLOT_2', str(_Global.MINIMUM_AMOUNT), str(_Global.BNI_SAM_2_WALLET)))
+                TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('INIT_TOPUP_BNI_2')
+                do_topup_bni(slot=2, force=True)
+        sleep(5)
 
 
 def start_do_topup_bni(slot):
@@ -56,6 +58,7 @@ def start_do_force_topup_bni():
 
 
 def do_topup_bni(slot=1, force=False):
+    global BNI_UPDATE_BALANCE_PROCESS
     try:
         if force is False and _Global.ALLOW_DO_TOPUP is False:
             LOGGER.warning(('do_topup_bni', slot, _Global.ALLOW_DO_TOPUP))
@@ -65,6 +68,8 @@ def do_topup_bni(slot=1, force=False):
             TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('FAILED_GET_CARD_INFO_BNI')
             _Global.upload_topup_error(slot, 'ADD')
             return 'FAILED_GET_CARD_INFO_BNI'
+        BNI_UPDATE_BALANCE_PROCESS = True
+        _Global.BNI_ACTIVE_WALLET = 0
         _result_pending = pending_balance({
             'card_no': _get_card_data['card_no'],
             'amount': _Global.BNI_TOPUP_AMOUNT,
@@ -89,6 +94,7 @@ def do_topup_bni(slot=1, force=False):
             _Global.upload_topup_error(slot, 'ADD')
             return 'FAILED_SEND_CRYPTOGRAM_BNI'
         else:
+            BNI_UPDATE_BALANCE_PROCESS = False
             TP_SIGNDLER.SIGNAL_DO_TOPUP_BNI.emit('SUCCESS_TOPUP_BNI')
             _Global.upload_topup_error(slot, 'RESET')
             return 'SUCCESS_TOPUP_BNI'

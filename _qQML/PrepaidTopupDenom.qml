@@ -5,6 +5,10 @@ import "base_function.js" as FUNC
 
 Base{
     id: prepaid_topup_denom
+
+//        property var globalScreenType: '2'
+//        height: (globalScreenType=='2') ? 1024 : 1080
+//        width: (globalScreenType=='2') ? 1280 : 1920
     property int timer_value: 120
     property var press: '0'
     idx_bg: 0
@@ -32,6 +36,7 @@ Base{
     property bool qrDanaEnable: false
     property bool qrGopayEnable: false
     property bool qrLinkajaEnable: false
+    property bool qrShopeeEnable: false
     property bool mainVisible: false
     property var totalPaymentEnable: 0
 
@@ -66,7 +71,7 @@ Base{
         if(Stack.status==Stack.Activating){
             abc.counter = timer_value;
             my_timer.start();
-            _SLOT.start_get_device_status();
+            _SLOT.start_get_payments();
             _SLOT.get_kiosk_price_setting();
             mainVisible = false;
             press = '0';
@@ -91,7 +96,7 @@ Base{
         set_confirmation.connect(do_set_confirm);
         get_payment_method_signal.connect(process_selected_payment);
         topup_denom_signal.connect(set_selected_denom);
-        base.result_get_device.connect(get_device_status);
+        base.result_get_payment.connect(get_payments);
         base.result_balance_qprox.connect(get_balance);
         base.result_topup_readiness.connect(topup_readiness);
         base.result_price_setting.connect(define_price);
@@ -101,16 +106,16 @@ Base{
         set_confirmation.disconnect(do_set_confirm);
         get_payment_method_signal.disconnect(process_selected_payment);
         topup_denom_signal.disconnect(set_selected_denom);
-        base.result_get_device.disconnect(get_device_status);
+        base.result_get_payment.disconnect(get_payments);
         base.result_balance_qprox.disconnect(get_balance);
         base.result_topup_readiness.disconnect(topup_readiness);
         base.result_price_setting.disconnect(define_price);
 
     }
 
-    function get_device_status(s){
+    function get_payments(s){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-        console.log('get_device_status', s, now);
+        console.log('get_payments', s, now);
         var device = JSON.parse(s);
         if (device.MEI == 'AVAILABLE' || device.GRG == 'AVAILABLE'){
             cashEnable = true;
@@ -134,6 +139,10 @@ Base{
         }
         if (device.QR_OVO == 'AVAILABLE') {
             qrOvoEnable = true;
+            totalPaymentEnable += 1;
+        }
+        if (device.QR_SHOPEEPAY == 'AVAILABLE') {
+            qrShopeeEnable = true;
             totalPaymentEnable += 1;
         }
 
@@ -289,7 +298,7 @@ Base{
         popup_loading.close();
         var result = text.split('|')[1];
         if (result == 'ERROR'){
-            switch_frame('source/insert_card_new.png', 'Anda tidak meletakkan kartu', 'atau kartu Anda tidak dapat digunakan', 'backToMain', false );
+            switch_frame('source/insert_card_new.png', 'Anda tidak meletakkan kartu', 'atau kartu Anda tidak dapat digunakan untuk Isi Ulang', 'backToMain', false );
             return;
         } else {
             var info = JSON.parse(result);
@@ -378,7 +387,7 @@ Base{
     CircleButton{
         id:back_button
         anchors.left: parent.left
-        anchors.leftMargin: 50
+        anchors.leftMargin: 30
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 30
         button_text: 'BATAL'
@@ -397,9 +406,9 @@ Base{
     CircleButton{
         id: next_button
         anchors.right: parent.right
-        anchors.rightMargin: 100
+        anchors.rightMargin: 30
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 50
+        anchors.bottomMargin: 30
         button_text: 'LANJUT'
         visible: (selectedDenom > 0 && selectedPayment != undefined)
         modeReverse: true
@@ -461,6 +470,26 @@ Base{
         if ((parseInt(cardData.balance) + parseInt(denom)) > maxBalance){
             press = '0';
             switch_frame('source/smiley_down.png', 'Mohon Maaf Saldo Akan Melebihi Limit', 'Silakan Pilih Denom Yang Lebih Kecil', 'closeWindow', false )
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function minus_sam_balance(denom){
+        var sam_balance = 0;
+        var topup_amount = parseInt(denom) - parseInt(adminFee);
+        switch(cardData.bank_name){
+            case 'MANDIRI':
+                sam_balance = parseInt(mandiriTopupWallet);
+                break;
+            case 'BNI':
+                sam_balance = parseInt(bniTopupWallet);
+                break;
+        }
+        if (topup_amount > sam_balance){
+            press = '0';
+            switch_frame('source/smiley_down.png', 'Mohon Maaf Saldo Mesin Tidak Mencukupi', 'Silakan Pilih Denom Yang Lebih Kecil', 'closeWindow', false )
             return true;
         } else {
             return false;
@@ -678,10 +707,10 @@ Base{
 
     MainTitle{
         anchors.top: parent.top
-        anchors.topMargin: 175
+        anchors.topMargin: (globalScreenType == '1') ? 175 : 150
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: 'Pilih nominal topup'
-        size_: 50
+        size_: (globalScreenType == '1') ? 50 : 45
         color_: "white"
         visible: mainVisible
     }
@@ -691,14 +720,14 @@ Base{
         color: "white"
         text: "Saldo Anda sekarang"
         anchors.top: parent.top
-        anchors.topMargin: 250
+        anchors.topMargin: (globalScreenType=='1') ? 250 : 200
         anchors.left: parent.left
-        anchors.leftMargin: 350
+        anchors.leftMargin: (globalScreenType=='1') ? 350 : 150
         wrapMode: Text.WordWrap
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignHCenter
         font.family:"Ubuntu"
-        font.pixelSize: 50
+        font.pixelSize:(globalScreenType=='1') ? 50 : 40
         visible: mainVisible
     }
 
@@ -707,14 +736,14 @@ Base{
         color: "white"
         text: (cardBalance==0) ? 'Rp 0' : 'Rp ' + FUNC.insert_dot(cardBalance.toString())
         anchors.right: parent.right
-        anchors.rightMargin: 350
+        anchors.rightMargin: (globalScreenType=='1') ? 350 : 150
         anchors.top: parent.top
         anchors.topMargin: label_current_balance.anchors.topMargin
         wrapMode: Text.WordWrap
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignRight
         font.family:"Ubuntu"
-        font.pixelSize: 50
+        font.pixelSize: (globalScreenType=='1') ? 50 : 40
         visible: mainVisible
     }
 
@@ -789,13 +818,12 @@ Base{
 
     Row{
         id: denom_button
-        width: 1220
         height: 200
-        anchors.horizontalCenterOffset: 20
-        anchors.top: parent.top
-        anchors.topMargin: 350
+        layoutDirection: Qt.LeftToRight
         anchors.horizontalCenter: parent.horizontalCenter
-        spacing: 50
+        anchors.top: parent.top
+        anchors.topMargin: (globalScreenType == '1') ? 350 : 320
+        spacing: (globalScreenType == '1') ? 50 : 30
         visible: mainVisible
         SmallSimplyNumber{
             id: small_denom
@@ -805,8 +833,9 @@ Base{
                 anchors.fill: parent
                 enabled: parent.buttonActive
                 onClicked: {
-                    if (exceed_balance(smallDenomTopup)) return
-                    _SLOT.user_action_log('Choose smallDenom "'+smallDenomTopup+'"');
+                    if (exceed_balance(smallDenomTopup)) return;
+                    if (minus_sam_balance(smallDenomTopup)) return;
+                    _SLOT.user_action_log('Choose smallDenom "'+smallDenomTopup+'"');;
                     if (press!='0') return;
                     press = '1';
                     release_denom_selection(small_denom);
@@ -822,7 +851,8 @@ Base{
                 anchors.fill: parent
                 enabled: parent.buttonActive
                 onClicked: {
-                    if (exceed_balance(midDenomTopup)) return
+                    if (exceed_balance(midDenomTopup)) return;
+                    if (minus_sam_balance(midDenomTopup)) return;
                     _SLOT.user_action_log('Choose midDenom "'+midDenomTopup+'"');
                     if (press!='0') return;
                     press = '1';
@@ -839,7 +869,8 @@ Base{
                 anchors.fill: parent
                 enabled: parent.buttonActive
                 onClicked: {
-                    if (exceed_balance(highDenomTopup)) return
+                    if (exceed_balance(highDenomTopup)) return;
+                    if (minus_sam_balance(highDenomTopup)) return;
                     _SLOT.user_action_log('Choose highDenom "'+highDenomTopup+'"');
                     if (press!='0') return;
                     press = '1';
@@ -853,7 +884,7 @@ Base{
     SelectPaymentInline{
         id: select_payment
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 125
+        anchors.bottomMargin: (globalScreenType=='1') ? 125 : 100
         anchors.horizontalCenter: parent.horizontalCenter
         visible: (selectedDenom > 0)
 //        visible: true
@@ -864,6 +895,7 @@ Base{
         _qrDanaEnable: qrDanaEnable
         _qrGopayEnable: qrGopayEnable
         _qrLinkAjaEnable: qrLinkajaEnable
+        _qrShopeeEnable: qrShopeeEnable
         totalEnable: totalPaymentEnable
     }
 

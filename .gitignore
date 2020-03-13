@@ -2,9 +2,11 @@
 /_lLog/
 /_vVideo/
 /_tTmp/
+/_qQr/
 *.log
 /venv
 /_pPDF/
+/_jJob/
 /_rRemoteFiles/
 /_dDB/kiosk.db
 setting.ini
@@ -20,3 +22,6 @@ _sSync/__pycache__/
 _tTools/__pycache__/
 
 _qQML/config.js
+_qQML/source/logo
+_qQML/source/background
+_qQML/source/card

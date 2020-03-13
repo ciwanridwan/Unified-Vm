@@ -62,7 +62,7 @@ Base{
         set_confirmation.connect(do_set_confirm);
         get_payment_method_signal.connect(process_selected_payment);
         base.result_check_trx.connect(get_trx_check_result);
-        base.result_get_device.connect(get_device_status);
+        base.result_get_payment.connect(get_payments);
         base.result_check_ppob.connect(get_check_ppob_result);
         base.result_check_voucher.connect(get_check_voucher);
         base.result_use_voucher.connect(get_use_voucher);
@@ -74,7 +74,7 @@ Base{
         set_confirmation.disconnect(do_set_confirm);
         get_payment_method_signal.disconnect(process_selected_payment);
         base.result_check_trx.disconnect(get_trx_check_result);
-        base.result_get_device.disconnect(get_device_status);
+        base.result_get_payment.disconnect(get_payments);
         base.result_check_ppob.disconnect(get_check_ppob_result);
         base.result_check_voucher.disconnect(get_check_voucher);
         base.result_use_voucher.disconnect(get_use_voucher);
@@ -115,9 +115,9 @@ Base{
     CircleButton{
         id:back_button
         anchors.left: parent.left
-        anchors.leftMargin: 100
+        anchors.leftMargin: 30
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 50
+        anchors.bottomMargin: 30
         button_text: 'BATAL'
         modeReverse: true
         MouseArea{
@@ -332,7 +332,7 @@ Base{
 //            false_notif('Pastikan Anda Telah Memilih Product Untuk Transaksi', 'backToPrevious');
 //            return
 //        }
-        _SLOT.start_get_device_status();
+        _SLOT.start_get_payments();
         var category = selectedProduct.category.toLowerCase();
         var operator = selectedProduct.operator;
         switch(category){
@@ -440,9 +440,9 @@ Base{
         my_layer.push(mandiri_payment_process, {details: details});
     }
 
-    function get_device_status(s){
+    function get_payments(s){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-        console.log('get_device_status', now, s);
+        console.log('get_payments', now, s);
         var device = JSON.parse(s);
         if (device.MEI == 'AVAILABLE' || device.GRG == 'AVAILABLE'){
             cashEnable = true;
@@ -568,9 +568,9 @@ Base{
     CircleButton{
         id:next_button
         anchors.right: parent.right
-        anchors.rightMargin: 100
+        anchors.rightMargin: 30
         anchors.bottom: parent.bottom
-        anchors.bottomMargin: 50
+        anchors.bottomMargin: 30
         button_text: 'LANJUT'
         modeReverse: true
         visible: !global_confirmation_frame.visible && !isConfirm && !popup_loading.visible

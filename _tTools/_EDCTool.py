@@ -123,7 +123,7 @@ def get_type(card_no):
     card_type = 'CREDIT CARD'
     try:
         card_type = CARD_TYPE[card_no[:4]]
-        LOGGER.info(('Card Type Found!', card_no, card_type))
+        # LOGGER.info(('Card Type Found!', card_no, card_type))
     except (KeyError, ValueError, IndexError):
         LOGGER.warning(('Card Type Not Found!', card_no))
     finally:
@@ -149,7 +149,6 @@ MARGIN_LEFT = 0
 HEADER_FONT_SIZE = 8
 SPACING = 3
 DEFAULT_FONT_SIZE = 6
-GLOBAL_RECEIPT_FILE = None
 
 
 class PDF(FPDF):
@@ -182,7 +181,6 @@ class PDF(FPDF):
 
 
 def generate_edc_receipt_old(trx):
-    global GLOBAL_RECEIPT_FILE
     pdf = None
 
     # Init Variables
@@ -251,18 +249,18 @@ def generate_edc_receipt_old(trx):
         # Rendering
         pdf_file = get_path(file_name+'.pdf')
         pdf.output(pdf_file, 'F')
-        GLOBAL_RECEIPT_FILE = pdf_file
+        _Global.LAST_EDC_TRX_RECEIPT = pdf_file
         LOGGER.debug(('pdf generate_edc_receipt : ', file_name))
     except Exception as e:
         LOGGER.warning(str(e))
     finally:
-        print_ = _Printer.ghost_print(GLOBAL_RECEIPT_FILE)
-        print("pyt : sending edc_receipt to printer : {}".format(str(print_)))
+        if not _Global.EDC_PRINT_ON_LAST:
+            print_ = _Printer.do_printout(_Global.LAST_EDC_TRX_RECEIPT)
+            print("pyt : sending edc_receipt to printer : {}".format(str(print_)))
         del pdf
 
 
 def generate_edc_receipt(trx):
-    global GLOBAL_RECEIPT_FILE
     pdf = None
 
     # Init Variables
@@ -328,11 +326,12 @@ def generate_edc_receipt(trx):
         # Rendering
         pdf_file = get_path(file_name+'.pdf')
         pdf.output(pdf_file, 'F')
-        GLOBAL_RECEIPT_FILE = pdf_file
+        _Global.LAST_EDC_TRX_RECEIPT = pdf_file
         LOGGER.debug(('pdf generate_edc_receipt : ', file_name))
     except Exception as e:
         LOGGER.warning(str(e))
     finally:
-        print_ = _Printer.ghost_print(GLOBAL_RECEIPT_FILE)
-        print("pyt : sending edc_receipt to printer : {}".format(str(print_)))
+        if not _Global.EDC_PRINT_ON_LAST:
+            print_ = _Printer.do_printout(_Global.LAST_EDC_TRX_RECEIPT)
+            print("pyt : sending edc_receipt to printer : {}".format(str(print_)))
         del pdf

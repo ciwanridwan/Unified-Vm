@@ -4,6 +4,11 @@ import "base_function.js" as FUNC
 
 Base{
     id: ppob_category
+
+//    property var globalScreenType: '1'
+//    height: (globalScreenType=='2') ? 1024 : 1080
+//    width: (globalScreenType=='2') ? 1280 : 1920
+
     property int timer_value: 60*5
     isPanelActive: false
     isHeaderActive: true
@@ -62,7 +67,6 @@ Base{
         popup_loading.close();
     }
 
-
     function false_notif(closeMode, textSlave){
         if (closeMode==undefined) closeMode = 'backToMain';
         if (textSlave==undefined) textSlave = '';
@@ -99,7 +103,6 @@ Base{
         global_frame.withTimer = false;
         global_frame.open();
     }
-
 
 
     Rectangle{
@@ -141,6 +144,7 @@ Base{
         anchors.bottomMargin: 30
         button_text: 'BATAL'
         modeReverse: true
+        z: 10
         MouseArea{
             anchors.fill: parent
             onClicked: {
@@ -156,22 +160,23 @@ Base{
 
     MainTitle{
         anchors.top: parent.top
-        anchors.topMargin: 180
+        anchors.topMargin: (globalScreenType == '1') ? 175 : 150
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: 'Pilih Kategori Produk'
         visible: !popup_loading.visible
-        size_: 50
+        size_: (globalScreenType == '1') ? 50 : 45
         color_: "white"
 
     }
 
     Item  {
         id: flickable_items
-        width: 1550
+        width: (globalScreenType == '1') ? 1550 : parent.width
         height: 800
-        anchors.verticalCenterOffset: 120
+        anchors.verticalCenterOffset: 100
         anchors.verticalCenter: parent.verticalCenter
         anchors.horizontalCenter: parent.horizontalCenter
+        anchors.horizontalCenterOffset:  (globalScreenType == '1') ? 0 : 75
 
         ScrollBarVertical{
             id: vertical_sbar

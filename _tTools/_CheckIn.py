@@ -279,7 +279,7 @@ def handling_boarding_pass():
                 CI_SIGNDLER.SIGNAL_GET_BOARDINGPASS.emit(json.dumps(result))
                 BOARDING_FILE = _PDFTool.rotate_pdf(BOARDING_FILE, BOOKING_CODE, FLIGHT_NO)
                 if BOARDING_FILE is not False:
-                    _Printer.ghost_print(BOARDING_FILE)
+                    _Printer.do_printout(BOARDING_FILE)
                     CI_SIGNDLER.SIGNAL_PRINT_BOARDINGPASS.emit('PRINTING|SUCCESS')
                 else:
                     CI_SIGNDLER.SIGNAL_PRINT_BOARDINGPASS.emit('PRINTING|FAILED')

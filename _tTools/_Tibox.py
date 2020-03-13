@@ -1246,7 +1246,7 @@ def save_receipt_local(r, d):
     param_receipt = {
         'rid': _Helper.get_uuid(),
         'bookingCode': BOOKING_CODE,
-        'tiboxId': ID,
+        'tid': ID,
         'receiptRaw': r,
         'receiptData': d,
         'createdAt': _Helper.now()
@@ -1254,10 +1254,10 @@ def save_receipt_local(r, d):
     if param_receipt['bookingCode'] == '':
         try:
             param_receipt['bookingCode'] = json.loads(d)['GET_BOOKING_CODE']
-            param_receipt['tiboxId'] = json.loads(d)['GET_TIBOX_ID']
+            param_receipt['tid'] = json.loads(d)['GET_TIBOX_ID']
         except (ValueError, IndexError, KeyError):
             param_receipt['bookingCode'] = 'REPRINT'
-            param_receipt['tiboxId'] = 'REPRINT'
+            param_receipt['tid'] = 'REPRINT'
     if len(_DAO.search_receipt({'bookingCode': param_receipt['bookingCode']})) == 0:
         _DAO.insert_receipt(param_receipt)
     return param_receipt

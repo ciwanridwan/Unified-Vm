@@ -85,6 +85,7 @@ Rectangle{
         height: 350
         color: (modeReverse) ? "black" : "white"
         text: show_detail
+//        font.weight: Font.Medium
         anchors.verticalCenterOffset: -30
         anchors.verticalCenter: parent.verticalCenter
         wrapMode: Text.WordWrap
@@ -93,7 +94,7 @@ Rectangle{
         font.bold: true
         font.family:"Ubuntu"
         anchors.horizontalCenter: notif_rec.horizontalCenter
-        font.pixelSize: 25
+        font.pixelSize: 30
     }
 
     NextButton{

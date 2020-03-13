@@ -84,7 +84,7 @@ Base{
         base.result_check_qr.connect(qr_check_result);
         base.result_trx_ppob.connect(ppob_trx_result);
         base.result_pay_qr.connect(qr_check_result);
-        base.result_diva_transfer_balance.connect(transfer_balance_result)
+        base.result_global_refund_balance.connect(transfer_balance_result)
         framingSignal.connect(get_signal_frame)
     }
 
@@ -108,7 +108,7 @@ Base{
         base.result_check_qr.disconnect(qr_check_result);
         base.result_trx_ppob.disconnect(ppob_trx_result);
         base.result_pay_qr.disconnect(qr_check_result);
-        base.result_diva_transfer_balance.disconnect(transfer_balance_result)
+        base.result_global_refund_balance.disconnect(transfer_balance_result)
         framingSignal.disconnect(get_signal_frame)
 
     }
@@ -148,7 +148,7 @@ Base{
         if (title!=undefined) notifTitle = title;
         if (message!=undefined) notifMessage = message;
         console.log('release_print_with_refund', now, JSON.stringify(refundPayload));
-        _SLOT.start_transfer_balance(JSON.stringify(refundPayload))
+        _SLOT.start_global_refund_balance(JSON.stringify(refundPayload))
     }
 
 

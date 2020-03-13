@@ -47,7 +47,7 @@ def init_sftp():
         # __transport.connect(username=SFTP_USER, password=SFTP_PASS)
         # SFTP = paramiko.SFTPClient.from_transport(__transport)
         # Init User SFTP
-        init_user_by_bid()
+        # init_user_by_bid()
         SSH = paramiko.SSHClient()
         SSH.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         SSH.connect(SFTP_SERVER, SFTP_PORT, SFTP_USER, SFTP_PASS)
@@ -68,12 +68,15 @@ def init_sftp():
 def send_file(filename, local_path, remote_path=None):
     global SFTP, SSH
     result = False
-    if remote_path is None:
-        remote_path = REMOTE_PATH
+    init_user_by_bid()
     if SFTP is None:
         init_sftp()
+    if remote_path is None:
+        remote_path = REMOTE_PATH
     if '_DEV' in remote_path:
-        if _Global.LIVE_MODE is True or _Global.TEST_MODE is True:
+        if _Global.LIVE_MODE is True:
+            remote_path = remote_path.replace('_DEV', '')
+        if 'TopUpOffline' in remote_path and _Global.MANDIRI_FORCE_PRODUCTION_SAM is True:
             remote_path = remote_path.replace('_DEV', '')
     try:
         if type(filename) == list:
@@ -107,13 +110,14 @@ def send_file(filename, local_path, remote_path=None):
 def get_file(file, remote_path=None):
     global SFTP, SSH
     result = False
+    init_user_by_bid()
     if file is None:
         LOGGER.warning(('get_file', 'File Param is Missing'))
         return result
-    if remote_path is None:
-        remote_path = REMOTE_PATH
     if SFTP is None:
         init_sftp()
+    if remote_path is None:
+        remote_path = REMOTE_PATH
     try:
         remote_file = os.path.join(remote_path, file)
         local_file = os.path.join(LOCAL_PATH, file)

@@ -78,12 +78,15 @@ CREATE TABLE Transactions
   sale            BIGINT,
   cardNo          VARCHAR(100),
   paymentType     VARCHAR(150),
-  paymentNotes    VARCHAR(255),
+  paymentNotes    TEXT,
   createdAt       BIGINT,
   syncFlag        INT,
   bankMid         VARCHAR(100),
-  bankTid         VARCHAR(100)
+  bankTid         VARCHAR(100),
+  pidStock        VARCHAR(100),
+  isCollected     INT DEFAULT 0
 );
+
 
 DROP TABLE IF EXISTS TransactionType;
 CREATE TABLE TransactionType 
@@ -97,22 +100,116 @@ DROP TABLE IF EXISTS AirportTerminal;
 CREATE TABLE AirportTerminal
 (
   no	            INT(11) PRIMARY KEY NOT NULL,
-  flight_no	    VARCHAR(100),
+  flight_no	      VARCHAR(100),
   flight_name	    VARCHAR(100),
   origin	        VARCHAR(10),
-  destination 	VARCHAR(10),
-  terminal	    VARCHAR(10)
+  destination 	  VARCHAR(10),
+  terminal	      VARCHAR(10)
 );
+
 DROP TABLE IF EXISTS Receipts;
 CREATE TABLE Receipts
 (
   rid             VARCHAR(100) PRIMARY KEY NOT NULL,
   bookingCode     VARCHAR(50),
-  tiboxId         VARCHAR(50),
+  tid             VARCHAR(50),
   receiptRaw      TEXT,
   receiptData     TEXT,
   syncFlag        INT,
   createdAt       BIGINT
+);
+
+DROP TABLE IF EXISTS PendingRefund;
+CREATE TABLE PendingRefund
+(
+  id              VARCHAR(100) PRIMARY KEY NOT NULL,
+  tid             VARCHAR(100)             NOT NULL,
+  trxid           VARCHAR(100),
+  amount          BIGINT,
+  customer        VARCHAR(100),
+  refundType      VARCHAR(100),
+  paymentType     VARCHAR(100),
+  isSuccess       INT,
+  remarks         TEXT,
+  createdAt       BIGINT,
+  updatedAt       BIGINT
+);
+
+DROP TABLE IF EXISTS SAMAudit;
+CREATE TABLE SAMAudit
+(
+  lid               VARCHAR(100) PRIMARY KEY NOT NULL,
+  trxid             VARCHAR(100),
+  samCardNo         VARCHAR(100),
+  samCardSlot       INT,
+  samPrevBalance    BIGINT,
+  samLastBalance    BIGINT,
+  topupCardNo       VARCHAR(100),
+  topupPrevBalance  BIGINT,
+  topupLastBalance  BIGINT,
+  status            TEXT,
+  remarks           TEXT,
+  syncFlag          INT,
+  createdAt         BIGINT
+);
+
+DROP TABLE IF EXISTS TopUpRecords;
+CREATE TABLE TopUpRecords
+(
+  rid             VARCHAR(100) PRIMARY KEY NOT NULL,
+  trxid           VARCHAR(100),
+  cardNo          TEXT,
+  balance         INT,
+  reportSAM       TEXT,
+  reportKA        TEXT,
+  status          INT,
+  remarks         TEXT,
+  syncFlag        INT,
+  createdAt       BIGINT
+);
+
+DROP TABLE IF EXISTS SAMRecords;
+CREATE TABLE SAMRecords
+(
+  smid            VARCHAR(100) PRIMARY KEY NOT NULL,
+  fileName        TEXT,
+  fileContent     TEXT,
+  status          INT,
+  remarks         TEXT,
+  createdAt       BIGINT
+);
+
+DROP TABLE IF EXISTS ProductStock;
+CREATE TABLE ProductStock
+(
+  stid            VARCHAR(100) PRIMARY KEY NOT NULL,
+  pid             VARCHAR(100)             NOT NULL,
+  tid             VARCHAR(100),
+  name            VARCHAR(255),
+  init_price      INT,
+  sell_price      INT,
+  remarks         TEXT,
+  stock           INT,
+  status          INT,
+  createdAt       BIGINT,
+  updatedAt       BIGINT,
+  syncFlag        INT
+);
+
+DROP TABLE IF EXISTS TransactionFailure;
+CREATE TABLE TransactionFailure
+(
+  trxid           VARCHAR(100) PRIMARY KEY NOT NULL,
+  tid             VARCHAR(100)             NOT NULL,
+  mid             VARCHAR(100),
+  pid             VARCHAR(100),
+  amount          BIGINT,
+  cardNo          VARCHAR(100),
+  failureType     VARCHAR(255),
+  paymentMethod   VARCHAR(255),
+  createdAt       BIGINT,
+  syncFlag        INT,
+  remarks         TEXT
 );
 
 

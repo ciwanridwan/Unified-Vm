@@ -11,7 +11,7 @@ Base{
     property var textQuard: 'sehingga, dana yang perlu dibayarkan oleh pembeli = Rp. 50.000 per kartu'
     property var imageSource: "source/reader_sign.png"
     property bool smallerSlaveSize: true
-    property int textSize: 40
+    property int textSize: (globalScreenType == '1') ? 40 : 35
     visible: false
     opacity: visible ? 1.0 : 0.0
     Behavior on opacity {
@@ -26,21 +26,21 @@ Base{
 
     MainTitle{
         anchors.top: parent.top
-        anchors.topMargin: 300
+        anchors.topMargin: (globalScreenType == '1') ? 300 : 250
         anchors.horizontalCenter: parent.horizontalCenter
         show_text: 'Penting : Informasi Pembelian Kartu'
-        size_: 50
+        size_: (globalScreenType == '1') ? 50 : 45
         color_: "yellow"
 
     }
 
     Column{
-        width: 1600
+        width: parent.width
         height: 500
         anchors.verticalCenterOffset: 125
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        spacing: 30
+        spacing: (globalScreenType == '1') ? 30 : 25
         Text{
             text: textMain
             font.pixelSize: textSize

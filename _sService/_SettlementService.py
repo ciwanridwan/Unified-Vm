@@ -11,7 +11,7 @@ from _dDAO import _DAO
 from _tTools import _Helper
 from _nNetwork import _NetworkAccess
 from _nNetwork import _SFTPAccess
-from _dDevice import _QPROX
+from _dDevice import _QPROX, _EDC
 from time import sleep
 
 
@@ -82,10 +82,10 @@ def push_settlement_data(__param):
     try:
         __param['mid'] = SMT_MID
         __param['token'] = SMT_TOKEN
-        __param['tid'] = 'TJ-TOPUP-VM'+TID
+        __param['tid'] = 'MDD-VM'+TID
         status, response = _NetworkAccess.post_to_url(url=__url, param=__param)
         # LOGGER.debug(('push_settlement_data :', str(status), str(response)))
-        if status == 200:
+        if status == 200 and response['response']['code'] == 200:
             _DAO.update_settlement({'sid': __sid, 'status': 'TOPUP_PREPAID|CLOSED'})
             for settle in GLOBAL_SETTLEMENT:
                 settle['key'] = settle['rid']
@@ -111,7 +111,7 @@ MANDIRI_LAST_TIMESTAMP = ''
 MANDIRI_LAST_FILENAME = ''
 
 
-def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, dummy=False):
+def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, force=False):
     global GLOBAL_SETTLEMENT, MANDIRI_LAST_TIMESTAMP, MANDIRI_LAST_FILENAME
     if bank == 'BNI' and mode == 'TOPUP':
         try:
@@ -199,7 +199,7 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, dummy=Fal
                 output_path = FILE_PATH
             settlements = _DAO.get_query_from('TopUpRecords', ' syncFlag=1 AND reportKA <> "N/A" ')
             GLOBAL_SETTLEMENT = settlements
-            if len(settlements) == 0 and dummy is False:
+            if len(settlements) == 0 and force is False:
                 LOGGER.warning(('No Data For Settlement', bank, mode, str(settlements)))
                 return False
             __shift = '0002'
@@ -267,7 +267,7 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, dummy=Fal
                 output_path = FILE_PATH
             settlements = _DAO.get_query_from('TopUpRecords', ' syncFlag=3 AND reportKA <> "N/A" ')
             # GLOBAL_SETTLEMENT = settlements
-            if len(settlements) == 0 and dummy is False:
+            if len(settlements) == 0 and force is False:
                 LOGGER.warning(('No Data For Settlement', bank, mode, str(settlements)))
                 return False
             __shift = '0002'
@@ -340,7 +340,6 @@ def create_settlement_file(bank='BNI', mode='TOPUP', output_path=None, dummy=Fal
 #      'settlement_created_at': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 # }
 
-
 def start_do_bni_topup_settlement():
     bank = 'BNI'
     _Helper.get_pool().apply_async(do_settlement_for, (bank,))
@@ -359,19 +358,19 @@ def start_do_mandiri_topup_settlement():
 def start_reset_mandiri_settlement():
     bank = 'MANDIRI'
     _Global.MANDIRI_ACTIVE_WALLET = 0
-    dummy = True
-    _Helper.get_pool().apply_async(do_settlement_for, (bank, dummy,))
+    force = True
+    _Helper.get_pool().apply_async(do_settlement_for, (bank, force,))
     ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TRIGGERED')
 
 
 def start_dummy_mandiri_topup_settlement():
     bank = 'MANDIRI'
-    dummy = True
-    _Helper.get_pool().apply_async(do_settlement_for, (bank, dummy,))
+    force = True
+    _Helper.get_pool().apply_async(do_settlement_for, (bank, force,))
     ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TRIGGERED')
 
 
-def do_settlement_for(bank='BNI', dummy=False):
+def do_settlement_for(bank='BNI', force=False):
     if bank == 'BNI':
         _SFTPAccess.HOST_BID = 2
         if _Helper.is_online(source='bni_settlement') is False:
@@ -401,7 +400,7 @@ def do_settlement_for(bank='BNI', dummy=False):
         # if _SFTPAccess.SFTP is None:
         #     LOGGER.warning(('do_settlement_for', bank, 'failed cannot init SFTP'))
         #     return
-        _param_sett = create_settlement_file(bank=bank, mode='TOPUP', dummy=dummy)
+        _param_sett = create_settlement_file(bank=bank, mode='TOPUP', force=force)
         if _param_sett is False:
             ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_CREATE_FILE_SETTLEMENT')
             return
@@ -414,7 +413,7 @@ def do_settlement_for(bank='BNI', dummy=False):
             ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_UPLOAD_FILE_SETTLEMENT')
             return
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|UPLOAD_FILE_SETTLEMENT')
-        _param_ka = create_settlement_file(bank=bank, mode='KA', dummy=dummy)
+        _param_ka = create_settlement_file(bank=bank, mode='KA', force=force)
         if _param_ka is False:
             ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|FAILED_CREATE_FILE_KA_SETTLEMENT')
             return
@@ -488,8 +487,11 @@ def validate_update_balance():
             if current_time >= last_update_with_tolerance:
                 LOGGER.info(('DETECTED_EXPIRED_LIMIT_UPDATE', last_update_with_tolerance, current_time))
                 _Global.MANDIRI_ACTIVE_WALLET = 0
-                do_settlement_for(bank='MANDIRI', dummy=True)
+                do_settlement_for(bank='MANDIRI', force=True)
                 ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TRIGGERED')
+        if _Helper.whoami() not in _Global.ALLOWED_SYNC_TASK:
+            LOGGER.debug(('[BREAKING-LOOP] ', _Helper.whoami()))
+            break
         next_run_time = current_time + sync_time
         LOGGER.debug(('MANDIRI_SAM_UPDATE_BALANCE NEXT RUN', _Helper.convert_epoch(t=next_run_time)))
         sleep(sync_time)
@@ -499,23 +501,57 @@ MANDIRI_UPDATE_SCHEDULE_RUNNING = False
 
 
 def start_trigger_mandiri_sam_update():
+    if not _QPROX.INIT_MANDIRI:
+        LOGGER.warning(('FAILED MANDIRI_SAM_UPDATE_BALANCE', 'INIT_MANDIRI', _QPROX.INIT_MANDIRI))
+        print("pyt: Failed MANDIRI_SAM_UPDATE_BALANCE, Mandiri SAM Not Init Yet")
+        return
+    sleep(_Helper.get_random_num(.7, 2.9))
     if not MANDIRI_UPDATE_SCHEDULE_RUNNING:
         _Helper.get_pool().apply_async(trigger_mandiri_sam_update)
+    else:
+        print("pyt: Failed MANDIRI_SAM_UPDATE_BALANCE, Already Triggered Previously")
 
 
 def trigger_mandiri_sam_update():
     global MANDIRI_UPDATE_SCHEDULE_RUNNING
+
+    # When This Function is Triggered, It will be forced update the SAM Balance And Ignore
+    # Last Update Timestamp on TEMPORARY 
     daily_settle_time = _ConfigParser.get_set_value('QPROX', 'mandiri^daily^settle^time', '02:00')
     current_time = _Helper.now() / 1000
-    last_update_with_tolerance = (_Global.LAST_UPDATE + 84600000)/1000
-    if _Global.empty(_Global.LAST_UPDATE) or current_time >= last_update_with_tolerance:
+    last_update = 0
+    if _Global.LAST_UPDATE > 0:
+        last_update = _Global.LAST_UPDATE/1000
+    last_update_with_tolerance = (last_update + 84600000)/1000
+    current_limit = 5000000
+    if _Global.MANDIRI_ACTIVE_WALLET > current_limit:
+        current_limit = 10000000
+    if _Global.MANDIRI_ACTIVE_WALLET < current_limit or current_time >= last_update_with_tolerance:
         MANDIRI_UPDATE_SCHEDULE_RUNNING = True
         LOGGER.info(('TRIGGERED_BY_TIME_SETUP', _Helper.time_string('%H:%M'), daily_settle_time))
         _Global.MANDIRI_ACTIVE_WALLET = 0
-        do_settlement_for(bank='MANDIRI', dummy=True)
+        do_settlement_for(bank='MANDIRI', force=True)
         ST_SIGNDLER.SIGNAL_MANDIRI_SETTLEMENT.emit('MANDIRI_SETTLEMENT|TRIGGERED')
         MANDIRI_UPDATE_SCHEDULE_RUNNING = False
     else:
-        LOGGER.warning(('FAILED_START_TIME_TRIGGER', _Helper.time_string('%H%M'), daily_settle_time))
+        LOGGER.warning(('FAILED_START_TIME_TRIGGER', _Helper.time_string('%H:%M'), daily_settle_time))
+        LOGGER.warning(('LAST_UPDATE_BALANCE', _Helper.convert_epoch(last_update)))
+        LOGGER.warning(('CURRENT_SAM_BALANCE', _Global.MANDIRI_ACTIVE_WALLET), current_limit)
+
+
+def start_trigger_edc_settlement():
+    sleep(_Helper.get_random_num(.7, 2.9))
+    if not _Global.EDC_SETTLEMENT_RUNNING:
+        _Global.EDC_SETTLEMENT_RUNNING = True
+        _Helper.get_pool().apply_async(trigger_edc_settlement)
+    else:
+        print("pyt: Failed EDC_SETTLEMENT_SCHEDULE, Already Triggered Previously")
+
+
+def trigger_edc_settlement():
+    daily_settle_time = _ConfigParser.get_set_value('EDC', 'daily^settle^time', '23:00')
+    LOGGER.info(('TRIGGERED_BY_TIME_SETUP', 'EDC_SETTLEMENT_SCHEDULE', _Helper.time_string('%H:%M'), daily_settle_time))
+    _EDC.define_edc_settlement()
+    _Global.EDC_SETTLEMENT_RUNNING = False
 
 

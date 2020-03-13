@@ -29,7 +29,8 @@ class KioskSignalHandler(QObject):
     SIGNAL_GET_GUI_VERSION = pyqtSignal(str)
     SIGNAL_GET_KIOSK_NAME = pyqtSignal(str)
     SIGNAL_GET_FILE_LIST = pyqtSignal(str)
-    SIGNAL_GET_DEVICE_STAT = pyqtSignal(str)
+    SIGNAL_GET_PAYMENTS = pyqtSignal(str)
+    SIGNAL_GET_REFUNDS = pyqtSignal(str)
     SIGNAL_GENERAL = pyqtSignal(str)
     SIGNAL_GET_KIOSK_STATUS = pyqtSignal(str)
     SIGNAL_PRICE_SETTING = pyqtSignal(str)
@@ -44,7 +45,7 @@ class KioskSignalHandler(QObject):
     SIGNAL_GET_TOPUP_AMOUNT = pyqtSignal(str)
     SIGNAL_STORE_TOPUP = pyqtSignal(str)
     SIGNAL_GET_MACHINE_SUMMARY = pyqtSignal(str)
-    SIGNAL_GET_PAYMENT_METHOD = pyqtSignal(str)
+    SIGNAL_GET_PAYMENT_SETTING = pyqtSignal(str)
     SIGNAL_SYNC_ADS_CONTENT = pyqtSignal(str)
     SIGNAL_ADMIN_GET_PRODUCT_STOCK = pyqtSignal(str)
 
@@ -58,22 +59,21 @@ def get_kiosk_status():
 
 
 def kiosk_status():
-    if _Helper.is_online(source='kiosk_status') is False:
-        _Global.KIOSK_SETTING = _DAO.init_kiosk()[0]
-        _Global.KIOSK_ADMIN = _Global.KIOSK_SETTING['defaultAdmin']
-        if _Global.TEST_MODE is True:
-            _Global.KIOSK_ADMIN = 1
-        _Global.KIOSK_MARGIN = _Global.KIOSK_SETTING['defaultMargin']
-        _Global.KIOSK_NAME = _Global.KIOSK_SETTING['name']
-        _Global.KIOSK_REAL_STATUS = 'OFFLINE'
+    # if _Helper.is_online(source='kiosk_status') is False:
+    #     _Global.KIOSK_SETTING = _DAO.init_kiosk()[0]
+    #     _Global.KIOSK_ADMIN = _Global.KIOSK_SETTING['defaultAdmin']
+    #     _Global.KIOSK_MARGIN = _Global.KIOSK_SETTING['defaultMargin']
+    #     _Global.KIOSK_NAME = _Global.KIOSK_SETTING['name']
+    #     _Global.KIOSK_REAL_STATUS = 'OFFLINE'
     K_SIGNDLER.SIGNAL_GET_KIOSK_STATUS.emit(json.dumps({
         'name': _Global.KIOSK_NAME,
         'version': _Global.VERSION,
         'status': _Global.KIOSK_STATUS,
-        'real_status': _Global.KIOSK_REAL_STATUS,
+        'real_status': _Global.KIOSK_STATUS,
         'tid': _Global.TID,
         # 'payment': _Global.PAYMENT_SETTING,
         'feature': _Global.FEATURE_SETTING,
+        'last_money_inserted': _ConfigParser.get_value('GRG', 'last^money^inserted')
     }))
 
 
@@ -81,47 +81,51 @@ def load_from_temp_data(section, selected_mode):
     return _Global.load_from_temp_data(temp=section, mode=selected_mode)
 
 
-def update_kiosk_status(r):
-    # _Global.KIOSK_STATUS = 'UNAUTHORIZED'
+def load_previous_kiosk_status():
+    _Global.KIOSK_SETTING = _DAO.init_kiosk()[0]
+    _Global.KIOSK_ADMIN = int(_Global.KIOSK_SETTING['defaultAdmin'])
+    _Global.KIOSK_MARGIN = int(_Global.KIOSK_SETTING['defaultMargin'])
+    _Global.KIOSK_NAME = _Global.KIOSK_SETTING['name']
+    _Global.TOPUP_AMOUNT_SETTING = load_from_temp_data('topup-amount-setting', 'json')
+    _Global.FEATURE_SETTING = load_from_temp_data('feature-setting', 'json')
+    _Global.PAYMENT_SETTING = load_from_temp_data('payment-setting', 'json')
+    _Global.REFUND_SETTING = load_from_temp_data('refund-setting', 'json')
+    _Global.THEME_SETTING = load_from_temp_data('theme-setting', 'json')
+    _Global.ADS_SETTING = load_from_temp_data('ads-setting', 'json')
+    _Global.KIOSK_STATUS = 'OFFLINE'
+
+
+def update_kiosk_status(s=400, r=None):
     try:
-        _Global.PRINTER_STATUS = get_printer_status_v2()
-        LOGGER.info(("get_printer_status : ", _Global.PRINTER_STATUS))
-        if _Global.empty(r['data']):
-            _Global.KIOSK_SETTING = _DAO.init_kiosk()[0]
-            _Global.KIOSK_ADMIN = int(_Global.KIOSK_SETTING['defaultAdmin'])
-            _Global.KIOSK_MARGIN = int(_Global.KIOSK_SETTING['defaultMargin'])
-            _Global.KIOSK_NAME = _Global.KIOSK_SETTING['name']
-            if _Global.PRINTER_STATUS == "NORMAL":
+        if s == 200 and r['result'] == 'OK':
+            if 'data' in r.keys() and not _Global.empty(r['data']):
+                _Global.KIOSK_SETTING = r['data']['kiosk']
+                _Global.KIOSK_NAME = _Global.KIOSK_SETTING['name']
+                _Global.KIOSK_MARGIN = int(_Global.KIOSK_SETTING['defaultMargin'])
+                _Global.KIOSK_ADMIN = int(_Global.KIOSK_SETTING['defaultAdmin'])
+                _Global.PAYMENT_SETTING = r['data']['payment']
+                define_device_port_setting(_Global.PAYMENT_SETTING)
+                _Global.store_to_temp_data('payment-setting', json.dumps(r['data']['payment']))
+                _Global.THEME_SETTING = r['data']['theme']
+                define_theme(_Global.THEME_SETTING)
+                _Global.FEATURE_SETTING = r['data']['feature']
+                define_feature(_Global.FEATURE_SETTING)
+                _Global.ADS_SETTING = r['data']['ads']
+                _Global.store_to_temp_data('ads-setting', json.dumps(r['data']['ads']))
+                # TODO: Check New Refund Data Setting
+                if 'refund' in r['data'].keys():
+                    _Global.REFUND_SETTING = r['data']['refund']
+                    _Global.store_to_temp_data('refund-setting', json.dumps(r['data']['refund']))
                 _Global.KIOSK_STATUS = 'ONLINE'
-            _Global.TOPUP_AMOUNT_SETTING = load_from_temp_data('topup-amount-setting', 'json')
-            _Global.FEATURE_SETTING = load_from_temp_data('feature-setting', 'json')
-            _Global.PAYMENT_SETTING = load_from_temp_data('payment-setting', 'json')
-            _Global.THEME_SETTING = load_from_temp_data('theme-setting', 'json')
-            _Global.ADS_SETTING = load_from_temp_data('ads-setting', 'json')
-        else:
-            _Global.KIOSK_SETTING = r['data']['kiosk']
-            _Global.KIOSK_NAME = _Global.KIOSK_SETTING['name']
-            _Global.KIOSK_MARGIN = int(_Global.KIOSK_SETTING['defaultMargin'])
-            _Global.KIOSK_ADMIN = int(_Global.KIOSK_SETTING['defaultAdmin'])
-            _Global.PAYMENT_SETTING = r['data']['payment']
-            define_device_port_setting(_Global.PAYMENT_SETTING)
-            _Global.store_to_temp_data('payment-setting', json.dumps(r['data']['payment']))
-            _Global.THEME_SETTING = r['data']['theme']
-            define_theme(_Global.THEME_SETTING)
-            _Global.FEATURE_SETTING = r['data']['feature']
-            define_feature(_Global.FEATURE_SETTING)
-            _Global.ADS_SETTING = r['data']['ads']
-            _Global.store_to_temp_data('ads-setting', json.dumps(r['data']['ads']))
-            # define_ads(_Global.ADS_SETTING)
-            if r['result'] == 'OK' and _Global.PRINTER_STATUS == "NORMAL":
-                _Global.KIOSK_STATUS = 'ONLINE'
-            _DAO.flush_table('Terminal')
-            # _DAO.flush_table('Transactions', ' tid <> "' + KIOSK_SETTING['tid'] + '"')
-            _DAO.update_kiosk_data(_Global.KIOSK_SETTING)
+                _DAO.flush_table('Terminal')
+                # _DAO.flush_table('Transactions', ' tid <> "' + KIOSK_SETTING['tid'] + '"')
+                _DAO.update_kiosk_data(_Global.KIOSK_SETTING)
     except Exception as e:
-        LOGGER.warning(("update_kiosk_status : ", str(e)))
+        LOGGER.warning((e))
+        load_previous_kiosk_status() 
     # finally:
-    #     # kiosk_status()
+    #     sleep(10)
+    #     kiosk_status()
     #     pprint(_Global.KIOSK_SETTING)
 
 
@@ -162,6 +166,13 @@ def define_theme(d):
     _Global.log_to_temp_config('theme^name', d['name'])
     config_js = sys.path[0] + '/_qQml/config.js'
     content_js = ''
+    # Mandiri Update Schedule Time For Timer Trigger
+    daily_settle_time = _ConfigParser.get_set_value('QPROX', 'mandiri^daily^settle^time', '02:00')
+    content_js += 'var mandiri_update_schedule = "' + daily_settle_time + '";' + os.linesep
+    edc_daily_settle_time = _ConfigParser.get_set_value('EDC', 'daily^settle^time', '23:00')
+    content_js += 'var edc_settlement_schedule = "' + edc_daily_settle_time + '";' + os.linesep
+    # Temp Config For Ubal Online
+    content_js += 'var bank_ubal_online = ' + json.dumps(_Global.ALLOWED_BANK_UBAL_ONLINE) + ';' + os.linesep
     if type(d['master_logo']) != list:
         d['master_logo'] = [d['master_logo']]
     master_logo = []
@@ -179,8 +190,6 @@ def define_theme(d):
             partner_logos.append(image)
         else:
             continue
-    daily_settle_time = _ConfigParser.get_set_value('QPROX', 'mandiri^daily^settle^time', '02:00')
-    content_js += 'var mandiri_update_schedule = "' + daily_settle_time + '";' + os.linesep
     content_js += 'var partner_logos = ' + json.dumps(partner_logos) + ';' + os.linesep
     backgrounds = []
     for b in d['backgrounds']:
@@ -203,16 +212,14 @@ def define_theme(d):
     if not _Global.empty(d['tvc_waiting_time']):
         _Global.log_to_temp_config('tvc^waiting^time', str(d['tvc_waiting_time']))
         content_js += 'var tvc_waiting_time = ' +  str(d['tvc_waiting_time']) + ';' + os.linesep
-    # Temp Config For Ubal Online
-    content_js += 'var bank_ubal_online = ' + json.dumps(_Global.BANK_UBAL_ONLINE) + ';' + os.linesep
     # Receipt Logo
     if not _Global.empty(d['receipt_custom_text']):
         _Global.CUSTOM_RECEIPT_TEXT = d['receipt_custom_text'].replace(os.linesep, '|')
-        _Global.log_to_temp_config('receipt^custom^text', d['receipt_custom_text'])
+        _Global.log_to_config('PRINTER', 'receipt^custom^text', d['receipt_custom_text'])
     store, receipt_logo = _NetworkAccess.item_download(d['receipt_logo'], os.getcwd() + '/_rReceipts')
     if store is True:
         _Global.RECEIPT_LOGO = receipt_logo
-        _Global.log_to_temp_config('receipt^logo', receipt_logo)
+        _Global.log_to_config('PRINTER', 'receipt^logo', receipt_logo)
     with open(config_js, 'w+') as config_qml:
         config_qml.write(content_js)
         config_qml.close()
@@ -238,7 +245,8 @@ def define_ads(a):
     __current_list = []
     __all_file = os.listdir(__tvc_path)
     for file in __all_file:
-        if file.endswith('.mp4') or file.endswith('.wmv') or file.endswith('.avi') or file.endswith('.mpeg'):
+        extentions = ('.mp4', '.mov', '.avi', '.mpg', '.mpeg')
+        if file.endswith(extentions):
             __current_list.append(file)
     __must_backup = list(set(__current_list) - set(__playlist))
     LOGGER.debug(("current list : ", str(__current_list)))
@@ -283,8 +291,6 @@ def get_kiosk_price_setting():
 
 
 def kiosk_price_setting():
-    if _Global.TEST_MODE is True:
-        _Global.KIOSK_ADMIN = 1
     K_SIGNDLER.SIGNAL_PRICE_SETTING.emit(json.dumps({
         'margin': _Global.KIOSK_MARGIN,
         'adminFee': _Global.KIOSK_ADMIN,
@@ -297,7 +303,7 @@ def development_status():
     return True if _ConfigParser.get_value('TERMINAL', 'server') == "dev" else False
 
 
-IS_DEV = development_status()
+IS_DEV = _Global.TEST_MODE
 
 
 def rename_file(filename, list_, x):
@@ -383,7 +389,7 @@ def machine_summary():
         'on_usage': 'IDLE',
         'edc_error': _Global.EDC_ERROR,
         'nfc_error': _Global.NFC_ERROR,
-        'mei_error': _Global.MEI_ERROR,
+        'mei_error': _Global.BILL_ERROR,
         'printer_error': _Global.PRINTER_ERROR,
         'scanner_error': _Global.SCANNER_ERROR,
         'webcam_error': _Global.WEBCAM_ERROR,
@@ -401,6 +407,7 @@ def machine_summary():
         'bni_active': str(_Global.BNI_ACTIVE),
         'service_ver': str(_Global.SERVICE_VERSION),
         'theme': str(_Global.THEME_NAME),
+        'last_money_inserted': _ConfigParser.get_set_value('GRG', 'last^money^inserted', 'N/A')
         # 'bni_sam1_no': str(_Global.BNI_SAM_1_NO),
         # 'bni_sam2_no': str(_Global.BNI_SAM_2_NO),
     }
@@ -556,7 +563,7 @@ def post_tvc_list(list_):
     if list_ is None or list_ == "":
         return
     try:
-        #TODO Create Backend URL
+        #NOTES: NO NEED, PLAYLIST FROM SERVER ALREADY
         status, response = _NetworkAccess.post_to_url('box/tvcList', {"tvclist": list_})
         LOGGER.info(('SUCCESS', response))
     except Exception as e:
@@ -615,18 +622,26 @@ def send_tvc_log(media, count, media_code=None):
     try:
         status, response = _NetworkAccess.post_to_url(_Global.BACKEND_URL+'count/ads', param)
         _Global.log_to_temp_config(media_code, str(_Helper.now()))
+        # Not Handling Response Result
         LOGGER.info((media, str(count), status, response))
     except Exception as e:
         LOGGER.warning((media, str(count), str(e)))
 
 
-def start_get_device_status():
-    _Helper.get_pool().apply_async(get_device_status)
+def start_get_payments():
+    _Helper.get_pool().apply_async(get_payments)
 
 
-def get_device_status():
-    devices = _Global.get_devices_status()
-    K_SIGNDLER.SIGNAL_GET_DEVICE_STAT.emit(json.dumps(devices))
+def get_payments():
+    K_SIGNDLER.SIGNAL_GET_PAYMENTS.emit(json.dumps(_Global.get_payments()))
+
+
+def start_get_refunds():
+    _Helper.get_pool().apply_async(get_refunds)
+
+
+def get_refunds():
+    K_SIGNDLER.SIGNAL_GET_REFUNDS.emit(json.dumps(_Global.get_refunds()))
 
 
 FIRST_RUN_FLAG = True
@@ -704,7 +719,11 @@ def post_cash_collection(l, t):
             "updatedAt": t
         }
         status, response = _NetworkAccess.post_to_url(_Global.BACKEND_URL + 'collect/cash', param)
-        LOGGER.info(("SUCCESS", response))
+        if status == 200:
+            LOGGER.info(("SUCCESS", response))
+        else:
+            # LOG REQUEST
+            _Global.store_request_to_job(name=_Helper.whoami(), url=_Global.BACKEND_URL + 'collect/cash', payload=param)
     except Exception as e:
         LOGGER.warning(("FAILED", str(e)))
 
@@ -734,6 +753,24 @@ def alter_table(a):
         _DAO.adjust_table(a)
     except Exception as e:
         LOGGER.debug(('FAILED', str(e)))
+
+
+def start_direct_alter_table(s):
+    _Helper.get_pool().apply_async(direct_alter_table, (s,))
+
+
+def direct_alter_table(scripts):
+    result = []
+    if _Global.empty(scripts):
+        LOGGER.warning(('EMPTY ADJUSTMENT SCRIPT'))
+        return
+    if type(scripts) == list and len(scripts) > 0:
+        for script in scripts:
+            result.append({'script': script, 'result': _DAO.direct_adjust_table(script=script)})
+    else:
+        result.append({'script': scripts, 'result': _DAO.direct_adjust_table(script=scripts)})
+    LOGGER.info(('RESULT', str(result)))
+    return result
 
 
 PREV_RECEIPT_RAW_DATA = None
@@ -766,13 +803,13 @@ def search_booking(bk):
                 K_SIGNDLER.SIGNAL_BOOKING_SEARCH.emit(json.dumps(_r))
             else:
                 K_SIGNDLER.SIGNAL_BOOKING_SEARCH.emit('ERROR')
-            LOGGER.debug(('search_booking : ', bk, _r))
+            LOGGER.debug((bk, _r))
         else:
             K_SIGNDLER.SIGNAL_BOOKING_SEARCH.emit('NO_DATA')
-            LOGGER.debug(('search_booking : ', str(r)))
+            LOGGER.debug((str(r)))
     except Exception as e:
         K_SIGNDLER.SIGNAL_BOOKING_SEARCH.emit('ERROR')
-        LOGGER.warning(('search_booking : ', e))
+        LOGGER.warning((e))
 
 
 DUMMY_PROCESS = False
@@ -799,8 +836,8 @@ def complete_booking_data(p):
             return False, p
     else:
         d = json.loads(p['receiptData'])
-        PREV_TIBOX_ID = p['tiboxId']
-        p['t_booking_id'] = p['tiboxId']
+        PREV_TIBOX_ID = p['tid']
+        p['t_booking_id'] = p['tid']
         p['t_payment_status'] = d['GET_PAYMENT_STATUS']
         p['t_grand_total'] = d['GET_INIT_FARE']
         # p['t_rawData'] = 'DUMMY'
@@ -844,7 +881,7 @@ def recreate_payment(payment):
                 break
             time.sleep(2)
     except Exception as e:
-        LOGGER.warning(('recreate_payment : ', e))
+        LOGGER.warning((e))
         K_SIGNDLER.SIGNAL_RECREATE_PAYMENT.emit('ERROR')
 
 
@@ -865,13 +902,13 @@ def check_wallet(amount):
     try:
         param = {"amount": int(amount)}
         status, response = _NetworkAccess.post_to_url(_Global.BACKEND_URL + 'task/check-wallet', param)
-        LOGGER.info(("check_wallet : ", response))
+        LOGGER.info((response))
         if status == 200 and response is not None:
             K_SIGNDLER.SIGNAL_WALLET_CHECK.emit(json.dumps(response))
         else:
             K_SIGNDLER.SIGNAL_WALLET_CHECK.emit('ERROR')
     except Exception as e:
-        LOGGER.warning(("check_wallet : ", e))
+        LOGGER.warning((e))
         K_SIGNDLER.SIGNAL_WALLET_CHECK.emit('ERROR')
 
 
@@ -965,7 +1002,6 @@ def store_transaction_global(param, retry=False):
         if retry is False:
             _trxid = _Helper.get_uuid()
             TRX_ID_SALE = _trxid
-
             if 'payment_error' in GLOBAL_TRANSACTION_DATA.keys():
                 if GLOBAL_TRANSACTION_DATA['shop_type'] == 'shop':
                     PID_SALE = GLOBAL_TRANSACTION_DATA['raw']['pid']
@@ -976,7 +1012,6 @@ def store_transaction_global(param, retry=False):
                     save_cash_local(GLOBAL_TRANSACTION_DATA['payment_received'], 'cancel')
                 K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('PAYMENT_FAILED_CANCEL_TRIGGERED')
                 return
-
             _total_price = int(GLOBAL_TRANSACTION_DATA['value']) * int(GLOBAL_TRANSACTION_DATA['qty'])
             _param = {
                 'pid': PID_SALE,
@@ -985,21 +1020,17 @@ def store_transaction_global(param, retry=False):
                 'details': param,
                 'status': 1
             }
-
             check_prod = _DAO.check_product(PID_SALE)
             if len(check_prod) == 0:
                 _DAO.insert_product(_param)
-
             status, response = _NetworkAccess.post_to_url(url=_Global.BACKEND_URL + 'sync/product', param=_param)
             if status == 200 and response['id'] == _param['pid']:
                 _param['key'] = _param['pid']
                 _DAO.mark_sync(param=_param, _table='Product', _key='pid')
             K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|STORE_PRODUCT-'+_param['pid'])
-
             if GLOBAL_TRANSACTION_DATA['payment'] == 'cash':
                 # Saving The CASH
                 save_cash_local(GLOBAL_TRANSACTION_DATA['payment_received'])
-
         # ================== RETRY MODE ==================
         _param_stock = dict()
         _trxid = TRX_ID_SALE
@@ -1041,32 +1072,29 @@ def store_transaction_global(param, retry=False):
             'isCollected': 0,
             'pidStock': PID_STOCK_SALE if GLOBAL_TRANSACTION_DATA['shop_type'] == 'shop' else ''
         }
-        attempt = 0
         GLOBAL_TRANSACTION_DATA['pid'] = PID_SALE
         GLOBAL_TRANSACTION_DATA['trxid'] = _trxid
-        while True:
-            attempt += 1
-            check_trx = _DAO.check_trx(_trxid)
-            if len(check_trx) == 0:
-                _DAO.insert_transaction(__param)
-                K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|STORE_TRX-' + _trxid)
-                __param['createdAt'] = _Helper.now()
-                status, response = _NetworkAccess.post_to_url(url=_Global.BACKEND_URL + 'sync/transaction-topup', param=__param)
-                if status == 200 and response['id'] == __param['trxid']:
-                    __param['key'] = __param['trxid']
-                    _DAO.mark_sync(param=__param, _table='Transactions', _key='trxid')
-                    K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|UPLOAD_TRX-' + _trxid)
-                    break
-                else:
-                    K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('PENDING|UPLOAD_TRX-' + _trxid)
-                    break
-            if attempt == 3:
-                LOGGER.warning(('store_transaction_global', 'max_attempt', str(attempt)))
-                K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('FAILED|STORE_TRX-' + _trxid)
-                break
-            sleep(1)
+        check_trx = _DAO.check_trx(_trxid)
+        if len(check_trx) == 0:
+            _DAO.insert_transaction(__param)
+            K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|STORE_TRX-' + _trxid)
+            __param['createdAt'] = _Helper.now()
+            status, response = _NetworkAccess.post_to_url(url=_Global.BACKEND_URL + 'sync/transaction-topup', param=__param)
+            if status == 200 and response['id'] == __param['trxid']:
+                __param['key'] = __param['trxid']
+                _DAO.mark_sync(param=__param, _table='Transactions', _key='trxid')
+                K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|UPLOAD_TRX-' + _trxid)
+            else:
+                K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('PENDING|UPLOAD_TRX-' + _trxid)
+        # while True:
+        #     attempt += 1
+        #     if attempt == 3:
+        #         LOGGER.warning(('max_attempt', str(attempt)))
+        #         K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('FAILED|STORE_TRX-' + _trxid)
+        #         break
+        #     sleep(1)
     except Exception as e:
-        LOGGER.warning(('store_transaction_global', str(retry), str(e)))
+        LOGGER.warning((str(retry), str(e)))
         K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('ERROR')
     finally:
         MEI_HISTORY = ''
@@ -1078,17 +1106,17 @@ def start_kiosk_get_topup_amount():
 
 
 def kiosk_get_topup_amount():
-    LOGGER.info(('kiosk_get_topup_amount', str(_Global.TOPUP_AMOUNT_SETTING)))
+    LOGGER.info((str(_Global.TOPUP_AMOUNT_SETTING)))
     K_SIGNDLER.SIGNAL_GET_TOPUP_AMOUNT.emit(json.dumps(_Global.TOPUP_AMOUNT_SETTING))
 
 
-def start_kiosk_get_payment_method():
-    _Helper.get_pool().apply_async(kiosk_get_payment_method)
+def start_kiosk_get_payment_setting():
+    _Helper.get_pool().apply_async(kiosk_get_payment_setting)
 
 
-def kiosk_get_payment_method():
-    LOGGER.info(('kiosk_get_payment_method', str(_Global.PAYMENT_SETTING)))
-    K_SIGNDLER.SIGNAL_GET_PAYMENT_METHOD.emit(json.dumps(_Global.PAYMENT_SETTING))
+def kiosk_get_payment_setting():
+    # LOGGER.info((str(_Global.PAYMENT_SETTING)))
+    K_SIGNDLER.SIGNAL_GET_PAYMENT_SETTING.emit(json.dumps(_Global.PAYMENT_SETTING))
 
 
 def start_store_topup_transaction(param):
@@ -1126,7 +1154,7 @@ def store_topup_transaction(param):
         else:
             K_SIGNDLER.SIGNAL_STORE_TOPUP.emit('STORE_TOPUP|SUCCESS-SYNC-FAILED')
     except Exception as e:
-        LOGGER.warning(('store_topup_transaction', e))
+        LOGGER.warning((e))
         K_SIGNDLER.SIGNAL_STORE_TOPUP.emit('STORE_TOPUP|ERROR')
 
 
@@ -1140,24 +1168,23 @@ def save_cash_local(amount, mode='normal'):
             'pid': PID_SALE
         }
         _DAO.insert_cash(param_cash)
-        LOGGER.info(('save_cash_local', mode, PID_SALE, str(amount)))
+        LOGGER.info((mode, PID_SALE, str(amount)))
         return True
     except Exception as e:
-        LOGGER.warning(('save_cash_local', mode, PID_SALE, str(amount), str(e)))
+        LOGGER.warning((mode, PID_SALE, str(amount), str(e)))
         return False
 
 
 def reset_db_record():
-    LOGGER.info(('reset_db_record', 'START'))
+    LOGGER.info(('START_RESET_DB_RECORDS'))
     try:
         # _DAO.flush_table('TopUpRecords', ' tid <> "'+_Global.TID+'" ')
         # time.sleep(1)
-        _DAO.flush_table('Receipts', ' tiboxId <> "'+_Global.TID+'" ')
+        _DAO.flush_table('Receipts', ' tid <> "'+_Global.TID+'" ')
         time.sleep(1)
         _DAO.flush_table('Settlement', ' tid <> "'+_Global.TID+'" AND status NOT LIKE "%EDC%" ')
         time.sleep(1)
-        _DAO.custom_update(' UPDATE Settlement SET status = "EDC|VOID" '
-                           'WHERE status LIKE "%EDC%" AND tid <> "'+_Global.TID+'" ')
+        _DAO.custom_update('UPDATE Settlement SET status = "EDC|VOID" WHERE status LIKE "%EDC%" AND tid <> "'+_Global.TID+'" ')
         time.sleep(1)
         _DAO.flush_table('Cash', ' tid <> "'+_Global.TID+'" ')
         # time.sleep(1)
@@ -1166,12 +1193,12 @@ def reset_db_record():
         _DAO.flush_table('Transactions', ' tid <> "'+_Global.TID+'" ')
         time.sleep(1)
         _DAO.flush_table('TransactionFailure', ' tid <> "'+_Global.TID+'" ')
-        # # Add Data HouseKeeping Which Older Than n Months
+        # Add Data HouseKeeping Which Older Than n Months
         # house_keeping(age_month=3)
-        LOGGER.info(('reset_db_record', 'FINISH'))
+        LOGGER.info(('FINISH_RESET_DB_RECORDS'))
         return 'FIRST_INIT_CLEANUP_SUCCESS'
     except Exception as e:
-        LOGGER.warning(('reset_db_record', str(e)))
+        LOGGER.warning((str(e)))
         return 'FIRST_INIT_CLEANUP_FAILED'
 
 
@@ -1183,13 +1210,18 @@ def python_dump(log):
     LOGGER.debug(('[DUMP]', str(log)))
 
 
-def house_keeping(age_month=1):
-    _DAO.clean_old_data(tables=['Cash', 'Receipts', 'Settlement', 'Product', 'SAMAudit', 'SAMRecords',
-                                'TopupRecords', 'TransactionFailure', 'Transactions'],
-                        key='createdAt',
-                        age_month=age_month)
+def house_keeping(age_month=1, mode='DATA_FILES'):
+    if mode == 'DATA_FILES':
+        LOGGER.info(('START DATA HOUSE_KEEPING', mode, _Helper.time_string()))
+        print('pyt: START DATA HOUSE_KEEPING ' + mode + ' ' +_Helper.time_string())
+        _DAO.clean_old_data(tables=['Cash', 'Receipts', 'Settlement', 'Product', 'SAMAudit', 'SAMRecords',
+                                    'TopupRecords', 'TransactionFailure', 'Transactions'],
+                            key='createdAt',
+                            age_month=age_month)
     expired = time.time() - (age_month * 30 * 24 * 60 * 60)
-    paths = ['_pPDF', '_lLog']
+    paths = ['_pPDF', '_lLog', '_qQr']
+    LOGGER.info(('START FILES HOUSE_KEEPING', paths, expired, mode, _Helper.time_string()))
+    print('pyt: START FILES HOUSE_KEEPING ' + str(paths) + ' ' + str(expired) + ' ' + mode + ' ' + _Helper.time_string())
     for path in paths:
         work_dir = os.path.join(sys.path[0], path)
         for f in os.listdir(work_dir):
@@ -1198,5 +1230,5 @@ def house_keeping(age_month=1):
                 stat = os.stat(file)
                 if stat.st_ctime < expired:
                     os.remove(file)
-    LOGGER.info(('house_keeping', str(age_month), 'FINISH'))
+    LOGGER.info((str(age_month), 'FINISH'))
     return 'HOUSE_KEEPING_' + str(age_month) + 'SUCCESS'

@@ -9,7 +9,7 @@ Base{
     property var textSlave: 'Pastikan kartu Anda tetap berada di alat pembaca kartu sampai transaksi selesai'
     property var imageSource: "source/reader_sign.png"
     property bool smallerSlaveSize: true
-    property int textSize: 45
+    property int textSize: (globalScreenType == '1') ? 40 : 35
     visible: false
     opacity: visible ? 1.0 : 0.0
     Behavior on opacity {
@@ -23,11 +23,11 @@ Base{
 //    }
 
     Column{
-        width: 1500
+        width: parent.width
         height: 500
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
-        spacing: 30
+        spacing: (globalScreenType == '1') ? 30 : 25
         Text{
             text: textMain
             font.pixelSize: textSize

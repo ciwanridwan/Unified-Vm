@@ -20,6 +20,10 @@ Rectangle{
 //    property var list_pic: img_files
     property variant media_files: []
     property int index: 0
+    property var mandiri_update_schedule
+    property var edc_settlement_schedule
+    property int counter: 0
+
 
     Stack.onStatusChanged:{
         if(Stack.status==Stack.Activating){
@@ -27,6 +31,7 @@ Rectangle{
             if(mode=="mediaPlayer" && media_files.length == 0){
                 _SLOT.get_file_list(img_path);
             }
+            counter = 0;
         }
         if(Stack.status==Stack.Deactivating){
             player.stop()
@@ -37,13 +42,49 @@ Rectangle{
     }
 
     Component.onCompleted: {
+        hidden_timer.start();
         base.result_get_file_list.connect(get_result);
         base.result_general.connect(handle_general);
     }
 
     Component.onDestruction: {
+        hidden_timer.stop();
         base.result_get_file_list.disconnect(get_result);
         base.result_general.disconnect(handle_general);
+    }
+
+    Rectangle{
+        width: 10
+        height: 10
+        x:0
+        y:0
+        visible: false
+        Timer{
+            id: hidden_timer
+            interval:1000
+            repeat:true
+            running:false
+            triggeredOnStart:true
+            onTriggered:{
+                counter += 1;
+                //Mandiri Auto Settlement Timer Trigger
+                if (mandiri_update_schedule != undefined){
+                    var hm = Qt.formatDateTime(new Date(), "HH:mm");
+                    if (hm == mandiri_update_schedule && counter%3==0) {
+                        console.log('MANDIRI_UPDATE_SCHEDULE_TVC', hm, mandiri_update_schedule);
+                        _SLOT.start_mandiri_update_schedule();
+                    }
+                }
+                //EDC Auto Settlement Timer Trigger
+                if (edc_settlement_schedule != undefined){
+                    var hm = Qt.formatDateTime(new Date(), "HH:mm");
+                    if (hm == edc_settlement_schedule && counter%3==0) {
+                        console.log('EDC_SETTLEMENT_SCHEDULE_TVC', hm, edc_settlement_schedule);
+                        _SLOT.start_trigger_edc_settlement();
+                    }
+                }
+            }
+        }
     }
 
 
