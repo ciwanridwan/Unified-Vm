@@ -54,8 +54,8 @@ def checkout_branch_by_app_env():
     if _Common.LIVE_MODE:
         ORIGIN = 'master'
     UPDATEAPP_SIGNDLER.SIGNAL_UPDATE_APP.emit('APP_UPDATE|DEFINING_BRANCH_'+ORIGIN.upper())
-    return _Helper.execute_console(" git stash && git checkout "+ORIGIN+" && git stash pop ")
-    # return _Helper.execute_console("git checkout "+ORIGIN)
+    # return _Helper.execute_console(" git stash && git checkout --force "+ORIGIN+" && git stash pop ")
+    return _Helper.execute_console("git checkout --force "+ORIGIN)
 
 
 def pull_branch():
@@ -86,13 +86,13 @@ def do_update():
     __checkout = checkout_branch_by_app_env()
     if len(__checkout) > 1:
         for c in __checkout:
-            UPDATEAPP_SIGNDLER.SIGNAL_UPDATE_APP.emit('APP_UPDATE|'+c.upper())
+            UPDATEAPP_SIGNDLER.SIGNAL_UPDATE_APP.emit('APP_UPDATE|CHECKOUT_RESULT|'+c.upper())
     UPDATEAPP_SIGNDLER.SIGNAL_UPDATE_APP.emit('APP_UPDATE|SUCCESS_CHECKOUT')
     sleep(.5)
     __pull = pull_branch()
     if len(__pull) > 1:
         for p in __pull:
-            UPDATEAPP_SIGNDLER.SIGNAL_UPDATE_APP.emit('APP_UPDATE|'+p.upper())
+            UPDATEAPP_SIGNDLER.SIGNAL_UPDATE_APP.emit('APP_UPDATE|PULL_RESULT|'+p.upper())
     # LOGGER.info(('step-3', 'APP_UPDATE|SUCCESS_PULLING'))
     UPDATEAPP_SIGNDLER.SIGNAL_UPDATE_APP.emit('APP_UPDATE|SUCCESS_PULLLING')
     sleep(.5)
