@@ -317,6 +317,7 @@ if RECEIPT_PRINT_COUNT >= RECEIPT_PRINT_LIMIT:
     PRINTER_ERROR = 'PAPER_ROLL_WARNING'
 RECEIPT_LOGO = _ConfigParser.get_set_value('PRINTER', 'receipt^logo', 'mandiri_logo.gif')
 CUSTOM_RECEIPT_TEXT = _ConfigParser.get_set_value('PRINTER', 'receipt^custom^text', '')
+PRINTER_TYPE = _ConfigParser.get_set_value('PRINTER', 'printer^type', 'Default')
 
 EDC_PRINT_ON_LAST = True if _ConfigParser.get_set_value('EDC', 'print^last', '1') == '1' else False
 LAST_EDC_TRX_RECEIPT = None

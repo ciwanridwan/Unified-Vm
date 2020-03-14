@@ -1,0 +1,99 @@
+[TERMINAL]
+backend^server = http://vm-api.mdd.co.id:11199/kiosk-api/v2/
+tid = 110322
+token = 1234567890abc
+reload^service = 0
+mode = development
+payment^cancel = 0
+payment^confirm = 1
+pir^usage = 0
+force^settlement = 0
+db = kiosk.db
+exceed^payment = 0
+mandiri^sam^production = 0
+db^debug = 0
+
+[PRINTER]
+port = COM
+baudrate = 19200
+receipt^print^count = 0
+receipt^print^limit = 1800
+receipt^logo = 20200306140740EMqMB3kgGbGSfYd2l4.gif
+receipt^custom^text = Layanan Pelanggan WA: +62 822 1364 5190 Telegram: @multidayadinamika E-mail: support@mdd.co.id 
+
+[CD]
+port1 = COM
+port2 = COM
+port3 = COM
+multiple^eject = 0
+
+[QPROX]
+port = 
+amount^topup = 500000
+mid^man = ---
+tid^man = ---
+sam^man = ---
+mid^bni = ---
+tid^bni = ---
+mc^bni = ---
+sam1^bni = ---
+sam2^bni = ---
+mid^bri = ---
+tid^bri = ---
+procode^bri = ---
+mid^bca = ---
+tid^bca = ---
+amount^minimum = 50000
+ka^pin1 = ---
+ka^pin2 = ---
+kl^pin = ---
+ka^nik = 2345
+mandiri^sam^uid^1 = ---
+mandiri^sam^uid^2 = ---
+mandiri^single^sam = 1
+mandiri^active^slot = 1
+bni^single^sam = 1
+bni^active^slot = 1
+topup^online^bri = 0
+topup^online^bca = 0
+topup^online^dki = 0
+bni^sam^1^no = ---
+bni^sam^2^no = ---
+mandiri^daily^settle^time = 02:00
+
+[MEI]
+port = COM
+
+[GRG]
+port = COM2
+last^money^inserted = N/A
+
+[QR]
+qr^host = http://apiv2.mdd.co.id:10107/v1/
+qr^token = e6f092a0fa88d9cac8dac3d2162f1450
+qr^mid = 000972721511382bf739669cce165808
+store^local = 1
+
+[SFTP]
+mdr^host = 103.28.14.188
+mdr^user = tj-kiosk
+mdr^pass = tj-kiosk123
+mdr^port = 22222
+mdr^path = /home/mdd/TopUpOffline
+bni^host = 103.28.14.188
+bni^user = tj-kiosk
+bni^pass = tj-kiosk123
+bni^port = 22222
+bni^path = /home/tj-kiosk/topup/bni/
+
+[REPOSITORY]
+username = developer
+password = Mdd*123#
+
+[EDC]
+type = UPT-IUR
+port = COM3
+debit^only = 1
+print^last = 1
+daily^settle^time = 23:00
+
