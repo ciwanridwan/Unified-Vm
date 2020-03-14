@@ -1,6 +1,6 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.3
-//import QtGraphicalEffects 1.0
+import QtGraphicalEffects 1.0
 import "base_function.js" as FUNC
 import "screen.js" as SCREEN
 import "config.js" as CONF
@@ -9,10 +9,10 @@ import "config.js" as CONF
 Base{
     id: general_payment_process
 
-                property var globalScreenType: '2'
-                height: (globalScreenType=='2') ? 1024 : 1080
-                width: (globalScreenType=='2') ? 1280 : 1920
-    property int timer_value: 300
+//                property var globalScreenType: '2'
+//                height: (globalScreenType=='2') ? 1024 : 1080
+//                width: (globalScreenType=='2') ? 1280 : 1920
+    property int timer_value: 900
     property var press: '0'
     property var details
     property var notif_text: 'Masukan Uang Tunai Anda Pada Bill Acceptor di bawah'
@@ -32,8 +32,11 @@ Base{
     property bool centerOnlyButton: false
     property bool proceedAble: false
     property int attemptCD: 0
+
     property int refundAmount: 0
     property var refundMode: 'payment_cash_exceed'
+    property var refundChannel: 'DIVA'
+
 
     property var qrPayload
     property var preloadNotif
@@ -41,8 +44,6 @@ Base{
 
     property var notifTitle: ''
     property var notifMessage: ''
-
-    property var refundChannel: 'DIVA'
 
     signal framingSignal(string str)
 
@@ -89,8 +90,9 @@ Base{
         base.result_check_qr.connect(qr_check_result);
         base.result_trx_ppob.connect(ppob_trx_result);
         base.result_pay_qr.connect(qr_check_result);
-        base.result_global_refund_balance.connect(transfer_balance_result)
-        framingSignal.connect(get_signal_frame)
+        base.result_global_refund_balance.connect(transfer_balance_result);
+        base.result_get_refund.connect(get_refund_result);
+        framingSignal.connect(get_signal_frame);
     }
 
     Component.onDestruction:{
@@ -113,8 +115,24 @@ Base{
         base.result_check_qr.disconnect(qr_check_result);
         base.result_trx_ppob.disconnect(ppob_trx_result);
         base.result_pay_qr.disconnect(qr_check_result);
-        base.result_global_refund_balance.disconnect(transfer_balance_result)
-        framingSignal.disconnect(get_signal_frame)
+        base.result_global_refund_balance.disconnect(transfer_balance_result);
+        base.result_get_refund.disconnect(get_refund_result);
+        framingSignal.disconnect(get_signal_frame);
+
+    }
+
+    function get_refund_result(r){
+        var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
+        console.log('get_refund_result', now, r);
+        var refund = JSON.parse(refund);
+        if (refund.MANUAL == 'AVAILABLE') popup_input_number.manualEnable = true;
+        if (refund.DIVA == 'AVAILABLE') popup_input_number.manualEnable = true;
+        if (refund.LINKAJA == 'AVAILABLE') popup_input_number.linkajaEnable = true;
+        if (refund.OVO == 'AVAILABLE') popup_input_number.ovoEnable = true;
+        if (refund.GOPAY == 'AVAILABLE') popup_input_number.gopayEnable = true;
+        if (refund.SHOPEEPAY == 'AVAILABLE') popup_input_number.shopeepayEnable = true;
+        if (refund.DANA == 'AVAILABLE') popup_input_number.danaEnable = true;
+        if (refund.DETAILS.length > 0) popup_input_number.availableRefund = refund.DETAILS;
 
     }
 
@@ -695,7 +713,10 @@ Base{
         totalPrice = parseInt(getDenom) + parseInt(adminFee);
         var epoch_string = details.epoch.toString();
         uniqueCode = epoch_string.substring(epoch_string.length-6);
-        _SLOT.start_set_payment(details.payment);
+        // Unnecessary
+//        _SLOT.start_set_payment(details.payment);
+        // Change To Get Refunds Details
+        _SLOT.start_get_refunds();
         if (['ovo', 'gopay', 'dana', 'linkaja', 'shopeepay'].indexOf(details.payment) > -1){
             console.log('generating_qr', now, details.payment);
             var msg = 'Persiapkan Aplikasi ' + details.payment.toUpperCase() + ' Pada Gawai Anda!';
@@ -1119,11 +1140,13 @@ Base{
         id: popup_input_number
 //        calledFrom: 'general_payment_process'
         handleButtonVisibility: next_button_input_number
+        externalSetValue: refundChannel
 //        visible: true
         z: 99
 
         CircleButton{
             id: cancel_button_input_number
+            visible: false
             anchors.left: parent.left
             anchors.leftMargin: 30
             anchors.bottom: parent.bottom
@@ -1169,10 +1192,33 @@ Base{
             MouseArea{
                 anchors.fill: parent
                 onClicked: {
+                    var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
                     if (press != '0') return;
                     press = '1';
-                    set_refund_number(popup_input_number.numberInput);
-                    _SLOT.user_action_log('Press "LANJUT" Input HP Number ' + customerPhone);
+                    if (refundChannel=='MANUAL'){
+                        popup_input_number.close();
+                        details.refund_status = 'AVAILABLE';
+                        details.refund_number = '';
+                        details.refund_amount = refundAmount.toString();
+                        var refundPayload = {
+                            amount: details.refund_amount,
+                            customer: 'NO_PHONE_NUMBER',
+                            reff_no: details.shop_type + details.epoch.toString(),
+                            remarks: details,
+                            channel: 'MANUAL',
+                            mode: 'not_having_phone_no_for_refund',
+                            payment: details.payment
+                        }
+                        _SLOT.start_store_pending_balance(JSON.stringify(refundPayload));
+                        console.log('start_store_pending_balance', now, JSON.stringify(refundPayload));
+                        release_print('Pengembalian Dana Tertunda', 'Silakan Ambil Struk Transaksi Anda Dan Lapor Petugas');
+                        return;
+                    }
+                    // If Not Manual Method
+                    // set_refund_number(popup_input_number.numberInput);
+                    customerPhone = popup_input_number.numberInput;
+                    details.refund_number = customerPhone;
+                    _SLOT.user_action_log('Press "LANJUT" Input Number ' + customerPhone + ' For Refund Channel ' + refundChannel);
                     switch(refundMode){
                     case 'payment_cash_exceed':
                         release_print_with_refund(refundAmount.toString());

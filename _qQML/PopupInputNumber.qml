@@ -10,22 +10,34 @@ Rectangle{
     id:popup_input_number
     width: parseInt(SCREEN.size.width)
     height: parseInt(SCREEN.size.height)
+
 //    property var globalScreenType: '1'
-//          height: (globalScreenType=='2') ? 1024 : 1080
-//          width: (globalScreenType=='2') ? 1280 : 1920
+//    height: (globalScreenType=='2') ? 1024 : 1080
+//    width: (globalScreenType=='2') ? 1280 : 1920
+
     color: 'transparent'
     property var escapeFunction: 'closeWindow' //['closeWindow', 'backToMain', 'backToPrevious']
-    property int max_count: 15
+    property int maxCountInput: 15
     property var press: "0"
     property var numberInput: ""
     property string mainTitle: "Terjadi Kegagalan Transaksi, Masukkan No HP Anda Untuk Pengembalian Dana"
-    property var titleImage: "source/whatsapp_transparent_white.png"
+    property var channelSelectedImage: "source/whatsapp_transparent_white.png"
+    property var colorMode: "darkgray"
     property bool withBackground: true
-    property int min_count: 9
+    property int minCountInput: 9
     property var pattern: '08'
     property var calledFrom
     property var handleButtonVisibility
-    property var providerTag: "*Dompet Digital Didukung Oleh DUWIT"
+    property var externalSetValue
+    property var channelDescription: "Pengembalian Dana Pada Akun XXX Anda, Dikenakan Potongan Biaya Rp. 500"
+    property bool manualEnable: false
+    property bool divaEnable: false
+    property bool linkajaEnable: false
+    property bool danaEnable: false
+    property bool ovoEnable: false
+    property bool gopayEnable: false
+    property bool shopeepayEnable: false
+    property var availableRefund: []
 
     visible: false
     scale: visible ? 1.0 : 0.1
@@ -38,19 +50,22 @@ Rectangle{
         visible: withBackground
         anchors.fill: parent
         color: CONF.background_color
+//        color: 'black'
         opacity: 0.6
     }
 
     Rectangle{
         id: notif_rec
         width: parent.width
-        height: parent.height - 300
-        color: CONF.frame_color
+        height: parent.height - 100
+//        color: CONF.frame_color
+        color: colorMode
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.verticalCenter: parent.verticalCenter
 
         MainTitle{
-            width: parent.width
+            id: main_title
+            width: parent.width - 200
             anchors.top: parent.top
             anchors.topMargin: 45
             anchors.horizontalCenter: parent.horizontalCenter
@@ -60,45 +75,47 @@ Rectangle{
         }
 
         Text {
+            id: channel_desc
             color: CONF.text_color
-            text: providerTag
-            anchors.verticalCenterOffset: (popup_input_number.width==1920) ? 200 : 400
-            anchors.verticalCenter: parent.verticalCenter
-            anchors.right: parent.right
-            anchors.rightMargin: (popup_input_number.width==1920) ? 50 : 10
+            text: channelDescription
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 100
+            anchors.horizontalCenter: parent.horizontalCenter
             font.bold: true
             font.italic: true
             verticalAlignment: Text.AlignVCenter
-            horizontalAlignment: Text.AlignRight
+            horizontalAlignment: Text.AlignHCenter
             font.family:"Ubuntu"
-            font.pixelSize: (popup_input_number.width==1920) ? 30 : 20
+            font.pixelSize: (popup_input_number.width==1920) ? 35 : 25
         }
 
         TextRectangle{
-            id: textRectangle
+            id: text_rectangle
             width: 650
             height: 100
             anchors.top: parent.top
             anchors.topMargin: 160
             anchors.horizontalCenter: parent.horizontalCenter
             borderColor: CONF.text_color
+            visible: !manualMethod.isSelected
         }
 
         Image{
+            id: channel_image
             width: 150
             height: 150
-            anchors.leftMargin: (popup_input_number.width==1920) ? 200 : 0
+            anchors.right: parent.right
+            anchors.rightMargin: 200
             anchors.verticalCenter: parent.verticalCenter
             opacity: 0.6
             scale: 4
-            anchors.left: parent.left
-            source: titleImage
+            source: channelSelectedImage
             fillMode: Image.PreserveAspectFit
         }
 
         TextInput {
             id: inputText
-            anchors.centerIn: textRectangle;
+            anchors.centerIn: text_rectangle;
             text: numberInput
     //        text: "INPUT NUMBER 1234567890SRDCVBUVTY"
             cursorVisible: true
@@ -107,7 +124,7 @@ Rectangle{
             font.pixelSize: (popup_input_number.width==1920) ? 50 : 45
             color: CONF.text_color
             clip: true
-            visible: true
+            visible: !manualMethod.isSelected
             focus: true
         }
 
@@ -115,10 +132,11 @@ Rectangle{
             id:virtual_numpad
             width:320
             height:420
-            anchors.verticalCenterOffset: 125
+            anchors.verticalCenterOffset: 50
             anchors.verticalCenter: parent.verticalCenter
             anchors.horizontalCenter: parent.horizontalCenter
-            visible: true
+            //TODO: Assign this into conditional view
+            visible: !manualMethod.isSelected
             property int count:0
 
             Component.onCompleted: {
@@ -139,16 +157,16 @@ Rectangle{
 
             function typeIn(str){
                 if (str == "" && count > 0){
-                    if(count >= max_count){
-                        count = max_count
+                    if(count >= maxCountInput){
+                        count = maxCountInput
                     }
                     count--
                     numberInput = numberInput.substring(0,count);
                 }
-                if (str != "" && count<max_count){
+                if (str != "" && count<maxCountInput){
                     count++
                 }
-                if (count >= max_count){
+                if (count >= maxCountInput){
                     str = ""
                 } else {
                     numberInput += str
@@ -159,8 +177,169 @@ Rectangle{
 
     }
 
+    Column{
+        id: column_buttons
+        spacing: 5
+        width: 150
+        anchors.left: parent.left
+        anchors.leftMargin: -10
+        anchors.verticalCenter: parent.verticalCenter
+
+        RefundSelectionButton{
+            id: manualMethod
+            buttonName: 'MANUAL'
+            imageSource: 'source/manual_logo.jpeg'
+            colorMode: 'white'
+            channelCode: 'MANUAL'
+            visible: manualEnable
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    switch_to_active(manualMethod);
+                }
+            }
+        }
+
+        RefundSelectionButton{
+            id: divaMethod
+            buttonName: 'WHATSAPP'
+            imageSource: 'source/whatsapp_logo.jpeg'
+            colorMode: '#64C85A'
+            channelCode: 'DIVA'
+            visible: divaEnable
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    switch_to_active(divaMethod);
+                }
+            }
+        }
+
+        RefundSelectionButton{
+            id: linkajaMethod
+            buttonName: 'LINKAJA'
+            imageSource: 'source/linkaja_logo.jpeg'
+            colorMode: '#D13A34'
+            channelCode: 'LINKAJA'
+            visible: linkajaEnable
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    switch_to_active(linkajaMethod);
+                }
+            }
+        }
+
+        RefundSelectionButton{
+            id: danaMethod
+            buttonName: 'DANA'
+            imageSource: 'source/dana_logo.jpeg'
+            colorMode: '#3888DB'
+            channelCode: 'DANA'
+            visible: danaEnable
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    switch_to_active(danaMethod);
+                }
+            }
+        }
+
+        RefundSelectionButton{
+            id: ovoMethod
+            buttonName: 'O V O'
+            imageSource: 'source/ovo_logo.jpeg'
+            colorMode: '#45368B'
+            channelCode: 'OVO'
+            visible: ovoEnable
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    switch_to_active(ovoMethod);
+                }
+            }
+        }
+
+
+        RefundSelectionButton{
+            id: gopayMethod
+            buttonName: 'GOPAY'
+            imageSource: 'source/gopay_logo.png'
+            colorMode: '#48A7CC'
+            channelCode: 'GOPAY'
+            visible: gopayEnable
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    switch_to_active(gopayMethod);
+                }
+            }
+        }
+
+
+        RefundSelectionButton{
+            id: shopeeMethod
+            buttonName: 'SHOPEE'
+            imageSource: 'source/shopee_logo.jpg'
+            colorMode: '#D25437'
+            channelCode: 'SHOPEEPAY'
+            visible: shopeepayEnable
+            MouseArea{
+                anchors.fill: parent
+                onClicked: {
+                    switch_to_active(shopeeMethod);
+                }
+            }
+        }
+
+    }
+
+    function switch_to_active(id){
+        console.log('Choose "'+ id.channelCode +'" as Refund Channel');
+//        _SLOT.user_action_log('Choose "'+ id.channelCode+'" as Refund Channel');
+        reset_all_channel();
+        id.setActive();
+        if (availableRefund.length > 0){
+            for (var i=0;i < availableRefund.length;i++){
+                if (availableRefund[i].status == '1'){
+                    if (availableRefund[i].name == id.channelCode){
+                        id.channelFee = availableRefund[i].admin_fee;
+                        if (parseInt(availableRefund[i].custom_admin_fee) > 0) id.channelFee = availableRefund[i].custom_admin_fee;
+                        channelDescription = availableRefund[i].description;
+                        if (availableRefund[i].due_time != "0") channelDescription += '- Waktu Kerja ' + availableRefund[i].due_time;
+                    }
+                }
+            }
+        }
+        switch(id.channelCode){
+        case 'MANUAL':
+            mainTitle = channelDescription;
+            main_title.anchors.topMargin = (popup_input_number.height/2) + 45;
+            channel_desc.visible = false;
+            break;
+        default:
+            mainTitle = 'Masukkan Nomor HP/Akun ' + id.channelCode + ' Anda';
+//            channelDescription = 'Pengembalian Dana Ke Akun ' + id.channelCode + ', Potongan Biaya Rp. ' + FUNC.insert_dot(id.channelFee.toString());
+            break;
+        }
+        channelSelectedImage = id.imageSource;
+        colorMode = id.colorMode;
+        if (externalSetValue != undefined) externalSetValue = id.channelCode;
+    }
+
+    function reset_all_channel(){
+        manualMethod.release();
+        divaMethod.release();
+        linkajaMethod.release();
+        danaMethod.release();
+        ovoMethod.release();
+        gopayMethod.release();
+        shopeeMethod.release();
+    }
+
     function open(msg){
         if (msg!=undefined) mainTitle = msg;
+        switch_to_active(divaMethod);
         popup_input_number.visible = true;
         reset_counter();
     }
@@ -172,14 +351,14 @@ Rectangle{
 
     function reset_counter(){
         numberInput = '';
-        max_count = 15;
+        maxCountInput = 15;
         virtual_numpad.count = 0;
     }
 
 
     function check_availability(){
 //        console.log('numberInput', numberInput, canProceed);
-        if (numberInput.substring(0, 2)==pattern && numberInput.length > min_count) {
+        if (numberInput.substring(0, 2)==pattern && numberInput.length > minCountInput) {
             if (calledFrom!=undefined) {
                 switch(calledFrom){
                 case 'general_payment_process':

@@ -620,6 +620,11 @@ class SlotHandler(QObject):
         _QRPaymentService.start_confirm_qr_payment()
     start_confirm_qr_payment = pyqtSlot()(start_confirm_qr_payment)
 
+    def start_get_refunds(self):
+        _KioskService.start_get_refunds()
+    start_get_refunds = pyqtSlot()(start_get_refunds)
+
+
 
 def s_handler():
     _KioskService.K_SIGNDLER.SIGNAL_GET_FILE_LIST.connect(view.rootObject().result_get_file_list)

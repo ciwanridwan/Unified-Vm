@@ -528,21 +528,77 @@ def get_payments():
         "QR_SHOPEEPAY": "AVAILABLE" if check_payment('shopeepay') is True else "NOT_AVAILABLE",
     }
 
+# [
+#             {
+#                 "tid": "110322",
+#                 "name": "DIVA",
+#                 "status": "1",
+#                 "custom_admin_fee": 0,
+#                 "refund_method_id": 1,
+#                 "admin_fee": 0,
+#                 "description": "Pengembalian Dana Ke Wallet WhatsApp Kamu, Powered By Duwit",
+#                 "due_time": "0"
+#             },
+#             {
+#                 "tid": "110322",
+#                 "name": "MANUAL",
+#                 "status": "1",
+#                 "custom_admin_fee": 0,
+#                 "refund_method_id": 99,
+#                 "admin_fee": 0,
+#                 "description": "Pengembalian Dana Melalui Transfer Oleh Tim Customer Service Kami Ke Rekening Bank Yang Kamu Miliki.",
+#                 "due_time": "H+1"
+#             },
+#             {
+#                 "tid": "110322",
+#                 "name": "LINKAJA",
+#                 "status": "1",
+#                 "custom_admin_fee": 0,
+#                 "refund_method_id": 2,
+#                 "admin_fee": 500,
+#                 "description": "Pengembalian Dana Ke Akun LinkAja Kamu",
+#                 "due_time": "0"
+#             },
+#             {
+#                 "tid": "110322",
+#                 "name": "OVO",
+#                 "status": "1",
+#                 "custom_admin_fee": 0,
+#                 "refund_method_id": 3,
+#                 "admin_fee": 1000,
+#                 "description": "Pengembalian Dana Ke Akun OVO Kamu",
+#                 "due_time": "0"
+#             }
+#         ]
+
 
 def get_refunds():
-    return {
-        "MANUAL": "AVAILABLE" if check_refund('manual') is True else "NOT_AVAILABLE",
-        "DIVA": "AVAILABLE" if check_refund('diva') is True else "NOT_AVAILABLE",
-        "LINKAJA": "AVAILABLE" if check_refund('linkaja') is True else "NOT_AVAILABLE",
-        "OVO": "AVAILABLE" if check_refund('ovo') is True else "NOT_AVAILABLE",
-        "GOPAY": "AVAILABLE" if check_refund('gopay') is True else "NOT_AVAILABLE",
-        "DANA": "AVAILABLE" if check_refund('dana') is True else "NOT_AVAILABLE",
-        "SHOPEEPAY": "AVAILABLE" if check_refund('shopeepay') is True else "NOT_AVAILABLE",
-    }
+    if len(REFUND_SETTING) == 0 or empty(REFUND_SETTING) is True:
+        return {
+            "MANUAL": "AVAILABLE",
+            "DIVA": "AVAILABLE",
+            "LINKAJA": "NOT_AVAILABLE",
+            "OVO": "NOT_AVAILABLE",
+            "GOPAY": "NOT_AVAILABLE",
+            "DANA": "NOT_AVAILABLE",
+            "SHOPEEPAY": "NOT_AVAILABLE",
+            "DETAILS": []
+        }
+    else: 
+        return {
+            "MANUAL": "AVAILABLE" if check_refund('manual') is True else "NOT_AVAILABLE",
+            "DIVA": "AVAILABLE" if check_refund('diva') is True else "NOT_AVAILABLE",
+            "LINKAJA": "AVAILABLE" if check_refund('linkaja') is True else "NOT_AVAILABLE",
+            "OVO": "AVAILABLE" if check_refund('ovo') is True else "NOT_AVAILABLE",
+            "GOPAY": "AVAILABLE" if check_refund('gopay') is True else "NOT_AVAILABLE",
+            "DANA": "AVAILABLE" if check_refund('dana') is True else "NOT_AVAILABLE",
+            "SHOPEEPAY": "AVAILABLE" if check_refund('shopeepay') is True else "NOT_AVAILABLE",
+            "DETAILS": REFUND_SETTING
+        }
 
 
 def check_refund(name='ovo'):
-    if len(REFUND_SETTING) == 0 or empty(REFUND_SETTING):
+    if len(REFUND_SETTING) == 0 or empty(REFUND_SETTING) is True:
         return False
     for x in range(len(REFUND_SETTING)):
         if REFUND_SETTING[x]['name'].lower() == name:
@@ -551,7 +607,7 @@ def check_refund(name='ovo'):
 
 
 def check_payment(name='ovo'):
-    if len(PAYMENT_SETTING) == 0 or empty(PAYMENT_SETTING):
+    if len(PAYMENT_SETTING) == 0 or empty(PAYMENT_SETTING) is True:
         return False
     for x in range(len(PAYMENT_SETTING)):
         if PAYMENT_SETTING[x]['name'].lower() == name:
