@@ -7,7 +7,7 @@ import "config.js" as CONF
 
 
 Rectangle{
-    id:popup_input_number
+    id:popup_refund
     width: parseInt(SCREEN.size.width)
     height: parseInt(SCREEN.size.height)
 
@@ -78,10 +78,10 @@ Rectangle{
             id: main_title
             width: parent.width - 200
             anchors.top: parent.top
-            anchors.topMargin: mainTitleMode=="normal" ? 45 : popup_input_number.height/2
+            anchors.topMargin: mainTitleMode=="normal" ? 45 : popup_refund.height/2
             anchors.horizontalCenter: parent.horizontalCenter
             show_text: caseTitle + mainTitle
-            size_: (popup_input_number.width==1920) ? 50 : 40
+            size_: (popup_refund.width==1920) ? 50 : 40
             color_: CONF.text_color
         }
 
@@ -97,7 +97,7 @@ Rectangle{
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
             font.family:"Ubuntu"
-            font.pixelSize: (popup_input_number.width==1920) ? 35 : 25
+            font.pixelSize: (popup_refund.width==1920) ? 35 : 25
         }
 
         TextRectangle{
@@ -132,7 +132,7 @@ Rectangle{
             cursorVisible: true
             horizontalAlignment: Text.AlignLeft
             font.family: "Ubuntu"
-            font.pixelSize: (popup_input_number.width==1920) ? 50 : 45
+            font.pixelSize: (popup_refund.width==1920) ? 50 : 45
             color: CONF.text_color
             clip: true
             visible: !manualMethod.isSelected
@@ -329,14 +329,13 @@ Rectangle{
             mainTitleMode = 'center';
             channel_desc.visible = false;
             if (handleButtonVisibility!=undefined) handleButtonVisibility.visible = true;
-
             break;
         default:
             mainTitle = 'Masukkan Nomor HP/Akun ' + id.channelCode + ' Anda';
             mainTitleMode = 'normal';
 //            channelDescription = 'Pengembalian Dana Ke Akun ' + id.channelCode + ', Potongan Biaya Rp. ' + FUNC.insert_dot(id.channelFee.toString());
             if (handleButtonVisibility!=undefined) handleButtonVisibility.visible = false;
-
+            reset_counter();
             break;
         }
         channelSelectedImage = id.imageSource;
@@ -358,12 +357,12 @@ Rectangle{
         if (msg!=undefined) caseTitle = msg;
         if (amount!=undefined) refundAmount = parseInt(amount);
         switch_to_active(divaMethod);
-        popup_input_number.visible = true;
+        popup_refund.visible = true;
         reset_counter();
     }
 
     function close(){
-        popup_input_number.visible = false;
+        popup_refund.visible = false;
         reset_counter();
     }
 

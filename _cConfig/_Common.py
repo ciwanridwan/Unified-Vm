@@ -528,49 +528,6 @@ def get_payments():
         "QR_SHOPEEPAY": "AVAILABLE" if check_payment('shopeepay') is True else "NOT_AVAILABLE",
     }
 
-# [
-#             {
-#                 "tid": "110322",
-#                 "name": "DIVA",
-#                 "status": "1",
-#                 "custom_admin_fee": 0,
-#                 "refund_method_id": 1,
-#                 "admin_fee": 0,
-#                 "description": "Pengembalian Dana Ke Wallet WhatsApp Kamu, Powered By Duwit",
-#                 "due_time": "0"
-#             },
-#             {
-#                 "tid": "110322",
-#                 "name": "MANUAL",
-#                 "status": "1",
-#                 "custom_admin_fee": 0,
-#                 "refund_method_id": 99,
-#                 "admin_fee": 0,
-#                 "description": "Pengembalian Dana Melalui Transfer Oleh Tim Customer Service Kami Ke Rekening Bank Yang Kamu Miliki.",
-#                 "due_time": "H+1"
-#             },
-#             {
-#                 "tid": "110322",
-#                 "name": "LINKAJA",
-#                 "status": "1",
-#                 "custom_admin_fee": 0,
-#                 "refund_method_id": 2,
-#                 "admin_fee": 500,
-#                 "description": "Pengembalian Dana Ke Akun LinkAja Kamu",
-#                 "due_time": "0"
-#             },
-#             {
-#                 "tid": "110322",
-#                 "name": "OVO",
-#                 "status": "1",
-#                 "custom_admin_fee": 0,
-#                 "refund_method_id": 3,
-#                 "admin_fee": 1000,
-#                 "description": "Pengembalian Dana Ke Akun OVO Kamu",
-#                 "due_time": "0"
-#             }
-#         ]
-
 
 def get_refunds():
     if len(REFUND_SETTING) == 0 or empty(REFUND_SETTING) is True:
@@ -582,6 +539,7 @@ def get_refunds():
             "GOPAY": "NOT_AVAILABLE",
             "DANA": "NOT_AVAILABLE",
             "SHOPEEPAY": "NOT_AVAILABLE",
+            "MIN_AMOUNT": int(_ConfigParser.get_set_value('TERMINAL', 'min^refund^amount', '2500')),
             "DETAILS": []
         }
     else: 
@@ -593,6 +551,7 @@ def get_refunds():
             "GOPAY": "AVAILABLE" if check_refund('gopay') is True else "NOT_AVAILABLE",
             "DANA": "AVAILABLE" if check_refund('dana') is True else "NOT_AVAILABLE",
             "SHOPEEPAY": "AVAILABLE" if check_refund('shopeepay') is True else "NOT_AVAILABLE",
+            "MIN_AMOUNT": int(_ConfigParser.get_set_value('TERMINAL', 'min^refund^amount', '2500')),
             "DETAILS": REFUND_SETTING
         }
 

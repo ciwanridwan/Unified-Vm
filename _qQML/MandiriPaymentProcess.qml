@@ -59,7 +59,7 @@ Base{
             if (preloadNotif==undefined){
                 define_first_process();
             } else {
-                popup_input_number.open('Silakan Masukkan No HP Anda')
+                popup_refund.open('Silakan Masukkan No HP Anda', refundAmount);
             }
             modeButtonPopup = 'check_balance';
             abc.counter = timer_value;
@@ -125,14 +125,15 @@ Base{
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('get_refund_result', now, r);
         var refund = JSON.parse(refund);
-        if (refund.MANUAL == 'AVAILABLE') popup_input_number.manualEnable = true;
-        if (refund.DIVA == 'AVAILABLE') popup_input_number.manualEnable = true;
-        if (refund.LINKAJA == 'AVAILABLE') popup_input_number.linkajaEnable = true;
-        if (refund.OVO == 'AVAILABLE') popup_input_number.ovoEnable = true;
-        if (refund.GOPAY == 'AVAILABLE') popup_input_number.gopayEnable = true;
-        if (refund.SHOPEEPAY == 'AVAILABLE') popup_input_number.shopeepayEnable = true;
-        if (refund.DANA == 'AVAILABLE') popup_input_number.danaEnable = true;
-        if (refund.DETAILS.length > 0) popup_input_number.availableRefund = refund.DETAILS;
+        if (refund.MANUAL == 'AVAILABLE') popup_refund.manualEnable = true;
+        if (refund.DIVA == 'AVAILABLE') popup_refund.manualEnable = true;
+        if (refund.LINKAJA == 'AVAILABLE') popup_refund.linkajaEnable = true;
+        if (refund.OVO == 'AVAILABLE') popup_refund.ovoEnable = true;
+        if (refund.GOPAY == 'AVAILABLE') popup_refund.gopayEnable = true;
+        if (refund.SHOPEEPAY == 'AVAILABLE') popup_refund.shopeepayEnable = true;
+        if (refund.DANA == 'AVAILABLE') popup_refund.danaEnable = true;
+        if (refund.DETAILS.length > 0) popup_refund.availableRefund = refund.DETAILS;
+        if (refund.MIN_AMOUNT != undefined && parseInt(refund.MIN_AMOUNT) > 0) popup_refund.minRefundAmount = parseInt(refund.MIN_AMOUNT);
 
     }
 
@@ -158,7 +159,7 @@ Base{
 
     function validate_release_refund(error){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-        var message_input_phone = 'Terjadi Kegagalan Transaksi, Masukkan No HP Anda Untuk Pengembalian Dana';
+        var messase_case_refund = 'Terjadi Kegagalan Transaksi, ';
         refundMode = error;
         abc.counter = timer_value/2;
         my_timer.restart();
@@ -173,7 +174,7 @@ Base{
             // If Cash Exceed Payment Detected
             refundMode = 'payment_cash_exceed';
             refundAmount = exceed;
-            message_input_phone = 'Terjadi Lebih Bayar [Rp. '+FUNC.insert_dot(exceed.toString())+'], Masukkan No HP Anda Untuk Pengembalian Dana';
+            messase_case_refund = 'Terjadi Lebih Bayar [Rp. '+FUNC.insert_dot(exceed.toString())+'], ';
         }
         switch(error){
         case 'user_payment_timeout':
@@ -183,8 +184,8 @@ Base{
             refundAmount = receivedCash;
             details.process_error = error;
             details.payment_received = receivedCash.toString();
-            message_input_phone = 'Terjadi Pembatalan Transaksi, Masukkan No HP Anda Untuk Pengembalian Dana';
-            if (error=='user_payment_timeout') message_input_phone = 'Waktu Transaksi Habis, Masukkan No HP Anda Untuk Pengembalian Dana';
+            messase_case_refund = 'Terjadi Pembatalan Transaksi, ';
+            if (error=='user_payment_timeout') messase_case_refund = 'Waktu Transaksi Habis, ';
             break;
         case 'cash_device_error':
             if (receivedCash == 0) {
@@ -195,7 +196,7 @@ Base{
             details.payment_error = error;
             details.payment_received = receivedCash.toString();
             refundAmount = receivedCash;
-            message_input_phone = 'Terjadi Kesalahan Mesin, Masukkan No HP Anda Untuk Pengembalian Dana';
+            messase_case_refund = 'Terjadi Kesalahan Mesin,';
             break;
         case 'ppob_error':
         case 'card_eject_error':
@@ -205,8 +206,8 @@ Base{
             break;
         }
         press = '0';
-        popup_input_number.open(message_input_phone);
-        console.log('validate_release_refund', now, refundMode, refundAmount, message_input_phone);
+        popup_refund.open(messase_case_refund, refundAmount);
+        console.log('validate_release_refund', now, refundMode, refundAmount, messase_case_refund);
 
     }
 
@@ -812,7 +813,7 @@ Base{
         button_text: 'BATAL'
         modeReverse: true
         z: 10
-        visible: !popup_loading.visible && !global_frame.visible && !qr_payment_frame.visible && !popup_input_number.visible
+        visible: !popup_loading.visible && !global_frame.visible && !qr_payment_frame.visible && !popup_refund.visible
 
         MouseArea{
             anchors.fill: parent
@@ -1136,8 +1137,8 @@ Base{
    }
 
 
-    PopupInputNumber{
-        id: popup_input_number
+    PopupInputNoRefund{
+        id: popup_refund
 //        calledFrom: 'general_payment_process'
         handleButtonVisibility: next_button_input_number
         externalSetValue: refundChannel
@@ -1159,7 +1160,7 @@ Base{
                 onClicked: {
                     var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
                     _SLOT.user_action_log('Press "TIDAK PUNYA" in Input HP Number');
-                    popup_input_number.close();
+                    popup_refund.close();
                     details.refund_status = 'AVAILABLE';
                     details.refund_number = '';
                     details.refund_amount = refundAmount.toString();
@@ -1196,7 +1197,7 @@ Base{
                     if (press != '0') return;
                     press = '1';
                     if (refundChannel=='MANUAL'){
-                        popup_input_number.close();
+                        popup_refund.close();
                         details.refund_status = 'AVAILABLE';
                         details.refund_number = '';
                         details.refund_amount = refundAmount.toString();
@@ -1215,8 +1216,8 @@ Base{
                         return;
                     }
                     // If Not Manual Method
-                    // set_refund_number(popup_input_number.numberInput);
-                    customerPhone = popup_input_number.numberInput;
+                    // set_refund_number(popup_refund.numberInput);
+                    customerPhone = popup_refund.numberInput;
                     details.refund_number = customerPhone;
                     _SLOT.user_action_log('Press "LANJUT" Input Number ' + customerPhone + ' For Refund Channel ' + refundChannel);
                     switch(refundMode){
@@ -1230,7 +1231,7 @@ Base{
                         release_print_with_refund(refundAmount.toString(), 'Terjadi Kesalahan', 'Silakan Ambil Struk Sebagai Bukti');
                         break;
                     }
-                     popup_input_number.close();
+                     popup_refund.close();
                     // proceedAble = true;
                     // define_first_process();
                 }
