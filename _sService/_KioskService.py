@@ -21,7 +21,7 @@ from _sService import _UserService
 from time import sleep
 import subprocess
 from operator import itemgetter
-# from _dDevice import _GRG
+from _dDevice import _GRG
 
 
 class KioskSignalHandler(QObject):
@@ -148,7 +148,7 @@ def define_device_port_setting(data):
         {"description": "QR LINKAJA", "config": "COM5", "payment_method_id": 7, "status": "1", "name": "linkaja", "tid": "110322"}
         ]
     ''' 
-    if _Common.empty(data):
+    if _Common.empty(data) is True:
         LOGGER.warning(('EMPTY_DATA_PAYMENT'))
         return
     for c in data: # QR No Need To Store in setting file
@@ -507,11 +507,7 @@ def get_cpu_temp():
 
 
 def execute_command(command):
-    try:
-        os.system(command)
-        LOGGER.info(('SUCCESS', command))
-    except Exception as e:
-        LOGGER.warning(('FAILED', str(e)))
+    _Helper.execute_console(command)
 
 
 def post_gui_version():
@@ -773,116 +769,7 @@ def direct_alter_table(scripts):
     return result
 
 
-PREV_RECEIPT_RAW_DATA = None
-PREV_BOOKING_CODE = None
-PREV_PARAM_DATA = None
-PREV_TIBOX_ID = None
-
-
-def clear_prev_data():
-    global PREV_RECEIPT_RAW_DATA, PREV_PARAM_DATA, PREV_BOOKING_CODE, PREV_TIBOX_ID
-    PREV_PARAM_DATA = None
-    PREV_BOOKING_CODE = None
-    PREV_RECEIPT_RAW_DATA = None
-    PREV_TIBOX_ID = None
-
-
-def start_search_booking(bk):
-    _Helper.get_pool().apply_async(search_booking, (bk,))
-
-
-def search_booking(bk):
-    global PREV_BOOKING_CODE
-    PREV_BOOKING_CODE = bk
-    try:
-        param = {'bookingCode': bk}
-        r = _DAO.search_receipt(param)
-        if len(r) != 0:
-            _s, _r = complete_booking_data(r[0])
-            if _s is True:
-                K_SIGNDLER.SIGNAL_BOOKING_SEARCH.emit(json.dumps(_r))
-            else:
-                K_SIGNDLER.SIGNAL_BOOKING_SEARCH.emit('ERROR')
-            LOGGER.debug((bk, _r))
-        else:
-            K_SIGNDLER.SIGNAL_BOOKING_SEARCH.emit('NO_DATA')
-            LOGGER.debug((str(r)))
-    except Exception as e:
-        K_SIGNDLER.SIGNAL_BOOKING_SEARCH.emit('ERROR')
-        LOGGER.warning((e))
-
-
-DUMMY_PROCESS = False
-
-
-def complete_booking_data(p):
-    global PREV_RECEIPT_RAW_DATA, PREV_PARAM_DATA, PREV_TIBOX_ID
-    PREV_RECEIPT_RAW_DATA = p['receiptRaw']
-    PREV_PARAM_DATA = p['receiptData']
-    param_send = {
-        'booking_code': p['bookingCode']
-    }
-    if DUMMY_PROCESS is False:
-        _url = _Common.BACKEND_URL + 'booking/status'
-        status, response = _NetworkAccess.post_to_url(url=_url, param=param_send)
-        if status == 200 and response['result'] == 'OK':
-            PREV_TIBOX_ID = response['data']['bk_id']
-            p['t_booking_id'] = response['data']['bk_id']
-            p['t_payment_status'] = response['data']['bk_payment_status']
-            p['t_grand_total'] = response['data']['bk_grandtotal'].replace('.00', '')
-            # p['t_rawData'] = json.dumps(response['data'])
-            return True, p
-        else:
-            return False, p
-    else:
-        d = json.loads(p['receiptData'])
-        PREV_TIBOX_ID = p['tid']
-        p['t_booking_id'] = p['tid']
-        p['t_payment_status'] = d['GET_PAYMENT_STATUS']
-        p['t_grand_total'] = d['GET_INIT_FARE']
-        # p['t_rawData'] = 'DUMMY'
-        return True, p
-
-
-HEADER = {'Content-Type': 'multipart/form-data'}
-TIBOX_URL = _ConfigParser.get_value('TERMINAL', 'tibox^server')
-TID = _ConfigParser.get_value('TERMINAL', 'tid')
-TXT_BOOKING_STATUS = 'FAILED'
-
-
-def start_recreate_payment(payment):
-    _Helper.get_pool().apply_async(recreate_payment, (payment,))
-
-
-def recreate_payment(payment):
-    global PREV_RECEIPT_RAW_DATA, PREV_PARAM_DATA, TXT_BOOKING_STATUS
-    url_ = 'p_check_paid.php?val=' + payment + '&&tid=' + TID + '&&id=' + str(PREV_TIBOX_ID)
-    print('pyt: start_recreate_payment', url_)
-    try:
-        trying = 0
-        while True:
-            trying += 1
-            status, response = _NetworkAccess.get_from_url(url=TIBOX_URL + url_, header=HEADER)
-            if status == 200 and 'OK' in response:
-                TXT_BOOKING_STATUS = 'SUCCESS'
-                if PREV_RECEIPT_RAW_DATA is not None:
-                    update_param_data = json.loads(PREV_PARAM_DATA)
-                    update_param_data['GET_UPDATE_PAYMENT'] = TXT_BOOKING_STATUS
-                    PREV_PARAM_DATA = json.dumps(update_param_data)
-                    PREV_PARAM_DATA = PREV_PARAM_DATA.replace('Payment Status', 'Booking Status')
-                    PREV_RECEIPT_RAW_DATA = PREV_RECEIPT_RAW_DATA.split('Booking Status')[0]
-                    PREV_RECEIPT_RAW_DATA += ('Booking Status   : ' + TXT_BOOKING_STATUS + '\r\n')
-                LOGGER.info(('recreate_payment to vedaleon: ', str(response)))
-                K_SIGNDLER.SIGNAL_RECREATE_PAYMENT.emit('SUCCESS')
-                break
-            if trying == 3:
-                LOGGER.warning(('recreate_payment to vedaleon: ', str(response)))
-                K_SIGNDLER.SIGNAL_RECREATE_PAYMENT.emit('ERROR')
-                break
-            time.sleep(2)
-    except Exception as e:
-        LOGGER.warning((e))
-        K_SIGNDLER.SIGNAL_RECREATE_PAYMENT.emit('ERROR')
+TID = _Common.TID
 
 
 def start_get_admin_key():
@@ -992,35 +879,36 @@ def direct_store_transaction_data(payload):
 
 
 def store_transaction_global(param, retry=False):
-    global GLOBAL_TRANSACTION_DATA, MEI_HISTORY, TRX_ID_SALE, PID_SALE, CARD_NO, PID_STOCK_SALE
-    GLOBAL_TRANSACTION_DATA = json.loads(param)
+    global GLOBAL_TRANSACTION_DATA, TRX_ID_SALE, PID_SALE, CARD_NO, PID_STOCK_SALE
+    g = GLOBAL_TRANSACTION_DATA = json.loads(param)
     LOGGER.info(('GLOBAL_TRANSACTION_DATA', param))
     try:
-        PID_SALE = GLOBAL_TRANSACTION_DATA['shop_type'] + str(GLOBAL_TRANSACTION_DATA['epoch'])
-        _key = 'EMONEY' if 'Mandiri' in GLOBAL_TRANSACTION_DATA['provider'] else 'TAPCASH'
-
+        __pid = PID_SALE = g['shop_type'] + str(g['epoch'])
+        # _______________________________________________________________________________________________________
         if retry is False:
-            _trxid = _Helper.get_uuid()
-            TRX_ID_SALE = _trxid
-            if 'payment_error' in GLOBAL_TRANSACTION_DATA.keys():
-                if GLOBAL_TRANSACTION_DATA['shop_type'] == 'shop':
-                    PID_SALE = GLOBAL_TRANSACTION_DATA['raw']['pid']
-                GLOBAL_TRANSACTION_DATA['pid'] = PID_SALE
-                GLOBAL_TRANSACTION_DATA['trxid'] = _trxid
-                if GLOBAL_TRANSACTION_DATA['payment'] == 'cash':
+            _trxid = TRX_ID_SALE = _Helper.get_uuid()
+            # If TRX Failure/Payment Error Detected
+            if 'payment_error' in g.keys():
+                if g['shop_type'] == 'shop':
+                    PID_SALE = g['raw']['pid']
+                g['pid'] = __pid
+                g['trxid'] = _trxid
+                if g['payment'] == 'cash':
                     # Saving The CASH
-                    save_cash_local(GLOBAL_TRANSACTION_DATA['payment_received'], 'cancel')
+                    _GRG.log_book_cash(PID_SALE, g['payment_received'], 'cancel')
+                    # save_cash_local(g['payment_received'], 'cancel')
                 K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('PAYMENT_FAILED_CANCEL_TRIGGERED')
+                # Must Stop The Logic Here
                 return
-            _total_price = int(GLOBAL_TRANSACTION_DATA['value']) * int(GLOBAL_TRANSACTION_DATA['qty'])
+            _total_price = int(g['value']) * int(g['qty'])
             _param = {
-                'pid': PID_SALE,
-                'name': GLOBAL_TRANSACTION_DATA['provider'],
+                'pid': __pid,
+                'name': g['provider'],
                 'price': _total_price,
                 'details': param,
                 'status': 1
             }
-            check_prod = _DAO.check_product(PID_SALE)
+            check_prod = _DAO.check_product(__pid)
             if len(check_prod) == 0:
                 _DAO.insert_product(_param)
             status, response = _NetworkAccess.post_to_url(url=_Common.BACKEND_URL + 'sync/product', param=_param)
@@ -1028,52 +916,48 @@ def store_transaction_global(param, retry=False):
                 _param['key'] = _param['pid']
                 _DAO.mark_sync(param=_param, _table='Product', _key='pid')
             K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|STORE_PRODUCT-'+_param['pid'])
-            if GLOBAL_TRANSACTION_DATA['payment'] == 'cash':
+            if g['payment'] == 'cash':
                 # Saving The CASH
-                save_cash_local(GLOBAL_TRANSACTION_DATA['payment_received'])
-        # ================== RETRY MODE ==================
+                # save_cash_local(g['payment_received'])
+                _GRG.log_book_cash(PID_SALE, g['payment_received'], 'cancel')
+
+        # _______________________________________________________________________________________________________
         _param_stock = dict()
         _trxid = TRX_ID_SALE
         _param = {
-            'pid': PID_SALE,
-            'name': GLOBAL_TRANSACTION_DATA['provider'],
-            'price': int(GLOBAL_TRANSACTION_DATA['value']),
+            'pid': __pid,
+            'name': g['provider'],
+            'price': int(g['value']),
             'details': param,
             'status': 1
         }
-        __pid = _param['pid']
-        if GLOBAL_TRANSACTION_DATA['shop_type'] == 'shop':
-            PID_STOCK_SALE = GLOBAL_TRANSACTION_DATA['raw']['pid']
+        if g['shop_type'] == 'shop':
+            PID_STOCK_SALE = g['raw']['pid']
             _param_stock = {
                 'pid': PID_STOCK_SALE,
-                'stock': int(GLOBAL_TRANSACTION_DATA['raw']['stock']) - int(GLOBAL_TRANSACTION_DATA['qty'])
+                'stock': int(g['raw']['stock']) - int(g['qty'])
             }
             _DAO.update_product_stock(_param_stock)
             K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|UPDATE_PRODUCT_STOCK-' + _param_stock['pid'])
-            _key = 'SALE_' + _key
             __pid = str(__pid) + '|' + str(_param_stock['pid']) + '|' + str(_param_stock['stock'])
-        else:
-            _key = 'TOPUP_' + _key
-        __notes = json.dumps(GLOBAL_TRANSACTION_DATA['payment_details'])
-        __total_price = int(GLOBAL_TRANSACTION_DATA['value']) * int(GLOBAL_TRANSACTION_DATA['qty'])
+        __notes = json.dumps(g['payment_details'])
+        __total_price = int(g['value']) * int(g['qty'])
         __param = {
             'trxid': _trxid,
             'tid': TID,
             'mid': '',
             'pid': __pid,
-            # 'tpid': get_tpid(string=_key),
-            # Create Simple Mapping For TRXID
             'tpid': '',
             'sale': __total_price,
             'amount': __total_price,
-            'cardNo': GLOBAL_TRANSACTION_DATA['payment_details'].get('card_no', ''),
-            'paymentType': get_payment(GLOBAL_TRANSACTION_DATA['payment']),
+            'cardNo': g['payment_details'].get('card_no', ''),
+            'paymentType': get_payment(g['payment']),
             'paymentNotes': __notes,
             'isCollected': 0,
-            'pidStock': PID_STOCK_SALE if GLOBAL_TRANSACTION_DATA['shop_type'] == 'shop' else ''
+            'pidStock': PID_STOCK_SALE if g['shop_type'] == 'shop' else ''
         }
-        GLOBAL_TRANSACTION_DATA['pid'] = PID_SALE
-        GLOBAL_TRANSACTION_DATA['trxid'] = _trxid
+        g['pid'] = PID_SALE
+        g['trxid'] = _trxid
         check_trx = _DAO.check_trx(_trxid)
         if len(check_trx) == 0:
             _DAO.insert_transaction(__param)
@@ -1086,19 +970,12 @@ def store_transaction_global(param, retry=False):
                 K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('SUCCESS|UPLOAD_TRX-' + _trxid)
             else:
                 K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('PENDING|UPLOAD_TRX-' + _trxid)
-        # while True:
-        #     attempt += 1
-        #     if attempt == 3:
-        #         LOGGER.warning(('max_attempt', str(attempt)))
-        #         K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('FAILED|STORE_TRX-' + _trxid)
-        #         break
-        #     sleep(1)
     except Exception as e:
         LOGGER.warning((str(retry), str(e)))
         K_SIGNDLER.SIGNAL_STORE_TRANSACTION.emit('ERROR')
-    finally:
-        MEI_HISTORY = ''
-        CARD_NO = ''
+    # finally:
+    #     MEI_HISTORY = ''
+    #     CARD_NO = ''
 
 
 def start_kiosk_get_topup_amount():
@@ -1158,23 +1035,6 @@ def store_topup_transaction(param):
         K_SIGNDLER.SIGNAL_STORE_TOPUP.emit('STORE_TOPUP|ERROR')
 
 
-def save_cash_local(amount, mode='normal'):
-    try:
-        csid = TRX_ID_SALE[::-1]
-        param_cash = {
-            'csid': csid,
-            'tid': TID,
-            'amount': int(amount),
-            'pid': PID_SALE
-        }
-        _DAO.insert_cash(param_cash)
-        LOGGER.info((mode, PID_SALE, str(amount)))
-        return True
-    except Exception as e:
-        LOGGER.warning((mode, PID_SALE, str(amount), str(e)))
-        return False
-
-
 def reset_db_record():
     LOGGER.info(('START_RESET_DB_RECORDS', _Helper.time_string()))
     try:
@@ -1207,7 +1067,7 @@ def user_action_log(log):
 
 
 def python_dump(log):
-    LOGGER.debug(('[DUMP]', str(log)))
+    _Helper.dump(log)
 
 
 def house_keeping(age_month=1, mode='DATA_FILES'):

@@ -263,17 +263,17 @@ class SlotHandler(QObject):
         _KioskService.start_begin_collect_cash()
     start_begin_collect_cash = pyqtSlot()(start_begin_collect_cash)
 
-    def start_search_booking(self, bk):
-        _KioskService.start_search_booking(bk)
-    start_search_booking = pyqtSlot(str)(start_search_booking)
+    # def start_search_booking(self, bk):
+    #     _KioskService.start_search_booking(bk)
+    # start_search_booking = pyqtSlot(str)(start_search_booking)
 
     def start_reprint(self, new_status):
         _TicketTool.start_reprint(new_status)
     start_reprint = pyqtSlot(str)(start_reprint)
 
-    def start_recreate_payment(self, payment):
-        _KioskService.start_recreate_payment(payment)
-    start_recreate_payment = pyqtSlot(str)(start_recreate_payment)
+    # def start_recreate_payment(self, payment):
+    #     _KioskService.start_recreate_payment(payment)
+    # start_recreate_payment = pyqtSlot(str)(start_recreate_payment)
 
     def start_mei_create_payment(self, payment):
         _MEI.start_mei_create_payment(payment)

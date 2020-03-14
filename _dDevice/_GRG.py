@@ -304,18 +304,24 @@ def start_log_book_cash(pid, amount):
     _Helper.get_pool().apply_async(log_book_cash, (pid, amount,))
 
 
-def log_book_cash(pid, amount):
+def log_book_cash(pid, amount, mode='normal'):
     param = {
         'csid': pid[::-1],
         'pid': pid,
         'tid': _Common.TID,
         'amount': amount
     }
+    check_cash = _DAO.get_query_from('Cash', 'csid = "{}"'.format(param['csid']))
+    if len(check_cash) > 0:
+        LOGGER.debug(('DUPLICATE_CSID', mode, param))
+        return False
     try:
         _DAO.insert_cash(param=param)
-        LOGGER.info(('log_book_cash : ', param))
+        LOGGER.info(('SUCCESS', mode, param))
+        return True
     except Exception as e:
-        LOGGER.warning(e)
+        LOGGER.warning(('FAILED', mode, param, str(e)))
+        return False
 
 
 def get_collected_cash():
