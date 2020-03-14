@@ -124,7 +124,7 @@ Base{
     function get_refund_result(r){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('get_refund_result', now, r);
-        var refund = JSON.parse(refund);
+        var refund = JSON.parse(r);
         if (refund.MANUAL == 'AVAILABLE') popup_refund.manualEnable = true;
         if (refund.DIVA == 'AVAILABLE') popup_refund.manualEnable = true;
         if (refund.LINKAJA == 'AVAILABLE') popup_refund.linkajaEnable = true;
@@ -300,7 +300,7 @@ Base{
         if (result=='SUCCESS'){
             var info = JSON.parse(r.split('|')[3]);
             now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-            console.log('qr_check_result', now, mode, result, info);
+            console.log('qr_check_result', now, mode, result, JSON.stringify(info));
             qr_payment_frame.success(3)
             details.payment_details = info;
             details.payment_received = details.value.toString();
