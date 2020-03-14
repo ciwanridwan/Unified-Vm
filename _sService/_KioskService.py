@@ -1176,7 +1176,7 @@ def save_cash_local(amount, mode='normal'):
 
 
 def reset_db_record():
-    LOGGER.info(('START_RESET_DB_RECORDS'))
+    LOGGER.info(('START_RESET_DB_RECORDS', _Helper.time_string()))
     try:
         # _DAO.flush_table('TopUpRecords', ' tid <> "'+_Common.TID+'" ')
         # time.sleep(1)
@@ -1195,7 +1195,7 @@ def reset_db_record():
         _DAO.flush_table('TransactionFailure', ' tid <> "'+_Common.TID+'" ')
         # Add Data HouseKeeping Which Older Than n Months
         # house_keeping(age_month=3)
-        LOGGER.info(('FINISH_RESET_DB_RECORDS'))
+        LOGGER.info(('FINISH_RESET_DB_RECORDS', _Helper.time_string()))
         return 'FIRST_INIT_CLEANUP_SUCCESS'
     except Exception as e:
         LOGGER.warning((str(e)))
@@ -1212,7 +1212,7 @@ def python_dump(log):
 
 def house_keeping(age_month=1, mode='DATA_FILES'):
     if mode == 'DATA_FILES':
-        LOGGER.info(('START DATA HOUSE_KEEPING', mode, _Helper.time_string()))
+        LOGGER.info(('START DATA HOUSE_KEEPING', age_month, mode, _Helper.time_string()))
         print('pyt: START DATA HOUSE_KEEPING ' + mode + ' ' +_Helper.time_string())
         _DAO.clean_old_data(tables=['Cash', 'Receipts', 'Settlement', 'Product', 'SAMAudit', 'SAMRecords',
                                     'TopupRecords', 'TransactionFailure', 'Transactions'],
@@ -1220,7 +1220,7 @@ def house_keeping(age_month=1, mode='DATA_FILES'):
                             age_month=age_month)
     expired = time.time() - (age_month * 30 * 24 * 60 * 60)
     paths = ['_pPDF', '_lLog', '_qQr']
-    LOGGER.info(('START FILES HOUSE_KEEPING', paths, expired, mode, _Helper.time_string()))
+    LOGGER.info(('START FILES HOUSE_KEEPING', age_month, paths, expired, mode, _Helper.time_string()))
     print('pyt: START FILES HOUSE_KEEPING ' + str(paths) + ' ' + str(expired) + ' ' + mode + ' ' + _Helper.time_string())
     for path in paths:
         work_dir = os.path.join(sys.path[0], path)
@@ -1230,5 +1230,6 @@ def house_keeping(age_month=1, mode='DATA_FILES'):
                 stat = os.stat(file)
                 if stat.st_ctime < expired:
                     os.remove(file)
-    LOGGER.info((str(age_month), 'FINISH'))
+    LOGGER.info(('FINISH DATA/FILES HOUSE_KEEPING', age_month, mode, _Helper.time_string()))
+    print('pyt: FINISH DATA/FILES HOUSE_KEEPING ' + mode + ' ' +_Helper.time_string())
     return 'HOUSE_KEEPING_' + str(age_month) + 'SUCCESS'

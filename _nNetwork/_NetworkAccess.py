@@ -87,8 +87,8 @@ def get_header():
 HEADER = get_header()
 
 
-def get_from_url(url, param=None, header=None, log=True):
-    if is_online(source=url) is False:
+def get_from_url(url, param=None, header=None, log=True, first_load=False):
+    if is_online(source=url) is False and first_load is False:
         return -1, NO_INTERNET
     if header is None:
         header = HEADER

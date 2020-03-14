@@ -105,10 +105,10 @@ def load_from_temp_data(temp, mode='text'):
 
 
 TOPUP_AMOUNT_SETTING = None
-FEATURE_SETTING = None
-PAYMENT_SETTING = None
-REFUND_SETTING = None
-THEME_SETTING = None
+FEATURE_SETTING = load_from_temp_data('feature-setting', 'json')
+PAYMENT_SETTING = load_from_temp_data('payment-setting', 'json')
+REFUND_SETTING = load_from_temp_data('refund-setting', 'json')
+THEME_SETTING = load_from_temp_data('theme-setting', 'json')
 ADS_SETTING = load_from_temp_data('ads-setting', 'json')
 THEME_NAME = _ConfigParser.get_set_value('TEMPORARY', 'theme^name', '---')
 REPO_USERNAME = _ConfigParser.get_set_value('REPOSITORY', 'username', 'developer')

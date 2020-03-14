@@ -36,7 +36,7 @@ def check_connection(url, param):
     while True:
         modulus += 1
         try:
-            status, response = _NetworkAccess.get_from_url(url=url)
+            status, response = _NetworkAccess.get_from_url(url=url, first_load=True)
             if status == 200:
                 print('pyt: check_connection ' + _Helper.time_string() + ' Connected To Backend')
                 _Common.KIOSK_STATUS = 'ONLINE'

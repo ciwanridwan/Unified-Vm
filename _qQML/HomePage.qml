@@ -206,13 +206,13 @@ Base{
         console.log("get_gui_version : ", result);
     }
 
-    function false_notif(param){
+    function false_notif(){
         press = '0';
         switch_frame('source/smiley_down.png', 'Maaf Sementara Mesin Tidak Dapat Digunakan', '', 'backToMain', false )
         return;
     }
 
-    function kalog_notif(param){
+    function kalog_notif(){
         press = '0';
         switch_frame('source/smiley_down.png', 'Maaf Sementara Mesin Tidak Dapat Untuk', 'Melakukan Pengisian Kartu', 'closeWindow', false )
         return;
@@ -241,7 +241,7 @@ Base{
         anchors.top: parent.top
         anchors.topMargin: (globalScreenType == '1') ? 350 : 300
         anchors.horizontalCenter: parent.horizontalCenter
-        show_text: ""
+        show_text: "Please Wait, Initiating Machine Setting..."
         visible: !popup_loading.visible
         size_: (globalScreenType == '1') ? 50 : 40
         color_: "white"
