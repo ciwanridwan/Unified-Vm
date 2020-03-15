@@ -338,9 +338,17 @@ Rectangle{
             reset_counter();
             break;
         }
-        channelSelectedImage = id.imageSource;
-        colorMode = id.colorMode;
-        if (externalSetValue != undefined) externalSetValue = id.channelCode;
+//        channelSelectedImage = id.imageSource;
+        channel_image.visible = false;
+//        colorMode = id.colorMode;
+        if (externalSetValue != undefined) externalSetValue = {
+                name: id.buttonName,
+                code: id.channelCode,
+                admin_fee: id.channelFee,
+                amount: refundAmount,
+                total: refundAmount - parseInt(id.channelFee)
+            }
+        ;
     }
 
     function reset_all_channel(){

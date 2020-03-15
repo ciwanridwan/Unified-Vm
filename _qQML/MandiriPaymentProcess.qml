@@ -36,6 +36,7 @@ Base{
     property int refundAmount: 0
     property var refundMode: 'payment_cash_exceed'
     property var refundChannel: 'DIVA'
+    property var refundData
 
 
     property var qrPayload
@@ -1141,7 +1142,7 @@ Base{
         id: popup_refund
 //        calledFrom: 'general_payment_process'
         handleButtonVisibility: next_button_input_number
-        externalSetValue: refundChannel
+        externalSetValue: refundData
 //        visible: true
         z: 99
 
@@ -1196,6 +1197,16 @@ Base{
                     var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
                     if (press != '0') return;
                     press = '1';
+                    if (refundData==undefined){
+                        console.log('MISSING REFUND_DATA', refundData);
+                        return;
+                    } else {
+                        console.log('REFUND_DATA', JSON.stringify(refundData))
+                    }
+                    refundChannel = refundData.name;
+                    refundAmount = refundData.total;
+                    details.refund_channel = refundChannel;
+                    details.refund_details = refundData;
                     if (refundChannel=='MANUAL'){
                         popup_refund.close();
                         details.refund_status = 'AVAILABLE';
