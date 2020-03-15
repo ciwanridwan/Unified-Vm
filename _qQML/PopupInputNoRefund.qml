@@ -348,7 +348,7 @@ Rectangle{
                 amount: refundAmount,
                 total: refundAmount - parseInt(id.channelFee)
             }
-        ;
+
     }
 
     function reset_all_channel(){
