@@ -556,11 +556,14 @@ def get_refunds():
         }
 
 
+FORCE_ALLOWED_REFUND_METHOD = ["MANUAL", "DIVA", "LINKAJA"]
+
+
 def check_refund(name='ovo'):
     if len(REFUND_SETTING) == 0 or empty(REFUND_SETTING) is True:
         return False
     for x in range(len(REFUND_SETTING)):
-        if REFUND_SETTING[x]['name'].lower() == name:
+        if REFUND_SETTING[x]['name'].lower() == name and REFUND_SETTING[x]['name'] in FORCE_ALLOWED_REFUND_METHOD:
             return True
     return False
 
