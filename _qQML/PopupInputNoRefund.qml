@@ -193,14 +193,14 @@ Rectangle{
         spacing: 5
         width: 150
         anchors.left: parent.left
-        anchors.leftMargin: -10
+        anchors.leftMargin: (popup_refund.width==1920) ? -20 : -10
         anchors.verticalCenter: parent.verticalCenter
 
         RefundSelectionButton{
             id: manualMethod
             buttonName: 'OPERATOR'
             imageSource: 'source/manual_logo.png'
-            colorMode: 'white'
+            colorMode: 'darkgreen'
             channelCode: 'MANUAL'
             visible: manualEnable
             MouseArea{
