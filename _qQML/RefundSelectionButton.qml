@@ -38,7 +38,7 @@ Rectangle{
         scale: 0.75
         source: imageSource
         fillMode: Image.PreserveAspectFit
-        visible: !isSelected
+//        visible: !isSelected
     }
     ColorOverlay {
         id: reverse_main_image

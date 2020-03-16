@@ -199,7 +199,7 @@ Rectangle{
         RefundSelectionButton{
             id: manualMethod
             buttonName: 'OPERATOR'
-            imageSource: 'source/manual_logo.jpeg'
+            imageSource: 'source/manual_logo.png'
             colorMode: 'white'
             channelCode: 'MANUAL'
             visible: manualEnable
@@ -214,7 +214,7 @@ Rectangle{
         RefundSelectionButton{
             id: divaMethod
             buttonName: 'WHATSAPP'
-            imageSource: 'source/whatsapp_logo.jpeg'
+            imageSource: 'source/whatsapp_logo.png'
             colorMode: '#64C85A'
             channelCode: 'DIVA'
             visible: divaEnable
@@ -229,7 +229,7 @@ Rectangle{
         RefundSelectionButton{
             id: linkajaMethod
             buttonName: 'LINKAJA'
-            imageSource: 'source/linkaja_logo.jpeg'
+            imageSource: 'source/linkaja_logo.png'
             colorMode: '#D13A34'
             channelCode: 'LINKAJA'
             visible: linkajaEnable && (refundAmount >= minRefundAmount)
@@ -244,7 +244,7 @@ Rectangle{
         RefundSelectionButton{
             id: danaMethod
             buttonName: 'DANA'
-            imageSource: 'source/dana_logo.jpeg'
+            imageSource: 'source/dana_logo.png'
             colorMode: '#3888DB'
             channelCode: 'DANA'
             visible: danaEnable && (refundAmount >= minRefundAmount)
@@ -259,7 +259,7 @@ Rectangle{
         RefundSelectionButton{
             id: ovoMethod
             buttonName: 'O V O'
-            imageSource: 'source/ovo_logo.jpeg'
+            imageSource: 'source/ovo_logo.png'
             colorMode: '#45368B'
             channelCode: 'OVO'
             visible: ovoEnable && (refundAmount >= minRefundAmount)
@@ -291,7 +291,7 @@ Rectangle{
         RefundSelectionButton{
             id: shopeeMethod
             buttonName: 'SHOPEE'
-            imageSource: 'source/shopee_logo.jpg'
+            imageSource: 'source/shopee_logo.png'
             colorMode: '#D25437'
             channelCode: 'SHOPEEPAY'
             visible: shopeepayEnable && (refundAmount >= minRefundAmount)
