@@ -16,7 +16,7 @@ Rectangle{
 //    width: (globalScreenType=='2') ? 1280 : 1920
 
     color: 'transparent'
-    property var colorMode: "darkgray"
+    property var colorMode: "#293846"
     property bool withBackground: true
 
     property var calledFrom
@@ -68,7 +68,7 @@ Rectangle{
     Rectangle{
         id: notif_rec
         width: parent.width
-        height: parent.height - 100
+        height: parent.height
 //        color: CONF.frame_color
         color: colorMode
         anchors.horizontalCenter: parent.horizontalCenter
@@ -76,7 +76,7 @@ Rectangle{
 
         MainTitle{
             id: main_title
-            width: (popup_refund.width==1920) ? (parent.width - 200) : (parent.width - 400)
+            width: parent.width - 400
             anchors.top: parent.top
             anchors.topMargin: mainTitleMode=="normal" ? 45 : 375
             anchors.horizontalCenter: parent.horizontalCenter
@@ -347,7 +347,7 @@ Rectangle{
             if (handleButtonVisibility!=undefined) handleButtonVisibility.visible = true;
             break;
         default:
-            mainTitle = 'Masukkan Nomor HP/Akun ' + id.channelCode + ' Anda';
+            mainTitle = 'Silakan Masukkan Nomor HP/Akun ' + id.buttonName + ' Anda';
             mainTitleMode = 'normal';
 //            channelDescription = 'Pengembalian Dana Ke Akun ' + id.channelCode + ', Potongan Biaya Rp. ' + FUNC.insert_dot(id.channelFee.toString());
             if (handleButtonVisibility!=undefined) handleButtonVisibility.visible = false;

@@ -14,7 +14,7 @@ Rectangle{
     property var channelFee: 0
     width:190
     height:100
-    color: isSelected ? 'black' : colorMode
+    color: isSelected ? 'silver' : colorMode
     radius: 20
     Text{
         text: buttonName
