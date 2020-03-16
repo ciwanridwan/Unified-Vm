@@ -124,7 +124,7 @@ Base{
 
     function get_refund_result(r){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-        console.log('get_refund_result', now, r);
+        console.log('get_refund_result', now, r);``
         var refund = JSON.parse(r);
         if (refund.MANUAL == 'AVAILABLE') popup_refund.manualEnable = true;
         if (refund.DIVA == 'AVAILABLE') popup_refund.divaEnable = true;
@@ -1198,7 +1198,7 @@ Base{
                     var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
                     if (press != '0') return;
                     press = '1';
-                    _SLOT.user_action_log('Press "SETUJU" in Input Refund Number');
+//                    _SLOT.user_action_log('Press "SETUJU" in Input Refund Number');
                     if (refundData==undefined){
                         console.log('MISSING REFUND_DATA', refundData);
                         return;

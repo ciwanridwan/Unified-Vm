@@ -76,9 +76,9 @@ Rectangle{
 
         MainTitle{
             id: main_title
-            width: (popup_refund.width==1920) ? (parent.width - 200) : (parent.width - 300)
+            width: (popup_refund.width==1920) ? (parent.width - 200) : (parent.width - 400)
             anchors.top: parent.top
-            anchors.topMargin: mainTitleMode=="normal" ? 45 : 275
+            anchors.topMargin: mainTitleMode=="normal" ? 45 : 375
             anchors.horizontalCenter: parent.horizontalCenter
             show_text: caseTitle + mainTitle
             size_: (popup_refund.width==1920) ? 50 : 35
