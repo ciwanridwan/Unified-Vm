@@ -306,7 +306,7 @@ Rectangle{
     }
 
     function switch_to_active(id){
-        console.log('Choose "'+ id.channelCode +'" as Refund Channel');
+        console.log('User Choose "'+ id.channelCode +'" as Refund Channel');
 //        _SLOT.user_action_log('Choose "'+ id.channelCode+'" as Refund Channel');
         reset_all_channel();
         id.setActive();
@@ -317,7 +317,7 @@ Rectangle{
                         id.channelFee = availableRefund[i].admin_fee;
                         if (parseInt(availableRefund[i].custom_admin_fee) > 0) id.channelFee = availableRefund[i].custom_admin_fee;
                         channelDescription = availableRefund[i].description;
-                        if (availableRefund[i].due_time != "0") channelDescription += '- Waktu Kerja ' + availableRefund[i].due_time;
+                        if (availableRefund[i].due_time != "0") channelDescription += ' Waktu Proses ' + availableRefund[i].due_time;
                     }
                 }
             }

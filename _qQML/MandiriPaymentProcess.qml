@@ -124,7 +124,7 @@ Base{
 
     function get_refund_result(r){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
-        console.log('get_refund_result', now, r);``
+        console.log('get_refund_result', now, r);
         var refund = JSON.parse(r);
         if (refund.MANUAL == 'AVAILABLE') popup_refund.manualEnable = true;
         if (refund.DIVA == 'AVAILABLE') popup_refund.divaEnable = true;
