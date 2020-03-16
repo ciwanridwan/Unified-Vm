@@ -80,6 +80,7 @@ Base{
         fillMode: Image.PreserveAspectFit
         visible: !successPayment
         Text{
+            id: text_timer_show
             anchors.fill: parent
             text: showDuration
             horizontalAlignment: Text.AlignHCenter
@@ -150,12 +151,13 @@ Base{
         running: parent.visible && withTimer
         onTriggered: {
             showDuration -= 1;
-            if (showDuration < 15){
+            if (showDuration < 30){
                 textSlave = 'Waktu Pembayaran Anda Akan Habis Dalam...';
             }
-            if (showDuration < 1){
+            if (showDuration < 2){
                 textSlave = 'Waktu Pembayaran Anda Telah Habis';
                 imageSource = 'source/smiley_down.png';
+                text_timer_show.text = '0';
             }
             if (showDuration==-2) {
                 show_timer.stop();
