@@ -127,7 +127,7 @@ Base{
         console.log('get_refund_result', now, r);
         var refund = JSON.parse(r);
         if (refund.MANUAL == 'AVAILABLE') popup_refund.manualEnable = true;
-        if (refund.DIVA == 'AVAILABLE') popup_refund.manualEnable = true;
+        if (refund.DIVA == 'AVAILABLE') popup_refund.divaEnable = true;
         if (refund.LINKAJA == 'AVAILABLE') popup_refund.linkajaEnable = true;
         if (refund.OVO == 'AVAILABLE') popup_refund.ovoEnable = true;
         if (refund.GOPAY == 'AVAILABLE') popup_refund.gopayEnable = true;
@@ -1124,9 +1124,10 @@ Base{
     function get_signal_frame(s){
         var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
         console.log('get_signal_frame', s, now);
-        var res = s.split('|')[1];
-        set_refund_number(res);
-        next_button_input_number.visible = true;
+        var mode = s.split('|')[0];
+        if (mode == 'SELECT_REFUND'){
+            refundData = JSON.parse(s.split('|')[1])
+        }
     }
 
 
@@ -1140,9 +1141,9 @@ Base{
 
     PopupInputNoRefund{
         id: popup_refund
-//        calledFrom: 'general_payment_process'
+        calledFrom: 'general_payment_process'
         handleButtonVisibility: next_button_input_number
-        externalSetValue: refundData
+//        externalSetValue: refundData
 //        visible: true
         z: 99
 
@@ -1197,6 +1198,7 @@ Base{
                     var now = Qt.formatDateTime(new Date(), "yyyy-MM-dd HH:mm:ss")
                     if (press != '0') return;
                     press = '1';
+                    _SLOT.user_action_log('Press "SETUJU" in Input Refund Number');
                     if (refundData==undefined){
                         console.log('MISSING REFUND_DATA', refundData);
                         return;

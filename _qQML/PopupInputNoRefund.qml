@@ -76,12 +76,12 @@ Rectangle{
 
         MainTitle{
             id: main_title
-            width: parent.width - 200
+            width: (popup_refund.width==1920) ? (parent.width - 200) : (parent.width - 300)
             anchors.top: parent.top
-            anchors.topMargin: mainTitleMode=="normal" ? 45 : popup_refund.height/2
+            anchors.topMargin: mainTitleMode=="normal" ? 45 : 275
             anchors.horizontalCenter: parent.horizontalCenter
             show_text: caseTitle + mainTitle
-            size_: (popup_refund.width==1920) ? 50 : 40
+            size_: (popup_refund.width==1920) ? 50 : 35
             color_: CONF.text_color
         }
 
@@ -323,6 +323,22 @@ Rectangle{
             }
         }
         console.log('Refund Channel Description : '+ channelDescription);
+        channel_image.visible = false;
+        externalSetValue = {
+            name: id.buttonName,
+            code: id.channelCode,
+            admin_fee: id.channelFee,
+            amount: refundAmount,
+            total: refundAmount - parseInt(id.channelFee)
+        }
+//        colorMode = id.colorMode;
+        if (calledFrom!=undefined) {
+            switch(calledFrom){
+            case 'general_payment_process':
+                general_payment_process.framingSignal('SELECT_REFUND|'+JSON.stringify(externalSetValue))
+                break;
+            }
+        }
         switch(id.channelCode){
         case 'MANUAL':
             mainTitle = channelDescription;
@@ -339,16 +355,6 @@ Rectangle{
             break;
         }
 //        channelSelectedImage = id.imageSource;
-        channel_image.visible = false;
-//        colorMode = id.colorMode;
-        if (externalSetValue != undefined) externalSetValue = {
-                name: id.buttonName,
-                code: id.channelCode,
-                admin_fee: id.channelFee,
-                amount: refundAmount,
-                total: refundAmount - parseInt(id.channelFee)
-            }
-
     }
 
     function reset_all_channel(){
@@ -384,13 +390,6 @@ Rectangle{
     function check_availability(){
 //        console.log('numberInput', numberInput, canProceed);
         if (numberInput.substring(0, 2)==pattern && numberInput.length > minCountInput) {
-            if (calledFrom!=undefined) {
-                switch(calledFrom){
-                case 'general_payment_process':
-                    general_payment_process.framingSignal('PHONE_INPUT_FRAME|'+numberInput)
-                    break;
-                }
-            }
             if (handleButtonVisibility!=undefined){
                 handleButtonVisibility.visible = true;
             }

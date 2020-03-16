@@ -925,7 +925,7 @@ def admin_print_global(struct_id, ext='.pdf'):
                      '- 200K : '+str(qty_t200k)+' x 200.000 = Rp. '+clean_number(total_t200k), 0, 0, 'L')
         pdf.ln(tiny_space+1)
         pdf.set_font(USED_FONT, '', line_size)
-        pdf.cell(padding_left, 0, 'CARD UPDATE', 0, 0, 'L')
+        pdf.cell(padding_left, 0, 'CARD UPDATE', 0, 0, 'L') 
         pdf.ln(tiny_space)
         pdf.set_font(USED_FONT, '', line_size)
         adjust_slot1 = int(s['slot1']) - int(s['init_slot1'])
