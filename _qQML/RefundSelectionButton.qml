@@ -46,7 +46,8 @@ Rectangle{
         source: main_image
         color: 'white'
         scale: main_image.scale
-        visible: isSelected
+        visible: false
+//        visible: isSelected
     }
 
     function setActive(){

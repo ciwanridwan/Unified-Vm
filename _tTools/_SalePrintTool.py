@@ -917,6 +917,7 @@ def admin_print_global(struct_id, ext='.pdf'):
         pdf.cell(padding_left, 0,
                  '- 100K : '+str(qty_t100k)+' x 100.000 = Rp. '+clean_number(total_t100k), 0, 0, 'L')
         if _Common.BANKS[0]['STATUS']:
+            pdf.ln(tiny_space)
             pdf.set_font(USED_FONT, '', line_size)
             qty_t200k = s['trx_top200k']
             total_t200k = str(int(qty_t200k) * 200000)
