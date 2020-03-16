@@ -1209,7 +1209,7 @@ Base{
                     refundAmount = refundData.total;
                     details.refund_channel = refundChannel;
                     details.refund_details = refundData;
-                    if (refundChannel=='MANUAL'){
+                    if (['MANUAL', 'OPERATOR'].indexOf(refundChannel) > -1){
                         popup_refund.close();
                         details.refund_status = 'AVAILABLE';
                         details.refund_number = '';
