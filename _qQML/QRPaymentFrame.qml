@@ -151,9 +151,13 @@ Base{
         onTriggered: {
             showDuration -= 1;
             if (showDuration < 15){
-                textSlave = 'Masih Menunggu Pembayaran dalam...';
+                textSlave = 'Waktu Pembayaran Anda Akan Habis Dalam...';
             }
-            if (showDuration==0) {
+            if (showDuration < 1){
+                textSlave = 'Waktu Pembayaran Anda Telah Habis';
+                imageSource = 'source/smiley_down.png';
+            }
+            if (showDuration==-2) {
                 show_timer.stop();
                 switch(closeMode){
                 case 'backToMain':
