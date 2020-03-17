@@ -339,6 +339,7 @@ Base{
         var msg = '*' + details.shop_type.toUpperCase() + ' ' + details.provider + ' Rp. ' + FUNC.insert_dot(details.value)
         if (details.shop_type=='topup') msg = '*Isi Ulang Kartu Prabayar '+ details.provider + ' Rp. ' + FUNC.insert_dot(details.denom) + ' + Biaya Admin Rp. ' + FUNC.insert_dot(adminFee.toString())
         press = '0'
+        if (info.payment_time != undefined) qr_payment_frame.timerDuration = parseInt(info.payment_time);
         qr_payment_frame.open(msg);
     }
 

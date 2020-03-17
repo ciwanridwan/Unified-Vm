@@ -91,6 +91,9 @@ def do_get_qr(payload, mode, serialize=True):
                 r['data']['qr'] = r['data']['qr'].replace('https', 'http')
             if _Common.STORE_QR_TO_LOCAL is True:
                 r['data']['qr'] = serialize_qr(r['data']['qr'], payload['trx_id'])
+            r['data']['payment_time'] = _Common.QR_PAYMENT_TIME
+            if mode in _Common.QR_DIRECT_PAY:
+                r['data']['payment_time'] = 70
             QR_SIGNDLER.SIGNAL_GET_QR.emit('GET_QR|'+mode+'|' + json.dumps(r['data']))
             if mode in ['LINKAJA', 'DANA', 'SHOPEEPAY']:
                 param['refference'] = param['trx_id']
