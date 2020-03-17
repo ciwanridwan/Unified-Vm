@@ -343,8 +343,8 @@ def cancel_qr_global(data):
         return
     try:
         s, r = _NetworkAccess.post_to_url(url=url, param=payload)
-        # if s == 200 and r['response']['code'] == 200:
-        #     CANCEL_PARAM = None
+        if s != 200 or r['response'].get('code') != 200:
+            _Common.store_request_to_job(name=_Helper.whoami(), url=url, payload=payload)
         LOGGER.debug((mode, str(payload), str(r)))
     except Exception as e:
         LOGGER.warning((mode, str(e)))
